@@ -1,4 +1,4 @@
 @extends('layouts.app')
 @section('titulo')
-    Registrar Usuario
+    Roles
 @endsection

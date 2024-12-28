@@ -27,6 +27,7 @@
         "webpack-dev-server": "^5.2.0"
     },
     "dependencies": {
-        "daisyui": "^4.12.22"
+        "daisyui": "^4.12.22",
+        "sweetalert2": "^11.15.3"
     }
 }
