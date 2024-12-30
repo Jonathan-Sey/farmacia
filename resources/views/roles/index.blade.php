@@ -19,35 +19,37 @@
         @foreach ($roles as $rol)
             <li>{{ $rol->nombre }}</li>
             <li>{{ $rol->descripcion }}</li>
+                {{-- Validacion de estado --}}
             Estado:
-            @if ($rol->estado == 1)
-                <span class="text-green-500 font-bold" >Ativo</span>
-            @else
-                <span class="text-red-500 font-bold" >Inactivo</span>
-            @endif
+            <a href="#" class="estado" data-id="{{ $rol->id}}" data-estado="{{$rol->estado}}">
+                @if ($rol->estado == 1)
+                    <span class="text-green-500 font-bold" >Ativo</span>
+                @else
+                    <span class="text-red-500 font-bold" >Inactivo</span>
+                @endif
+            </a>
             <div>
-               <form action="{{route('roles.edit',['rol'=>$rol->id])}} " method="GET">
+
+               {{-- Boton editar --}}
+               <form action="{{route('roles.edit',['rol'=>$rol->id])}}" method="GET">
                 @csrf
                 <button type="submit" class="btn btn-primary font-bold uppercase">
                     <i class="fas fa-edit"></i>
                 </button>
                </form>
+
                {{-- <form id="eliminar-from-{{ $rol-id }}" action="{{route('')}}"> --}}
-                @if ($rol->estado == 1)
-                <button type="submit" class="btn btn-warning font-bold uppercase eliminar-btn" data-id="{{$rol->id}}">
+                {{-- Cambio de estado --}}
+                <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn" data-id="{{$rol->id}}"  data-info="{{$rol->nombre}}">
                     <i class="fas fa-trash"></i>
                 </button>
-                @else
-                <button type="submit" class="btn btn-warning font-bold uppercase eliminar-btn" data-id="{{$rol->id}}">
-                    <i class="fa-solid fa-rotate-left"></i>
-                </button>
-                @endif
 
-                {{-- formulario para mandar el id a eliminar --}}
-                <form id="form-eliminar{{$rol->id}}" action="{{route('roles.destroy',['rol'=> $rol->id])}}" method="POST" >
+                {{-- Formulario oculto para eliminación --}}
+                <form id="form-eliminar{{$rol->id}}" action="{{ route('roles.destroy', $rol->id) }}" method="POST" style="display: none;">
                     @csrf
                     @method('DELETE')
                 </form>
+
             </div>
         @endforeach
     </ul>
@@ -58,7 +60,7 @@
 @endsection
 
 @push('js')
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 {{-- Alerta de registro exitoso --}}
@@ -84,8 +86,37 @@
 </script>
 @endif
 
-{{-- Modal para eliminar  --}}
+{{-- Cambio de estado --}}
+<script>
+    $(document).ready(function(){
+        $('.estado').click(function(e){
+            e.preventDefault();
+            var rolId = $(this).data('id')
+            var estado = $(this).data('estado')
 
+            $.ajax({
+                url: '/roles/' + rolId,
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token()}}',
+                    _method: 'DELETE',
+                    status: estado == 1 ? 2 : 1
+                },
+                success: function(response){
+                    if(response.success){
+                        location.reload()
+                    }else{
+                        alert('Error al cambiar el estado')
+                    }
+                }
+            })
+        })
+    });
+</script>
+
+
+
+{{-- Modal para eliminar  --}}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const deleteButtons = document.querySelectorAll('.eliminar-btn');
@@ -93,9 +124,10 @@ document.addEventListener('DOMContentLoaded', function() {
     deleteButtons.forEach(button => {
         button.addEventListener('click', function() {
             const rolId = this.getAttribute('data-id');
+            const rolnombre = this.getAttribute('data-info');
             Swal.fire({
                 title: "¿Estás seguro?",
-                text: "¡No podrás revertir esto!" + rolId,
+                text: "¡Deseas eliminar! " + rolnombre,
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",

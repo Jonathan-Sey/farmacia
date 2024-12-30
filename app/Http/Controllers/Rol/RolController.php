@@ -12,10 +12,14 @@ class RolController extends Controller
     {
         //return view('roles.index');
         // obtenemos los registros de la tabla rol
-        $roles = Rol::all();
         //$roles = Rol::where('estado', 1)->get();
         // retornamos los valores al vista del rol
-        return view('roles.index',['roles' => $roles]);
+
+        //$roles = Rol::all();
+        //return view('roles.index',['roles' => $roles]);
+
+        $roles = Rol::where('estado', '!=', 0)->get();
+        return view('roles.index', ['roles' => $roles]);
 
     }
     public function create()
@@ -73,18 +77,18 @@ class RolController extends Controller
 
 
 
-    public function destroy(Rol $rol)
+    public function destroy(Request $request, Rol $rol)
     {
         //dd($rol);
-        if($rol->estado==1)
-        {
-            $rol->update(['estado'=> 0]);
+        $estado = $request->input('status', 0);
+        if($estado == 0){
+            $rol->update(['estado' => 0]);
+            return redirect()->route('roles.index')->with('success','¡Rol eliminado con éxito!');
         }else{
-            $rol->update(['estado'=> 1]);
+            $rol->estado = $estado;
+            $rol->save();
+            return response()->json(['success' => true]);
         }
-
-
-        return redirect()->route('roles.index')->with('success','¡Rol eliminado con éxito!');
+        return response()->json(['success'=> false]);
     }
-
 }
