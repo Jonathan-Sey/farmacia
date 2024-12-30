@@ -38,3 +38,4 @@ Route::get('/', function () {
 
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+
