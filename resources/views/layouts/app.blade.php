@@ -24,6 +24,7 @@
                 <div class="flex gap-2 items-center">
                     <a class="font-bold uppercase text-gray-600 text-sm" href="/crear-cuenta">Usuarios</a>
                     <a class="font-bold uppercase text-gray-600 text-sm" href="/rol">Roles</a>
+                    <a class="font-bold uppercase text-gray-600 text-sm" href="/categorias">categorias</a>
                 </div>
 
             </div>

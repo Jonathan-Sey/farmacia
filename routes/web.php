@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('principal');
+    return view('Login.login');
 });
 Route::get('/crear-cuenta', function () {
     return view('auth.registrar');
@@ -23,3 +23,6 @@ Route::get('/rol', function () {
     return view('rol');
 });
 
+Route::get('/categorias',function(){
+    return view('categorias.index');
+});
