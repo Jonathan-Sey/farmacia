@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\Categoria\CategoriaController;
+use App\Http\Controllers\RegistrarController;
+use App\Http\Controllers\Rol\RolController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,12 +17,25 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('principal');
+    return view('panel.index');
 });
-Route::get('/crear-cuenta', function () {
-    return view('auth.registrar');
-});
-Route::get('/rol', function () {
-    return view('rol');
-});
+
+// //modulo rol
+// Route::get('/roles', [RolController::class, 'index'] )->name('roles');
+// //vista para crear roles
+// Route::get('/roles/create', [RolController::class,'create'])->name('roles.create');
+// //enviando datos del rol
+// Route::post('/roles/create', [RolController::class,'store'])->name('roles.store');
+
+// //vista editar
+// Route::get('/roles/{rol}/edit', [RolController::class,'edit'])->name('roles.edit');
+// //enviar datos para actuializar rol
+// Route::patch('/roles/{rol}/edit', [RolController::class,'update'])->name('roles.update');
+// // ruta para eliminar
+// Route::delete('/roles/{rol}',[RolController::class,'destroy'])->name('roles.destroy');
+
+// Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias');
+
+Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 
