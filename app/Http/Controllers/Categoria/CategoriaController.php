@@ -101,7 +101,7 @@ class CategoriaController extends Controller
         // Actualizar datos
         $categoria->update($datosActualizados);
 
-        return redirect()->route('categorias.index')->with('success', '¡Categoria actualizada!');
+        return redirect()->route('categorias.index')->with('success', '¡Categoria actualizado!');
     }
 
     /**
