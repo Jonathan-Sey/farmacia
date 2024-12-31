@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sucursal;
 
 use App\Http\Controllers\Controller;
+use App\Models\Sucursal;
 use Illuminate\Http\Request;
 
 class SucursalController extends Controller
@@ -14,7 +15,11 @@ class SucursalController extends Controller
      */
     public function index()
     {
-        return view('sucursal.index');
+
+        $sucursales = Sucursal::select('id','nombre','ubicacion','estado','updated_at')
+        ->where('estado', '!=', 0)
+        ->get();
+        return view('sucursal.index',['sucursales'=>$sucursales]);
     }
 
     /**
@@ -35,7 +40,18 @@ class SucursalController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[
+            'nombre'=>['required','string','max:35','unique:sucursal,nombre'],
+            'ubicacion'=>'required|max:50',
+            'estado'=>'integer',
+        ]);
+
+        Sucursal::create([
+            'nombre'=>$request->nombre,
+            'ubicacion'=>$request->ubicacion,
+            'estado'=>1,
+        ]);
+        return redirect()->route('sucursales.index')->with('success', '¡Registro exitoso!');
     }
 
     /**
@@ -55,9 +71,9 @@ class SucursalController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Sucursal $sucursal)
     {
-        //
+        return view('sucursal.edit', ['sucursal'=>$sucursal]);
     }
 
     /**
@@ -67,9 +83,27 @@ class SucursalController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Sucursal $sucursal)
     {
-        //
+        $this->validate($request,[
+            'nombre'=>['required','string','max:35','unique:sucursal,nombre,'. $sucursal->id],
+            'ubicacion'=>'required|max:50',
+            'estado'=>'integer',
+        ]);
+
+         // Verificación de cambios
+         $datosActualizados = $request->only(['nombre', 'ubicacion']);
+         $datosSinCambios = $sucursal->only(['nombre', 'ubicacion']);
+
+         if ($datosActualizados == $datosSinCambios) {
+             return redirect()->route('sucursales.index');
+         }
+
+         // Actualizar datos
+         $sucursal->update($datosActualizados);
+
+         return redirect()->route('sucursales.index')->with('success', '¡Sucursal actualizado!');
+
     }
 
     /**
@@ -78,8 +112,17 @@ class SucursalController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
-    {
-        //
+    public function destroy(Request $request, Sucursal $sucursal){
+          //dd($rol);
+          $estado = $request->input('status', 0);
+          if($estado == 0){
+              $sucursal->update(['estado' => 0]);
+              return redirect()->route('sucursales.index')->with('success','Sucursal eliminado con éxito!');
+          }else{
+              $sucursal->estado = $estado;
+              $sucursal->save();
+              return response()->json(['success' => true]);
+          }
+          return response()->json(['success'=> false]);
     }
 }
