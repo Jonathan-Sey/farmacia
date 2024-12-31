@@ -19050,12 +19050,9 @@ var __WEBPACK_AMD_DEFINE_RESULT__;/**
 /*!*******************************!*\
   !*** ./resources/css/app.css ***!
   \*******************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (() => {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
+throw new Error("Module build failed (from ./node_modules/mini-css-extract-plugin/dist/loader.js):\nModuleBuildError: Module build failed (from ./node_modules/laravel-mix/node_modules/postcss-loader/dist/cjs.js):\nSyntaxError: Unexpected token, expected \",\" (11:3)\n    at unexpected (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\util.js:99:15)\n    at expect (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\util.js:86:5)\n    at parseObj (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:759:20)\n    at parseExprAtom (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:553:7)\n    at parseExprSubscripts (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:276:20)\n    at parseMaybeUnary (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:257:20)\n    at parseExprOps (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:185:20)\n    at parseMaybeConditional (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:157:20)\n    at baseParseMaybeAssign (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:142:20)\n    at tsParseMaybeAssignWithoutJSX (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\plugins\\typescript.js:1580:45)\n    at tsParseMaybeAssign (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\plugins\\typescript.js:1548:12)\n    at parseMaybeAssign (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:121:43)\n    at baseParseMaybeAssign (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:148:5)\n    at tsParseMaybeAssignWithoutJSX (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\plugins\\typescript.js:1580:45)\n    at tsParseMaybeAssign (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\plugins\\typescript.js:1548:12)\n    at parseMaybeAssign (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:121:43)\n    at parseExpression (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\expression.js:104:3)\n    at parseStatementContent (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\statement.js:242:31)\n    at parseStatement (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\statement.js:116:3)\n    at parseBlockBody (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\statement.js:586:5)\n    at parseTopLevel (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\statement.js:92:3)\n    at parseFile (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\traverser\\index.js:17:35)\n    at parse (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\parser\\index.js:26:35)\n    at getSucraseContext (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\index.js:95:30)\n    at transform (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\sucrase\\dist\\index.js:38:28)\n    at Object.transform (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\tailwindcss\\lib\\lib\\load-config.js:38:43)\n    at D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\jiti\\dist\\jiti.js:1:247465\n    at opts.transform.Object.assign.Object.assign.Object.assign.legacy (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\jiti\\dist\\jiti.js:1:247286)\n    at transform (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\jiti\\dist\\jiti.js:1:247408)\n    at evalModule (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\jiti\\dist\\jiti.js:1:251187)\n    at jiti (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\jiti\\dist\\jiti.js:1:249841)\n    at D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\tailwindcss\\lib\\lib\\load-config.js:52:26\n    at loadConfig (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\tailwindcss\\lib\\lib\\load-config.js:62:6)\n    at getTailwindConfig (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\tailwindcss\\lib\\lib\\setupTrackingContext.js:71:116)\n    at D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\tailwindcss\\lib\\lib\\setupTrackingContext.js:100:92\n    at D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\tailwindcss\\lib\\processTailwindFeatures.js:46:11\n    at plugins (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\tailwindcss\\lib\\plugin.js:38:69)\n    at LazyResult.runOnRoot (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\postcss\\lib\\lazy-result.js:329:16)\n    at LazyResult.runAsync (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\postcss\\lib\\lazy-result.js:258:26)\n    at LazyResult.async (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\postcss\\lib\\lazy-result.js:160:30)\n    at LazyResult.then (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\postcss\\lib\\lazy-result.js:404:17)\n    at processResult (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\webpack\\lib\\NormalModule.js:891:19)\n    at D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\webpack\\lib\\NormalModule.js:1037:5\n    at D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\loader-runner\\lib\\LoaderRunner.js:400:11\n    at D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\loader-runner\\lib\\LoaderRunner.js:252:18\n    at context.callback (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\loader-runner\\lib\\LoaderRunner.js:124:13)\n    at Object.loader (D:\\Xampp\\htdocs\\Proyecto_Farmacias\\farmacia\\node_modules\\laravel-mix\\node_modules\\postcss-loader\\dist\\index.js:142:7)");
 
 /***/ }),
 
@@ -19282,42 +19279,7 @@ process.umask = function() { return 0; };
 /******/ 		return module.exports;
 /******/ 	}
 /******/ 	
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = __webpack_modules__;
-/******/ 	
 /************************************************************************/
-/******/ 	/* webpack/runtime/chunk loaded */
-/******/ 	(() => {
-/******/ 		var deferred = [];
-/******/ 		__webpack_require__.O = (result, chunkIds, fn, priority) => {
-/******/ 			if(chunkIds) {
-/******/ 				priority = priority || 0;
-/******/ 				for(var i = deferred.length; i > 0 && deferred[i - 1][2] > priority; i--) deferred[i] = deferred[i - 1];
-/******/ 				deferred[i] = [chunkIds, fn, priority];
-/******/ 				return;
-/******/ 			}
-/******/ 			var notFulfilled = Infinity;
-/******/ 			for (var i = 0; i < deferred.length; i++) {
-/******/ 				var [chunkIds, fn, priority] = deferred[i];
-/******/ 				var fulfilled = true;
-/******/ 				for (var j = 0; j < chunkIds.length; j++) {
-/******/ 					if ((priority & 1 === 0 || notFulfilled >= priority) && Object.keys(__webpack_require__.O).every((key) => (__webpack_require__.O[key](chunkIds[j])))) {
-/******/ 						chunkIds.splice(j--, 1);
-/******/ 					} else {
-/******/ 						fulfilled = false;
-/******/ 						if(priority < notFulfilled) notFulfilled = priority;
-/******/ 					}
-/******/ 				}
-/******/ 				if(fulfilled) {
-/******/ 					deferred.splice(i--, 1)
-/******/ 					var r = fn();
-/******/ 					if (r !== undefined) result = r;
-/******/ 				}
-/******/ 			}
-/******/ 			return result;
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/global */
 /******/ 	(() => {
 /******/ 		__webpack_require__.g = (function() {
@@ -19330,22 +19292,6 @@ process.umask = function() { return 0; };
 /******/ 		})();
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
-/******/ 	})();
-/******/ 	
-/******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
-/******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
-/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 			}
-/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 		};
-/******/ 	})();
-/******/ 	
 /******/ 	/* webpack/runtime/node module decorator */
 /******/ 	(() => {
 /******/ 		__webpack_require__.nmd = (module) => {
@@ -19355,68 +19301,13 @@ process.umask = function() { return 0; };
 /******/ 		};
 /******/ 	})();
 /******/ 	
-/******/ 	/* webpack/runtime/jsonp chunk loading */
-/******/ 	(() => {
-/******/ 		// no baseURI
-/******/ 		
-/******/ 		// object to store loaded and loading chunks
-/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
-/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
-/******/ 		var installedChunks = {
-/******/ 			"/js/app": 0,
-/******/ 			"css/app": 0
-/******/ 		};
-/******/ 		
-/******/ 		// no chunk on demand loading
-/******/ 		
-/******/ 		// no prefetching
-/******/ 		
-/******/ 		// no preloaded
-/******/ 		
-/******/ 		// no HMR
-/******/ 		
-/******/ 		// no HMR manifest
-/******/ 		
-/******/ 		__webpack_require__.O.j = (chunkId) => (installedChunks[chunkId] === 0);
-/******/ 		
-/******/ 		// install a JSONP callback for chunk loading
-/******/ 		var webpackJsonpCallback = (parentChunkLoadingFunction, data) => {
-/******/ 			var [chunkIds, moreModules, runtime] = data;
-/******/ 			// add "moreModules" to the modules object,
-/******/ 			// then flag all "chunkIds" as loaded and fire callback
-/******/ 			var moduleId, chunkId, i = 0;
-/******/ 			if(chunkIds.some((id) => (installedChunks[id] !== 0))) {
-/******/ 				for(moduleId in moreModules) {
-/******/ 					if(__webpack_require__.o(moreModules, moduleId)) {
-/******/ 						__webpack_require__.m[moduleId] = moreModules[moduleId];
-/******/ 					}
-/******/ 				}
-/******/ 				if(runtime) var result = runtime(__webpack_require__);
-/******/ 			}
-/******/ 			if(parentChunkLoadingFunction) parentChunkLoadingFunction(data);
-/******/ 			for(;i < chunkIds.length; i++) {
-/******/ 				chunkId = chunkIds[i];
-/******/ 				if(__webpack_require__.o(installedChunks, chunkId) && installedChunks[chunkId]) {
-/******/ 					installedChunks[chunkId][0]();
-/******/ 				}
-/******/ 				installedChunks[chunkId] = 0;
-/******/ 			}
-/******/ 			return __webpack_require__.O(result);
-/******/ 		}
-/******/ 		
-/******/ 		var chunkLoadingGlobal = self["webpackChunk"] = self["webpackChunk"] || [];
-/******/ 		chunkLoadingGlobal.forEach(webpackJsonpCallback.bind(null, 0));
-/******/ 		chunkLoadingGlobal.push = webpackJsonpCallback.bind(null, chunkLoadingGlobal.push.bind(chunkLoadingGlobal));
-/******/ 	})();
-/******/ 	
 /************************************************************************/
 /******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/js/app.js")))
-/******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["css/app"], () => (__webpack_require__("./resources/css/app.css")))
-/******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
+/******/ 	__webpack_require__("./resources/js/app.js");
+/******/ 	// This entry module doesn't tell about it's top-level declarations so it can't be inlined
+/******/ 	var __webpack_exports__ = __webpack_require__("./resources/css/app.css");
 /******/ 	
 /******/ })()
 ;
