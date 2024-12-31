@@ -1905,6 +1905,12 @@ html {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
+<<<<<<< HEAD
+=======
+.bg-\[\#00000050\] {
+  background-color: #00000050;
+}
+>>>>>>> 46e302af47938cf47915c8c816f26eb74452396d
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
