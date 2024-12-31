@@ -15,7 +15,9 @@ class CategoriaController extends Controller
      */
     public function index()
     {
-        $categorias = Categoria::select('nombre','estado','created_at')->get();
+        $categorias = Categoria::select('id','nombre','estado','created_at')
+        ->where('estado', '!=', 0)
+        ->get();
         return view('categorias.index',['categorias'=>$categorias]);
     }
 
@@ -37,7 +39,17 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
-
+        $this->validate($request,[
+            'nombre'=>['required','string','max:35','unique:categoria,nombre'],
+            'descripcion'=>'nullable|max:100',
+            'estado'=>'integer',
+        ]);
+        Categoria::create([
+            'nombre'=> $request->nombre,
+            'descripcion'=> $request->descripcion,
+            'estado'=> 1,
+        ]);
+            return redirect()->route('categorias.index')->with('success', '¡Registro exitoso!');
     }
 
     /**
@@ -57,9 +69,9 @@ class CategoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Categoria $categoria)
     {
-        //
+        return view('categorias.edit', ['categoria' => $categoria]);
     }
 
     /**
@@ -69,9 +81,27 @@ class CategoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Categoria $categoria)
     {
-        //
+        // Validaciones de los datos
+        $this->validate($request, [
+            'nombre' => ['required', 'string', 'max:35', 'unique:categoria,nombre,' . $categoria->id],
+            'descripcion' => 'nullable|max:100',
+            'estado' => 'integer',
+        ]);
+
+        // Verificación de cambios
+        $datosActualizados = $request->only(['nombre', 'descripcion']);
+        $datosSinCambios = $categoria->only(['nombre', 'descripcion']);
+
+        if ($datosActualizados == $datosSinCambios) {
+            return redirect()->route('categorias.index');
+        }
+
+        // Actualizar datos
+        $categoria->update($datosActualizados);
+
+        return redirect()->route('categorias.index')->with('success', '¡Categoria actualizada!');
     }
 
     /**
@@ -80,8 +110,18 @@ class CategoriaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, Categoria $categoria)
     {
-        //
+               //dd($rol);
+               $estado = $request->input('status', 0);
+               if($estado == 0){
+                   $categoria->update(['estado' => 0]);
+                   return redirect()->route('categorias.index')->with('success','Categoria eliminado con éxito!');
+               }else{
+                   $categoria->estado = $estado;
+                   $categoria->save();
+                   return response()->json(['success' => true]);
+               }
+               return response()->json(['success'=> false]);
     }
 }
