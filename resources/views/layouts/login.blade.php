@@ -18,7 +18,7 @@
                     <div class=" ">
                         <i class="fa-solid fa-envelope"></i>
                     </div>
-                    <input type="email" placeholder="Usuario">
+                    {{-- <input type="email" placeholder="Usuario"> --}}
 
                     <div>
                         <i class="fa-solid fa-lock"></i>
