@@ -15,8 +15,8 @@ class CreateProductosTable extends Migration
     {
         Schema::create('producto', function (Blueprint $table) {
             $table->id();
-            $table->string('codigo')->uniqued();
-            $table->string('nombre');
+            $table->string('codigo',12)->uniqued();
+            $table->string('nombre',50);
             $table->text('descripcion');
             $table->decimal('precio_venta',10,2);
             $table->date('fecha_caducidad');

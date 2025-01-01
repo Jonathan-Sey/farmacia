@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Producto;
 
 use App\Http\Controllers\Controller;
+use App\Models\Producto;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -14,7 +15,11 @@ class ProductoController extends Controller
      */
     public function index()
     {
-        //
+
+        $productos = Producto::with('categoria:id,nombre')
+        ->select('id','codigo','nombre','nombre','precio_venta','estado','id_categoria')
+        ->get();
+        return view('producto.index',['productos'=>$productos]);
     }
 
     /**
@@ -24,7 +29,7 @@ class ProductoController extends Controller
      */
     public function create()
     {
-        //
+        return view('producto.create');
     }
 
     /**
