@@ -1879,12 +1879,27 @@ html {
 .border-t {
   border-top-width: 1px;
 }
+.border-solid {
+  border-style: solid;
+}
 .border-gray-200 {
   --tw-border-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-border-opacity, 1));
 }
 .border-gray-900\/10 {
   border-color: rgb(17 24 39 / 0.1);
+}
+.border-gray-500 {
+  --tw-border-opacity: 1;
+  border-color: rgb(107 114 128 / var(--tw-border-opacity, 1));
+}
+.border-black {
+  --tw-border-opacity: 1;
+  border-color: rgb(0 0 0 / var(--tw-border-opacity, 1));
+}
+.border-blue-950 {
+  --tw-border-opacity: 1;
+  border-color: rgb(23 37 84 / var(--tw-border-opacity, 1));
 }
 .bg-\[\#00000050\] {
   background-color: #00000050;
@@ -1904,6 +1919,14 @@ html {
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
+}
+.bg-slate-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(203 213 225 / var(--tw-bg-opacity, 1));
+}
+.bg-slate-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(100 116 139 / var(--tw-bg-opacity, 1));
 }
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
@@ -1937,6 +1960,12 @@ html {
 }
 .p-6 {
   padding: 1.5rem;
+}
+.p-9 {
+  padding: 2.25rem;
+}
+.p-3 {
+  padding: 0.75rem;
 }
 .px-3 {
   padding-left: 0.75rem;
