@@ -1,10 +1,10 @@
 @extends('layouts.login')
 
 @section('contenido')
-<div class="max-w-[1000px] bg-[#00000050] grid grid-cols-1 p-4 rounded-2xl">
-    <div class=" max-w-100 grid gap-3">
+<div class="max-w-[1000px] sm:max-w-full bg-[#00000050] grid grid-cols-1 p-4 rounded-2xl">
+    <div class=" max-w-100 sm:max-w-full grid gap-3 overflow-hidden">
     
-        <h1 class="text-5xl font-bold text-white">Logueate</h1>
+        <h1 class="text-5xl font-bold text-white">Iniciar Secion</h1>
     
         <form class="my-20 mx-20  space-y-5 text-white" action="" >
        
@@ -24,7 +24,7 @@
     </form>
     <div>
         <p class=" font-bold text-white">
-            ¿Olvido la contraseña? <a href="Registrate" class="text-[#3ABFF8]">Recuperar</a>
+            ¿Olvido la contraseña? <a href="/Recuperacion_contraseña" class="text-[#3ABFF8]">Recuperar</a>
         </p>
     </div>
 </div>
