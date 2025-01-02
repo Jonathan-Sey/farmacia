@@ -2005,6 +2005,7 @@ html {
 .border-gray-900\/10 {
   border-color: rgb(17 24 39 / 0.1);
 }
+
 .border-\[\#00000050\] {
   border-color: #00000050;
 }
@@ -2016,6 +2017,7 @@ html {
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity, 1));
 }
+
 .bg-\[\#00000050\] {
   background-color: #00000050;
 }
@@ -2035,6 +2037,7 @@ html {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
+
 .bg-\[\] {
   background-color: ;
 }
@@ -2044,6 +2047,7 @@ html {
 .bg-\[\#FFFFFF30\] {
   background-color: #FFFFFF30;
 }
+
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
