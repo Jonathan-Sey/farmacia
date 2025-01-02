@@ -9,6 +9,7 @@
         <title> @yield('titulo')</title>
         <link rel="stylesheet" href="{{ mix('js/app.js') }}">
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -30,6 +31,8 @@
         <x-footer/>
         @stack('css')
         @stack('js')
+        <script src="https://code.jquery.com/jquery-3.7.1.js" type="text/javascript"></script>
+        <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js" type="text/javascript"></script>
     </body>
 
 </html>
