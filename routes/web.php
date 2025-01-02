@@ -3,6 +3,7 @@
 use App\Http\Controllers\Categoria\CategoriaController;
 use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\Rol\RolController;
+use App\Http\Controllers\Sucursal\SucursalController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -36,6 +37,7 @@ Route::get('/', function () {
 
 // Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias');
 
-Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
 

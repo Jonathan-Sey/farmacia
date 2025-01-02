@@ -3,3 +3,7 @@
 *.scss linguist-vendored
 *.js linguist-vendored
 CHANGELOG.md export-ignore
+
+text=auto # Archivos binarios
+*.jpg binary
+*.png binary
