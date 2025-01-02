@@ -20,7 +20,7 @@
                     <input type="text" placeholder="Contraseña" class="w-80 bg-[#FFFFFF30] px-10 py-2 rounded-full focus:bg-[#00000050] focus:outline-none focus:ring-2 focus:ring-cyan">
                 </div>
             
-            <button class="btn btn-outline btn-secondary w-80">Iniciar secion</button>
+                <button class="btn btn-outline font-bold w-80 text-white hover:bg-[#00000050] hover:text-white hover:border-white">Iniciar Secion</button>
     </form>
     <div>
         <p class=" font-bold text-white">
