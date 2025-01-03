@@ -21,6 +21,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('Login.login');
 });
+Route::get('/Recuperacion_contraseña', function(){
+    return view('OlvidoC.olvidoC');
+});
 
 // //modulo rol
 // Route::get('/roles', [RolController::class, 'index'] )->name('roles');
