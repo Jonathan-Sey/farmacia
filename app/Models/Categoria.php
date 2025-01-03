@@ -14,6 +14,12 @@ class Categoria extends Model
         'descripcion',
         'estado',
     ];
+
+    public function producto()
+        {
+            return $this->hasMany(Producto::class, 'id_categoria');
+        }
+
 }
 
 
