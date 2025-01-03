@@ -8,6 +8,7 @@
                     <a class="font-bold uppercase text-gray-600 text-sm" href="{{ route('roles.index') }}">Roles</a>
                     <a class="font-bold uppercase text-gray-600 text-sm" href="{{ route('categorias.index') }}">Categorias</a>
                     <a class="font-bold uppercase text-gray-600 text-sm" href="{{ route('sucursales.index') }}">Sucursales</a>
+                    <a class="font-bold uppercase text-gray-600 text-sm" href="{{ route('productos.index') }}">Productos</a>
                 </div>
 
             </div>

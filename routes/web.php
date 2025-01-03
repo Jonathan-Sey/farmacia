@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Categoria\CategoriaController;
+use App\Http\Controllers\Producto\ProductoController;
 use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
@@ -43,4 +44,5 @@ Route::get('/Recuperacion_contraseña', function(){
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
+Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
 
