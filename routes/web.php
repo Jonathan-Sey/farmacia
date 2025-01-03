@@ -18,9 +18,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+<<<<<<< HEAD
 Route::get('/', function () {
     return view('Login.login');
 });
+=======
+
+Route::get('/', function () {
+    return view('Login.login');
+});
+Route::get('/Recuperacion_contraseña', function(){
+    return view('OlvidoC.olvidoC');
+
+Route::get('/login', function () {
+    return view('Login.login');
+
+});
+>>>>>>> 8405c1e31ea77215b0ecf52e40af13a4c31b785b
 
 Route::get('/dashboard', function () {
     return view('dashboard.index');
