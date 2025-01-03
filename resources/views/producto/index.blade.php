@@ -3,6 +3,9 @@
 @section('titulo','Productos')
 
 @push('css')
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
+
 
 @endpush
 
@@ -17,8 +20,8 @@
 
     <x-data-table>
         <x-slot name="thead">
-            <thead class="bg-blue-950 text-white rounded-lg">
-                <tr>
+            <thead class="bg-blue-950 text-white rounded-lg ">
+                <tr class="">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
@@ -32,10 +35,10 @@
             <tbody>
                 @foreach ($productos as $producto)
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">
                         <a href="#" class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
                             @if ($producto->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
@@ -53,20 +56,36 @@
 @endsection
 
 @push('js')
+<script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.js"></script>
+<script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap5.js"></script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
 
+
+
+
+{{-- botones --}}
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js">//botones en general</script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js">//imprimir</script>
+<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.colVis.min.js">//fltrar columnas</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">//pdf</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//copiar</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">//excel</script>
+
+<script src=""></script>
 
 <script>
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
+            order: [0,'desc'],
             language: {
-                search: "Buscar:",
-                lengthMenu: "Mostrar _MENU_ registros",
-                info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                paginate: {
-                    previous: "Anterior",
-                    next: "Siguiente",
-                },
+                url: '/js/i18n/Spanish.json',
+            },
+            layout: {
+                topStart: {
+
+                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                }
             },
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
