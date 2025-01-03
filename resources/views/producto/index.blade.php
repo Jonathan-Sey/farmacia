@@ -20,8 +20,8 @@
 
     <x-data-table>
         <x-slot name="thead">
-            <thead class="bg-blue-950 text-white rounded-lg ">
-                <tr class="">
+            <thead class=" text-white ">
+                <tr class="bg-slate-600">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
