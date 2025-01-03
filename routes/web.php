@@ -18,12 +18,24 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/login', function () {
     return view('Login.login');
 });
+<<<<<<< HEAD
 Route::get('/dashboard', function () {
     return view('dashboard.index');
 });
+=======
+Route::get('/Recuperacion_contraseña', function(){
+    return view('OlvidoC.olvidoC');
+});
+
+Route::get('/index', function(){
+    return view('pagina_principal.index');
+});
+
+
+>>>>>>> 6469566bcdc88859e0a731464f27867bfdb987ca
 // //modulo rol
 // Route::get('/roles', [RolController::class, 'index'] )->name('roles');
 // //vista para crear roles
@@ -44,4 +56,3 @@ Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
-
