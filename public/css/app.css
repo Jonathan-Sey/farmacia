@@ -1191,10 +1191,6 @@ html {
     --btn-color: var(--fallback-p);
   }
 
-  .btn-secondary {
-    --btn-color: var(--fallback-s);
-  }
-
   .btn-success {
     --btn-color: var(--fallback-su);
   }
@@ -1256,10 +1252,6 @@ html {
     --btn-color: var(--p);
   }
 
-  .btn-secondary {
-    --btn-color: var(--s);
-  }
-
   .btn-success {
     --btn-color: var(--su);
   }
@@ -1267,11 +1259,6 @@ html {
   .btn-warning {
     --btn-color: var(--wa);
   }
-}
-.btn-secondary {
-  --tw-text-opacity: 1;
-  color: var(--fallback-sc,oklch(var(--sc)/var(--tw-text-opacity)));
-  outline-color: var(--fallback-s,oklch(var(--s)/1));
 }
 .btn-success {
   --tw-text-opacity: 1;
@@ -1762,14 +1749,6 @@ html {
   margin-left: 0.75rem;
   margin-right: 0.75rem;
 }
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
-}
-.my-20 {
-  margin-top: 5rem;
-  margin-bottom: 5rem;
-}
 .mx-4 {
   margin-left: 1rem;
   margin-right: 1rem;
@@ -1777,6 +1756,14 @@ html {
 .mx-8 {
   margin-left: 2rem;
   margin-right: 2rem;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.my-20 {
+  margin-top: 5rem;
+  margin-bottom: 5rem;
 }
 .my-8 {
   margin-top: 2rem;
@@ -2225,12 +2212,12 @@ html {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
 }
+.hover\:bg-\[\#00000050\]:hover {
+  background-color: #00000050;
+}
 .hover\:bg-indigo-500:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(99 102 241 / var(--tw-bg-opacity, 1));
-}
-.hover\:bg-\[\#00000050\]:hover {
-  background-color: #00000050;
 }
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
@@ -2304,16 +2291,6 @@ html {
     justify-content: center;
   }
 
-  .sm\:text-sm {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-  }
-
-  .sm\:text-sm\/6 {
-    font-size: 0.875rem;
-    line-height: 1.5rem;
-  }
-
   .sm\:text-2xl {
     font-size: 1.5rem;
     line-height: 2rem;
@@ -2322,6 +2299,16 @@ html {
   .sm\:text-5xl {
     font-size: 3rem;
     line-height: 1;
+  }
+
+  .sm\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+
+  .sm\:text-sm\/6 {
+    font-size: 0.875rem;
+    line-height: 1.5rem;
   }
 }
 

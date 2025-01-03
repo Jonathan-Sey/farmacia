@@ -18,14 +18,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login', function () {
+Route::get('/', function () {
     return view('Login.login');
 });
-<<<<<<< HEAD
+
 Route::get('/dashboard', function () {
     return view('dashboard.index');
 });
-=======
+
 Route::get('/Recuperacion_contraseña', function(){
     return view('OlvidoC.olvidoC');
 });
@@ -35,7 +35,7 @@ Route::get('/index', function(){
 });
 
 
->>>>>>> 6469566bcdc88859e0a731464f27867bfdb987ca
+
 // //modulo rol
 // Route::get('/roles', [RolController::class, 'index'] )->name('roles');
 // //vista para crear roles
