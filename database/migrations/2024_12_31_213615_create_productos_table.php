@@ -17,7 +17,7 @@ class CreateProductosTable extends Migration
             $table->id();
             $table->string('codigo',12)->uniqued();
             $table->string('nombre',50);
-            $table->text('descripcion');
+            $table->text('descripcion')->nullable();
             $table->decimal('precio_venta',10,2);
             $table->date('fecha_caducidad');
             $table->tinyInteger('estado')->default(1);

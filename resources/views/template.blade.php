@@ -25,7 +25,7 @@
     <body class="relative min-h-screen flex flex-col bg-gray-100">
         <!-- Navegación -->
         <x-navegacion class="w-full md:w-1/5 bg-white shadow fixed top-0 left-0 h-full"/>
-    
+
         <!-- Contenido principal -->
         <main class="flex-1 ml-[10px] md:ml-[200px] mt-20 md:mt-5 pb-16 px-4 md:px-10">
             <h2 class="text-center text-3xl mb-10 uppercase font-bold">
@@ -33,14 +33,15 @@
             </h2>
             @yield('contenido')
         </main>
-    
+
         <!-- Footer -->
        <div class=" ml-4 md:ml-[200px]">
         <x-footer class="bg-gray-800 text-white p-4 text-center w-full"/>
         </div>
         @stack('css')
         @stack('js')
+        @stack('css')
+        @stack('js')
     </body>
     <script src="{{ asset('js/barraResponsive.js') }}"></script>
     </html>
-    
