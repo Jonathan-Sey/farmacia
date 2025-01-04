@@ -36,6 +36,8 @@
 
         <!-- Footer -->
         <x-footer class="bg-gray-800 text-white p-4 text-center w-full"/>
+        @stack('css')
+        @stack('js')
     </body>
     <script src="{{ asset('js/barraResponsive.js') }}"></script>
     </html>

@@ -26,18 +26,13 @@
 
     <x-data-table>
         <x-slot name="thead">
-
             <thead class="bg-blue-950 text-white rounded-lg">
                 <tr>
-
-            <thead class=" text-white font-bold">
-                <tr class="bg-slate-600 ">
-
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Código</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nombre</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Precio</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Estado</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Categoría</th>
                 </tr>
             </thead>
         </x-slot>
@@ -46,18 +41,11 @@
             <tbody>
                 @foreach ($productos as $producto)
                 <tr>
-
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">
-
-                        <a href="#" class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
+                        <a href="#" class="estado" data-id="{{ $producto->id }}" data-estado="{{$producto->estado}}">
                             @if ($producto->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
                             @else
@@ -72,6 +60,7 @@
         </x-slot>
     </x-data-table>
 @endsection
+
 
 @push('js')
 
@@ -100,7 +89,6 @@
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
-
             language: {
                 search: "Buscar:",
                 lengthMenu: "Mostrar _MENU_ registros",
@@ -109,17 +97,13 @@
                     previous: "Anterior",
                     next: "Siguiente",
                 },
-
-            order: [0,'desc'],
-            language: {
-                url: '/js/i18n/Spanish.json',
+                url: '/js/i18n/Spanish.json', // Se mueve la url aquí
             },
+            order: [[0, 'desc']], // Se coloca la coma y el formato correcto
             layout: {
                 topStart: {
-
                     buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
                 }
-
             },
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -132,4 +116,5 @@
         });
     });
 </script>
+
 @endpush
