@@ -1907,6 +1907,12 @@ html {
 .left-1 {
   left: 0.25rem;
 }
+.left-\[-50px\] {
+  left: -50px;
+}
+.left-\[2px\] {
+  left: 2px;
+}
 .right-0 {
   right: 0px;
 }
@@ -1929,10 +1935,6 @@ html {
   margin-left: 0.25rem;
   margin-right: 0.25rem;
 }
-.mx-20 {
-  margin-left: 5rem;
-  margin-right: 5rem;
-}
 .mx-3 {
   margin-left: 0.75rem;
   margin-right: 0.75rem;
@@ -1948,10 +1950,6 @@ html {
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
-}
-.my-20 {
-  margin-top: 5rem;
-  margin-bottom: 5rem;
 }
 .my-8 {
   margin-top: 2rem;
@@ -2080,8 +2078,8 @@ html {
 .max-w-6xl {
   max-width: 72rem;
 }
-.max-w-\[1000px\] {
-  max-width: 1000px;
+.max-w-\[400px\] {
+  max-width: 400px;
 }
 .max-w-\[527px\] {
   max-width: 527px;
@@ -2119,12 +2117,14 @@ html {
 .justify-between {
   justify-content: space-between;
 }
+
 .gap-3 {
   gap: 0.75rem;
 }
 .gap-2 {
   gap: 0.5rem;
 }
+
 .gap-x-6 {
   -moz-column-gap: 1.5rem;
        column-gap: 1.5rem;
@@ -2312,10 +2312,6 @@ html {
 .text-3xl {
   font-size: 1.875rem;
   line-height: 2.25rem;
-}
-.text-5xl {
-  font-size: 3rem;
-  line-height: 1;
 }
 .text-base {
   font-size: 1rem;
@@ -2535,6 +2531,15 @@ html {
 }
 @media (min-width: 640px) {
 
+  .sm\:left-5 {
+    left: 1.25rem;
+  }
+
+  .sm\:mx-2 {
+    margin-left: 0.5rem;
+    margin-right: 0.5rem;
+  }
+
   .sm\:mx-20 {
     margin-left: 5rem;
     margin-right: 5rem;
@@ -2559,6 +2564,10 @@ html {
 
   .sm\:w-80 {
     width: 20rem;
+  }
+
+  .sm\:max-w-\[500px\] {
+    max-width: 500px;
   }
 
   .sm\:max-w-\[640px\] {
