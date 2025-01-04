@@ -1,4 +1,4 @@
-<header>        
+<header>
     <div class="flex absolute bg-gray-100 min-h-screen">
         <!-- Barra lateral (pantallas grandes) -->
         <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden">
@@ -34,6 +34,12 @@
                     <a href="{{ route('productos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class='bx bxs-package'></i></span>
                         <span class="text-sm font-medium">Productos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('proveedores.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class='bx bxs-package'></i></span>
+                        <span class="text-sm font-medium">Proveedores</span>
                     </a>
                 </li>
             </ul>
