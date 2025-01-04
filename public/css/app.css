@@ -1892,6 +1892,9 @@ html {
   margin-inline-start: calc(var(--border-btn) * -1);
   margin-top: 0px;
 }
+.visible {
+  visibility: visible;
+}
 .fixed {
   position: fixed;
 }
