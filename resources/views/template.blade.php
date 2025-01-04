@@ -40,8 +40,7 @@
         </div>
         @stack('css')
         @stack('js')
-        @stack('css')
-        @stack('js')
+        
     </body>
     <script src="{{ asset('js/barraResponsive.js') }}"></script>
     </html>
