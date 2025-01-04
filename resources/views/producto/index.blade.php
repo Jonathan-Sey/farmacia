@@ -21,12 +21,13 @@
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
-                <tr class="bg-slate-600 ">
+                <tr class="bg-slate-600  ">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
             </thead>
         </x-slot>
@@ -38,7 +39,7 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">
+                    <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a href="#" class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
                             @if ($producto->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
@@ -48,7 +49,25 @@
                         </a>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->categoria->nombre}}</td>
+                    <td class="flex gap-2 justify-center">
+                        <form action="{{route('productos.edit',['producto'=>$producto->id])}}" method="GET">
+                            @csrf
+                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                           </form>
+                           <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$producto->id}}"  data-info="{{$producto->nombre}}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+
+                        {{-- Formulario oculto para eliminación --}}
+                        <form id="form-eliminar{{$producto->id}}" action="{{ route('productos.destroy', $producto->id) }}" method="POST" style="display: none;">
+                            @csrf
+                            @method('DELETE')
+                        </form>
+                    </td>
                 </tr>
+
                 @endforeach
             </tbody>
         </x-slot>
