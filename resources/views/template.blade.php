@@ -35,7 +35,9 @@
         </main>
 
         <!-- Footer -->
+       <div class=" ml-4 md:ml-[200px]">
         <x-footer class="bg-gray-800 text-white p-4 text-center w-full"/>
+        </div>
         @stack('css')
         @stack('js')
     </body>
