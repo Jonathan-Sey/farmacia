@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Otra')
+@section('titulo','Productos')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
