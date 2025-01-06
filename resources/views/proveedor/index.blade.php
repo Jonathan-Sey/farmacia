@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Productos')
+@section('titulo','Proveedores')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -10,7 +10,7 @@
 @endpush
 
 @section('contenido')
-    <a href="{{ route('productos.create') }}">
+    <a href="{{ route('proveedores.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
@@ -19,12 +19,13 @@
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Telefono</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >empresa</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Correo</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Actualizado</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
             </thead>
@@ -32,38 +33,39 @@
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($productos as $producto)
+                @foreach ($proveedores as $proveedor)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->id}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->telefono}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->empresa}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->correo}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->updated_at}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
-                            @if ($producto->estado == 1)
+                        <a href="#" class="estado" data-id="{{ $proveedor->id}}" data-estado="{{$proveedor->estado}}">
+                            @if ($proveedor->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
                             @else
                                 <span class="text-red-500 font-bold">Inactivo</span>
                             @endif
                         </a>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->categoria->nombre}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->updated_at}}</td>
                     <td class="flex gap-2 justify-center">
-
-                        <form action="{{route('productos.edit',['producto'=>$producto->id])}}" method="GET">
+                        {{-- editar  --}}
+                        <form action="{{route('proveedores.edit',['proveedor'=>$proveedor->id])}}" method="GET">
                             @csrf
                             <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </form>
 
-                        {{-- cabiar estado --}}
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$producto->id}}"  data-info="{{$producto->nombre}}">
+                        {{-- eliminar --}}
+                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$proveedor->id}}"  data-info="{{$proveedor->nombre}}">
                             <i class="fas fa-trash"></i>
                         </button>
 
                         {{-- Formulario oculto para eliminación --}}
-                        <form id="form-eliminar{{$producto->id}}" action="{{ route('productos.destroy', $producto->id) }}" method="POST" style="display: none;">
+                        <form id="form-eliminar{{$proveedor->id}}" action="{{ route('proveedores.destroy', $proveedor->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
                         </form>
@@ -102,7 +104,7 @@
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
-            order: [0,'desc'],
+            order: [5,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
             },
@@ -115,7 +117,7 @@
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 6 },
+                { responsivePriority: 2, targets: 7 },
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -163,7 +165,7 @@
             var estado = $(this).data('estado')
 
             $.ajax({
-                url: '/productos/' + Id,
+                url: '/proveedores/' + Id,
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token()}}',
