@@ -2185,10 +2185,6 @@ html {
 .bg-\[\#FFFFFF30\] {
   background-color: #FFFFFF30;
 }
-.bg-blue-950 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(23 37 84 / var(--tw-bg-opacity, 1));
-}
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
