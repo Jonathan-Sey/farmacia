@@ -19,4 +19,13 @@ class Proveedor extends Model
         'estado',
     ];
 
+    public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
+
+    public function compra()
+    {
+        return $this->hasMany(Compra::class, 'id_proveedor');
+    }
 }
