@@ -15,13 +15,31 @@ class Producto extends Model
         'descripcion',
         'precio_venta',
         'fecha_caducidad',
-        'estado',
         'id_categoria',
+        'estado',
 
     ];
+
+    public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
 
     public function categoria()
     {
         return $this->belongsTo(Categoria::class,'id_categoria');
+    }
+    public function almacen()
+    {
+        return $this->hasMany(Almacen::class,'id_producto');
+    }
+    public function detalleVenta()
+    {
+        return $this->hasMany(DetalleVenta::class, 'id_producto');
+    }
+
+    public function detalleCompra()
+    {
+        return $this->hasMany(DetalleCompra::class, 'id_producto');
     }
 }

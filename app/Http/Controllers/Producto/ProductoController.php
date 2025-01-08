@@ -29,9 +29,11 @@ class ProductoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function create()
     {
-        $categorias = Categoria::all(['id', 'nombre']);
+        // $categorias = Categoria::all(['id', 'nombre']);
+        $categorias = Categoria::activos()->get();
         return view('producto.create', compact('categorias'));
     }
 
@@ -89,7 +91,7 @@ class ProductoController extends Controller
     public function edit(Producto $producto)
 
     {
-        $categorias = Categoria::all(['id', 'nombre']);
+        $categorias = Categoria::activos()->get();
         return view('producto.edit',compact('producto','categorias'));
     }
 
