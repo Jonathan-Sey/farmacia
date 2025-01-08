@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Categoria\CategoriaController;
+use App\Http\Controllers\Compra\CompraController;
 use App\Http\Controllers\Producto\ProductoController;
 use App\Http\Controllers\Proveedor\ProveedorController;
 use App\Http\Controllers\RegistrarController;
@@ -61,3 +62,4 @@ Route::resource('categorias', CategoriaController::class)->parameters(['categori
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
 Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
+Route::resource('compras', CompraController::class)->parameters(['compras' => 'compra']);

@@ -14,7 +14,7 @@ class DetalleCompra extends Model
         'id_producto',
         'cantidad',
         'precio',
-        'estado',
+
     ];
     public function compra()
     {
