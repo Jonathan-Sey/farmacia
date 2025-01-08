@@ -21,7 +21,8 @@
                         id="id_categoria">
                         <option value="">Seleccionar una categoría</option>
                         @foreach ($categorias as $categoria)
-                            <option value="{{ $categoria->id }}">{{ $categoria->nombre }}</option>
+                            <option value="{{ $categoria->id }}">
+                                {{ $categoria->nombre }}</option>
                         @endforeach
                     </select>
                     @error('id_categoria')

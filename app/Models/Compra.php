@@ -18,7 +18,7 @@ class Compra extends Model
         'comprobante',
         'impuesto',
         'total',
-        'estado',
+
     ];
 
     public function proveedor()

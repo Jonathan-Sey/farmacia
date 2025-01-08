@@ -20,6 +20,11 @@ class Producto extends Model
 
     ];
 
+    public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
+
     public function categoria()
     {
         return $this->belongsTo(Categoria::class,'id_categoria');
