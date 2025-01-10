@@ -1,7 +1,9 @@
 import jwt_decode  from "https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.esm.js";
 document.addEventListener('DOMContentLoaded', function() {
    
-    const token = localStorage.getItem('jwt_token'); // Obtener el token del localStorage
+    const token = localStorage.getItem('jwt_token');
+    console.log(token);
+    // Obtener el token del localStorage
     // Asegúrate de que devuelva un valor válido
     if (token) {
         // Decodificar el token para obtener el payload
