@@ -103,6 +103,7 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6',
             'rol' => 'required|string',
+            'id_rol'=> 'required',
             ]
         );
 
