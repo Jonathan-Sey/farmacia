@@ -27,29 +27,27 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        logger('Entrando al método login');
-        
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
         ]);
-    
-        logger('Datos validados:', $request->only('email', 'password'));
-    
+
         $credentials = $request->only('email', 'password');
     
         if (!$token = auth('api')->attempt($credentials)) {
-            logger('Credenciales inválidas');
             return response()->json(['error' => 'Credenciales incorrectas'], 401);
         }
+        $user = auth('api')->user();
 
-        // Imprimir el token para verlo en el log
-    \Log::info('Generated Token: ' . $token);
-    
-        logger('Usuario autenticado, token generado');
-        $request->session()->put('jwt_token', $token);
-    
-        return redirect()->route('dashboard')->with('success', 'Inicio de sesión exitoso.');
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+        return response()->json([
+            'success' => true,
+            'token' => $token,
+            'user' => $user,
+            'rol' =>  $user->rol,
+        ]);
     }
     /**
      * Get the authenticated User.
@@ -104,6 +102,7 @@ class AuthController extends Controller
             'name' => 'required',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6',
+            'rol' => 'required|string',
             ]
         );
 

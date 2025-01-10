@@ -31,7 +31,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', function () {
     return view('dashboard.index');
-})->name('dashboard');
+});
 
 Route::get('/Recuperacion_contraseña', function(){
     return view('OlvidoC.olvidoC');
@@ -58,6 +58,18 @@ Route::get('/index', function(){
 // Route::delete('/roles/{rol}',[RolController::class,'destroy'])->name('roles.destroy');
 
 // Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias');
+
+//Route::middleware(['role:admin'])->group(function () {
+ //   Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+ //   Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+   // Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']); 
+   // Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
+//});
+
+//Route::middleware(['role:admin,cajero'])->group(function () {
+ //   Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
+   // Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
+//});
 
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
