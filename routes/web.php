@@ -78,3 +78,9 @@ Route::resource('sucursales', SucursalController::class)->parameters(['sucursale
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
 Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
 Route::resource('compras', CompraController::class)->parameters(['compras' => 'compra']);
+
+ Route::post('auth/login', 'App\Http\Controllers\AuthController@login');
+ Route::post('auth/logout', 'App\Http\Controllers\AuthController@logout');
+ Route::post('auth/refresh', 'App\Http\Controllers\AuthController@refresh');
+Route::post('auth/me', 'App\Http\Controllers\AuthController@me');
+Route::post('auth/register', 'App\Http\Controllers\AuthController@register');
