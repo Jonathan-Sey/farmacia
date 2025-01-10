@@ -14,4 +14,14 @@ class Sucursal extends Model
         'ubicacion',
         'estado',
     ];
+
+    public function almacen()
+    {
+        return $this->hasMany(Almacen::class, 'id_sucursal');
+    }
+
+    public function ventas()
+    {
+        return $this->hasMany(Venta::class, 'id_sucursal');
+    }
 }

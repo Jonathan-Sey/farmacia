@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Producto;
 
 use App\Http\Controllers\Controller;
+use App\Models\Categoria;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 
@@ -17,7 +18,8 @@ class ProductoController extends Controller
     {
 
         $productos = Producto::with('categoria:id,nombre')
-        ->select('id','codigo','nombre','nombre','precio_venta','estado','id_categoria')
+        ->select('id','codigo','nombre','nombre','precio_venta','estado','id_categoria','updated_at')
+        ->where('estado', '!=', 0)
         ->get();
         return view('producto.index',['productos'=>$productos]);
     }
@@ -27,9 +29,12 @@ class ProductoController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+
     public function create()
     {
-        return view('producto.create');
+        // $categorias = Categoria::all(['id', 'nombre']);
+        $categorias = Categoria::activos()->get();
+        return view('producto.create', compact('categorias'));
     }
 
     /**
@@ -40,7 +45,30 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request,[
+            // 'codigo'=>['nullable'],
+            'id_categoria'=>'required',
+            'nombre'=>['required','string','max:50'],
+            'descripcion'=>['max:100','nullable','string'],
+            'precio_venta'=>'numeric|required|min:0',
+            'fecha_caducidad'=>'required|date',
+            'estado'=>'integer',
+        ]);
+        // generacion de codigo
+        $ultimoId = Producto::max('id') ?? 0;
+        $codigo = 'C-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
+
+        Producto::create([
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
+            'precio_venta' => $request->precio_venta,
+            'fecha_caducidad' => $request->fecha_caducidad,
+            'id_categoria' => $request->id_categoria,
+            'estado' => 1,
+            'codigo' => $codigo, // asignamos el codigo generado
+        ]);
+        return redirect()->route('productos.index')->with('success','¡Registro exitoso!');
+
     }
 
     /**
@@ -60,9 +88,11 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Producto $producto)
+
     {
-        //
+        $categorias = Categoria::activos()->get();
+        return view('producto.edit',compact('producto','categorias'));
     }
 
     /**
@@ -72,9 +102,27 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, Producto $producto)
     {
-        //
+        $this->validate($request,[
+            // 'codigo'=>['nullable'],
+            'id_categoria'=>'required|exists:categoria,id',
+            'nombre'=>['required','string','max:50'],
+            'descripcion'=>['nullable','string','max:100'],
+            'precio_venta'=>'numeric|required|min:0',
+            'fecha_caducidad'=>'required|date',
+            'estado'=>'integer',
+        ]);
+
+        $datosActualizados = $request->only(['id_categoria','nombre','descripcion','precio_venta','fecha_caducidad']);
+        $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_venta','fecha_caducidad']);
+
+        if ($datosActualizados == $datosSinCambios){
+            return redirect()->route('productos.index');
+        }
+
+        $producto->update($datosActualizados);
+        return redirect()->route('productos.index')->with('success','¡Producto actualizado!');
     }
 
     /**
@@ -83,8 +131,17 @@ class ProductoController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, Producto $producto)
     {
-        //
+        $estado = $request->input('status', 0);
+        if($estado == 0){
+            $producto->update(['estado' => 0]);
+            return redirect()->route('productos.index')->with('success','Producto eliminado con éxito!');
+        }else{
+            $producto->estado = $estado;
+            $producto->save();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success'=> false]);
     }
 }

@@ -1,11 +1,16 @@
 <?php
 
 use App\Http\Controllers\Categoria\CategoriaController;
+use App\Http\Controllers\Compra\CompraController;
 use App\Http\Controllers\Producto\ProductoController;
+use App\Http\Controllers\Proveedor\ProveedorController;
 use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
+use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -22,13 +27,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('Login.login');
 });
-Route::get('/Recuperacion_contraseña', function(){
-    return view('OlvidoC.olvidoC');
 
-Route::get('/login', function () {
-    return view('Login.login');
 
-});
 
 Route::get('/dashboard', function () {
     return view('dashboard.index');
@@ -60,7 +60,27 @@ Route::get('/index', function(){
 
 // Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias');
 
+//Route::middleware(['role:admin'])->group(function () {
+ //   Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+ //   Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+   // Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']); 
+   // Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
+//});
+
+//Route::middleware(['role:admin,cajero'])->group(function () {
+ //   Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
+   // Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
+//});
+
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
+Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
+Route::resource('compras', CompraController::class)->parameters(['compras' => 'compra']);
+
+ Route::post('auth/login', 'App\Http\Controllers\AuthController@login');
+ Route::post('auth/logout', 'App\Http\Controllers\AuthController@logout');
+ Route::post('auth/refresh', 'App\Http\Controllers\AuthController@refresh');
+Route::post('auth/me', 'App\Http\Controllers\AuthController@me');
+Route::post('auth/register', 'App\Http\Controllers\AuthController@register');

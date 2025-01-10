@@ -1,0 +1,140 @@
+<?php
+
+namespace App\Http\Controllers\Compra;
+
+use App\Http\Controllers\Controller;
+use App\Models\Compra;
+use App\Models\DetalleCompra;
+use App\Models\Producto;
+use App\Models\Proveedor;
+use Illuminate\Http\Request;
+use PhpParser\Node\Stmt\TryCatch;
+use Illuminate\Support\Facades\DB;
+use Exception;
+
+class CompraController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index()
+    {
+        return view('compra.index');
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function create()
+    {
+        // $proveedores = Proveedor::whereNotIn('estado',[0,2])->get();
+        $proveedores = Proveedor::activos()->get();
+        $productos = Producto::activos()->get();
+        return view('compra.create',compact('proveedores','productos'));
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+        $this->validate($request,[
+            'arrayprecio' => 'required|array',
+            'estado'=>'integer',
+            'arraycantidad.*' => 'integer|min:1',
+            'arrayprecio.*' => 'numeric|min:0',
+        ]);
+
+
+        try{
+            DB::beginTransaction();
+            // generacion de codigo
+            $ultimoId = Compra::max('id') ?? 0;
+            $codigo = 'CR-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
+            //creando el registro de compra
+            $compra = Compra::create([
+                'numero_compra'=> $codigo,
+                'id_proveedor'=> $request->id_proveedor,
+                'id_usuario' => 1,
+                'comprobante'=> $request->comprobante,
+                'impuesto'=>$request->impuesto,
+                'fecha_compra'=>$request->fecha_compra,
+                'total'=>$request->input('total'),
+            ]);
+
+            // obtener los arrays de detalles
+            $arrayProducto_id = $request->get('arrayIdProducto');
+            $arrayCantidad = $request->get('arraycantidad');
+            $arrayprecio= $request->get('arrayprecio');
+
+            //insertar los detalels
+            foreach($arrayProducto_id as $index => $idPoducto){
+                DetalleCompra::create([
+                    'id_compra' => $compra->id,
+                    'id_producto' => $idPoducto,
+                    'cantidad' => $arrayCantidad[$index],
+                    'precio'=> $arrayprecio[$index]
+                ]);
+            }
+
+            DB::commit();
+            return redirect()->route('compras.index')->with('success', 'Compra creado exitosamente');
+        }catch(Exception $e){
+            // cancelar transaccion
+            DB::reset();
+            return redirect()->route('compra.create')->with('error', 'Error al crear la compra: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        //
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit($id)
+    {
+        //
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+        //
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        //
+    }
+}

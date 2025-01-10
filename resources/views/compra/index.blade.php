@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Productos')
+@section('titulo','Compras')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -10,7 +10,7 @@
 @endpush
 
 @section('contenido')
-    <a href="{{ route('productos.create') }}">
+    <a href="{{ route('compras.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
@@ -20,19 +20,19 @@
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Actualizado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Proveedor</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha de compra</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Usuario</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >comprobante</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >impuesto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >total</th>
                 </tr>
             </thead>
         </x-slot>
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($productos as $producto)
+                {{-- @foreach ($productos as $producto)
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
@@ -57,12 +57,12 @@
                             </button>
                         </form>
 
-                        {{-- cabiar estado --}}
+
                         <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$producto->id}}"  data-info="{{$producto->nombre}}">
                             <i class="fas fa-trash"></i>
                         </button>
 
-                        {{-- Formulario oculto para eliminación --}}
+
                         <form id="form-eliminar{{$producto->id}}" action="{{ route('productos.destroy', $producto->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
@@ -72,6 +72,7 @@
                 </tr>
 
                 @endforeach
+                --}}
             </tbody>
         </x-slot>
     </x-data-table>

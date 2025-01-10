@@ -5,13 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Categoria extends Model
+class Proveedor extends Model
 {
+
     use HasFactory;
-    protected $table = 'categoria';
+    protected $table = 'proveedor';
     protected $fillable = [
         'nombre',
-        'descripcion',
+        'telefono',
+        'empresa',
+        'correo',
+        'direccion',
         'estado',
     ];
 
@@ -20,11 +24,8 @@ class Categoria extends Model
        return $query->whereNotIn('estado', [0, 2]);
     }
 
-    public function producto()
-        {
-            return $this->hasMany(Producto::class, 'id_categoria');
-        }
-
+    public function compra()
+    {
+        return $this->hasMany(Compra::class, 'id_proveedor');
+    }
 }
-
-
