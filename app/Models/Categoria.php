@@ -15,6 +15,11 @@ class Categoria extends Model
         'estado',
     ];
 
+    public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
+
     public function producto()
         {
             return $this->hasMany(Producto::class, 'id_categoria');

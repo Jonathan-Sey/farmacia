@@ -8,6 +8,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+
+
 class User extends Authenticatable implements JWTSubject
 {
     use HasFactory, Notifiable;
@@ -35,6 +37,19 @@ class User extends Authenticatable implements JWTSubject
         'remember_token',
     ];
 
+    public function getJWTIdentifier() {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims() {
+        return [
+            'rol' => $this->rol,
+            'name' => $this->name,
+            'email' => $this->email,
+            ];
+    }
+
+
     /**
      * The attributes that should be cast to native types.
      *
@@ -44,28 +59,33 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
-     /**
-     * Get the identifier that will be stored in the subject claim of the JWT.
-     *
-     * @return mixed
-     */
-    public function getJWTIdentifier()
+
+
+
+    public function rol()
     {
-        return $this->getKey();
+        return $this->belongsTo(Rol::class, 'id_rol');
+    }
+    public function almacen()
+    {
+        return $this->hasMany(Almacen::class, 'id_usuario');
+    }
+    public function consulta()
+    {
+        return $this->hasMany(Consulta::class, 'id_medico');
     }
 
-    /**
-     * Return a key value array, containing any custom claims to be added to the JWT.
-     *
-     * @return array
-     */
-    public function getJWTCustomClaims()
+    public function compra()
     {
-        return [
-        'rol' => $this->rol,
-        'name' => $this->name,
-        'email' => $this->email,
-        ];
+
+        
+        return $this->hasMany(Compra::class, 'id_usuario');
+    }
+
+    public function venta()
+    {
+        return $this->hasMany(Venta::class, 'id_usuario');
+
     }
 
 }
