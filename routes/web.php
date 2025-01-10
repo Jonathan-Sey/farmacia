@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Categoria\CategoriaController;
+use App\Http\Controllers\Compra\CompraController;
 use App\Http\Controllers\Producto\ProductoController;
 use App\Http\Controllers\Proveedor\ProveedorController;
 use App\Http\Controllers\RegistrarController;
@@ -76,18 +77,4 @@ Route::resource('categorias', CategoriaController::class)->parameters(['categori
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
 Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
-
-// Ruta para el inicio de sesión
-Route::post('/auth/login', [AuthController::class, 'login'])->name('login');
-
-// Ruta para cerrar sesión
-Route::post('/auth/logout', [AuthController::class, 'logout'])->name('logout');
-
-// Ruta para refrescar el token
-Route::post('/auth/refresh', [AuthController::class, 'refresh'])->name('refresh');
-
-// Ruta para obtener los datos del usuario autenticado
-Route::post('/auth/me', [AuthController::class, 'me'])->name('me');
-
-// Ruta para el registro de nuevos usuarios
-Route::post('/auth/register', [AuthController::class, 'register'])->name('register');
+Route::resource('compras', CompraController::class)->parameters(['compras' => 'compra']);
