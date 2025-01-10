@@ -1,4 +1,4 @@
-document.getElementById('loginForm').addEventListener('submit', function (e) {
+document.getElementById('login-Form').addEventListener('submit', function (e) {
     e.preventDefault(); // Evitar que el formulario se envíe de manera tradicional
     
     const email = document.getElementById('email').value;
@@ -11,7 +11,7 @@ document.getElementById('loginForm').addEventListener('submit', function (e) {
     };
 
     // Hacer la solicitud POST al backend usando fetch
-    fetch('/api/auth/login', {
+    fetch('/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
