@@ -7,6 +7,7 @@
 
 @section('contenido')
     <h1>Contenido Dashboard</h1>
+  
 @endsection
 @push('js')
 
