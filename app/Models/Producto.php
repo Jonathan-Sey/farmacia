@@ -51,6 +51,14 @@ class Producto extends Model
                     ->withPivot('cantidad', 'precio');
     }
 
+    public function ventas()
+{
+    return $this->belongsToMany(Venta::class, 'detalle_venta', 'id_producto', 'id_venta')
+                ->withPivot('cantidad', 'precio')
+                ->withTimestamps();
+}
+
+
     //     public function venta()
     // {
     //     return $this->belongsTo(Venta::class, 'id_venta');
