@@ -21,7 +21,11 @@ class CompraController extends Controller
      */
     public function index()
     {
-        return view('compra.index');
+        $compras = Compra::with('proveedor','detalleCompras','usuario')
+        ->latest()
+        ->activos()
+        ->get();
+        return view('compra.index',compact('compras'));
     }
 
     /**
@@ -50,6 +54,7 @@ class CompraController extends Controller
             'estado'=>'integer',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
+            'estado'=>'integer',
         ]);
 
 
@@ -67,6 +72,7 @@ class CompraController extends Controller
                 'impuesto'=>$request->impuesto,
                 'fecha_compra'=>$request->fecha_compra,
                 'total'=>$request->input('total'),
+                'estado' => 1,
             ]);
 
             // obtener los arrays de detalles
@@ -99,9 +105,11 @@ class CompraController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Compra $compra)
     {
-        //
+        // $productos = $compra->productos();
+        return view('compra.show',compact('compra'));
+
     }
 
     /**
@@ -133,8 +141,17 @@ class CompraController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, Compra $compra)
     {
-        //
+        $estado = $request->input('status', 0);
+        if($estado == 0){
+            $compra->update(['estado' => 0]);
+            return redirect()->route('compras.index')->with('success','Compra eliminado con éxito!');
+        }else{
+            $compra->estado = $estado;
+            $compra->save();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success'=> false]);
     }
 }

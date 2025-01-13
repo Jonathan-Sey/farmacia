@@ -13,44 +13,35 @@
             @csrf
             <div class="border-b border-gray-900/10 pb-12">
 
-                <div class="mt-2 mb-5">
-                    <label for="id_categoria" class="uppercase block text-sm font-medium text-gray-900">Categoría</label>
-                    <select
-                        class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        name="id_categoria"
-                        id="id_categoria">
-                        <option value="">Seleccionar una categoría</option>
-                        @foreach ($categorias as $categoria)
-                            <option value="{{ $categoria->id }}">
-                                {{ $categoria->nombre }}</option>
-                        @endforeach
-                    </select>
-                    @error('id_categoria')
-                        <div role="alert" class="alert alert-error mt-4 p-2">
-                            <span class="text-white font-bold">{{ $message }}</span>
-                        </div>
-                    @enderror
-                </div>
-
-                {{-- <div class="mt-2 mb-5">
-                    <label for="codigo" class="uppercase block text-sm font-medium text-gray-900">Codigo</label>
-                    <input
-                        type="text"
-                        name="codigo"
-                        id="codigo"
-                        autocomplete="given-name"
-                        readonly
-                        value="{{$codigoTemporal}}"
-                        placeholder="Codigo del producto"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        value="{{ old('codigo') }}">
-
-                    @error('codigo')
-                    <div role="alert" class="alert alert-error mt-4 p-2">
-                        <span class="text-white font-bold">{{ $message }}</span>
+                <div class="mt-2 mb-5 flex flex-col gap-5 md:grid md:grid-cols-2 " >
+                    <div class="mt-2 mb-5">
+                        <label for="id_categoria" class="uppercase block text-sm font-medium text-gray-900">Categoría</label>
+                        <select
+                            class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                            name="id_categoria"
+                            id="id_categoria">
+                            <option value="">Seleccionar una categoría</option>
+                            @foreach ($categorias as $categoria)
+                                <option value="{{ $categoria->id }}">
+                                    {{ $categoria->nombre }}</option>
+                            @endforeach
+                        </select>
+                        @error('id_categoria')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message }}</span>
+                            </div>
+                        @enderror
                     </div>
-                    @enderror
-                </div> --}}
+
+                    <div class="flex flex-row gap-5">
+                        <div class="flex flex-col gap-1">
+                            <label for="tipo">Servicio</label>
+                            <input name="tipo" id="tipo" type="checkbox" class="toggle toggle-success"
+                            {{ old('tipo') ? 'checked' : '' }}
+                            />
+                        </div>
+                    </div>
+                </div>
 
                 <div class="mt-2 mb-5">
                     <label for="nombre" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
@@ -87,7 +78,7 @@
                     </div>
                     @enderror
                 </div>
-                <div class="mt-2 mb-5">
+                <div class="mt-2 mb-5" id="fecha_caducidad_container">
                     <label for="fecha_caducidad" class="uppercase block text-sm font-medium text-gray-900">Fecha caducidad</label>
                     <input
                         type="date"
@@ -161,6 +152,23 @@
         $('.select2').on('select2:open', function() {
         document.querySelector('.select2-search__field').focus();
         });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const tipoCheckbox = document.getElementById('tipo');
+            const fechaCaducidadContainer = document.getElementById('fecha_caducidad_container');
+            const toggleFechaCaducidad = () => {
+                if (tipoCheckbox.checked) {
+                    fechaCaducidadContainer.style.display = 'none';
+                } else {
+                    fechaCaducidadContainer.style.display = 'block';
+                }
+            };
+
+            tipoCheckbox.addEventListener('change', toggleFechaCaducidad);
+            // Ejecutar la función al cargar la página para establecer el estado inicial
+            toggleFechaCaducidad(); });
     </script>
 
 @endpush
