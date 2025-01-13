@@ -19,10 +19,11 @@
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Proveedor</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha de compra</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >comprobante</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Venta</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Vendedor</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Cliente</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha y hora</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >total</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
@@ -31,16 +32,18 @@
 
         <x-slot name="tbody">
             <tbody>
-                {{-- @foreach ($compras as $compra)
+                @foreach ($ventas as $venta)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->numero_compra}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->proveedor->empresa}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->created_at}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->comprobante}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->total}}</td>
+
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$venta->id}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$venta->usuario->name}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$venta->persona->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$venta->sucursal->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$venta->updated_at}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$venta->total}}</td>
                     <td class="flex gap-2 justify-center">
 
-                        <form action="{{route('compras.show',['compra'=>$compra])}}" method="GET">
+                        <form action="{{route('ventas.show',['venta'=>$venta])}}" method="GET">
                             @csrf
                             <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
                                 ver
@@ -48,12 +51,12 @@
                         </form>
 
 
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$compra->id}}"  data-info="{{$compra->numero_compra}}">
+                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$venta->id}}"  data-info="{{$venta->id}}">
                             <i class="fas fa-trash"></i>
                         </button>
 
 
-                        <form id="form-eliminar{{$compra->id}}" action="{{ route('compras.destroy', $compra->id) }}" method="POST" style="display: none;">
+                        <form id="form-eliminar{{$venta->id}}" action="{{ route('ventas.destroy', $venta->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
                         </form>
@@ -61,7 +64,7 @@
 
                 </tr>
 
-                @endforeach --}}
+                @endforeach
 
             </tbody>
         </x-slot>
@@ -153,7 +156,7 @@
             var estado = $(this).data('estado')
 
             $.ajax({
-                url: '/compras/' + Id,
+                url: '/ventas/' + Id,
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token()}}',

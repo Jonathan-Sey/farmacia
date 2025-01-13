@@ -45,10 +45,11 @@ class Venta extends Model
         return $this->hasMany(DetalleVenta::class, 'id_venta');
     }
 
-//     public function productos()
-// {
-//     return $this->belongsToMany(Producto::class, 'detalle_venta', 'id_venta', 'id_producto')
-//                 ->withPivot('cantidad', 'precio');
-// }
+     public function productos()
+ {
+     return $this->belongsToMany(Producto::class, 'detalle_venta', 'id_venta', 'id_producto')
+                 ->withPivot('cantidad', 'precio')
+                 ->withTimestamps();
+ }
 
 }

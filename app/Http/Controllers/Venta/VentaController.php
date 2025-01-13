@@ -22,7 +22,12 @@ class VentaController extends Controller
      */
     public function index()
     {
-        return view('venta.index');
+        $ventas = Venta::with(['sucursal','persona','usuario'])
+        ->where('estado',1)
+        ->latest()
+        ->get();
+
+        return view('venta.index',compact('ventas'));
     }
 
     /**
@@ -32,24 +37,40 @@ class VentaController extends Controller
      */
     public function create()
     {
+        $productos = collect();
         $almacenesActivos = Almacen::activos()->get();
          // Filtrar los productos disponibles en almacenes activos
-         $productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
+         //$productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
         // Obtener las sucursales relacionadas a los almacenes activos
         $sucursales = Sucursal::whereIn('id', $almacenesActivos->pluck('id_sucursal'))->get();
+
+//        $productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
+
         $personas = Persona::activos()->get();
 
         return view('venta.create',compact('productos','sucursales','personas','almacenesActivos'));
     }
-    public function obtenerProductosPorSucursal($idSucursal)
+
+    public function productosPorSucursal($id)
     {
-        $productos = Almacen::where('id_sucursal', $idSucursal)
-            ->where('estado', 1) // Filtrar solo activos
-            ->with('producto') // Cargar la relación con la tabla producto
-            ->get();
+        // Obtener los productos disponibles en la sucursal con stock > 0
+        $productos = Almacen::where('id_sucursal', $id)
+            ->where('cantidad', '>', 0) // Solo productos con cantidad disponible
+            ->with('producto')  // Obtener la relación con el producto
+            ->get()
+            ->map(function($almacen) {
+                return [
+                    'id' => $almacen->producto->id,
+                    'nombre' => $almacen->producto->nombre,
+                    'precio_venta' => $almacen->producto->precio_venta,
+                    'tipo' => $almacen->producto->tipo,
+                    'stock' => $almacen->cantidad,
+                ];
+            });
 
         return response()->json($productos);
     }
+
 
 
 
@@ -133,9 +154,11 @@ class VentaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show(Venta $venta)
     {
-        //
+
+         //$venta->load('productos');
+        return view('venta.show',compact('venta'));
     }
 
     /**
@@ -167,8 +190,17 @@ class VentaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy(Request $request, Venta $venta)
     {
-        //
+        $estado = $request->input('status', 0);
+        if($estado == 0){
+            $venta->update(['estado' => 0]);
+            return redirect()->route('ventas.index')->with('success','Venta eliminado con éxito!');
+        }else{
+            $venta->estado = $estado;
+            $venta->save();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success'=> false]);
     }
 }

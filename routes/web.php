@@ -72,6 +72,10 @@ Route::resource('compras', CompraController::class)->parameters(['compras' => 'c
 Route::resource('ventas', VentaController::class)->parameters(['ventas' => 'venta']);
 Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' => 'almacen']);
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
+
+Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
+
+
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 

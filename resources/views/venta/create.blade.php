@@ -9,7 +9,7 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-7xl mb-10 ">
-        <form action="{{ route('ventas.store', ['id'=>1]) }}" method="POST" >
+        <form action="{{ route('ventas.store') }}" method="POST" >
             @csrf
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
@@ -19,20 +19,11 @@
                         <div class="mt-2 mb-5">
                             <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto</label>
                             <select
-                                class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_producto"
                                 id="id_producto">
                                 <option value="">Buscar un producto</option>
-                                @foreach ($productos as $producto)
-                                    <option
-                                    data-precio="{{ $producto->precio_venta }}"
-                                    data-nombre="{{ $producto->nombre }}"
-                                    data-tipo="{{ $producto->tipo }}"
-                                    data-stock="{{ $almacenesActivos->where('id_producto', $producto->id)->sum('cantidad') }}"
-                                    value="{{ $producto->id }}">
-                                    {{ $producto->nombre }} - Precio: {{ $producto->precio_venta }}
-                                </option>
-                                @endforeach
+
                             </select>
                             @error('id_producto')
                                 <div role="alert" class="alert alert-error mt-4 p-2">
@@ -48,7 +39,10 @@
                                 id="stock"
                                 name="stock"
                                 value=""
-                                readonly>
+                                readonly
+                                min="1"
+                                step="1"
+                                >
 
                             @error('cantidad')
                             <div role="alert" class="alert alert-error mt-4 p-2">
@@ -113,11 +107,11 @@
                         <div class="mt-2 mb-5">
                             <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
                             <select
-                                class="select2-proveedor block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal"
                                 id="id_sucursal"
                                 required>
-                                <option value="">Seleccionar una categoría</option>
+                                <option value="">Seleccionar una sucursal</option>
                                 @foreach ($sucursales as $sucursal)
                                     <option value="{{ $sucursal->id }}" {{old('id_sucursal') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}}</option>
                                 @endforeach
@@ -132,7 +126,7 @@
                         <div class="mt-2 mb-5">
                             <label for="id_persona" class="uppercase block text-sm font-medium text-gray-900">Persona</label>
                             <select
-                                class="select2-proveedor block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_persona"
                                 id="id_persona"
                                 required>
@@ -241,38 +235,66 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
-{{-- filtar segun el almacen seleccionado  --}}
-
-
-
+    {{-- select2 de productos y sucursales --}}
     <script>
         //uso del select2 para proveedores
         $(document).ready(function(){
-            $('.select2-proveedor').select2({
+            $('.select2-sucursal').select2({
                 width: '100%',
                 placeholder: "Buscar",
                 allowClear: true
             });
         // pocicionar el cursor en el input para buscar producto
-        $('.select2-proveedor').on('select2-proveedor:open', function() {
-        document.querySelector('.select2-search__field').focus();
-        });
-
-        //uso del select2 para productos
-            $('.select2-producto').select2({
-                width: '100%',
-                placeholder: "Buscar producto",
-                allowClear: true
-            });
-        // pocicionar el cursor en el input para buscar producto
-        $('.select2-producto').on('select2-producto:open', function() {
+        $('.select2-sucursal').on('select2-sucursal:open', function() {
         document.querySelector('.select2-search__field').focus();
         });
     });
 
 
     </script>
+    <script>
+        $(document).ready(function(){
+            // Escuchar el cambio en el select de sucursal
+            $('#id_sucursal').change(function() {
+                var sucursalId = $(this).val();  // Obtener el id de la sucursal seleccionada
+
+                if(sucursalId) {
+                    // Hacer una petición AJAX para obtener los productos de la sucursal seleccionada
+                    $.ajax({
+                        url: '/productos/sucursal/' + sucursalId,  // Ruta que proporcionaremos en el controlador
+                        method: 'GET',
+                        success: function(response) {
+                            // Limpiar el select de productos
+                            $('#id_producto').empty();
+                            $('#id_producto').append('<option value="">Buscar un producto</option>');
+
+                            // Llenar el select de productos con los productos obtenidos
+                            response.forEach(function(producto) {
+                                $('#id_producto').append(`
+                                    <option value="${producto.id}"
+                                        data-precio="${producto.precio_venta}"
+                                        data-nombre="${producto.nombre}"
+                                        data-tipo="${producto.tipo}"
+                                        data-stock="${producto.stock}">
+                                        ${producto.nombre} - Precio: ${producto.precio_venta}
+                                    </option>
+                                `);
+                            });
+                        },
+                        error: function() {
+                            alert('Error al cargar los productos');
+                        }
+                    });
+                } else {
+                    // Si no se selecciona una sucursal, limpiar el select de productos
+                    $('#id_producto').empty();
+                    $('#id_producto').append('<option value="">Buscar un producto</option>');
+                }
+            });
+        });
+    </script>
+
+
 
 <script>
         $(document).ready(function(){
