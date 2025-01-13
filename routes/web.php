@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Almacen\AlmacenController;
 use App\Http\Controllers\Categoria\CategoriaController;
 use App\Http\Controllers\Compra\CompraController;
 use App\Http\Controllers\Producto\ProductoController;
@@ -8,6 +9,8 @@ use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\Venta\VentaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -66,3 +69,9 @@ Route::resource('sucursales', SucursalController::class)->parameters(['sucursale
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
 Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
 Route::resource('compras', CompraController::class)->parameters(['compras' => 'compra']);
+Route::resource('ventas', VentaController::class)->parameters(['ventas' => 'venta']);
+Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' => 'almacen']);
+Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
+Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
+Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+

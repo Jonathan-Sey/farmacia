@@ -15,6 +15,11 @@ class Sucursal extends Model
         'estado',
     ];
 
+    public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
+
     public function almacen()
     {
         return $this->hasMany(Almacen::class, 'id_sucursal');

@@ -17,8 +17,7 @@ class CreatePersonasTable extends Migration
             $table->id();
             $table->string('nombre',45);
             $table->string('nit',10)->nullable();
-            $table->boolean('paciente')->default(0);
-            $table->boolean('cliente')->default(0);
+            $table->tinyInteger('rol')->default(1);
             $table->string('telefono',20)->nullable();
             $table->date('fecha_nacimiento')->nullable();
             $table->tinyInteger('estado')->default(1);
