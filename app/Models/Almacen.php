@@ -17,11 +17,17 @@ class Almacen extends Model
         'estado',
     ];
 
+    public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
+
+
     public function sucursal()
     {
         return $this->belongsTo(Sucursal::class,'id_sucursal');
     }
-    public function poducto()
+    public function producto()
     {
         return $this->belongsTo(Producto::class, 'id_producto');
     }
@@ -30,4 +36,6 @@ class Almacen extends Model
     {
         return $this->belongsTo(User::class, 'id_user');
     }
+
+
 }

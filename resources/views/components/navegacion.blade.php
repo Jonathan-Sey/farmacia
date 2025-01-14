@@ -39,14 +39,32 @@
                 </li>
                 <li>
                     <a href="{{ route('proveedores.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class='bx bxs-package'></i></span>
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-truck-field"></i></span>
                         <span class="text-sm font-medium">Proveedores</span>
                     </a>
                 </li>
                 <li>
-                    <a href="{{ route('compras.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                    <a href="{{ route('almacenes.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-store"></i></span>
+                        <span class="text-sm font-medium">Almacenes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('compras.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-cart-shopping"></i></span>
                         <span class="text-sm font-medium">Compras</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('ventas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-bag-shopping"></i></span>
+                        <span class="text-sm font-medium">Ventas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('personas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-person"></i></span>
+                        <span class="text-sm font-medium">Personas</span>
                     </a>
                 </li>
             </ul>

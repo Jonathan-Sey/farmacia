@@ -8,38 +8,46 @@
 
 <div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
     <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
-      <p class="card-title font">Codigo</p>
+      <p class="card-title font">Venta</p>
     </div>
     <div class="md:col-span-2">
-      <p class="p-2 text-center font-semibold " >{{$compra->numero_compra}}</p>
+      <p class="p-2 text-center font-semibold " >{{$venta->id}}</p>
     </div>
 </div>
 
 <div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
     <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
-      <p class="card-title font">Comprovante</p>
+      <p class="card-title font">Vendedor</p>
     </div>
     <div class="md:col-span-2">
-      <p class="p-2 text-center font-semibold " >{{$compra->comprobante}}</p>
-    </div>
-</div>
-
-
-<div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
-    <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
-      <p class="card-title font">Proveedor</p>
-    </div>
-    <div class="md:col-span-2">
-      <p class="p-2 text-center font-semibold " >{{$compra->proveedor->empresa}}</p>
+      <p class="p-2 text-center font-semibold " >{{$venta->usuario->name}}</p>
     </div>
 </div>
 
 <div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
     <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
-      <p class="card-title font">Fecha</p>
+      <p class="card-title font">Cliente</p>
     </div>
     <div class="md:col-span-2">
-      <p class="p-2 text-center font-semibold " >{{$compra->fecha_compra}}</p>
+      <p class="p-2 text-center font-semibold " >{{$venta->persona->nombre}}</p>
+    </div>
+</div>
+
+<div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
+    <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
+      <p class="card-title font">Sucursal</p>
+    </div>
+    <div class="md:col-span-2">
+      <p class="p-2 text-center font-semibold " >{{$venta->sucursal->nombre}} - {{$venta->sucursal->ubicacion}}</p>
+    </div>
+</div>
+
+<div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
+    <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
+      <p class="card-title font">Fecha y hora</p>
+    </div>
+    <div class="md:col-span-2">
+      <p class="p-2 text-center font-semibold " >{{$venta->created_at}}</p>
     </div>
 </div>
 
@@ -48,32 +56,24 @@
       <p class="card-title font">Impuesto</p>
     </div>
     <div class="md:col-span-2">
-      <p  id="impuesto" class=" p-2 text-center font-semibold ">{{$compra->impuesto}}</p>
+      <p id="impuesto"  class="p-2 text-center font-semibold " >{{$venta->impuesto}}</p>
     </div>
 </div>
 
-{{--
-<div class="flex flex-col gap-3">
-    <div class="flex items-center">
-        <span class="flex-shrink-0 p-2 bg-gray-300 rounded-md w-1/3 flex items-center gap-2 ">
-        <i class="fa-solid fa-file "></i>
-        <p>Codigo</p>
-        </span>
-        <input class="p-2 ml-2 rounded-md w-full bg-slate-300" readonly type="text" value="Codigo" disabled>
+<div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
+    <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
+      <p class="card-title font">Total</p>
     </div>
-    <div class="flex items-center">
-        <span class="flex-shrink-0 p-2 bg-gray-300 rounded-md w-1/3 flex items-center gap-2 ">
-        <i class="fa-solid fa-file "></i>
-        <p>Codigo</p>
-        </span>
-        <input class="p-2 ml-2 rounded-md w-full bg-slate-300" readonly type="text" value="Codigo" disabled>
+    <div class="md:col-span-2">
+      <p class="p-2 text-center font-semibold " >{{$venta->total}}</p>
     </div>
-
 </div>
- --}}
+
+
+
 
  <div class="mt-5">
-    <h2 class="text-center m-5 font-bold text-lg">Detalle compra</h2>
+    <h2 class="text-center m-5 font-bold text-lg">Detalle Venta</h2>
     <div class="overflow-x-auto">
         <table id="tabla-productos" class="table  table-md table-pin-rows table-pin-cols">
           <thead>
@@ -87,13 +87,14 @@
             </tr>
           </thead>
           <tbody>
-            @foreach ($compra->productos as $compra)
+            @foreach ($venta->productos as $producto)
             <tr>
                 <th></th>
-                <td class="bg-white" >{{$compra->nombre}} </td>
-                <td class="bg-white" >{{$compra->pivot->cantidad}} </td>
-                <td class="bg-white" >{{$compra->pivot->precio}} </td>
-                <td class="subTotal  bg-white">{{ $compra->pivot->cantidad * $compra->pivot->precio }}</td>
+                <td class="bg-white" >{{$producto->nombre}} </td>
+                <td class="bg-white" >{{$producto->pivot->cantidad}} </td>
+                <td class="bg-white" >{{$producto->precio_venta}} </td>
+                <td class="subTotal bg-white">{{ $producto->pivot->cantidad * $producto->precio_venta }}</td>
+
                 <th></th>
             </tr>
             @endforeach

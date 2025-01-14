@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Compras')
+@section('titulo', 'Venta')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -9,33 +9,47 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-7xl mb-10 ">
-        <form action="{{ route('compras.store', ['id'=>1]) }}" method="POST" >
+        <form action="{{ route('ventas.store') }}" method="POST" >
             @csrf
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
-                    <legend class="text-blue-500 font-bold">Compras</legend>
+                    <legend class="text-blue-500 font-bold">Venta</legend>
                     <div class="border-b border-gray-900/10  lg:pb-0 lg:mb-0">
                         {{-- producto --}}
+                        <div class="mt-2 mb-5">
+                            <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto</label>
+                            <select
+                                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                name="id_producto"
+                                id="id_producto">
+                                <option value="">Buscar un producto</option>
 
-                            <div class="mt-2 mb-5">
-                                <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto</label>
-                                <select
-                                    class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                    name="id_producto"
-                                    id="id_producto">
-                                    <option value="">Buscar un producto</option>
-                                    @foreach ($productos as $producto)
-                                        <option value="{{ $producto->id }}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
-                                    @endforeach
-                                </select>
-                                @error('id_producto')
-                                    <div role="alert" class="alert alert-error mt-4 p-2">
-                                        <span class="text-white font-bold">{{ $message }}</span>
-                                    </div>
-                                @enderror
+                            </select>
+                            @error('id_producto')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="mt-2 mb-5">
+                            <label for="stock" class="uppercase block text-sm font-medium text-gray-900">Stock disponible</label>
+                            <input
+                                type="number"
+                                class="block w-full rounded-md bg-gray-100 px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                id="stock"
+                                name="stock"
+                                value=""
+                                readonly
+                                min="1"
+                                step="1"
+                                >
+
+                            @error('cantidad')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message }}</span>
                             </div>
-
-
+                            @enderror
+                        </div>
 
                         <div class="lg:grid lg:grid-cols-2 lg:gap-x-4">
                                 {{-- cantidad --}}
@@ -61,12 +75,13 @@
 
                             {{-- precio --}}
                             <div class="mt-2 mb-5">
-                                <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Precio</label>
+                                <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Precio de venta</label>
                                 <input
                                     type="number"
                                     name="precio"
                                     id="precio"
                                     min="1"
+                                    disabled
                                     autocomplete="given-name"
                                     placeholder="Precio del producto"
                                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
@@ -90,18 +105,18 @@
                     <div class="border-b border-gray-900/10 ">
 
                         <div class="mt-2 mb-5">
-                            <label for="id_proveedor" class="uppercase block text-sm font-medium text-gray-900">Proveedor</label>
+                            <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
                             <select
-                                class="select2-proveedor block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                name="id_proveedor"
-                                id="id_proveedor"
+                                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                name="id_sucursal"
+                                id="id_sucursal"
                                 required>
-                                <option value="">Seleccionar una categoría</option>
-                                @foreach ($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->id }}" {{old('id_proveedor') == $proveedor->id ? 'selected' : ''}}>{{$proveedor->empresa}}</option>
+                                <option value="">Seleccionar una sucursal</option>
+                                @foreach ($sucursales as $sucursal)
+                                    <option value="{{ $sucursal->id }}" {{old('id_sucursal') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}}</option>
                                 @endforeach
                             </select>
-                            @error('id_proveedor')
+                            @error('id_sucursal')
                                 <div role="alert" class="alert alert-error mt-4 p-2">
                                     <span class="text-white font-bold">{{ $message }}</span>
                                 </div>
@@ -109,21 +124,23 @@
                         </div>
 
                         <div class="mt-2 mb-5">
-                            <label for="comprobante" class="uppercase block text-sm font-medium text-gray-900">Comprobante</label>
-                            <input
-                                type="text"
-                                name="comprobante"
-                                id="comprobante"
-                                autocomplete="given-name"
-                                placeholder="Numero del comprobante"
-                                required
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                value="{{ old('comprobante') }}">
-
-                            @error('comprobante')
-                            <div role="alert" class="alert alert-error mt-4 p-2">
-                                <span class="text-white font-bold">{{ $message }}</span>
-                            </div>
+                            <label for="id_persona" class="uppercase block text-sm font-medium text-gray-900">Persona</label>
+                            <select
+                                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                name="id_persona"
+                                id="id_persona"
+                                required>
+                                <option value="">Seleccionar una sucursal</option>
+                                @foreach ($personas as $persona)
+                                    <option value="{{ $persona->id }}" {{ old('id_persona') == $persona->id ? 'selected' : '' }}>
+                                        {{ $persona->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('id_persona')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
 
@@ -148,12 +165,12 @@
                             </div>
 
                             <div class="mt-2 mb-5">
-                                <label for="fecha_compra" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
+                                <label for="fecha_venta" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
                                 <input
                                     readonly
                                     type="date"
-                                    name="fecha_compra"
-                                    id="fecha_compra"
+                                    name="fecha_venta"
+                                    id="fecha_venta"
                                     autocomplete="given-name"
                                     placeholder="Impuesto"
                                     class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
@@ -203,7 +220,7 @@
 
             <div class="mt-6 flex items-center justify-end gap-x-6">
 
-                <a href="{{route('compras.index')}} " id="btn-cancelar">
+                <a href="{{route('ventas.index')}} " id="btn-cancelar">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
                 </a>
                 <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
@@ -218,41 +235,109 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    {{-- select2 de productos y sucursales --}}
     <script>
         //uso del select2 para proveedores
         $(document).ready(function(){
-            $('.select2-proveedor').select2({
+            $('.select2-sucursal').select2({
                 width: '100%',
-                placeholder: "Buscar proveedor",
+                placeholder: "Buscar",
                 allowClear: true
             });
         // pocicionar el cursor en el input para buscar producto
-        $('.select2-proveedor').on('select2-proveedor:open', function() {
-        document.querySelector('.select2-search__field').focus();
-        });
-
-        //uso del select2 para proveedores
-            $('.select2-producto').select2({
-                width: '100%',
-                placeholder: "Buscar producto",
-                allowClear: true
-            });
-        // pocicionar el cursor en el input para buscar producto
-        $('.select2-producto').on('select2-producto:open', function() {
+        $('.select2-sucursal').on('select2-sucursal:open', function() {
         document.querySelector('.select2-search__field').focus();
         });
     });
 
+
     </script>
     <script>
         $(document).ready(function(){
+            // Escuchar el cambio en el select de sucursal
+            $('#id_sucursal').change(function() {
+                var sucursalId = $(this).val();  // Obtener el id de la sucursal seleccionada
+
+                if(sucursalId) {
+                    // Hacer una petición AJAX para obtener los productos de la sucursal seleccionada
+                    $.ajax({
+                        url: '/productos/sucursal/' + sucursalId,  // Ruta que proporcionaremos en el controlador
+                        method: 'GET',
+                        success: function(response) {
+                            // Limpiar el select de productos
+                            $('#id_producto').empty();
+                            $('#id_producto').append('<option value="">Buscar un producto</option>');
+
+                            // Llenar el select de productos con los productos obtenidos
+                            response.forEach(function(producto) {
+                                $('#id_producto').append(`
+                                    <option value="${producto.id}"
+                                        data-precio="${producto.precio_venta}"
+                                        data-nombre="${producto.nombre}"
+                                        data-tipo="${producto.tipo}"
+                                        data-stock="${producto.stock}">
+                                        ${producto.nombre} - Precio: ${producto.precio_venta}
+                                    </option>
+                                `);
+                            });
+                        },
+                        error: function() {
+                            alert('Error al cargar los productos');
+                        }
+                    });
+                } else {
+                    // Si no se selecciona una sucursal, limpiar el select de productos
+                    $('#id_producto').empty();
+                    $('#id_producto').append('<option value="">Buscar un producto</option>');
+                }
+            });
+        });
+    </script>
+
+
+
+<script>
+        $(document).ready(function(){
+
+            $('.select2-producto').select2();
+
+            // Actualizar stock al seleccionar producto
+            $('#id_producto').on('change', function() {
+                const selectedOption = $(this).find('option:selected');
+                const tipo = selectedOption.data('tipo');
+                const stock = selectedOption.data('stock');
+
+                if (tipo === 1) { // si es Producto
+                    $('#stock').val(stock).prop('readonly', true);
+                    $('#cantidad').prop('disabled', false).attr('placeholder', 'Ingrese la cantidad');
+                } else { // si es servicio
+                    $('#stock').val('').prop('placeholder', 'N/A');
+                    $('#cantidad').prop('disabled', true).val('').attr('placeholder', 'No aplica');
+                }
+            });
+
+            //obtener datos de producto
+            $('#id_producto').change(mostrarValores);
+
+
             $('#btn-agregar').click(function(){
                 agregarProducto();
             });
 
             $('#impuesto').val(impuesto + '%');
+
         })
+
+        let precioProducto
+        let nombreProducto
+        function mostrarValores(){
+            let selectProducto = document.getElementById('id_producto');
+            precioProducto = selectProducto.options[selectProducto.selectedIndex].getAttribute('data-precio');
+            nombreProducto = selectProducto.options[selectProducto.selectedIndex].getAttribute('data-nombre');
+            $('#precio').val(precioProducto);
+        }
+
+
 
         let contador = 0;
         let subtotal = [];
@@ -265,49 +350,57 @@
 
         function agregarProducto(){
             let id_producto = $('#id_producto').val();
-            let producto = ($('#id_producto option:selected').text()).split(' ')[1];
-            let cantidad = $('#cantidad').val();
-            let precio = $('#precio').val();
-
-            if(id_producto != '' && producto != '' && cantidad != '' && precio != '')
-            {
-               if( parseInt(cantidad) > 0 && (cantidad % 1 == 0) && parseFloat(precio) > 0)
-               {
-
-                       // sumador
-                        contador++;
-                        // calcular subtotal
-                        subtotal[contador] = round(cantidad * precio);
-                        suma+=subtotal[contador]
-                        iva = round(suma/100 *  impuesto);
-                        total = round(suma + iva);
-
-                        $('#tabla-productos tbody').append(`
-                            <tr id="fila${contador}">
-                                <th>${contador}</th>
-                                <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
-                                <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
-                                <td><input type="hidden" name="arrayprecio[]" value="${precio}">${precio}</td>
-                                <td>${subtotal[contador]}</td>
-                                <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
-                            </tr> `);
-
-                        limpiar();
+            let producto = nombreProducto;
+            let cantidad = parseInt($('#cantidad').val());
+            let precio = parseFloat(precioProducto);
+            let stock = parseInt($('#stock').val()) || 0; // Si no tiene stock, usar 0
+            let tipo = $('#id_producto').find('option:selected').data('tipo'); // 1: Producto físico, 2: Servicio
 
 
-                        $('#suma').html(suma);
-                        $('#iva').html(iva);
-                        $('#total').html(total);
-                        $('#impuesto').val(iva);
-                        $('#inputTotal').val(total);
+            if (id_producto != '' && producto != '' && precio > 0) {
+        if (tipo === 1) { // Producto físico
+            if (!cantidad || cantidad <= 0 || cantidad % 1 !== 0) {
+                mensaje('Favor ingresar una cantidad válida.');
+                return;
+            }
+            if (cantidad > stock) {
+                mensaje(`La cantidad ingresada (${cantidad}) supera el stock disponible (${stock}).`);
+                return;
+            }
+        } else { // Servicio
+            cantidad = 1; // Para servicios, la cantidad siempre es 1
+        }
 
-               }else
-               {
-                    mensaje('favor ingresar una cantidad entera');
-               }
+            // Sumador
+            contador++;
+            // Calcular subtotal
+            subtotal[contador] = round(cantidad * precio);
+            suma += subtotal[contador];
+            iva = round((suma / 100) * impuesto);
+            total = round(suma + iva);
 
-            }else{
-                mensaje('Los campos estan vacios');
+            // Agregar producto a la tabla
+            $('#tabla-productos tbody').append(`
+                <tr id="fila${contador}">
+                    <th>${contador}</th>
+                    <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
+                    <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
+                    <td><input type="hidden" name="arrayprecio[]" value="${precio}">${precio}</td>
+                    <td>${subtotal[contador]}</td>
+                    <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
+                </tr>
+            `);
+
+            limpiar();
+
+                // Actualizar totales
+                $('#suma').html(suma);
+                $('#iva').html(iva);
+                $('#total').html(total);
+                $('#impuesto').val(iva);
+                $('#inputTotal').val(total);
+            } else {
+                mensaje('Los campos están vacíos o son inválidos.');
             }
 
         }
@@ -344,7 +437,7 @@
             event.preventDefault();
             Swal.fire({
             title: "Estas seguro de esto?",
-            text: "Quieres canselar esta compra!",
+            text: "Quieres cancelar esta Venta!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -354,10 +447,10 @@
             if (result.isConfirmed) {
                 Swal.fire({
                 title: "Cancelado!",
-                text: "La compra fue cancelada.",
+                text: "La venta fue cancelada.",
                 icon: "success"
                 }).then(() => {
-                    window.location.href = "{{ route('compras.index') }}";
+                    window.location.href = "{{ route('ventas.index') }}";
                 });
             }
             });
@@ -383,7 +476,7 @@
         }
 
 
-
+        // funcion para redondear los numeros
         // funete: https://es.stackoverflow.com/questions/48958/redondear-a-dos-decimales-cuando-sea-necesario
         function round(num, decimales = 2) {
             var signo = (num >= 0 ? 1 : -1);
@@ -399,10 +492,25 @@
         }
 
 
-
-
-
     </script>
+
+        @if(session('error'))
+        <div class="alert-message">
+            <span>{{ session('error') }}</span>
+        </div>
+        @endif
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const errorMessage = document.querySelector('.alert-message span').textContent;
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+        });
+        </script>
+
+
+
 
 
 @endpush
