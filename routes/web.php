@@ -73,14 +73,15 @@ Route::get('/index', function(){
 //});
 
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+Route::post('roles/{rol}/estado', [RolController::class, 'changeStatus'])->name('roles.changeStatus');
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
 Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
 Route::resource('compras', CompraController::class)->parameters(['compras' => 'compra']);
 
- Route::post('auth/login', 'App\Http\Controllers\AuthController@login');
- Route::post('auth/logout', 'App\Http\Controllers\AuthController@logout');
- Route::post('auth/refresh', 'App\Http\Controllers\AuthController@refresh');
-Route::post('auth/me', 'App\Http\Controllers\AuthController@me');
-Route::post('auth/register', 'App\Http\Controllers\AuthController@register');
+ //Route::post('auth/login', 'App\Http\Controllers\AuthController@login');
+ //Route::post('auth/logout', 'App\Http\Controllers\AuthController@logout');
+ //Route::post('auth/refresh', 'App\Http\Controllers\AuthController@refresh');
+//Route::post('auth/me', 'App\Http\Controllers\AuthController@me');
+//Route::post('auth/register', 'App\Http\Controllers\AuthController@register');
