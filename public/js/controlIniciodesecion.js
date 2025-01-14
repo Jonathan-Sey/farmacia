@@ -5,7 +5,7 @@
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         
-            axios.post('/auth/login', {
+            axios.post('api/auth/login', {
                  email: email,
                  password: password
             })
