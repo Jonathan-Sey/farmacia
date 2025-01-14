@@ -22,48 +22,38 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Proveedor</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha de compra</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Usuario</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >comprobante</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >impuesto</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >total</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
             </thead>
         </x-slot>
 
         <x-slot name="tbody">
             <tbody>
-                {{-- @foreach ($productos as $producto)
+                @foreach ($compras as $compra)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
-                            @if ($producto->estado == 1)
-                                <span class="text-green-500 font-bold">Activo</span>
-                            @else
-                                <span class="text-red-500 font-bold">Inactivo</span>
-                            @endif
-                        </a>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->categoria->nombre}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->updated_at}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->numero_compra}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->proveedor->empresa}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->created_at}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->comprobante}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->total}}</td>
                     <td class="flex gap-2 justify-center">
 
-                        <form action="{{route('productos.edit',['producto'=>$producto->id])}}" method="GET">
+                        <form action="{{route('compras.show',['compra'=>$compra])}}" method="GET">
                             @csrf
                             <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
+                                ver
                             </button>
                         </form>
 
 
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$producto->id}}"  data-info="{{$producto->nombre}}">
+                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$compra->id}}"  data-info="{{$compra->numero_compra}}">
                             <i class="fas fa-trash"></i>
                         </button>
 
 
-                        <form id="form-eliminar{{$producto->id}}" action="{{ route('productos.destroy', $producto->id) }}" method="POST" style="display: none;">
+                        <form id="form-eliminar{{$compra->id}}" action="{{ route('compras.destroy', $compra->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
                         </form>
@@ -72,7 +62,7 @@
                 </tr>
 
                 @endforeach
-                --}}
+
             </tbody>
         </x-slot>
     </x-data-table>
@@ -115,8 +105,7 @@
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
-                { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 6 },
+
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -164,7 +153,7 @@
             var estado = $(this).data('estado')
 
             $.ajax({
-                url: '/productos/' + Id,
+                url: '/compras/' + Id,
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token()}}',
