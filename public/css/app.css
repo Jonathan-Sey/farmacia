@@ -2516,6 +2516,9 @@ html {
 .max-w-6xl {
   max-width: 72rem;
 }
+.max-w-7xl {
+  max-width: 80rem;
+}
 .max-w-\[400px\] {
   max-width: 400px;
 }
@@ -2524,9 +2527,6 @@ html {
 }
 .max-w-full {
   max-width: 100%;
-}
-.max-w-7xl {
-  max-width: 80rem;
 }
 .flex-1 {
   flex: 1 1 0%;
@@ -2892,10 +2892,6 @@ html {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
-}
-.text-blue-500 {
-  --tw-text-opacity: 1;
-  color: rgb(59 130 246 / var(--tw-text-opacity, 1));
 }
 .underline {
   text-decoration-line: underline;
