@@ -1,7 +1,7 @@
 <!--
 <header>
     <div class="flex absolute bg-gray-100 min-h-screen">
-        <!- Barra lateral (pantallas grandes) 
+        <!- Barra lateral (pantallas grandes)
         <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden">
             <div class="flex items-center justify-center h-20 shadow-md">
                 <h1 class="text-3xl uppercase text-indigo-500">Farmacia</h1>
@@ -70,7 +70,7 @@
             </ul>
         </div>
 
-        <!- Barra móvil (pantallas pequeñas) 
+        <!- Barra móvil (pantallas pequeñas)
         <div class="flex md:hidden bg-white w-full shadow-md fixed top-0 z-50">
             <div class="flex justify-between items-center w-full px-4 h-16">
                 <h1 class="text-xl uppercase text-indigo-500">Farmacia</h1>
@@ -82,7 +82,7 @@
             </div>
         </div>
 
-        <!-Menú desplegable móvil 
+        <!-Menú desplegable móvil
         <ul id="menu" class="hidden md:hidden bg-white shadow-md flex-col fixed top-16 left-0 w-full z-40">
             <li class="px-6 py-2 hover:bg-gray-100">
                 <a href="/dashboard">Dashboard</a>
