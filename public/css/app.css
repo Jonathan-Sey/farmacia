@@ -1095,10 +1095,6 @@ html {
     grid-auto-flow: row dense;
   }
 }
-.form-control {
-  display: flex;
-  flex-direction: column;
-}
 .label {
   display: flex;
   -webkit-user-select: none;
@@ -2944,9 +2940,6 @@ html {
 .ring-cyan-500 {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(6 182 212 / var(--tw-ring-opacity, 1));
-}
-.filter {
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 .transition-transform {
   transition-property: transform;

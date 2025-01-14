@@ -13,7 +13,7 @@
             @csrf
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
-                    <legend class="text-blue-500 font-bold">Compras</legend>
+                    <legend class="text-blue-500 font-bold">Venta</legend>
                     <div class="border-b border-gray-900/10  lg:pb-0 lg:mb-0">
                         {{-- producto --}}
                         <div class="mt-2 mb-5">
