@@ -89,11 +89,18 @@ class PersonaController extends Controller
      */
     public function update(Request $request, Persona $persona)
     {
-        $this->validate($request,[
+        // $this->validate($request,[
+        //     'nombre' => 'required|string|max:45',
+        //     'nit' => 'string|max:10',
+        //     'telefono' => 'string|max:20',
+        //     'fecha_nacimiento'=>'date',
+        // ]);
+
+        $this -> validate($request,[
             'nombre' => 'required|string|max:45',
-            'nit' => 'string|max:10',
-            'telefono' => 'string|max:20',
-            'fecha_nacimiento'=>'date',
+            'nit' => 'max:10',
+            'telefono' => 'max:20',
+
         ]);
 
         $datosActualizados = $request->only(['nombre','nit','telefono','rol','fecha_nacimiento']);

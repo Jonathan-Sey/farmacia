@@ -11,7 +11,9 @@ class Consulta extends Model
     protected $table = 'consulta';
     protected $fillable = [
         'detalle',
+        'asunto',
         'fecha_consulta',
+        'proxima_cita',
         'id_medico',
         'id_persona',
         'estado',
@@ -21,12 +23,14 @@ class Consulta extends Model
         return $this->belongsTo(Persona::class, 'id_persona');
     }
 
-    public function medico()
-    {
-        return $this->belongsTo(User::class, 'id_user');
-    }
+     public function medico()
+        {
+         return $this->belongsTo(DetalleMedico::class, 'id_medico');
+        }
+
     public function venta()
     {
         return $this->hasMany(Venta::class, 'id_consulta');
     }
+
 }

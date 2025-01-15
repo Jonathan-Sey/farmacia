@@ -18,6 +18,7 @@ class CreateDetalleMedicosTable extends Migration
             $table->foreignId('id_usuario')->constrained('users');
             $table->string('especialidad',75);
             $table->string('numero_colegiado',10);
+            $table->tinyInteger('estado')->default(1);
             $table->timestamps();
         });
     }
