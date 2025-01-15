@@ -13,6 +13,7 @@ class DetalleVenta extends Model
         'id_venta',
         'id_producto',
         'cantidad',
+        'precio',
         'estado',
     ];
 

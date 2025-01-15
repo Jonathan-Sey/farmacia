@@ -8,17 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class Persona extends Model
 {
     use HasFactory;
-    protected $talbe = 'persona';
+    protected $table = 'persona';
     protected $fillable = [
         'nombre',
         'nit',
-        'paciente',
-        'cliente',
+        'rol',
         'telefono',
         'fecha_nacimiento',
         'estado',
 
     ];
+
+    public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
+
+
     public function consultas()
     {
         return $this->hasMany(Consulta::class, 'id_persona');

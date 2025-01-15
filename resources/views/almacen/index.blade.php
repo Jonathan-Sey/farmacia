@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Productos')
+@section('titulo','Almacenes')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -10,7 +10,7 @@
 @endpush
 
 @section('contenido')
-    <a href="{{ route('productos.create') }}">
+    <a href="{{ route('almacenes.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
@@ -20,50 +20,50 @@
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Actualizado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
+
                 </tr>
             </thead>
         </x-slot>
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($productos as $producto)
+                @foreach ($almacenes as $almacen)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
+                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->id}}</td>
+                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
+                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->sucursal->nombre}}</td>
+                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->cantidad}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
-                            @if ($producto->estado == 1)
+                        <a href="#" class="estado" data-id="{{ $almacen->id}}" data-estado="{{$almacen->estado}}">
+                            @if ($almacen->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
                             @else
                                 <span class="text-red-500 font-bold">Inactivo</span>
                             @endif
                         </a>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->categoria->nombre}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->updated_at}}</td>
+
                     <td class="flex gap-2 justify-center">
 
-                        <form action="{{route('productos.edit',['producto'=>$producto->id])}}" method="GET">
+                        <form action="{{route('almacenes.edit',['almacen'=>$almacen->id])}}" method="GET">
                             @csrf
                             <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
                                 <i class="fas fa-edit"></i>
                             </button>
                         </form>
 
-                        {{-- eliminar --}}
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$producto->id}}"  data-info="{{$producto->nombre}}">
+
+                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$almacen->id}}"  data-info="{{$almacen->id}}">
                             <i class="fas fa-trash"></i>
                         </button>
 
-                        {{-- Formulario oculto para eliminación --}}
-                        <form id="form-eliminar{{$producto->id}}" action="{{ route('productos.destroy', $producto->id) }}" method="POST" style="display: none;">
+
+                        <form id="form-eliminar{{$almacen->id}}" action="{{ route('almacenes.destroy', $almacen->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
                         </form>
@@ -72,6 +72,7 @@
                 </tr>
 
                 @endforeach
+
             </tbody>
         </x-slot>
     </x-data-table>
@@ -114,8 +115,7 @@
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
-                { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 6 },
+
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -163,7 +163,7 @@
             var estado = $(this).data('estado')
 
             $.ajax({
-                url: '/productos/' + Id,
+                url: '/almacenes/' + Id,
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token()}}',

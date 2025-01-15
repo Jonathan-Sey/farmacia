@@ -18,8 +18,14 @@ class Compra extends Model
         'comprobante',
         'impuesto',
         'total',
+        'estado',
 
     ];
+
+    public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
 
     public function proveedor()
     {
@@ -35,6 +41,14 @@ class Compra extends Model
     {
         return $this->hasMany(DetalleCompra::class, 'id_compra');
     }
+
+        // App\Models\Compra.php
+    public function productos()
+    {
+        return $this->belongsToMany(Producto::class, 'detalle_compra', 'id_compra', 'id_producto')
+                    ->withPivot('cantidad', 'precio'); // Incluye los campos adicionales de la tabla intermedia
+    }
+
 
 
 }
