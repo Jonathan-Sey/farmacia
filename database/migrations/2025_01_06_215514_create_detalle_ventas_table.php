@@ -18,6 +18,7 @@ class CreateDetalleVentasTable extends Migration
             $table->foreignId('id_venta')->constrained('venta');
             $table->foreignId('id_producto')->constrained('producto');
             $table->integer('cantidad');
+            $table->decimal('precio', 10, 2);
             $table->tinyInteger('estado')->default(1);
             $table->timestamps();
         });

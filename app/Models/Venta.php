@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Venta extends Model
 {
     use HasFactory;
-    protected $talbe = 'venta';
+    protected $table = 'venta';
     protected $fillable = [
         'id_sucursal',
         'fecha_venta',
@@ -17,6 +17,7 @@ class Venta extends Model
         'id_usuario',
         'id_consulta',
         'id_persona',
+        'estado'
     ];
 
     public function sucursal()
@@ -43,4 +44,12 @@ class Venta extends Model
     {
         return $this->hasMany(DetalleVenta::class, 'id_venta');
     }
+
+     public function productos()
+ {
+     return $this->belongsToMany(Producto::class, 'detalle_venta', 'id_venta', 'id_producto')
+                 ->withPivot('cantidad', 'precio')
+                 ->withTimestamps();
+ }
+
 }

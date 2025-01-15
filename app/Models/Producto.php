@@ -16,6 +16,7 @@ class Producto extends Model
         'precio_venta',
         'fecha_caducidad',
         'id_categoria',
+        'tipo',
         'estado',
 
     ];
@@ -42,4 +43,31 @@ class Producto extends Model
     {
         return $this->hasMany(DetalleCompra::class, 'id_producto');
     }
+
+        // App\Models\Producto.php
+    public function compras()
+    {
+        return $this->belongsToMany(Compra::class, 'detalle_compra', 'id_producto', 'id_compra')
+                    ->withPivot('cantidad', 'precio');
+    }
+
+    public function ventas()
+{
+    return $this->belongsToMany(Venta::class, 'detalle_venta', 'id_producto', 'id_venta')
+                ->withPivot('cantidad', 'precio')
+                ->withTimestamps();
+}
+
+
+    //     public function venta()
+    // {
+    //     return $this->belongsTo(Venta::class, 'id_venta');
+    // }
+
+    // public function producto()
+    // {
+    //     return $this->belongsTo(Producto::class, 'id_producto');
+    // }
+
+
 }
