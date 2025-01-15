@@ -9,6 +9,8 @@ use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Consulta\consultaController;
+use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
 use App\Http\Controllers\Venta\VentaController;
 use Illuminate\Support\Facades\Route;
@@ -45,24 +47,6 @@ Route::get('/index', function(){
     return view('pagina_principal.index');
 });
 
-
-
-// //modulo rol
-// Route::get('/roles', [RolController::class, 'index'] )->name('roles');
-// //vista para crear roles
-// Route::get('/roles/create', [RolController::class,'create'])->name('roles.create');
-// //enviando datos del rol
-// Route::post('/roles/create', [RolController::class,'store'])->name('roles.store');
-
-// //vista editar
-// Route::get('/roles/{rol}/edit', [RolController::class,'edit'])->name('roles.edit');
-// //enviar datos para actuializar rol
-// Route::patch('/roles/{rol}/edit', [RolController::class,'update'])->name('roles.update');
-// // ruta para eliminar
-// Route::delete('/roles/{rol}',[RolController::class,'destroy'])->name('roles.destroy');
-
-// Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias');
-
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
@@ -72,6 +56,8 @@ Route::resource('compras', CompraController::class)->parameters(['compras' => 'c
 Route::resource('ventas', VentaController::class)->parameters(['ventas' => 'venta']);
 Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' => 'almacen']);
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
+Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
+Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
 
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');

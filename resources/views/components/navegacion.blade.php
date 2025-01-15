@@ -66,6 +66,18 @@
                         <span class="text-sm font-medium">Personas</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('medicos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-briefcase-medical"></i></span>
+                        <span class="text-sm font-medium">Medicos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('consultas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
+                        <span class="text-sm font-medium">Consultas</span>
+                    </a>
+                </li>
             </ul>
         </div>
 

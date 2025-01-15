@@ -79,4 +79,10 @@ class User extends Authenticatable implements JWTSubject
         return $this->hasMany(Venta::class, 'id_usuario');
     }
 
+    public function detalleMedico()
+    {
+        return $this->hasOne(DetalleMedico::class, 'id_usuario');
+    }
+
+
 }

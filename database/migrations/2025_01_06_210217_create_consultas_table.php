@@ -15,10 +15,12 @@ class CreateConsultasTable extends Migration
     {
         Schema::create('consulta', function (Blueprint $table) {
             $table->id();
-            $table->text('detalle',255)->nullble();
+            $table->string('asunto',35);
             $table->date('fecha_consulta');
-            $table->foreignId('id_medico')->constrained('users');
+            $table->date('proxima_cita')->nullable();
+            $table->text('detalle',255)->nullable();
             $table->foreignId('id_persona')->constrained('persona');
+            $table->foreignId('id_medico')->constrained('detalle_medico');
             $table->tinyInteger('estado')->default(1);
             $table->timestamps();
         });
