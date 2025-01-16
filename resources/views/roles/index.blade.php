@@ -15,6 +15,19 @@
 </a>
 
     <h1>Contenido Roles</h1>
+
+    {{-- Tabla  --}}
+    <x-data-table>
+        <x-slot name="thead">
+            <thead class=" text-white font-bold">
+                <tr class="bg-slate-600  ">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Telefono</th>
+                </tr>
+            </thead>
+        </x-slot>
+    </x-data-table>
     <ul>
         @foreach ($roles as $rol)
             <li>{{ $rol->nombre }}</li>
@@ -59,9 +72,19 @@
 
 @endsection
 
+
+
+
+
+
 @push('js')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
 
 {{-- Alerta de registro exitoso --}}
 @if (session('success'))
