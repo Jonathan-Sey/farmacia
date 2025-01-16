@@ -37,16 +37,21 @@ class AuthController extends Controller
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Credenciales incorrectas'], 401);
         }
-        $user = auth('api')->user();
-
+        $user = auth('api')->user(); 
         if (!$user) {
             return response()->json(['error' => 'Usuario no encontrado'], 404);
         }
+ 
+        if (!$user->rol) {
+            return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
+        }
+        $user->load('rol.pestanas');
         return response()->json([
             'success' => true,
             'token' => $token,
             'user' => $user,
             'rol' =>  $user->rol,
+            //'pestanas' => $user->rol->pestanas,
         ]);
     }
     /**
@@ -101,7 +106,7 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(),[
             'name' => 'required',
             'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|max:12',
             'rol' => 'required|string',
             'id_rol'=> 'required',
             ]

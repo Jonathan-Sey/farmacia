@@ -1,42 +1,31 @@
-import jwt_decode  from "https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.esm.js";
-document.addEventListener('DOMContentLoaded', function() {
-   
+import jwt_decode from "https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.esm.js";
+
+document.addEventListener('DOMContentLoaded', function () {
     const token = localStorage.getItem('jwt_token');
-    console.log(token);
-    // Obtener el token del localStorage
-    // Asegúrate de que devuelva un valor válido
+
     if (token) {
-        // Decodificar el token para obtener el payload
+        // Decodificar el token
         const decodedToken = jwt_decode(token);
 
-        // Obtener el rol del payload decodificado
-        const role = decodedToken.rol;
-        console.log(decodedToken); // Asegúrate de ver el rol aquí
-        console.log(decodedToken.rol); 
-
-        
-        // Llamamos a la función para configurar la navegación según el rol
-        setupNavigation(role);
+        // Obtener las pestañas desde el payload del token
+        const pestanas = decodedToken.pestanas || [];
+        console.log(decodedToken.pestanas); 
+        // Configurar la navegación dinámica
+        setupNavigation(pestanas);
     }
-   
-
 });
 
-function setupNavigation(role) {
-    const adminNavElements = document.querySelectorAll('#admin-nav');
-    const userNavElements = document.querySelectorAll('#user-nav');
+function setupNavigation(pestanas) {
+    // Ocultar todas las pestañas primero
+    const navItems = document.querySelectorAll('[data-pestana]');
+    navItems.forEach(item => item.style.display = 'none');
 
-    if (adminNavElements.length > 0 && userNavElements.length > 0) {
-        if (role === 'admin') {
-            adminNavElements.forEach(el => el.style.display = 'block');
-            userNavElements.forEach(el => el.style.display = 'none');
-        } else if (role === 'cajero') {
-            adminNavElements.forEach(el => el.style.display = 'none');
-            userNavElements.forEach(el => el.style.display = 'block');
-        } else {
-            adminNavElements.forEach(el => el.style.display = 'none');
-            userNavElements.forEach(el => el.style.display = 'none');
+    // Mostrar solo las pestañas permitidas
+    pestanas.forEach(pestana => {
+        const navItem = document.querySelector(`[data-pestana="${pestana}"]`);
+        if (navItem) {
+            navItem.style.display = 'block';
         }
-    }
+    });
+    
 }
-
