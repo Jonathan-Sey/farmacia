@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const token = localStorage.getItem('jwt_token');
 
     if (token) {
-        // Decodificar el token
+        
         const decodedToken = jwt_decode(token);
 
         // Obtener las pestañas desde el payload del token
