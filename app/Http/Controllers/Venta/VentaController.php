@@ -12,6 +12,7 @@ use App\Models\Almacen;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use App\Models\User;
 
 class VentaController extends Controller
 {
@@ -20,6 +21,8 @@ class VentaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+ 
+
     public function index()
     {
         $ventas = Venta::with(['sucursal','persona','usuario'])
