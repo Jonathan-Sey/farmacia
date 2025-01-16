@@ -49,8 +49,6 @@
         @stack('js')
         
     </body>
-    <script src="/js/myModule.js"></script>
+    <script src="{{ asset('/js/barraResponsive.js') }}"></script>
     <script type="module" src="/js/controldeNavPorRoles.js"></script>
-    <script src="{{ asset('js/barraResponsive.js') }}"></script>
-    
     </html>
