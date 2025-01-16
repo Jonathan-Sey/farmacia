@@ -43,11 +43,22 @@ class User extends Authenticatable implements JWTSubject
     }
 
     public function getJWTCustomClaims() {
-        return [
-            'rol' => $this->rol,
-            'name' => $this->name,
-            'email' => $this->email,
-            ];
+    $rol = $this->rol()->with('pestanas')->first();  // Cargar rol y pestanas
+
+    // Verificar si el rol existe y tiene pestañas
+    if ($rol && $rol->pestanas) {
+        $pestanas = $rol->pestanas->pluck('nombre');
+    } else {
+        $pestanas = collect();  // Si no tiene pestañas, asignar un array vacío
+    }
+
+    return [
+        'id' => $this->id,
+        'rol' => $rol ? $rol->nombre : null,  // Devolver el nombre del rol si existe
+        'name' => $this->name,
+        'email' => $this->email,
+        'pestanas' => $pestanas,  // Asignar las pestañas
+    ];
     }
 
 
