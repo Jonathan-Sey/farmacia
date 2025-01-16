@@ -90,28 +90,28 @@
     $(document).ready(function(){
         $('.estado').click(function(e){
             e.preventDefault();
-            var rolId = $(this).data('id');
-            var estado = $(this).data('estado');
+            var rolId = $(this).data('id')
+            var estado = $(this).data('estado')
 
             $.ajax({
-                url: '/roles/' + rolId + '/estado',  // Cambia la URL a la ruta personalizada
+                url: '/roles/' + rolId,
                 method: 'POST',
                 data: {
-                    _token: '{{ csrf_token() }}',
-                    status: estado == 1 ? 2 : 1  // Alterna entre estado 1 y 2
+                    _token: '{{ csrf_token()}}',
+                    _method: 'DELETE',
+                    status: estado == 1 ? 2 : 1
                 },
                 success: function(response){
                     if(response.success){
-                        location.reload();  // Recarga la página después de cambiar el estado
-                    } else {
-                        alert('Error al cambiar el estado');
+                        location.reload()
+                    }else{
+                        alert('Error al cambiar el estado')
                     }
                 }
-            });
-        });
+            })
+        })
     });
 </script>
-
 
 {{-- Modal para eliminar --}}
 <script>
