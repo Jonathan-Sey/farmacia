@@ -46,6 +46,48 @@
                         <span class="text-sm font-medium">Productos</span>
                     </a>
                 </li>
+                <li>
+                    <a href="{{ route('proveedores.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-truck-field"></i></span>
+                        <span class="text-sm font-medium">Proveedores</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('almacenes.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-store"></i></span>
+                        <span class="text-sm font-medium">Almacenes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('compras.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-cart-shopping"></i></span>
+                        <span class="text-sm font-medium">Compras</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('ventas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-bag-shopping"></i></span>
+                        <span class="text-sm font-medium">Ventas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('personas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-person"></i></span>
+                        <span class="text-sm font-medium">Personas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('medicos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-briefcase-medical"></i></span>
+                        <span class="text-sm font-medium">Medicos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('consultas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
+                        <span class="text-sm font-medium">Consultas</span>
+                    </a>
+                </li>
             </ul>
         </div>
 
@@ -153,7 +195,7 @@
 </div>
 <!-- Menú desplegable móvil -->
      <ul id="menu" class="hidden bg-white shadow-md flex-col fixed top-16 left-0 w-full z-40">
-       
+
             <li data-pestanal="Dashboard" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
                 <a href="/dashboard">Dashboard</a>
             </li>
