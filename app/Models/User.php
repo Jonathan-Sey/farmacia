@@ -100,4 +100,10 @@ class User extends Authenticatable implements JWTSubject
 
     }
 
+    public function detalleMedico()
+    {
+        return $this->hasOne(DetalleMedico::class, 'id_usuario');
+    }
+
+
 }

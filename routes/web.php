@@ -9,6 +9,8 @@ use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Consulta\consultaController;
+use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
 use App\Http\Controllers\Venta\VentaController;
 use Illuminate\Support\Facades\Route;
@@ -85,6 +87,8 @@ Route::resource('compras', CompraController::class)->parameters(['compras' => 'c
 Route::resource('ventas', VentaController::class)->parameters(['ventas' => 'venta']);
 Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' => 'almacen']);
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
+Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
+Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
 
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');

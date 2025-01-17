@@ -13,9 +13,20 @@ class DetalleMedico extends Model
         'id_usuario',
         'especialidad',
         'numero_colegiado',
+        'estado',
     ];
+
+    public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
+
     public function usuario()
     {
         return $this->belongsTo(User::class, 'id_usuario');
+    }
+    public function consultas()
+    {
+        return $this->hasMany(Consulta::class, 'id_medico');
     }
 }

@@ -123,7 +123,7 @@ class ProductoController extends Controller
         //validando el tipo de producto
         $nuevotipo = $request->has('tipo') ? 2 : 1;
         if ($producto->tipo != $nuevotipo) {
-            // Permitir cambio de cliente a paciente (1 a 2)
+            // cambio de cliente a paciente (1 a 2)
             if ($producto->tipo == 1 && $nuevotipo == 2) {
                 $datosActualizados['tipo'] = 2;
             }

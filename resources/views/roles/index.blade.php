@@ -13,21 +13,22 @@
     </button>
 </a>
 
-<h1>Contenido Roles</h1>
-<ul>
-    @foreach ($roles as $rol)
-        <li>{{ $rol->nombre }}</li>
-        <li>{{ $rol->descripcion }}</li>
-    
-        {{-- Validación de estado --}}
-        Estado:
-        <a href="#" class="estado" data-id="{{ $rol->id }}" data-estado="{{ $rol->estado }}">
-            @if ($rol->estado == 1)
-                <span class="text-green-500 font-bold">Activo</span>
-            @else
-                <span class="text-red-500 font-bold">Inactivo</span>
-            @endif
-        </a>
+    <h1>Contenido Roles</h1>
+
+    <ul>
+        @foreach ($roles as $rol)
+            <li>{{ $rol->nombre }}</li>
+            <li>{{ $rol->descripcion }}</li>
+                {{-- Validacion de estado --}}
+            Estado:
+            <a href="#" class="estado" data-id="{{ $rol->id}}" data-estado="{{$rol->estado}}">
+                @if ($rol->estado == 1)
+                    <span class="text-green-500 font-bold" >Ativo</span>
+                @else
+                    <span class="text-red-500 font-bold" >Inactivo</span>
+                @endif
+            </a>
+            <div>
 
         {{-- Mostrar las pestañas asignadas --}}
         <p><strong>Pestañas asignadas:</strong></p>
@@ -57,13 +58,23 @@
                     @method('DELETE')
             </form>
         </div>
-    @endforeach    
+    @endforeach
 </ul>
 @endsection
+
+
+
+
+
 
 @push('js')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+
+
+
 
 {{-- Alerta de registro exitoso --}}
 @if (session('success'))
