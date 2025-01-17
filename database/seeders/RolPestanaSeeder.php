@@ -3,7 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Pestana; 
+use App\Models\Pestana;
 class RolPestanaSeeder extends Seeder
 {
     /**
@@ -21,5 +21,12 @@ class RolPestanaSeeder extends Seeder
         Pestana::create(['nombre' => 'Proveedores', 'slug' => 'proveedores','ruta' => 'proveedores']);
         Pestana::create(['nombre' => 'Sucursales', 'slug' => 'sucursales','ruta' => 'sucursales']);
         Pestana::create(['nombre' => 'Productos', 'slug' => 'productos','ruta' => 'productos']);
+        Pestana::create(['nombre' => 'Almacenes', 'slug' => 'almacenes','ruta' => 'almacenes']);
+        Pestana::create(['nombre' => 'Compras', 'slug' => 'compras','ruta' => 'compras']);
+        Pestana::create(['nombre' => 'Ventas', 'slug' => 'ventas','ruta' => 'ventas']);
+        Pestana::create(['nombre' => 'Personas', 'slug' => 'personas','ruta' => 'personas']);
+        Pestana::create(['nombre' => 'Medicos', 'slug' => 'medicos','ruta' => 'medicos']);
+        Pestana::create(['nombre' => 'Consultas', 'slug' => 'consultas','ruta' => 'consultas']);
+
     }
 }
