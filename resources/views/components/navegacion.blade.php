@@ -180,6 +180,85 @@
                         <span class="text-sm font-medium">Productos</span>
                     </a>
                 </li>
+
+                <li data-pestana="Almacenes" style="display:none;">
+                    <a href="{{ route('almacenes.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-store"></i></span>
+                        <span class="text-sm font-medium">Almacenes</span>
+                    </a>
+                </li>
+                <li data-pestana="Compras" style="display:none;">
+                    <a href="{{ route('compras.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-cart-shopping"></i></span>
+                        <span class="text-sm font-medium">Compras</span>
+                    </a>
+                </li>
+                <li data-pestana="Ventas" style="display:none;">
+                    <a href="{{ route('ventas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-bag-shopping"></i></span>
+                        <span class="text-sm font-medium">Ventas</span>
+                    </a>
+                </li>
+                <li data-pestana="Personas" style="display:none;">
+                    <a href="{{ route('personas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-person"></i></span>
+                        <span class="text-sm font-medium">Personas</span>
+                    </a>
+                </li>
+                <li data-pestana="Medicos" style="display:none;">
+                    <a href="{{ route('medicos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-briefcase-medical"></i></span>
+                        <span class="text-sm font-medium">Medicos</span>
+                    </a>
+                </li>
+                <li data-pestana="Consultas" style="display:none;">
+                    <a href="{{ route('consultas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
+                        <span class="text-sm font-medium">Consultas</span>
+                    </a>
+                </li>
+
+                {{-- enlaces directos sin la relacion de pestaña rol  --}}
+
+                <li>
+                    <a href="{{ route('almacenes.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-store"></i></span>
+                        <span class="text-sm font-medium">Almacenes</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('compras.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-cart-shopping"></i></span>
+                        <span class="text-sm font-medium">Compras</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('ventas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-bag-shopping"></i></span>
+                        <span class="text-sm font-medium">Ventas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('personas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-person"></i></span>
+                        <span class="text-sm font-medium">Personas</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('medicos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-briefcase-medical"></i></span>
+                        <span class="text-sm font-medium">Medicos</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="{{ route('consultas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
+                        <span class="text-sm font-medium">Consultas</span>
+                    </a>
+                </li>
+
+
+
             </ul>
         </div>
         <!-- Barra móvil (pantallas pequeñas) -->
@@ -214,6 +293,49 @@
             <li data-pestanal="Productos" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('productos.index') }}">Productos</a>
             </li>
+            <li data-pestanal="Almacenes" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('almacenes.index') }}">Almacenes</a>
+            </li>
+            <li data-pestanal="Comptas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('compras.index') }}">Compras</a>
+            </li>
+            <li data-pestanal="Ventas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('ventas.index') }}">Ventas</a>
+            </li>
+            <li data-pestanal="Personas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('personas.index') }}">Personas</a>
+            </li>
+            <li data-pestanal="Medicos" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('medicos.index') }}">Medicos</a>
+            </li>
+            <li data-pestanal="Consultas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('consultas.index') }}">Consultas</a>
+            </li>
+
+            {{-- enlaces directos sin la relacion de rol pestañas  --}}
+            <li  id="admin-nav"  class="px-6 py-2 hover:bg-gray-100">
+                <a href="{{ route('almacenes.index') }}">Almacenes</a>
+            </li>
+
+            <li  id="admin-nav"  class="px-6 py-2 hover:bg-gray-100">
+                <a href="{{ route('compras.index') }}">Compras</a>
+            </li>
+            <li  id="admin-nav"  class="px-6 py-2 hover:bg-gray-100">
+                <a href="{{ route('ventas.index') }}">Ventas</a>
+            </li>
+            <li  id="admin-nav"  class="px-6 py-2 hover:bg-gray-100">
+                <a href="{{ route('personas.index') }}">Personas</a>
+            </li>
+            <li  id="admin-nav"  class="px-6 py-2 hover:bg-gray-100">
+                <a href="{{ route('medicos.index') }}">Medicos</a>
+            </li>
+            <li  id="admin-nav"  class="px-6 py-2 hover:bg-gray-100">
+                <a href="{{ route('consultas.index') }}">Consultas</a>
+            </li>
+
+
+
+
         </ul>
     </div>
 </header>
