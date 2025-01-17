@@ -153,22 +153,23 @@
 </div>
 <!-- Menú desplegable móvil -->
      <ul id="menu" class="hidden bg-white shadow-md flex-col fixed top-16 left-0 w-full z-40">
-            <li data-pestana="Dashboard" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
+       
+            <li data-pestanal="Dashboard" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
                 <a href="/dashboard">Dashboard</a>
             </li>
-            <li data-pestana="Rol" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+            <li data-pestanal="Rol" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('roles.index') }}">Roles</a>
             </li>
-            <li data-pestana="Categorias" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+            <li data-pestanal="Categorias" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('categorias.index') }}">Categorías</a>
             </li>
-            <li data-pestana="Proveedores" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+            <li data-pestanal="Proveedores" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('proveedores.index') }}">Proveedores</a>
             </li>
-            <li data-pestana="Sucursales" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+            <li data-pestanal="Sucursales" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('sucursales.index') }}">Sucursal</a>
             </li>
-            <li data-pestana="Productos" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+            <li data-pestanal="Productos" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('productos.index') }}">Productos</a>
             </li>
         </ul>

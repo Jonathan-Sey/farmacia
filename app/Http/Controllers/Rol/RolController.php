@@ -97,27 +97,18 @@ class RolController extends Controller
 
     public function destroy(Request $request, Rol $rol)
     {
-        // Eliminar las relaciones del rol en la tabla intermedia (rol_pestana) y eliminar el registro de rol en la tabla rol
-        $rol->pestanas()->detach();
-        $rol->delete();
-        return redirect()->route('roles.index')->with('success', '¡Rol eliminado con éxito!');
-    }
-    
-    public function changeStatus(Request $request, Rol $rol)
-    {
-        // Obtener el estado desde la solicitud
-        $nuevoEstado = $request->input('status');
-    
-        // Validar que el estado sea 0 (inactivo) o 1 (activo)
-        if (!in_array($nuevoEstado, [0, 1])) {
-            return response()->json(['success' => false, 'message' => 'Estado no válido.']);
+        //dd($rol);
+        $estado = $request->input('status', 0);
+        if($estado == 0){
+            $rol->update(['estado' => 0]);
+            return redirect()->route('roles.index')->with('success','¡Rol eliminado con éxito!');
+        }else{
+            $rol->estado = $estado;
+            $rol->save();
+            return response()->json(['success' => true]);
         }
-    
-        // Cambiar el estado del rol
-        $rol->update(['estado' => $nuevoEstado]);
-    
-        // Responder con éxito
-        return response()->json(['success' => true, 'message' => '¡Estado actualizado con éxito!']);
+        return response()->json(['success'=> false]);
     }
+
     
 }
