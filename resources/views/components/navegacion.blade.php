@@ -3,7 +3,9 @@
         <!-- Barra lateral (pantallas grandes) -->
         <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden">
             <div class="flex items-center justify-center h-20 shadow-md">
-                <h1 class="text-3xl uppercase text-indigo-500">Farmacia</h1>
+                <a href="/dashboard">
+                    <h1 class="text-3xl uppercase text-indigo-500">Farmacia</h1>
+                </a>
             </div>
             <ul class="flex flex-col py-4">
                 <li>
