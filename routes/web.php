@@ -10,6 +10,7 @@ use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Consulta\consultaController;
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
 use App\Http\Controllers\Venta\VentaController;
@@ -46,7 +47,7 @@ Route::get('/Recuperacion_contraseña', function(){
 Route::get('/index', function(){
     return view('pagina_principal.index');
 });
-
+Route::get('/dashboard', [Dashboard::class, 'index']);
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
