@@ -10,15 +10,99 @@ use App\Models\Venta;
 use Illuminate\Http\Request;
 
 class Dashboard extends Controller
+
+
 {
-    public function index(){
-        $productos = Producto::where('tipo',1)->count();
+    public function index(Request $request){
+        // pruebas con fechas del año actual
+        // $año = date('Y');
+        // $mes = date('m');
+
+        // nuevos valores desde el input, esto para acualizar la tabla
+        // en dado caso no hau mostrar los actuales
+        $año = $request->input('año', date('Y'));
+        $mes = $request->input('mes', date('m'));
+
+
+        $productos = Producto::where('tipo',1)->count();// conteo de productos
         $sucursales = Sucursal::count();
         $compras = Compra::count();
-        $ventas = Venta::count();
-        $servicios = Producto::where('tipo',2)->count();
+        $NumeroVentas = Venta::count();
+        $servicios = Producto::where('tipo',2)->count();//conteo de servicios
         $medicos = DetalleMedico::count();
-        return view('dashboard.index',compact('productos','sucursales','compras','ventas','servicios','medicos'));
+
+        // datos de ventas, esto para la tabla
+        $ventas = Venta::with([
+            'persona:id,nombre',
+            'productos:id,nombre',
+            'sucursal:id,nombre,ubicacion',
+            ])->latest()->get();
+
+        // fitrar fecjas por el campo fecha_venta
+        $ventasFiltro = Venta::with([
+            'persona:id,nombre',
+            'productos:id,nombre',
+            'sucursal:id,nombre,ubicacion',
+        ])->whereYear('fecha_venta', $año) //filtro por año
+        ->whereMonth('fecha_venta', $mes)// filto pod mes
+        ->latest()
+        ->get();
+
+        // generar los dias del mes
+        $numDias = cal_days_in_month(CAL_GREGORIAN, $mes,$año);// total de dias de ese mes
+        $diasMes =  range(1, $numDias);//cantidad de dias de ese mes
+
+        $ventasPorDia = [];
+        $totalGeneral = 0;
+
+        foreach ($diasMes as $dia){
+            $ventasDelDia = $ventasFiltro->filter(function ($venta) use ($año,$mes,$dia){
+                 return \Carbon\Carbon::parse($venta->fecha_venta)->format('Y-m-d') === "$año-" . str_pad($mes,2, '0', STR_PAD_LEFT). "-" . str_pad($dia, 2, '0', STR_PAD_LEFT);
+            });
+            $totalDia = $ventasDelDia->sum('total');
+            $ventasPorDia[] = $totalDia;
+            $totalGeneral += $totalDia;
+        }
+
+        //return $diasMes;
+        return view('dashboard.index',compact('productos','sucursales','compras','NumeroVentas','servicios','medicos','ventas','ventasFiltro','ventasPorDia','totalGeneral', 'diasMes', 'año','mes'));
+    }
+
+    public function filtrarVentas(Request $request){
+        $año = $request->input('año');
+        $mes = $request->input('mes');
+
+         // fitrar fecjas por el campo fecha_venta
+         $ventasFiltro = Venta::with([
+            'persona:id,nombre',
+            'productos:id,nombre',
+            'sucursal:id,nombre,ubicacion',
+        ])->whereYear('fecha_venta', $año) //filtro por año
+        ->whereMonth('fecha_venta', $mes)// filto pod mes
+        ->latest()
+        ->get();
+
+        // generar los dias del mes
+        $numDias = cal_days_in_month(CAL_GREGORIAN, $mes,$año);// total de dias de ese mes
+        $diasMes =  range(1, $numDias);//cantidad de dias de ese mes
+
+        $ventasPorDia = [];
+        $totalGeneral = 0;
+
+        foreach ($diasMes as $dia){
+            $ventasDelDia = $ventasFiltro->filter(function ($venta) use ($año,$mes,$dia){
+                 return \Carbon\Carbon::parse($venta->fecha_venta)->format('Y-m-d') === "$año-" . str_pad($mes,2, '0', STR_PAD_LEFT). "-" . str_pad($dia, 2, '0', STR_PAD_LEFT);
+            });
+            $totalDia = $ventasDelDia->sum('total');
+            $ventasPorDia[] = $totalDia;
+            $totalGeneral += $totalDia;
+        }
+
+        return response()->json([
+            'diasMes' => $diasMes,
+            'ventasPorDia' => $ventasPorDia,
+            'totalGeneral' => $totalGeneral,
+        ]);
     }
 
 }
