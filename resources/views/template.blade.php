@@ -9,10 +9,10 @@
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
         <title> @yield('titulo')</title>
         <link rel="stylesheet" href="{{ mix('js/app.js') }}">
+        {{-- <link rel="stylesheet" href="{{ mix('js/datepicker/jquery-ui.min.css') }}"> --}}
         <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
         <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
         <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" />
-
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
@@ -43,9 +43,9 @@
         </div>
         @stack('css')
         @stack('js')
-        
     </body>
-    
+
     <script src="{{ asset('js/barraResponsive.js') }}"></script>
     <script src="{{ asset('js/alertaDeUsuario.js') }}"></script>
+    {{-- <script src="{{ asset('js/datepicker/jquery-ui.js') }}"></script> --}}
     </html>
