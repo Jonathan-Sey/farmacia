@@ -33,16 +33,16 @@ class AuthController extends Controller
         ]);
 
         $credentials = $request->only('email', 'password');
-    
+
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Credenciales incorrectas'], 401);
         }
-        $user = auth('api')->user(); 
+        $user = auth('api')->user();
         if (!$user) {
             return response()->json(['error' => 'Usuario no encontrado'], 404);
         }
- 
-        if (!$user->rol) {
+
+        if (!$user->id_rol) {
             return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
         }
         $user->load('rol.pestanas');

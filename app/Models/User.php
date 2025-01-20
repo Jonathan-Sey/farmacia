@@ -22,10 +22,10 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'name',
         'email',
-        'rol',
+
         'password',
         'id_rol',
-       
+
     ];
 
     /**
@@ -54,7 +54,7 @@ class User extends Authenticatable implements JWTSubject
 
     return [
         'id' => $this->id,
-        'rol' => $rol ? $rol->nombre : null,  // Devolver el nombre del rol si existe
+        'rol' => $rol ? $rol->id : null,  // Devolver el nombre del rol si existe
         'name' => $this->name,
         'email' => $this->email,
         'pestanas' => $pestanas,  // Asignar las pestañas
@@ -90,7 +90,7 @@ class User extends Authenticatable implements JWTSubject
     public function compra()
     {
 
-        
+
         return $this->hasMany(Compra::class, 'id_usuario');
     }
 
