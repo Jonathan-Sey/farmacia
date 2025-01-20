@@ -49,6 +49,7 @@
         @stack('js')
         
     </body>
+    <script src="{{ asset('js/axios.min.js') }}"></script>
     <script src="{{ asset('/js/barraResponsive.js') }}"></script>
     <script type="module" src="/js/controldeNavPorRoles.js"></script>
     </html>
