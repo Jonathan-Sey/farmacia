@@ -59,7 +59,7 @@ class Dashboard extends Controller
             $totalGeneral += $totalDia;
         }
 
-        return $productos;
+        //return $productos;
 
         return view('dashboard.index',compact('productos','sucursales','compras','NumeroVentas','servicios','medicos','ventas','ventasFiltro','ventasPorDia','totalGeneral', 'diasMes', 'año','mes','nombreSucursales'));
     }

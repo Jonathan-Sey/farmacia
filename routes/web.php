@@ -60,7 +60,8 @@ Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSuc
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 
-
+Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
+Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->name('dashboard.filtrarVentas');
 
 
 
