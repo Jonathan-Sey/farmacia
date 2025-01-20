@@ -87,6 +87,13 @@
                         <span class="text-sm font-medium">Consultas</span>
                     </a>
                 </li>
+                <!-- Botón Logout -->
+                <li>
+                    <a href="javascript:void(0);" id="logout-btn" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-log-out"></i></span>
+                        <span class="text-sm font-medium">Cerrar Sesión</span>
+                    </a>
+                </li>
             </ul>
         </div>
         <!-- Barra móvil (pantallas pequeñas) -->
@@ -104,43 +111,51 @@
      <ul id="menu" class="hidden bg-white shadow-md flex-col fixed top-16 left-0 w-full z-40">
 
             <li data-pestanal="Dashboard" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
-                <a href="/dashboard">Dashboard</a>
+                <a href="/dashboard"><i class="bx bx-home"></i> Dashboard</a>
             </li>
             <li data-pestanal="Usuarios" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('usuarios.index') }}">Usuario</a>
+                <a href="{{ route('usuarios.index') }}"><i class='bx bxs-user'></i> Usuarios</a>
             </li>
             <li data-pestanal="Rol" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('roles.index') }}">Roles</a>
+                <a href="{{ route('roles.index') }}"><i class="bx bx-briefcase-alt"></i> Roles</a>
             </li>
             <li data-pestanal="Categorias" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('categorias.index') }}">Categorías</a>
+                <a href="{{ route('categorias.index') }}"><i class="bx bx-category"></i> Categorias</a>
             </li>
             <li data-pestanal="Proveedores" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('proveedores.index') }}">Proveedores</a>
+                <a href="{{ route('proveedores.index') }}"><i class="bx bxs-package"></i> Proveedores</a>
             </li>
             <li data-pestanal="Sucursales" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('sucursales.index') }}">Sucursal</a>
+                <a href="{{ route('sucursales.index') }}"><i class="bx bxs-building"></i> Sucursales</a>
             </li>
             <li data-pestanal="Productos" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('productos.index') }}">Productos</a>
+                <a href="{{ route('productos.index') }}"><i class="bx bxs-package"></i> Productos</a>
             </li>
             <li data-pestanal="Almacenes" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('almacenes.index') }}">Almacenes</a>
+                <a href="{{ route('almacenes.index') }}"><i class="fa-solid fa-store"></i> Almacenes</a>
             </li>
             <li data-pestanal="Comptas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('compras.index') }}">Compras</a>
+                <a href="{{ route('compras.index') }}"><i class="fa-solid fa-cart-shopping"></i> Compras</a>
             </li>
             <li data-pestanal="Ventas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('ventas.index') }}">Ventas</a>
+                <a href="{{ route('ventas.index') }}"><i class="fa-solid fa-bag-shopping"></i> Ventas</a>
             </li>
             <li data-pestanal="Personas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('personas.index') }}">Personas</a>
+                <a href="{{ route('personas.index') }}"><i class="fa-solid fa-person"></i> Personas</a>
             </li>
             <li data-pestanal="Medicos" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('medicos.index') }}">Medicos</a>
+               <a href="{{ route('medicos.index') }}"><i class="fa-solid fa-briefcase-medical"></i> Medicos</a>
             </li>
             <li data-pestanal="Consultas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('consultas.index') }}">Consultas</a>
+                <a href="{{ route('consultas.index') }}"><i class="fa-solid fa-book-medical"></i> Consultas</a>
+            </li>
+            <li>
+                {{-- <a href="javascript:void(0);" id="logout-btn-mobile" class="block px-6 py-2 text-left text-gray-500 hover:text-gray-800 hover:bg-gray-100">
+                    <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
+                </a> --}}
+                <button id="logout-btn-mobile" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
+                    <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
+                </button>
             </li>
         </ul>
     </div>
