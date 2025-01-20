@@ -14,7 +14,7 @@
              console.log(response.data); 
                 const token = response.data.token;
                     localStorage.setItem('jwt_token',token);
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt_token')}`;
             
                         window.location.href = '/dashboard';
             })

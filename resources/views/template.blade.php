@@ -49,10 +49,11 @@
         @stack('js')
     </body>
 
-
+    <script src="{{ asset('js/axios.min.js') }}"></script>
     <script src="{{ asset('js/barraResponsive.js') }}"></script>
     <script src="{{ asset('js/alertaDeUsuario.js') }}"></script>
     {{-- <script src="{{ asset('js/datepicker/jquery-ui.js') }}"></script> --}}
+
 
     <script src="{{ asset('/js/barraResponsive.js') }}"></script>
     <script type="module" src="/js/controldeNavPorRoles.js"></script>
