@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Throwable;
 
 class Handler extends ExceptionHandler
 {
@@ -32,6 +33,14 @@ class Handler extends ExceptionHandler
      */
     public function register()
     {
-        //
+        $this->reportable(function (Throwable $e) {
+
+         });
+         $this->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'No autenticado'], 401);
+            }
+            return redirect()->guest(route('login'));
+        });
     }
 }
