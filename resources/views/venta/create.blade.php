@@ -113,7 +113,7 @@
                                 required>
                                 <option value="">Seleccionar una sucursal</option>
                                 @foreach ($sucursales as $sucursal)
-                                    <option value="{{ $sucursal->id }}" {{old('id_sucursal') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}}</option>
+                                    <option value="{{ $sucursal->id }}" {{old('id_sucursal') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}} - {{$sucursal->ubicacion}}</option>
                                 @endforeach
                             </select>
                             @error('id_sucursal')
@@ -312,7 +312,11 @@
                     $('#cantidad').prop('disabled', false).attr('placeholder', 'Ingrese la cantidad');
                 } else { // si es servicio
                     $('#stock').val('').prop('placeholder', 'N/A');
+                    // nota se agrego 0 o puede dejarse como n/a, ya que es un servicio codigo nuevo
+                    $('#impuesto').val('').prop('placeholder', 'N/A');
+                    // fin
                     $('#cantidad').prop('disabled', true).val('').attr('placeholder', 'No aplica');
+
                 }
             });
 
@@ -376,7 +380,13 @@
             // Calcular subtotal
             subtotal[contador] = round(cantidad * precio);
             suma += subtotal[contador];
-            iva = round((suma / 100) * impuesto);
+
+            // nota aca se valido si es tipo producto o servicio
+            if(tipo === 1) {
+                iva += round((subtotal[contador]/100) * impuesto);
+            }
+            //iva = round((suma / 100) * impuesto); - esto tenia antes
+
             total = round(suma + iva);
 
             // Agregar producto a la tabla

@@ -15,14 +15,8 @@ class Dashboard extends Controller
 {
     public function index(Request $request){
         // pruebas con fechas del año actual
-        // $año = date('Y');
-        // $mes = date('m');
-
-        // nuevos valores desde el input, esto para acualizar la tabla
-        // en dado caso no hau mostrar los actuales
-        $año = $request->input('año', date('Y'));
-        $mes = $request->input('mes', date('m'));
-
+         $año = date('Y');
+         $mes = date('m');
 
         $productos = Producto::where('tipo',1)->count();// conteo de productos
         $sucursales = Sucursal::count();
@@ -30,6 +24,7 @@ class Dashboard extends Controller
         $NumeroVentas = Venta::count();
         $servicios = Producto::where('tipo',2)->count();//conteo de servicios
         $medicos = DetalleMedico::count();
+        $nombreSucursales = Sucursal::all();
 
         // datos de ventas, esto para la tabla
         $ventas = Venta::with([
@@ -38,7 +33,7 @@ class Dashboard extends Controller
             'sucursal:id,nombre,ubicacion',
             ])->latest()->get();
 
-        // fitrar fecjas por el campo fecha_venta
+        // fitrar fechas por el campo fecha_venta
         $ventasFiltro = Venta::with([
             'persona:id,nombre',
             'productos:id,nombre',
@@ -64,13 +59,17 @@ class Dashboard extends Controller
             $totalGeneral += $totalDia;
         }
 
-        //return $diasMes;
-        return view('dashboard.index',compact('productos','sucursales','compras','NumeroVentas','servicios','medicos','ventas','ventasFiltro','ventasPorDia','totalGeneral', 'diasMes', 'año','mes'));
+        //return $ventasFiltro;
+        return view('dashboard.index',compact('productos','sucursales','compras','NumeroVentas','servicios','medicos','ventas','ventasFiltro','ventasPorDia','totalGeneral', 'diasMes', 'año','mes','nombreSucursales'));
     }
 
     public function filtrarVentas(Request $request){
+        // filtro en base al mes
         $año = $request->input('año');
         $mes = $request->input('mes');
+        // filtrado por mes
+        $sucusalId = $request->input('sucursal');
+
 
          // fitrar fecjas por el campo fecha_venta
          $ventasFiltro = Venta::with([
@@ -79,6 +78,9 @@ class Dashboard extends Controller
             'sucursal:id,nombre,ubicacion',
         ])->whereYear('fecha_venta', $año) //filtro por año
         ->whereMonth('fecha_venta', $mes)// filto pod mes
+        ->when($sucusalId, function($query) use ($sucusalId){
+            return $query->where('id_sucursal', $sucusalId);
+        })
         ->latest()
         ->get();
 
@@ -102,6 +104,8 @@ class Dashboard extends Controller
             'diasMes' => $diasMes,
             'ventasPorDia' => $ventasPorDia,
             'totalGeneral' => $totalGeneral,
+            'mes' => $mes,
+            'año' => $año,
         ]);
     }
 
