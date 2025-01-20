@@ -22,6 +22,29 @@
                     @enderror
                 </div>
 
+                <div class="mt-2 mb-5">
+                    <label for="pestanas" class="uppercase block text-sm font-medium text-gray-900">Pestañas</label>
+                    <select name="pestanas[]" id="pestanas" multiple class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" onchange="updateSelectedTabs()">
+                        @foreach($pestanas as $pestana)
+                            <option value="{{ $pestana->id }}" 
+                                @if(in_array($pestana->id, $rol->pestanas->pluck('id')->toArray())) selected @endif>
+                                {{ $pestana->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('pestanas')
+                    <div role="alert" class="alert alert-error mt-4 p-2">
+                        <span class="text-white font-bold">{{ $message }}</span>
+                    </div>
+                    @enderror
+                </div>
+                
+                <!-- Lista dinámica de pestañas seleccionadas -->
+                <div class="mt-2 mb-5">
+                    <label class="uppercase block text-sm font-medium text-gray-900">Pestañas Seleccionadas</label>
+                    <ul id="selected-tabs-list" class="list-disc pl-5"></ul>
+                </div>
+
                 <div class="mt-2">
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
                     <textarea name="descripcion" id="descripcion" rows="3" placeholder="Descripción del Rol" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{old('descripcion', $rol->descripcion)}}</textarea>
@@ -45,5 +68,24 @@
 @endsection
 
 @push('js')
+<script>
+    // Función para actualizar la lista de pestañas seleccionadas en tiempo real
+    function updateSelectedTabs() {
+        const selectedTabs = document.getElementById('pestanas').selectedOptions;
+        const selectedTabsList = document.getElementById('selected-tabs-list');
+        
+        // Limpiar la lista
+        selectedTabsList.innerHTML = '';
 
+        // Añadir las pestañas seleccionadas a la lista
+        Array.from(selectedTabs).forEach(option => {
+            const listItem = document.createElement('li');
+            listItem.textContent = option.text; // Mostrar el nombre de la pestaña
+            selectedTabsList.appendChild(listItem);
+        });
+    }
+
+    // Llamar a la función al cargar la página en caso de que haya selecciones previas
+    window.onload = updateSelectedTabs;
+</script>
 @endpush
