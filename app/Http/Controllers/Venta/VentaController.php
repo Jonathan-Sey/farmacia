@@ -162,6 +162,7 @@ class VentaController extends Controller
 
          //$venta->load('productos');
         return view('venta.show',compact('venta'));
+
     }
 
     /**
