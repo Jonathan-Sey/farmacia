@@ -19,4 +19,8 @@ class Rol extends Model
     {
         return $this->hasMany(User::class,'id_rol');
     }
+    public function pestanas()
+    {
+        return $this->belongsToMany(Pestana::class, 'rol_pestana', 'rol_id', 'pestana_id');
+    }
 }

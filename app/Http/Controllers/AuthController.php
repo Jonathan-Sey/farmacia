@@ -27,29 +27,32 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
-        logger('Entrando al método login');
-        
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6',
         ]);
-    
-        logger('Datos validados:', $request->only('email', 'password'));
-    
+
         $credentials = $request->only('email', 'password');
     
         if (!$token = auth('api')->attempt($credentials)) {
-            logger('Credenciales inválidas');
             return response()->json(['error' => 'Credenciales incorrectas'], 401);
         }
-
-        // Imprimir el token para verlo en el log
-    \Log::info('Generated Token: ' . $token);
-    
-        logger('Usuario autenticado, token generado');
-        $request->session()->put('jwt_token', $token);
-    
-        return redirect()->route('dashboard')->with('success', 'Inicio de sesión exitoso.');
+        $user = auth('api')->user(); 
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+ 
+        if (!$user->rol) {
+            return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
+        }
+        $user->load('rol.pestanas');
+        return response()->json([
+            'success' => true,
+            'token' => $token,
+            'user' => $user,
+            'rol' =>  $user->rol,
+            //'pestanas' => $user->rol->pestanas,
+        ]);
     }
     /**
      * Get the authenticated User.
@@ -103,7 +106,9 @@ class AuthController extends Controller
         $validator = Validator::make($request->all(),[
             'name' => 'required',
             'email' => 'required|string|email|max:100|unique:users',
-            'password' => 'required|string|min:6',
+            'password' => 'required|string|min:6|max:12',
+            'rol' => 'required|string',
+            'id_rol'=> 'required',
             ]
         );
 

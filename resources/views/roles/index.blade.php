@@ -3,7 +3,6 @@
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-
 @endpush
 
 @section('contenido')
@@ -31,33 +30,36 @@
             </a>
             <div>
 
-               {{-- Boton editar --}}
-               <form action="{{route('roles.edit',['rol'=>$rol->id])}}" method="GET">
+        {{-- Mostrar las pestañas asignadas --}}
+        <p><strong>Pestañas asignadas:</strong></p>
+        <ul>
+            @foreach ($rol->pestanas as $pestana)
+                <li>{{ $pestana->nombre }}</li> {{-- Puedes mostrar el nombre de las pestañas asignadas--}}
+            @endforeach
+        </ul>
+
+        <div>
+            {{-- Botón editar --}}
+            <form action="{{ route('roles.edit', ['rol' => $rol->id]) }}" method="GET">
                 @csrf
                 <button type="submit" class="btn btn-primary font-bold uppercase">
                     <i class="fas fa-edit"></i>
                 </button>
-               </form>
+            </form>
 
-               {{-- <form id="eliminar-from-{{ $rol-id }}" action="{{route('')}}"> --}}
-                {{-- Cambio de estado --}}
-                <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn" data-id="{{$rol->id}}"  data-info="{{$rol->nombre}}">
-                    <i class="fas fa-trash"></i>
-                </button>
+            {{-- Botón eliminar --}}
+            <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn" data-id="{{ $rol->id }}" data-info="{{ $rol->nombre }}">
+                 <i class="fas fa-trash"></i>
+            </button>
 
-                {{-- Formulario oculto para eliminación --}}
-                <form id="form-eliminar{{$rol->id}}" action="{{ route('roles.destroy', $rol->id) }}" method="POST" style="display: none;">
-                    @csrf
+            {{-- Formulario oculto para eliminación --}}
+            <form id="form-eliminar{{ $rol->id }}" action="{{ route('roles.destroy', ['rol' => $rol->id]) }}" method="POST" style="display: none;">
+                @csrf
                     @method('DELETE')
-                </form>
-
-            </div>
-        @endforeach
-    </ul>
-
-
-
-
+            </form>
+        </div>
+    @endforeach
+</ul>
 @endsection
 
 
@@ -86,14 +88,11 @@
         didOpen: (toast) => {
             toast.onmouseenter = Swal.stopTimer;
             toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log("Evento DOMContentLoaded disparado");
-                Toast.fire({ icon: "success",
-                title: "{{ session('success')}}"
-                });
-        });
+        }
+    });
+    document.addEventListener('DOMContentLoaded', function() {
+        Toast.fire({ icon: "success", title: "{{ session('success') }}" });
+    });
 </script>
 @endif
 
@@ -125,9 +124,7 @@
     });
 </script>
 
-
-
-{{-- Modal para eliminar  --}}
+{{-- Modal para eliminar --}}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const deleteButtons = document.querySelectorAll('.eliminar-btn');
@@ -138,7 +135,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const rolnombre = this.getAttribute('data-info');
             Swal.fire({
                 title: "¿Estás seguro?",
-                text: "¡Deseas eliminar! " + rolnombre,
+                text: "¡Deseas eliminar el rol " + rolnombre + "!",
                 icon: "warning",
                 showCancelButton: true,
                 confirmButtonColor: "#3085d6",
@@ -147,11 +144,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 cancelButtonText: "Cancelar"
             }).then((result) => {
                 if (result.isConfirmed) {
+                    // Activar el formulario de eliminación y enviarlo
                     document.getElementById('form-eliminar' + rolId).submit();
                 }
             });
         });
     });
 });
+
 </script>
 @endpush
