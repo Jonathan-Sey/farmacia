@@ -150,9 +150,6 @@
                 <a href="{{ route('consultas.index') }}"><i class="fa-solid fa-book-medical"></i> Consultas</a>
             </li>
             <li>
-                {{-- <a href="javascript:void(0);" id="logout-btn-mobile" class="block px-6 py-2 text-left text-gray-500 hover:text-gray-800 hover:bg-gray-100">
-                    <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
-                </a> --}}
                 <button id="logout-btn-mobile" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
                     <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
                 </button>
