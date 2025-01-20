@@ -10,6 +10,7 @@ use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Consulta\consultaController;
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
 use App\Http\Controllers\Venta\VentaController;
@@ -47,6 +48,9 @@ Route::get('/index', function(){
     return view('pagina_principal.index');
 });
 
+// Route::get('/dashboard', [Dashboard::class, 'index']);
+
+
 
 
 // //modulo rol
@@ -77,6 +81,7 @@ Route::get('/index', function(){
    // Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
 //});
 
+
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::post('roles/{rol}/estado', [RolController::class, 'changeStatus'])->name('roles.changeStatus');
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
@@ -93,6 +98,9 @@ Route::resource('consultas', consultaController::class)->parameters(['consultas'
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+
+Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
+Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->name('dashboard.filtrarVentas');
 
 
 
