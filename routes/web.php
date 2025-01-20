@@ -78,8 +78,14 @@ Route::get('/index', function(){
 //});
 
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+
+Route::group(['middleware' => ['auth:api', 'role:1']], function() {
+    Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+});
+
+
 Route::post('roles/{rol}/estado', [RolController::class, 'changeStatus'])->name('roles.changeStatus');
-Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+// Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
 Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
