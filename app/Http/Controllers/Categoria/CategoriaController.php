@@ -8,6 +8,12 @@ use Illuminate\Http\Request;
 
 class CategoriaController extends Controller
 {
+
+    public function __construct() {
+        $this->middleware('auth:api', ['except' => ['index','show']]);
+        //$this->middleware('role:2', ['only' => ['create',]]);
+    }
+
     /**
      * Display a listing of the resource.
      *
