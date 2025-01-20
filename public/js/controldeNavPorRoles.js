@@ -4,12 +4,12 @@ document.addEventListener('DOMContentLoaded', function () {
     const token = localStorage.getItem('jwt_token');
 
     if (token) {
-        
-        const decodedToken = jwt_decode(token);
 
+        const decodedToken = jwt_decode(token);
+      console.log(decodedToken);
         // Obtener las pestañas desde el payload del token
         const pestanas = decodedToken.pestanas || [];
-        console.log(decodedToken.pestanas); 
+       
         // Configurar la navegación dinámica
         setupNavigation(pestanas);
     }
