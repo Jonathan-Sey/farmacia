@@ -9,6 +9,7 @@ use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Consulta\consultaController;
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
 use App\Http\Controllers\Venta\VentaController;
@@ -36,6 +37,7 @@ Route::get('/dashboard', function () {
     return view('dashboard.index');
 });
 
+
 Route::resource('usuarios', AuthController::class)->parameters(['usuarios' => 'usuario']);
 Route::post('/usuarios/register', [AuthController::class, 'register'])->name('usuarios.register');
 Route::patch('/usuarios/{usuario}/actualizar-estado',[AuthController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');
@@ -57,6 +59,8 @@ Route::resource('consultas', consultaController::class)->parameters(['consultas'
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+
+
 
 
 
