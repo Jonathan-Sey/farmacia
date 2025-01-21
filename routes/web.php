@@ -8,6 +8,7 @@ use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Usuario\UsuarioController;
 use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Medico\MedicoController;
@@ -38,10 +39,10 @@ Route::get('/dashboard', function () {
 });
 
 
-Route::resource('usuarios', AuthController::class)->parameters(['usuarios' => 'usuario']);
-Route::post('/usuarios/register', [AuthController::class, 'register'])->name('usuarios.register');
-Route::patch('/usuarios/{usuario}/actualizar-estado',[AuthController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');
-Route::patch('usuarios/{id}', [AuthController::class, 'update'])->name('usuarios.update');
+Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuario']);
+Route::post('/usuarios/register', [UsuarioController::class, 'register'])->name('usuarios.register');
+Route::patch('/usuarios/{usuario}/actualizar-estado',[UsuarioController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');
+Route::patch('usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::post('roles/{rol}/estado', [RolController::class, 'changeStatus'])->name('roles.changeStatus');
