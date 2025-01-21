@@ -43,7 +43,7 @@ Route::post('/usuarios/register', [AuthController::class, 'register'])->name('us
 Route::patch('/usuarios/{usuario}/actualizar-estado',[AuthController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');
 Route::patch('usuarios/{id}', [AuthController::class, 'update'])->name('usuarios.update');
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
-Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+//Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 
 Route::post('roles/{rol}/estado', [RolController::class, 'changeStatus'])->name('roles.changeStatus');
 Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
