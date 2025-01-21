@@ -2436,9 +2436,6 @@ html {
 .left-0 {
   left: 0px;
 }
-.left-1 {
-  left: 0.25rem;
-}
 .left-\[-50px\] {
   left: -50px;
 }
@@ -2642,9 +2639,6 @@ html {
 }
 .max-w-\[400px\] {
   max-width: 400px;
-}
-.max-w-\[527px\] {
-  max-width: 527px;
 }
 .max-w-full {
   max-width: 100%;
@@ -2985,10 +2979,6 @@ html {
 .tracking-wider {
   letter-spacing: 0.05em;
 }
-.text-\[\#3ABFF8\] {
-  --tw-text-opacity: 1;
-  color: rgb(58 191 248 / var(--tw-text-opacity, 1));
-}
 .text-blue-500 {
   --tw-text-opacity: 1;
   color: rgb(59 130 246 / var(--tw-text-opacity, 1));
@@ -3295,11 +3285,6 @@ html {
 
   .sm\:text-right {
     text-align: right;
-  }
-
-  .sm\:text-2xl {
-    font-size: 1.5rem;
-    line-height: 2rem;
   }
 
   .sm\:text-3xl {
