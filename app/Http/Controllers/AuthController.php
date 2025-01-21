@@ -18,7 +18,9 @@ class AuthController extends Controller
     public function __construct()
     {
         $this->middleware('auth:api', ['except' => ['login', 'register']]);
+
     }
+
 
     /**
      * Get a JWT via given credentials.
@@ -46,13 +48,16 @@ class AuthController extends Controller
             return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
         }
         $user->load('rol.pestanas');
+        // Guardar el token JWT en una cookie
+        $cookie = cookie('jwt_token', $token, 60, '/', null, false, true);
+
         return response()->json([
             'success' => true,
             'token' => $token,
             'user' => $user,
             'rol' =>  $user->rol,
             //'pestanas' => $user->rol->pestanas,
-        ]);
+        ])->cookie($cookie);
     }
     /**
      * Get the authenticated User.
@@ -126,4 +131,6 @@ class AuthController extends Controller
         'user' => $user
        ],201);
     }
+
+
 }

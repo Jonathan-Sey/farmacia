@@ -14,19 +14,25 @@ document.addEventListener('DOMContentLoaded', function () {
         // Configurar la navegación dinámica
         setupNavigation(pestanas);
     }
+
+
+
+    function setupNavigation(pestanas) {
+        // Ocultar todas las pestañas primero
+        const navItems = document.querySelectorAll('[data-pestana]');
+        navItems.forEach(item => item.style.display = 'none');
+
+        // Mostrar solo las pestañas permitidas
+        pestanas.forEach(pestana => {
+            const navItem = document.querySelector(`[data-pestana="${pestana}"]`);
+            if (navItem) {
+                navItem.style.display = 'block';
+            }
+        });
+    }
+
+
 });
 
-function setupNavigation(pestanas) {
-    // Ocultar todas las pestañas primero
-    const navItems = document.querySelectorAll('[data-pestana]');
-    navItems.forEach(item => item.style.display = 'none');
 
-    // Mostrar solo las pestañas permitidas
-    pestanas.forEach(pestana => {
-        const navItem = document.querySelector(`[data-pestana="${pestana}"]`);
-        if (navItem) {
-            navItem.style.display = 'block';
-        }
-    });
 
-}

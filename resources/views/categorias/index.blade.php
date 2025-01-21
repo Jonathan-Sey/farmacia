@@ -7,6 +7,7 @@
 @endpush
 
 @section('contenido')
+
 {{-- mensaje script  --}}
 <a href="{{ route('categorias.create') }}">
     <button class="btn btn-success text-white font-bold uppercase">
@@ -15,6 +16,7 @@
 </a>
 
     <h1>Contenido Roles</h1>
+    <div id="token-info" class="mb-4"> <!-- La información del token se mostrará aquí --> </div>
     <ul>
         @foreach ($categorias as $categoria)
             <li>{{ $categoria->nombre }}</li>
@@ -60,6 +62,8 @@
 @endsection
 
 @push('js')
+<script src="/path/to/controldeNavPorRol.js"></script>
+<script src="/path/to/controldeNavPorRol.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -142,5 +146,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+</script>
+
+<script>
+    function mostrarInformacionToken(decodedToken) { const tokenInfoElement = document.getElementById('token-info'); if (tokenInfoElement) { tokenInfoElement.innerHTML = ` <p>Email: ${decodedToken.email}</p> <p>Rol: ${decodedToken.rol}</p> <p>Nombre: ${decodedToken.name}</p> <p>Pestañas: ${decodedToken.pestanas.join(', ')}</p> `; } }
 </script>
 @endpush
