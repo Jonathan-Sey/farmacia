@@ -157,9 +157,15 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth('api')->logout();
+   
+        // Verificar si hay un usuario autenticado
+        if (auth('api')->check()) {
+            auth('api')->logout(); // Cerrar sesión
+            return response()->json(['message' => 'Successfully logged out'], 200);
+        }
 
-        return response()->json(['message' => 'Successfully logged out']);
+        return response()->json(['message' => 'No user is currently logged in'], 401);
+    
     }
 
     /**
