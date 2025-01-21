@@ -1,7 +1,7 @@
 <header>
-    <div class="flex absolute bg-gray-100 min-h-screen">
-        <!-- Barra lateral (pantallas grandes) -->
-        <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden">
+    <div class="flex">
+        <!-- Barra lateral fija -->
+        <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden fixed top-0 left-0 h-full">
             <div class="flex items-center justify-center h-20 shadow-md">
                 <h1 class="text-3xl uppercase text-indigo-500">Farmacia</h1>
             </div>
