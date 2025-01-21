@@ -18,7 +18,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register','index','create','destroy','edit','update','actualizarEstado']]);
+        $this->middleware('auth:api', ['except' => ['login']]);
     }
 
 
@@ -27,6 +27,7 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+<<<<<<< HEAD
     public function index()
     {
         $roles = Rol::all();
@@ -108,6 +109,8 @@ class AuthController extends Controller
     }
 
 
+=======
+>>>>>>> main
 
     public function login(Request $request)
     {
@@ -194,6 +197,7 @@ class AuthController extends Controller
         ]);
     }
 
+<<<<<<< HEAD
     public function register(Request $request){
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:100',
@@ -220,3 +224,7 @@ class AuthController extends Controller
 
 
 }
+=======
+    
+}
+>>>>>>> main
