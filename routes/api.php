@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Categoria\CategoriaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -29,4 +29,8 @@ Route::group([
     Route::post('me', 'App\Http\Controllers\AuthController@me');
     Route::post('register', 'App\Http\Controllers\AuthController@register');
 });
+
+//  Route::group(['middleware' => ['auth:api', 'role:2'], 'prefix' => 'api'], function() {
+//      Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria'])->names([ 'index' => 'api.categorias.index', 'create' => 'api.categorias.create', 'store' => 'api.categorias.store', 'show' => 'api.categorias.show', 'edit' => 'api.categorias.edit', 'update' => 'api.categorias.update', 'destroy' => 'api.categorias.destroy', ]);
+//  });
 

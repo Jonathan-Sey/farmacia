@@ -85,6 +85,9 @@ Route::get('/index', function(){
 // });
 
 
+//Route::middleware(['auth'])->group(function () { Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']); });
+//Route::middleware(['auth'])->group(function () { Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']); });
+
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 
 Route::post('roles/{rol}/estado', [RolController::class, 'changeStatus'])->name('roles.changeStatus');
