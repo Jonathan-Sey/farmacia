@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\Almacen\AlmacenController;
 use App\Http\Controllers\Categoria\CategoriaController;
 use App\Http\Controllers\Compra\CompraController;
@@ -10,6 +9,7 @@ use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Consulta\consultaController;
+use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
 use App\Http\Controllers\Venta\VentaController;
@@ -31,63 +31,18 @@ use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return view('Login.login');
-});
-
-Route::get('login', function () {
-    return view('Login.login');
- })->name('login');
+})->name('login');
 
 Route::get('/dashboard', function () {
     return view('dashboard.index');
 });
 
-Route::get('/Recuperacion_contraseña', function(){
-    return view('OlvidoC.olvidoC');
-});
 
-Route::get('/index', function(){
-    return view('pagina_principal.index');
-});
-
-
-
-
-// //modulo rol
-// Route::get('/roles', [RolController::class, 'index'] )->name('roles');
-// //vista para crear roles
-// Route::get('/roles/create', [RolController::class,'create'])->name('roles.create');
-// //enviando datos del rol
-// Route::post('/roles/create', [RolController::class,'store'])->name('roles.store');
-
-// //vista editar
-// Route::get('/roles/{rol}/edit', [RolController::class,'edit'])->name('roles.edit');
-// //enviar datos para actuializar rol
-// Route::patch('/roles/{rol}/edit', [RolController::class,'update'])->name('roles.update');
-// // ruta para eliminar
-// Route::delete('/roles/{rol}',[RolController::class,'destroy'])->name('roles.destroy');
-
-// Route::get('/categorias', [CategoriaController::class, 'index'])->name('categorias');
-
-//Route::middleware(['role:admin'])->group(function () {
- //   Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
- //   Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
-   // Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
-   // Route::resource('proveedores', ProveedorController::class)->parameters(['proveedores' => 'proveedor']);
-//});
-
-//Route::middleware(['role:admin,cajero'])->group(function () {
- //   Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
-   // Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
-//});
-
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-
-//Route::middleware(['auth'])->group(function () { Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']); });
-//Route::middleware(['auth'])->group(function () { Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']); });
-
+Route::resource('usuarios', AuthController::class)->parameters(['usuarios' => 'usuario']);
+Route::post('/usuarios/register', [AuthController::class, 'register'])->name('usuarios.register');
+Route::patch('/usuarios/{usuario}/actualizar-estado',[AuthController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');
+Route::patch('usuarios/{id}', [AuthController::class, 'update'])->name('usuarios.update');
+Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
 
 Route::post('roles/{rol}/estado', [RolController::class, 'changeStatus'])->name('roles.changeStatus');
@@ -105,6 +60,9 @@ Route::resource('consultas', consultaController::class)->parameters(['consultas'
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+
+Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
+Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->name('dashboard.filtrarVentas');
 
 
 

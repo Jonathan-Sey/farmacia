@@ -6,11 +6,10 @@ document.addEventListener('DOMContentLoaded', function () {
     if (token) {
 
         const decodedToken = jwt_decode(token);
-        console.log(decodedToken);
-
+      console.log(decodedToken);
         // Obtener las pestañas desde el payload del token
         const pestanas = decodedToken.pestanas || [];
-        console.log(decodedToken.pestanas);
+
         // Configurar la navegación dinámica
         setupNavigation(pestanas);
     }
