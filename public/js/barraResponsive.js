@@ -42,6 +42,11 @@ window.addEventListener('resize', () => {
             }
           
         });
+        // Mostrar siempre el botón de cerrar sesión
+      const logoutBtn = document.getElementById('logout-btn-mobile');
+            if (logoutBtn) {
+            logoutBtn.style.display = 'block';
+         }
     }
 });
 

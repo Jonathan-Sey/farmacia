@@ -7,7 +7,7 @@
 
             axios.post('api/auth/login', {
                  email: email,
-                 password: password
+                 password: password,
             })
             .then(response => {
              // Guardar el token en localStorage

@@ -23,7 +23,7 @@
             Estado:
             <a href="#" class="estado" data-id="{{ $rol->id}}" data-estado="{{$rol->estado}}">
                 @if ($rol->estado == 1)
-                    <span class="text-green-500 font-bold" >Ativo</span>
+                    <span class="text-green-500 font-bold" >Activo</span>
                 @else
                     <span class="text-red-500 font-bold" >Inactivo</span>
                 @endif

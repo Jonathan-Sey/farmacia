@@ -2,7 +2,8 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Categoria\CategoriaController;
+use App\Http\Controllers\AuthController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -23,7 +24,7 @@ Route::group([
     'middleware' => ['api', 'auth:api'],
     'prefix' => 'auth'
 ], function ($router) {
-    Route::post('logout', 'App\Http\Controllers\AuthController@logout');
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
     Route::post('me', 'App\Http\Controllers\AuthController@me');
 });
