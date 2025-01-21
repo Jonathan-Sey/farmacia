@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
+use App\Models\Rol;
 
 class AuthController extends Controller
 {
@@ -17,8 +18,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth:api', ['except' => ['login', 'register']]);
-
+        $this->middleware('auth:api', ['except' => ['login', 'register','index','create','destroy','edit','update','actualizarEstado']]);
     }
 
 
@@ -27,6 +27,88 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
+    public function index()
+    {
+        $roles = Rol::all();
+        // Filtrar solo usuarios activos
+        $usuarios = User::where('activo', true)->with('rol:id,nombre')->get();
+        return view('usuarios.index', compact('roles', 'usuarios'));
+    }
+
+
+
+    public function create(){
+        $roles = Rol::all();
+        return view('usuarios.create',compact('roles'));
+    }
+
+    public function destroy()
+    {
+
+    }
+
+    public function edit($id)
+    {
+        // Obtén al usuario por ID
+        $user = User::findOrFail($id);
+        $roles = Rol::all();
+        return view('usuarios.edit', compact('user', 'roles'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        // Obtener el usuario desde la base de datos
+        $user = User::findOrFail($id);
+
+        // Determinar si el email ha cambiado
+        $emailValidationRule = $request->email == $user->email
+            ? 'required|string|email|max:100'
+            : 'required|string|email|max:100|unique:users,email,' . $id;
+
+        // Realizar la validación
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|string|max:255',
+            'email' => $emailValidationRule, // Validación condicional del email
+            'password' => 'nullable|string|min:6|max:12',
+            'id_rol' => 'required|exists:rol,id',
+        ]);
+
+        // Si la validación falla, redirigir con errores
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        // Actualizar los datos del usuario
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->id_rol = $request->id_rol;
+
+        // Si se proporciona una nueva contraseña, actualizarla
+        if ($request->filled('password')) {
+            $user->password = bcrypt($request->password);
+        }
+
+        // Guardar los cambios
+        $user->save();
+
+        // Redirigir con mensaje de éxito
+        return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
+    }
+
+    // En el controlador de usuarios
+    public function actualizarEstado(Request $request, $id)
+    {
+        $usuario = User::findOrFail($id); // Busca al usuario por ID
+
+        // Cambiar el estado de 'activo' a false
+        $usuario->activo = false;
+        $usuario->save();
+
+        return response()->json(['success' => 'Usuario desactivado correctamente']);
+    }
+
+
+
     public function login(Request $request)
     {
         $request->validate([
@@ -55,7 +137,6 @@ class AuthController extends Controller
             'success' => true,
             'token' => $token,
             'user' => $user,
-            'rol' =>  $user->rol,
             //'pestanas' => $user->rol->pestanas,
         ])->cookie($cookie);
     }
@@ -76,7 +157,7 @@ class AuthController extends Controller
      */
     public function logout()
     {
-        auth()->logout();
+        auth('api')->logout();
 
         return response()->json(['message' => 'Successfully logged out']);
     }
@@ -88,7 +169,7 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth()->refresh());
+        return $this->respondWithToken(auth('api')->refresh());
     }
 
     /**
@@ -108,28 +189,27 @@ class AuthController extends Controller
     }
 
     public function register(Request $request){
-        $validator = Validator::make($request->all(),[
-            'name' => 'required',
+        $validator = Validator::make($request->all(), [
+            'nombre' => 'required|string|max:100',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6|max:12',
-            'rol' => 'required|string',
-            'id_rol'=> 'required',
-            ]
-        );
+            'id_rol' => 'required|exists:rol,id',
+        ]);
 
-        if($validator->fails()){
-            return response()->json($validator->errors()->tojson(),400);
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
         }
 
-       $user = User::create(array_merge(
-        $validator->validate(),
-        ['password' => bcrypt($request->password)]
-       ));
+        $user = User::create([
+            'name' => $request->input('nombre'),
+            'email' => $request->input('email'),
+            'password' => bcrypt($request->input('password')),
+            'id_rol' => $request->input('id_rol'),
+        ]);
 
-       return response()->json([
-        'message' => '¡Usuario registrado exitosamente!',
-        'user' => $user
-       ],201);
+        return redirect()->route('usuarios.index')->with('success', '¡Usuario registrado exitosamente!');
     }
 
 
