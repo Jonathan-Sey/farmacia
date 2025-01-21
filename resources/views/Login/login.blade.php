@@ -22,12 +22,6 @@
             
                 <button type="submit" class="btn btn-outline font-bold left-[-50px] sm:left-5 w-80 text-white hover:bg-[#00000050] hover:text-white hover:border-white">Iniciar Secion</button>
         </form>
-        
-    </div>
-    <div>
-        <p class=" font-bold text-white">
-            ¿Olvido la contraseña? <a href="/Recuperacion_contraseña" class="text-[#3ABFF8]">Recuperar</a>
-        </p>
     </div>
 </div>
 </div>
