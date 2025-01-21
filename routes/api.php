@@ -35,5 +35,5 @@ Route::group([
     'prefix' => 'auth'
 ], function ($router) {
     Route::post('login', 'App\Http\Controllers\AuthController@login');
-    Route::post('register', 'App\Http\Controllers\AuthController@register');
+    Route::post('register', 'App\Http\Controllers\UsuarioController@register');
 });
