@@ -35,7 +35,25 @@ class AuthController extends Controller
             'password' => 'required|min:6',
         ]);
 
+
         $credentials = $request->only('email', 'password');
+
+        // if (Auth::attempt($credentials)) {
+        //     // Regenerar sesión para mayor seguridad
+        //     $request->session()->regenerate();
+
+        //     // Redirigir al dashboard
+        //     return redirect()->intended('/dashboard');
+        // }
+        // // error si falla
+        // return back()->withErrors([
+        //     'email' => 'Las credenciales no coinciden con nuestros registros.',
+        // ])->onlyInput('email');
+
+          // Autenticar al usuario con Laravel para la sesión
+        if (!auth()->attempt($credentials)) {
+            return response()->json(['error' => 'Credenciales incorrectas'], 401);
+        }
 
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Credenciales incorrectas'], 401);
@@ -49,15 +67,21 @@ class AuthController extends Controller
             return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
         }
         $user->load('rol.pestanas');
+
+
+       // auth()->attempt($credentials);
         // Guardar el token JWT en una cookie
-        $cookie = cookie('jwt_token', $token, 60, '/', null, false, true);
+        //$cookie = cookie('jwt_token', $token, 60, '/', null, false, true);
+        session()->regenerate();
 
         return response()->json([
             'success' => true,
             'token' => $token,
-            'user' => $user,
+            'user' => auth()->user(),
+            //'user' => $user,
             //'pestanas' => $user->rol->pestanas,
-        ])->cookie($cookie);
+        //])->cookie($cookie);
+        ]);
     }
     /**
      * Get the authenticated User.
@@ -74,14 +98,20 @@ class AuthController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function logout()
+    public function logout(Request $request)
     {
 
         // Verificar si hay un usuario autenticado
         if (auth('api')->check()) {
             auth('api')->logout(); // Cerrar sesión
+            session()->flush();
             return response()->json(['message' => 'Successfully logged out'], 200);
         }
+        Auth::logout();
+
+        // Invalidar y regenerar sesión
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         return response()->json(['message' => 'No user is currently logged in'], 401);
 
