@@ -8,61 +8,13 @@
 
 @section('contenido')
 
-<<<<<<< HEAD
-{{-- mensaje script  --}}
-=======
 {{-- Botón para crear nueva categoría --}}
->>>>>>> main
 <a href="{{ route('categorias.create') }}">
     <button class="btn btn-success text-white font-bold uppercase">
         Crear
     </button>
 </a>
 
-<<<<<<< HEAD
-    <h1>Contenido Roles</h1>
-    <div id="token-info" class="mb-4"> <!-- La información del token se mostrará aquí --> </div>
-    <ul>
-        @foreach ($categorias as $categoria)
-            <li>{{ $categoria->nombre }}</li>
-            <li>{{ $categoria->descripcion }}</li>
-                {{-- Validacion de estado --}}
-            Estado:
-            <a href="#" class="estado" data-id="{{ $categoria->id}}" data-estado="{{$categoria->estado}}">
-                @if ($categoria->estado == 1)
-                    <span class="text-green-500 font-bold" >Ativo</span>
-                @else
-                    <span class="text-red-500 font-bold" >Inactivo</span>
-                @endif
-            </a>
-            <div>
-
-               {{-- Boton editar --}}
-               <form action="{{route('categorias.edit',['categoria'=>$categoria->id])}}" method="GET">
-                @csrf
-                <button type="submit" class="btn btn-primary font-bold uppercase">
-                    <i class="fas fa-edit"></i>
-                </button>
-               </form>
-
-               {{-- <form id="eliminar-from-{{ $rol-id }}" action="{{route('')}}"> --}}
-                {{-- Cambio de estado --}}
-                <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn" data-id="{{$categoria->id}}"  data-info="{{$categoria->nombre}}">
-                    <i class="fas fa-trash"></i>
-                </button>
-
-                {{-- Formulario oculto para eliminación --}}
-                <form id="form-eliminar{{$categoria->id}}" action="{{ route('categorias.destroy', $categoria->id) }}" method="POST" style="display: none;">
-                    @csrf
-                    @method('DELETE')
-                </form>
-
-            </div>
-        @endforeach
-    </ul>
-
-
-=======
 {{-- Tabla de categorías --}}
 <x-data-table>
     <x-slot name="thead">
@@ -76,7 +28,6 @@
             </tr>
         </thead>
     </x-slot>
->>>>>>> main
 
     <x-slot name="tbody">
         <tbody>
@@ -102,12 +53,12 @@
                             <i class="fas fa-edit"></i>
                         </button>
                     </form>
-    
+
                     {{-- Botón Eliminar --}}
                     <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{ $categoria->id }}" data-info="{{ $categoria->nombre }}">
                         <i class="fas fa-trash"></i>
                     </button>
-    
+
                     {{-- Formulario oculto para eliminación --}}
                     <form id="form-eliminar{{ $categoria->id }}" action="{{ route('categorias.destroy', $categoria->id) }}" method="POST" style="display: none;">
                         @csrf
@@ -118,19 +69,12 @@
             @endforeach
         </tbody>
     </x-slot>
-    
+
 </x-data-table>
 
 @endsection
 
 @push('js')
-<<<<<<< HEAD
-<script src="/path/to/controldeNavPorRol.js"></script>
-<script src="/path/to/controldeNavPorRol.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-=======
-
->>>>>>> main
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.js"></script>

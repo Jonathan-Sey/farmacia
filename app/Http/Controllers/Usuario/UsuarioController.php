@@ -18,16 +18,16 @@ class UsuarioController extends Controller
      */
     public function index()
         {
-      
+
         $roles = Rol::where('estado', '!=', 0)->get();
         // Filtrar solo usuarios activos y cargar el rol relacionado con las columnas específicas
         $usuarios = User::where('activo', true)->with('rol:id,nombre') // Solo cargar 'id' y 'nombre' de la tabla 'rol'
         ->get();
-        
+
         // Pasar los usuarios y roles a la vista
         return view('usuarios.index', compact('roles', 'usuarios'));
         }
-    
+
 
     /**
      * Show the form for creating a new resource.
@@ -50,7 +50,7 @@ class UsuarioController extends Controller
     public function update(Request $request, $id)
         {
             // Obtener el usuario desde la base de datos
-            $user = User::findOrFail($id); 
+            $user = User::findOrFail($id);
 
             // Determinar si el email ha cambiado
             $emailValidationRule = $request->email == $user->email
@@ -87,7 +87,7 @@ class UsuarioController extends Controller
             return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
         }
 
-   
+
     public function actualizarEstado(Request $request, $id)
         {
             $usuario = User::findOrFail($id); // Busca al usuario por ID
@@ -103,7 +103,7 @@ class UsuarioController extends Controller
             'nombre' => 'required|string|max:100',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6|max:12',
-            'id_rol' => 'required|exists:rol,id', 
+            'id_rol' => 'required|exists:rol,id',
         ]);
 
         if ($validator->fails()) {
@@ -111,14 +111,19 @@ class UsuarioController extends Controller
                 ->withErrors($validator)
                 ->withInput();
         }
-    
+
         $user = User::create([
             'name' => $request->input('nombre'),
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
             'id_rol' => $request->input('id_rol'),
         ]);
-    
+
+        auth()->attempt([
+            'email' => $request->email,
+            'password' => $request->password,
+        ]);
+
         return redirect()->route('usuarios.index')->with('success', '¡Usuario registrado exitosamente!');
     }
 }

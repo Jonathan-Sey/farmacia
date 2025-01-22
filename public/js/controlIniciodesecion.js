@@ -1,27 +1,33 @@
 
- document.getElementById('login-form').addEventListener('submit', function(e) {
-     e.preventDefault();
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
+       const email = document.getElementById('email').value;
+       const password = document.getElementById('password').value;
 
-            axios.post('api/auth/login', {
-                 email: email,
-                 password: password,
-            })
-            .then(response => {
-             // Guardar el token en localStorage
-             console.log(response.data);
-                const token = response.data.token;
-                    localStorage.setItem('jwt_token',token);
-                    axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt_token')}`;
+           axios.post('api/auth/login', {
+                email: email,
+                password: password,
+           })
+           .then(response => {
+            // Guardar el token en localStorage
+            console.log(response.data);
+               const token = response.data.token;
+                   localStorage.setItem('jwt_token',token);
+                   axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('jwt_token')}`;
 
-                        window.location.href = '/dashboard';
-            })
-            .catch(error => {
-                console.error('Error al iniciar sesión:', error);
-                alert('Error al iniciar sesión. Verifique sus credenciales.');
-            });
+                   axios.post('/login', { email, password })
+                   .then(() => {
+                       window.location.href = '/dashboard';
+                   })
+                   .catch(error => {
+                       console.error('Error al iniciar sesión en Laravel:', error);
+                   });
+
+                       window.location.href = '/dashboard';
+           })
+           .catch(error => {
+               console.error('Error al iniciar sesión:', error);
+               alert('Error al iniciar sesión. Verifique sus credenciales.');
+           });
 });
-
-

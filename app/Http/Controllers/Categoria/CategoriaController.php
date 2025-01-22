@@ -13,23 +13,14 @@ class CategoriaController extends Controller
 
     //   public function __construct() {
     //       if (request()->is('api/*')) {
-    //            //$this->middleware('auth:api', ['except' => ['index','show']]);
-    //         //   $this->middleware('role:2', ['only' => ['create', 'store', 'update', 'destroy']]);
+    //         $this->middleware('auth:api', ['except' => ['index','show']]);
+    //            $this->middleware('role:2', ['only' => ['create', 'store', 'update', 'destroy']]);
     //       } else {
     //           $this->middleware('auth', ['except' => [ 'index','show','create']]);
-    //           //$this->middleware('role:2', ['only' => ['create', 'store', 'update', 'destroy']]);
+    //           $this->middleware('role:2', ['only' => ['create', 'store', 'update', 'destroy']]);
     //       }
     //       Log::info('Middleware applied in CategoriaController', ['path' => request()->path()]);
     //   }
-
-        public function __construct()
-        {
-            $this->middleware('auth:api', ['except' => ['index', 'create']]);
-        }
-
-
-       private function validarRol($rol) { $token = request()->cookie('jwt_token'); if ($token) { try { $user = JWTAuth::setToken($token)->authenticate(); if ($user && $user->rol == $rol) { return true; } return false; } catch (\Exception $e) { return response()->json(['error' => 'Error al autenticar el token', 'exception' => $e->getMessage()], 403); } } else { return response()->json(['error' => 'Token no proporcionado', 'cookie' => $token], 401); } }
-
 
 
     /**

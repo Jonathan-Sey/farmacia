@@ -150,9 +150,12 @@
                 <a href="{{ route('consultas.index') }}"><i class="fa-solid fa-book-medical"></i> Consultas</a>
             </li>
             <li>
-                <button id="logout-btn-mobile" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
-                    <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
-                </button>
+                <form id="logout-form" method="POST" action="{{ route('auth.logout') }}">
+                    @csrf
+                    <button type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
+                        <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
+                    </button>
+                </form>
             </li>
         </ul>
     </div>
