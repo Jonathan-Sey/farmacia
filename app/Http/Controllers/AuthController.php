@@ -37,19 +37,6 @@ class AuthController extends Controller
 
 
         $credentials = $request->only('email', 'password');
-
-        // if (Auth::attempt($credentials)) {
-        //     // Regenerar sesión para mayor seguridad
-        //     $request->session()->regenerate();
-
-        //     // Redirigir al dashboard
-        //     return redirect()->intended('/dashboard');
-        // }
-        // // error si falla
-        // return back()->withErrors([
-        //     'email' => 'Las credenciales no coinciden con nuestros registros.',
-        // ])->onlyInput('email');
-
           // Autenticar al usuario con Laravel para la sesión
         if (!auth()->attempt($credentials)) {
             return response()->json(['error' => 'Credenciales incorrectas'], 401);
@@ -67,8 +54,6 @@ class AuthController extends Controller
             return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
         }
         $user->load('rol.pestanas');
-
-
        // auth()->attempt($credentials);
         // Guardar el token JWT en una cookie
         //$cookie = cookie('jwt_token', $token, 60, '/', null, false, true);
@@ -92,7 +77,6 @@ class AuthController extends Controller
     {
         return response()->json(auth()->user());
     }
-
     /**
      * Log the user out (Invalidate the token).
      *
@@ -116,7 +100,6 @@ class AuthController extends Controller
         return response()->json(['message' => 'No user is currently logged in'], 401);
 
     }
-
     /**
      * Refresh a token.
      *
@@ -124,7 +107,11 @@ class AuthController extends Controller
      */
     public function refresh()
     {
-        return $this->respondWithToken(auth('api')->refresh());
+        //return $this->respondWithToken(auth('api')->refresh());
+        $newToken = auth()->refresh();
+        return response()->json([
+            'token' => $newToken
+        ]);
     }
 
     /**

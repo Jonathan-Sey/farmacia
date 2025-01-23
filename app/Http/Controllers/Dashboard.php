@@ -16,6 +16,7 @@ class Dashboard extends Controller
     //     $this->middleware('auth');
     // }
     public function index(Request $request){
+
       //  dd(auth()->user());
         // pruebas con fechas del año actual
          $año = date('Y');

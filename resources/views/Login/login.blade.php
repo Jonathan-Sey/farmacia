@@ -6,8 +6,9 @@
 
         <h1 class="text-3xl sm:text-5xl font-bold text-white">Iniciar Secion</h1>
     <div class="mx-4 sm:mx-2 flex max-w-full sm:max-w-[640px] flex-wrap items-center justify-center">
-        <form id="login-form" class="my-8 sm:my-20 mx-8 sm:mx-20 space-y-5 text-white" method="POST" action="{{ route('auth.login') }}">
-            @csrf
+        {{-- <form id="login-form" class="my-8 sm:my-20 mx-8 sm:mx-20 space-y-5 text-white" method="POST" action="{{ route('auth.login') }}"> --}}
+        <form id="login-form" class="my-8 sm:my-20 mx-8 sm:mx-20 space-y-5 text-white">
+
                 <div class="space-y-5 grid grid-cols-1 relative">
                     <div class="absolute top-6 left-[2px] items-center sm:items-center sm:justify-center justify-center bg-[#FFFFFF30] rounded-full px-2 py-1 ring-2 ring-cyan-500">
                         <i class="fa-solid fa-envelope"></i>

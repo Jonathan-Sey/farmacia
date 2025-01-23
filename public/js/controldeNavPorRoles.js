@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // Obtener las pestañas desde el payload del token
         const pestanas = decodedToken.pestanas || [];
 
+
         // Configurar la navegación dinámica
         setupNavigation(pestanas);
     }

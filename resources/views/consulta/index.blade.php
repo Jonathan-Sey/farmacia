@@ -11,6 +11,8 @@
 
 @section('contenido')
     <a href="{{ route('consultas.create') }}">
+        <div id="consultas-container"></div>
+
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
@@ -82,6 +84,41 @@
 @endsection
 
 @push('js')
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    axios.get('/api/consultas')
+        .then(response => {
+            console.log(response.data);
+            // Renderiza las consultas en tu vista
+            renderConsultas(response.data.consultas);
+        })
+        .catch(error => {
+            if (error.response.status === 401) {
+                alert('No estás autenticado. Por favor, inicia sesión.');
+                window.location.href = '/login';
+            } else {
+                console.error('Error al cargar las consultas:', error.response.data);
+            }
+        });
+});
+
+function renderConsultas(consultas) {
+    const container = document.getElementById('consultas-container');
+    container.innerHTML = ''; // Limpia el contenedor
+
+    consultas.forEach(consulta => {
+        const div = document.createElement('div');
+        div.innerHTML = `
+            <p>Consulta ID: ${consulta.id}</p>
+            <p>Paciente: ${consulta.persona.nombre}</p>
+            <p>Médico: ${consulta.medico.usuario.name}</p>
+        `;
+        container.appendChild(div);
+    });
+}
+
+</script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -215,4 +252,5 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
+
 @endpush
