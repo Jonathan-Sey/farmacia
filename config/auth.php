@@ -46,7 +46,15 @@ return [
             'provider' => 'users',
             'hash' => false,
         ],
+
     ],
+
+'providers' => [
+    'users' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\User::class,
+    ],
+],
 
     /*
     |--------------------------------------------------------------------------

@@ -9,13 +9,11 @@
 
 @section('contenido')
 
-@auth
+
     <h1>Autenticado</h1>
-    <p>Bienvenido {{auth()->user()->name}}</p>
-@endauth
-@guest
-    <h1>No Autenticado</h1>
-@endguest
+    <p>Bienvenido <span id="user-name">Cargando...</span></p> <!-- El valor se actualizará con JS -->
+
+
 
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <a href="{{ route('productos.index') }}">
@@ -165,9 +163,13 @@
 
 @push('js')
 
+
+
+
+
         {{-- librerias para generar graficas --}}
         <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/exporting.js"></script>
+        <script src="https://code.highcharts.com/modules/exporting.js"></>
         <script src="https://code.highcharts.com/modules/export-data.js"></script>
         <script src="https://code.highcharts.com/modules/accessibility.js"></script>
         <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>

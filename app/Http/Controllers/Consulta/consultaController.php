@@ -12,10 +12,10 @@ class consultaController extends Controller
 {
 
 
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
     /**
      * Display a listing of the resource.
      *
@@ -23,9 +23,29 @@ class consultaController extends Controller
      */
     public function index()
     {
-        $consultas = Consulta::with('persona:id,nombre','medico.usuario:id,name')->get();
-        //return $consultas;
-        return view('consulta.index',compact('consultas'));
+        // if (!auth('api')->check()) {
+        //     return response()->json(['error' => 'Token inválido o no proporcionado'], 401);
+        // }
+
+
+        // $user = auth()->user();
+
+        // if (!$user) {
+        //     return response()->json(['error' => 'Usuario no autenticado'], 401);
+        // }
+
+        // $consultas = Consulta::with('persona:id,nombre', 'medico.usuario:id,name')->get();
+
+        // return response()->json([
+        //     'message' => 'Listado de consultas prueba',
+        //     'user' => $user,
+        //     'consultas' => $consultas
+        // ]);
+
+
+         $consultas = Consulta::with('persona:id,nombre','medico.usuario:id,name')->get();
+         //return $consultas;
+         return view('consulta.index',compact('consultas'));
     }
 
     /**
