@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const token = localStorage.getItem('jwt_token');
 
     if (!token) {
-        window.location.href = '/login';
+        window.location.href = '/';
     } else {
         const decodificarToken = jwt_decode(token);
         const limiteDeTiempo = Date.now() / 1000;
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
             //removemos
             localStorage.removeItem('jwt_token');
-            window.location.href = '/login';
+            window.location.href = '/';
         } else {
             // importante con Axios se incluira el token en todas las peticiones
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -189,21 +189,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
                 document.getElementById('user-name').innerText = userName;
-            setupNavigation(pestanas);
+            // setupNavigation(pestanas);
         }
     }
 });
 
-function setupNavigation(pestanas) {
-    const navItems = document.querySelectorAll('[data-pestana]');
-    navItems.forEach(item => item.style.display = 'none');
+// function setupNavigation(pestanas) {
+//     const navItems = document.querySelectorAll('[data-pestana]');
+//     navItems.forEach(item => item.style.display = 'none');
 
-    pestanas.forEach(pestana => {
-        const navItem = document.querySelector(`[data-pestana="${pestana}"]`);
-        if (navItem) {
-            navItem.style.display = 'block';
-        }
-    });
-}
+//     pestanas.forEach(pestana => {
+//         const navItem = document.querySelector(`[data-pestana="${pestana}"]`);
+//         if (navItem) {
+//             navItem.style.display = 'block';
+//         }
+//     });
+// }
 
 </script>
