@@ -152,7 +152,7 @@
             <li>
                 {{-- <form id="logout-form" method="POST" action="{{ route('auth.logout') }}">
                     @csrf --}}
-                    <button type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
+                    <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
                         <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
                     </button>
                 {{-- </form> --}}
