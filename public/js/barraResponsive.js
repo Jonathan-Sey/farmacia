@@ -5,13 +5,11 @@ document.addEventListener('DOMContentLoaded', function () {
     
     if (menuBtn && menu) {
   
-        menuBtn.addEventListener('click', function() {
-            console.log('Botón de menú clickeado');  
+        menuBtn.addEventListener('click', function() {  
             menu.classList.toggle('hidden'); 
             
 
     const token = localStorage.getItem('jwt_token');
-    console.log(token);
     if (token) {
         const decodedToken = jwt_decode(token);
         const pestanas = decodedToken.pestanas || [];
