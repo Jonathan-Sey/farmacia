@@ -18,7 +18,7 @@ class ProductoController extends Controller
     {
 
         $productos = Producto::with('categoria:id,nombre')
-        ->select('id','codigo','nombre','tipo','precio_venta','estado','id_categoria','updated_at')
+        ->select('id','codigo','nombre','tipo','precio_venta','estado','id_categoria','fecha_caducidad','updated_at')
         ->where('estado', '!=', 0)
         ->get();
         return view('producto.index',['productos'=>$productos]);
