@@ -19,7 +19,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
             icon: 'success',
             title: '¡Éxito!',
             text: 'Inicio de sesión exitoso. Redirigiendo...',
-            position: 'top',  // Posición en la parte superior de la pantalla
+            position: 'center',  // Posición en la parte superior de la pantalla
             customClass: {
                 popup: 'fixed top-10 left-1/2 transform -translate-x-1/2 z-50', // Posición fija y centrada
             },
