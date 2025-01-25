@@ -27,7 +27,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
      Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
      Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
      Route::post('me', 'App\Http\Controllers\AuthController@me');
-     Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
+     //Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
  });
 
 
