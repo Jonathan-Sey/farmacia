@@ -37,7 +37,14 @@
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->id}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->sucursal->nombre}}</td>
-                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->cantidad}}</td>
+                    <td class="text-left px-6 py-4 whitespace-nowrap">
+                        <span class="{{ $almacen->cantidad <= 10 ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
+                            {{$almacen->cantidad}}
+                            @if ($almacen->cantidad <= 10)
+                                <span class="text-red-400">(Poco stock)</span>
+                            @endif
+                        </span>
+                    </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a href="#" class="estado" data-id="{{ $almacen->id}}" data-estado="{{$almacen->estado}}">
                             @if ($almacen->estado == 1)
