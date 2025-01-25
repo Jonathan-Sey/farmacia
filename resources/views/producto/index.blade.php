@@ -38,6 +38,7 @@
                         $fechaActual = \Carbon\Carbon::now(); // Fecha actual
                         $fechaCaducidad = \Carbon\Carbon::parse($producto->fecha_caducidad); // Convierte la fecha de caducidad a Carbon
                         $diferenciaDias = $fechaActual->diffInDays($fechaCaducidad, false); // Diferencia en días (negativo si ya caducó)
+                   
                     @endphp
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
@@ -57,18 +58,18 @@
                         <span
                             class="
                                 @if($diferenciaDias < 0) text-red-500 font-bold
-                                @elseif($diferenciaDias <= 5) text-yellow-500 font-bold
+                                @elseif($diferenciaDias <= 5  ) text-yellow-500 font-bold
                                 @else text-green-500 font-bold
                                 @endif
                             ">
-                            {{ $fechaCaducidad->format('d/m/Y') }}
-                            @if($diferenciaDias < 0)
-                                (Caducado)
-                            @elseif($diferenciaDias <= 5)
-                                (Próximo a caducar)
-                            @else
-                                (Vigente)
-                            @endif
+                                {{ $fechaCaducidad->format('d/m/Y') }}
+                                @if($diferenciaDias < 0)
+                                    (Caducado)
+                                @elseif($diferenciaDias <= 5)
+                                    (Próximo a caducar)
+                                @else
+                                    (Vigente)
+                                @endif
                         </span>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->updated_at}}</td>
