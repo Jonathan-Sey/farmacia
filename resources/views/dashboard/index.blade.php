@@ -10,9 +10,12 @@
 @section('contenido')
 
 
-    <h1>Autenticado</h1>
-    <p>Bienvenido <span id="user-name">Cargando...</span></p> <!-- El valor se actualizará con JS -->
-
+    
+<p class="bg-gray-200 p-4 rounded-lg shadow-md max-w-max text-lg font-semibold text-gray-800">
+    Bienvenido 
+    <span id="user-name" class="text-blue-600 transition-all duration-300 ease-in-out">Cargando...</span>
+</p>
+  
 
 
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">

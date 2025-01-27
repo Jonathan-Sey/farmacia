@@ -1,5 +1,5 @@
 document.getElementById('login-form').addEventListener('submit', function (e) {
-    e.preventDefault(); // Evitar que el formulario se envíe de manera tradicional
+    e.preventDefault(); 
     
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
@@ -19,15 +19,18 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
             icon: 'success',
             title: '¡Éxito!',
             text: 'Inicio de sesión exitoso. Redirigiendo...',
-            position: 'center',  // Posición en la parte superior de la pantalla
+            position: 'center',  
             customClass: {
-                popup: 'fixed top-10 left-1/2 transform -translate-x-1/2 z-50', // Posición fija y centrada
+                popup: 'z-50',
             },
             didOpen: () => {
-                document.body.classList.add('overflow-hidden');  // Desactivar el scroll mientras el modal está abierto
+                const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+                document.body.style.overflow = 'hidden'; // Desactiva el scroll
+                document.body.style.marginRight = `${scrollBarWidth}px`; // Compensa la barra de scroll
             },
             willClose: () => {
-                document.body.classList.remove('overflow-hidden');  // Restaurar el scroll cuando se cierre el modal
+                document.body.style.overflow = ''; // Restaura el scroll
+                document.body.style.marginRight = ''; // Elimina el margen adicional
             }
         }).then(() => {
             window.location.href = '/dashboard';
@@ -39,13 +42,16 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
             title: '¡Error!',
             text: 'Credenciales incorrectas o hubo un error al intentar iniciar sesión.',
             customClass: {
-                popup: 'fixed top-10 left-1/2 transform -translate-x-1/2 z-50',
+                popup: 'z-50',
             },
             didOpen: () => {
-                document.body.classList.add('overflow-hidden');  // Desactivar el scroll mientras el modal está abierto
+                const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+                document.body.style.overflow = 'hidden'; // Desactiva el scroll
+                document.body.style.marginRight = `${scrollBarWidth}px`; // Compensa la barra de scroll
             },
             willClose: () => {
-                document.body.classList.remove('overflow-hidden');  // Restaurar el scroll cuando se cierre el modal
+                document.body.style.overflow = ''; // Restaura el scroll
+                document.body.style.marginRight = ''; // Elimina el margen adicional
             }
         });
     });
