@@ -2610,6 +2610,9 @@ html {
 .left-1 {
   left: 0.25rem;
 }
+.right-5 {
+  right: 1.25rem;
+}
 .z-40 {
   z-index: 40;
 }
@@ -3078,6 +3081,9 @@ html {
 .p-8 {
   padding: 2rem;
 }
+.p-10 {
+  padding: 2.5rem;
+}
 .px-10 {
   padding-left: 2.5rem;
   padding-right: 2.5rem;
@@ -3125,6 +3131,10 @@ html {
 .px-12 {
   padding-left: 3rem;
   padding-right: 3rem;
+}
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
 }
 .pb-12 {
   padding-bottom: 3rem;
@@ -3303,6 +3313,9 @@ html {
 .placeholder-white::placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(255 255 255 / var(--tw-placeholder-opacity, 1));
+}
+.opacity-50 {
+  opacity: 0.5;
 }
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
@@ -3676,6 +3689,10 @@ html {
 
   .md\:p-8 {
     padding: 2rem;
+  }
+
+  .md\:p-12 {
+    padding: 3rem;
   }
 
   .md\:px-10 {
