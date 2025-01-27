@@ -1,9 +1,9 @@
 @extends('layouts.login')
 
 @section('contenido')
-<div class="min-h-screen flex items-center justify-center px-4">
+<div class="min-h-screen flex items-center justify-center px-3">
     <div class="max-w-md w-full bg-[#004D4D] p-6 md:p-8 rounded-2xl shadow-lg">
-        <h1 class="text-3xl sm:text-5xl font-bold text-white text-center">Iniciar Sesion</h1>
+        <h1 class="text-3xl sm:text-5xl font-bold text-white ">Iniciar Sesion</h1>
         <div class="mx-4 sm:mx-2 flex flex-wrap items-center justify-center">
             <form id="login-form" class="my-8 sm:my-20 mx-8 sm:mx-20 space-y-5 text-white w-full">
                 <!-- Campo Email -->
