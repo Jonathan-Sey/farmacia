@@ -150,60 +150,13 @@
                 <a href="{{ route('consultas.index') }}"><i class="fa-solid fa-book-medical"></i> Consultas</a>
             </li>
             <li>
-                {{-- <form id="logout-form" method="POST" action="{{ route('auth.logout') }}">
-                    @csrf --}}
-                    <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
-                        <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
-                    </button>
-                {{-- </form> --}}
+                <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
+                    <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
+                </button>
             </li>
         </ul>
     </div>
 </header>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+<script src="/js/logout.js"></script>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-    const token = localStorage.getItem('jwt_token');
-
-    if (!token) {
-        window.location.href = '/';
-    } else {
-        const decodificarToken = jwt_decode(token);
-        const limiteDeTiempo = Date.now() / 1000;
-        //validamos el tiempo
-        if (decodificarToken.exp < limiteDeTiempo) {
-            alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-            //removemos
-            localStorage.removeItem('jwt_token');
-            window.location.href = '/';
-        } else {
-            // importante con Axios se incluira el token en todas las peticiones
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-            // Configurar las pestañas del menú
-            const pestanas = decodificarToken.pestanas || [];
-
-            const userName = decodificarToken.name;
-            const userTabs = decodificarToken.pestanas;
-
-
-                document.getElementById('user-name').innerText = userName;
-            // setupNavigation(pestanas);
-        }
-    }
-});
-
-// function setupNavigation(pestanas) {
-//     const navItems = document.querySelectorAll('[data-pestana]');
-//     navItems.forEach(item => item.style.display = 'none');
-
-//     pestanas.forEach(pestana => {
-//         const navItem = document.querySelector(`[data-pestana="${pestana}"]`);
-//         if (navItem) {
-//             navItem.style.display = 'block';
-//         }
-//     });
-// }
-
-</script>
