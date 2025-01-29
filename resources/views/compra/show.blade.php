@@ -17,7 +17,7 @@
 
 <div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
     <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
-      <p class="card-title font">Comprovante</p>
+      <p class="card-title font">Comprobante</p>
     </div>
     <div class="md:col-span-2">
       <p class="p-2 text-center font-semibold " >{{$compra->comprobante}}</p>
