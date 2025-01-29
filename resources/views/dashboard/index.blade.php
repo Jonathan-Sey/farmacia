@@ -10,12 +10,12 @@
 @section('contenido')
 
 
-    
+
 <p class="bg-gray-200 p-4 rounded-lg shadow-md max-w-max text-lg font-semibold text-gray-800">
-    Bienvenido 
+    Bienvenido
     <span id="user-name" class="text-blue-600 transition-all duration-300 ease-in-out">Cargando...</span>
 </p>
-  
+
 
 
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
@@ -172,7 +172,7 @@
 
         {{-- librerias para generar graficas --}}
         <script src="https://code.highcharts.com/highcharts.js"></script>
-        <script src="https://code.highcharts.com/modules/exporting.js"></>
+        <script src="https://code.highcharts.com/modules/exporting.js"></script>
         <script src="https://code.highcharts.com/modules/export-data.js"></script>
         <script src="https://code.highcharts.com/modules/accessibility.js"></script>
         <script src="https://code.highcharts.com/modules/offline-exporting.js"></script>
@@ -282,6 +282,38 @@
             num = num.toString().split('e');
             return signo * (num[0] + 'e' + (num[1] ? (+num[1] - decimales) : -decimales));
         }
+
+        // proceso para traducir las opciones a español
+        Highcharts.setOptions({
+            lang: {
+            contextButtonTitle: "Menú contextual",
+            downloadCSV: "Descargar archivo CSV",
+            downloadJPEG: "Descargar imagen JPEG",
+            downloadPDF: "Descargar documento PDF",
+            downloadPNG: "Descargar imagen PNG",
+            downloadSVG: "Descargar imagen vectorial SVG",
+            downloadXLS: "Descargar archivo XLS",
+            viewData: "Ver tabla de datos",
+            hideData: "Ocultar tabla de datos",  // Traducción de "Hide data table"
+            viewFullscreen: "Ver en pantalla completa",
+            exitFullscreen: "Salir de pantalla completa",  // Traducción de "Exit from full screen"
+            printChart: "Imprimir gráfico",
+            resetZoom: "Restablecer zoom",
+            resetZoomTitle: "Restablecer nivel de zoom",
+            thousandsSep: ".",
+            decimalPoint: ",",
+            loading: "Cargando...",
+            months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+            shortMonths: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+            weekdays: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+            rangeSelectorFrom: "De",
+            rangeSelectorTo: "A",
+            rangeSelectorZoom: "Periodo",
+            }
+        });
+
+
+
 
         </script>
 
