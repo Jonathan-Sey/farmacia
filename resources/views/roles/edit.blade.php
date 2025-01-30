@@ -22,6 +22,17 @@
                     @enderror
                 </div>
 
+                <!-- Vista Principal -->
+                <div class="mt-4">
+                    <label for="nueva_pestana" class="block text-sm font-medium text-gray-900">Seleccionar Vista Principal</label>
+                    <select name="nueva_pestana" id="nueva_pestana" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" onchange="updateSelectedTabs()">
+                        <option value="">-- Selecciona una Vista Principal --</option>
+                        @foreach($pestanas as $pestana)
+                            <option value="{{ $pestana->id }}">{{ $pestana->nombre }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
                 <!-- Pestañas seleccionadas -->
                 <div class="mt-4">
                     <label for="pestanas" class="block text-sm font-medium text-gray-900">Seleccionar Pestañas</label>
@@ -38,17 +49,6 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
-                </div>
-
-                <!-- Nueva Pestaña -->
-                <div class="mt-4">
-                    <label for="nueva_pestana" class="block text-sm font-medium text-gray-900">Seleccionar Nueva Pestaña</label>
-                    <select name="nueva_pestana" id="nueva_pestana" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" onchange="updateSelectedTabs()">
-                        <option value="">-- Selecciona una Pestaña --</option>
-                        @foreach($pestanas as $pestana)
-                            <option value="{{ $pestana->id }}">{{ $pestana->nombre }}</option>
-                        @endforeach
-                    </select>
                 </div>
 
                 <!-- Mostrar las pestañas seleccionadas -->
@@ -104,7 +104,7 @@
     
             // Si la nueva pestaña no está en el array, reemplazar la primera
             if (!tabsArray.includes(newTabText)) {
-                tabsArray[0] = newTabText; // Reemplaza la primera pestaña con la nueva
+                tabsArray[0] = newTabText; 
             }
         }
     
@@ -128,7 +128,7 @@
     // Función para actualizar el selector múltiple
     function updateSelectTabs() {
         const selectedTabs = document.getElementById('pestanas');
-        const currentSelectedTabs = @json($rol->pestanas->pluck('id')->toArray());  // Datos de las pestañas seleccionadas en el backend
+        const currentSelectedTabs = @json($rol->pestanas->pluck('id')->toArray()); 
         Array.from(selectedTabs.options).forEach(option => {
             if (currentSelectedTabs.includes(parseInt(option.value))) {
                 option.selected = true;
