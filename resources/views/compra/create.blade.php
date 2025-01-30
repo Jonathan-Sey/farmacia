@@ -128,23 +128,31 @@
                         </div>
 
                         <div class="lg:grid grid-cols-2 gap-8">
-                            <div class="mt-2 mb-5">
-                                <label for="impuesto" class="uppercase block text-sm font-medium text-gray-900">Impuesto</label>
-                                <input
-                                    readonly
-                                    type="text"
-                                    name="impuesto"
-                                    id="impuesto"
-                                    autocomplete="given-name"
-                                    placeholder="Impuesto"
-                                    class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                    value="{{ old('impuesto') }}">
+                            <div   class="md:flex md:flex-row gap-5 flex flex-col">
+                                <div class="mt-2 mb-5">
+                                    <label for="impuesto" class="uppercase block text-sm font-medium text-gray-900">Impuesto</label>
+                                    <input
+                                        readonly
+                                        type="text"
+                                        name="impuesto"
+                                        id="impuesto"
+                                        autocomplete="given-name"
+                                        placeholder="Impuesto"
+                                        class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                        value="{{ old('impuesto') }}">
 
-                                @error('impuesto')
-                                <div role="alert" class="alert alert-error mt-4 p-2">
-                                    <span class="text-white font-bold">{{ $message }}</span>
+                                    @error('impuesto')
+                                    <div role="alert" class="alert alert-error mt-4 p-2">
+                                        <span class="text-white font-bold">{{ $message }}</span>
+                                    </div>
+                                    @enderror
                                 </div>
-                                @enderror
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-[0.7rem]"  for="tipo">Aplicar IVA</label>
+                                    <input name="tipo" id="impuesto-checkbox" type="checkbox" class="toggle toggle-success"
+                                    {{ old('tipo') ? 'checked' : '' }}
+                                    />
+                                </div>
                             </div>
 
                             <div class="mt-2 mb-5">
@@ -268,18 +276,24 @@
             let producto = ($('#id_producto option:selected').text()).split(' ')[1];
             let cantidad = $('#cantidad').val();
             let precio = $('#precio').val();
+            let aplicarImpuesto = $('#impuesto-checkbox').is(':checked'); // aplicacion de impuesto
 
             if(id_producto != '' && producto != '' && cantidad != '' && precio != '')
             {
                if( parseInt(cantidad) > 0 && (cantidad % 1 == 0) && parseFloat(precio) > 0)
                {
 
+
+
                        // sumador
                         contador++;
                         // calcular subtotal
                         subtotal[contador] = round(cantidad * precio);
                         suma+=subtotal[contador]
-                        iva = round(suma/100 *  impuesto);
+                        //validacion del impuesto
+                        if(aplicarImpuesto){
+                            iva = round(suma/100 *  impuesto);
+                        }
                         total = round(suma + iva);
 
                         $('#tabla-productos tbody').append(`

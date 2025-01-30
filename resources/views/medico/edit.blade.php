@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Crear Producto')
+@section('titulo', 'Editar Medico')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -14,7 +14,7 @@
             @method('PATCH')
             <div class="border-b border-gray-900/10 pb-12">
                     <div class="mt-2 mb-5">
-                        <label for="id_usuario" class="uppercase block text-sm font-medium text-gray-900">Categoría</label>
+                        <label for="id_usuario" class="uppercase block text-sm font-medium text-gray-900">Paciente</label>
                         <select
                             class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             name="id_usuario"

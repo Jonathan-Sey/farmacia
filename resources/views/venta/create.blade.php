@@ -166,7 +166,7 @@
                                     @enderror
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <label for="tipo">no / si</label>
+                                    <label class="text-[0.7rem]"  for="tipo">Aplicar IVA</label>
                                     <input name="tipo" id="impuesto-checkbox" type="checkbox" class="toggle toggle-success"
                                     {{ old('tipo') ? 'checked' : '' }}
                                     />
