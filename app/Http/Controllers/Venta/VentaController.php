@@ -21,7 +21,7 @@ class VentaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
- 
+
 
     public function index()
     {
@@ -40,8 +40,10 @@ class VentaController extends Controller
      */
     public function create()
     {
-        $productos = collect();
+     //   $productos = collect();
+        $productos = Producto::activos()->get();
         $almacenesActivos = Almacen::activos()->get();
+
          // Filtrar los productos disponibles en almacenes activos
          //$productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
         // Obtener las sucursales relacionadas a los almacenes activos

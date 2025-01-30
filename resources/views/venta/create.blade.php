@@ -145,24 +145,34 @@
                         </div>
 
                         <div class="lg:grid grid-cols-2 gap-8">
-                            <div class="mt-2 mb-5">
-                                <label for="impuesto" class="uppercase block text-sm font-medium text-gray-900">Impuesto</label>
-                                <input
-                                    readonly
-                                    type="text"
-                                    name="impuesto"
-                                    id="impuesto"
-                                    autocomplete="given-name"
-                                    placeholder="Impuesto"
-                                    class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                    value="{{ old('impuesto') }}">
 
-                                @error('impuesto')
-                                <div role="alert" class="alert alert-error mt-4 p-2">
-                                    <span class="text-white font-bold">{{ $message }}</span>
+                            <div   class="md:flex md:flex-row gap-5 flex flex-col">
+                                <div class="mt-2 mb-5">
+                                    <label for="impuesto" class="uppercase block text-sm font-medium text-gray-900">Impuesto</label>
+                                    <input
+                                        readonly
+                                        type="text"
+                                        name="impuesto"
+                                        id="impuesto"
+                                        autocomplete="given-name"
+                                        placeholder="Impuesto"
+                                        class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                        value="{{ old('impuesto') }}">
+
+                                    @error('impuesto')
+                                    <div role="alert" class="alert alert-error mt-4 p-2">
+                                        <span class="text-white font-bold">{{ $message }}</span>
+                                    </div>
+                                    @enderror
                                 </div>
-                                @enderror
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-[0.7rem]"  for="tipo">Aplicar IVA</label>
+                                    <input name="tipo" id="impuesto-checkbox" type="checkbox" class="toggle toggle-success"
+                                    {{ old('tipo') ? 'checked' : '' }}
+                                    />
+                                </div>
                             </div>
+
 
                             <div class="mt-2 mb-5">
                                 <label for="fecha_venta" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
@@ -359,7 +369,7 @@
             let precio = parseFloat(precioProducto);
             let stock = parseInt($('#stock').val()) || 0; // Si no tiene stock, usar 0
             let tipo = $('#id_producto').find('option:selected').data('tipo'); // 1: Producto físico, 2: Servicio
-
+            let aplicarImpuesto = $('#impuesto-checkbox').is(':checked'); // proceso para verificar si incluye iva
 
             if (id_producto != '' && producto != '' && precio > 0) {
         if (tipo === 1) { // Producto físico
@@ -382,7 +392,7 @@
             suma += subtotal[contador];
 
             // nota aca se valido si es tipo producto o servicio
-            if(tipo === 1) {
+            if(tipo === 1 && aplicarImpuesto) { // aca se agrego el aplicar impuesto
                 iva += round((subtotal[contador]/100) * impuesto);
             }
             //iva = round((suma / 100) * impuesto); - esto tenia antes
@@ -518,10 +528,5 @@
             }
         });
         </script>
-
-
-
-
-
 @endpush
 

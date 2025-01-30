@@ -54,6 +54,7 @@ Route::post('/usuarios/register', [UsuarioController::class, 'register'])->name(
 Route::patch('/usuarios/{usuario}/actualizar-estado',[UsuarioController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');
 Route::patch('usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+Route::post('/roles/{rol}', [RolController::class, 'update'])->name('roles.update');
 Route::post('roles/{rol}/estado', [RolController::class, 'changeStatus'])->name('roles.changeStatus');
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);

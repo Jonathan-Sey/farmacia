@@ -6,8 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (token) {
 
         const decodedToken = jwt_decode(token);
-      console.log(decodedToken);
-        // Obtener las pestañas desde el payload del token
+    console.log(decodedToken);        // Obtener las pestañas desde el payload del token
         const pestanas = decodedToken.pestanas || [];
 
 
