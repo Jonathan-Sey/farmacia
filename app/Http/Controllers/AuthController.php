@@ -49,7 +49,7 @@ class AuthController extends Controller
          }
      
          $user = auth('api')->user();
-     
+        
          if (!$user) {
              return response()->json(['error' => 'Usuario no encontrado'], 404);
          }
@@ -58,12 +58,15 @@ class AuthController extends Controller
              return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
          }
      
-         $user->load('rol.pestanas');
-     
+         //$user->load('rol.pestanas');
+         $rol = $user->rol;
+         $pestanas = $rol->pestanas()->pluck('ruta')->toArray();
+         
          return response()->json([
              'success' => true,
              'token' => $token,
              'user' => $user,
+             'pestanas' => $pestanas,
          ]);
      }
      
