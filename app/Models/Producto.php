@@ -59,15 +59,11 @@ class Producto extends Model
 }
 
 
-    //     public function venta()
-    // {
-    //     return $this->belongsTo(Venta::class, 'id_venta');
-    // }
-
-    // public function producto()
-    // {
-    //     return $this->belongsTo(Producto::class, 'id_producto');
-    // }
+//Funcion que se ejecutara cada vez para hacer el redondeo en el precio
+public function setPrecioVentaAttribute($value)
+{
+        $this->attributes['precio_venta'] = round($value * 10) / 10;
+}
 
 
 }

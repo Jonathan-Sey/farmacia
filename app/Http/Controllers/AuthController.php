@@ -28,46 +28,48 @@ class AuthController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:6',
-        ]);
-
-
-        $credentials = $request->only('email', 'password');
-          // Autenticar al usuario con Laravel para la sesión
-        if (!auth()->attempt($credentials)) {
-            return response()->json(['error' => 'Credenciales incorrectas'], 401);
-        }
-
-        if (!$token = auth('api')->attempt($credentials)) {
-            return response()->json(['error' => 'Credenciales incorrectas'], 401);
-        }
-        $user = auth('api')->user();
-        if (!$user) {
-            return response()->json(['error' => 'Usuario no encontrado'], 404);
-        }
-
-        if (!$user->id_rol) {
-            return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
-        }
-        $user->load('rol.pestanas');
-       // auth()->attempt($credentials);
-        // Guardar el token JWT en una cookie
-        //$cookie = cookie('jwt_token', $token, 60, '/', null, false, true);
-        session()->regenerate();
-
-        return response()->json([
-            'success' => true,
-            'token' => $token,
-            'user' => auth()->user(),
-            //'user' => $user,
-            //'pestanas' => $user->rol->pestanas,
-        //])->cookie($cookie);
-        ]);
-    }
+     public function login(Request $request)
+     {
+         try {
+             $request->validate([
+                 'email' => 'required|email',
+                 'password' => 'required|min:6',
+             ]);
+         } catch (\Illuminate\Validation\ValidationException $e) {
+             return response()->json([
+                 'error' => 'Errores de validación',
+                 'messages' => $e->errors()
+             ], 422);
+         }
+     
+         $credentials = $request->only('email', 'password');
+     
+         if (!$token = auth('api')->attempt($credentials)) {
+             return response()->json(['error' => 'Credenciales incorrectas'], 401);
+         }
+     
+         $user = auth('api')->user();
+        
+         if (!$user) {
+             return response()->json(['error' => 'Usuario no encontrado'], 404);
+         }
+     
+         if (!$user->id_rol) {
+             return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
+         }
+     
+         //$user->load('rol.pestanas');
+         $rol = $user->rol;
+         $pestanas = $rol->pestanas()->pluck('ruta')->toArray();
+         
+         return response()->json([
+             'success' => true,
+             'token' => $token,
+             'user' => $user,
+             'pestanas' => $pestanas,
+         ]);
+     }
+     
     /**
      * Get the authenticated User.
      *

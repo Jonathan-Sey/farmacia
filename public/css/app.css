@@ -2795,15 +2795,6 @@ input.tab:checked + .tab-content,
 .top-16 {
   top: 4rem;
 }
-.left-\[-50px\] {
-  left: -50px;
-}
-.left-\[2px\] {
-  left: 2px;
-}
-.top-6 {
-  top: 1.5rem;
-}
 .z-40 {
   z-index: 40;
 }
@@ -2993,12 +2984,6 @@ input.tab:checked + .tab-content,
 }
 .max-w-md {
   max-width: 28rem;
-}
-.max-w-\[400px\] {
-  max-width: 400px;
-}
-.max-w-full {
-  max-width: 100%;
 }
 .flex-1 {
   flex: 1 1 0%;
@@ -3572,10 +3557,6 @@ input.tab:checked + .tab-content,
 }
 @media (min-width: 640px) {
 
-  .sm\:left-5 {
-    left: 1.25rem;
-  }
-
   .sm\:mx-2 {
     margin-left: 0.5rem;
     margin-right: 0.5rem;
@@ -3617,18 +3598,6 @@ input.tab:checked + .tab-content,
 
   .sm\:min-w-\[400px\] {
     min-width: 400px;
-  }
-
-  .sm\:max-w-\[500px\] {
-    max-width: 500px;
-  }
-
-  .sm\:max-w-\[640px\] {
-    max-width: 640px;
-  }
-
-  .sm\:max-w-full {
-    max-width: 100%;
   }
 
   .sm\:grid-cols-1 {
