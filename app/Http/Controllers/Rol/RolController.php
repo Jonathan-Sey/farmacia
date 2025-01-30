@@ -50,9 +50,9 @@ class RolController extends Controller
             'nombre' => ['required', 'string', 'max:20', 'unique:rol,nombre'],
             'descripcion' => 'nullable|max:100',
             'estado' => 'integer',
-            'pestanas' => 'required|array', // Validamos que pestanas sea un array
-            'pestanas.*' => 'exists:pestanas,id', // Validamos que cada ID de pestaña exista en la base de datos
-            'nueva_pestana' => 'nullable|exists:pestanas,id', // Validamos que la nueva pestaña, si es seleccionada, exista
+            'pestanas' => 'required|array', // Se valida que pestanas sea un array
+            'pestanas.*' => 'exists:pestanas,id', // Se valida que cada ID de pestaña exista en la base de datos
+            'nueva_pestana' => 'nullable|exists:pestanas,id', // Se valida que la nueva pestaña, si es seleccionada, exista
         ]);
 
         
@@ -95,12 +95,8 @@ class RolController extends Controller
             
             // Verificar si la nueva pestaña ya está en el array
             if (!in_array($newTab, $selectedTabs)) {
-                // Agregar la nueva pestaña al inicio del array
-                array_unshift($selectedTabs, $newTab);  // Agregar al inicio
-            } else {
-                // Si la nueva pestaña ya está en el array, la movemos al inicio
-                $selectedTabs = array_diff($selectedTabs, [$newTab]); // Eliminar la pestaña existente
-                array_unshift($selectedTabs, $newTab); // Agregarla al inicio
+                // Invertir el array para poner el nuevo valor al principio
+                array_unshift($selectedTabs, $newTab);  
             }
         }
     
@@ -110,7 +106,7 @@ class RolController extends Controller
         // Asignar las pestañas al rol en el mismo orden
         $rol->pestanas()->sync($selectedTabs);
         
-        // Actualizar los otros campos del rol
+     
         $rol->update([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
@@ -118,6 +114,7 @@ class RolController extends Controller
         
         return redirect()->route('roles.index')->with('success', 'Rol actualizado con éxito');
     }
+    
     
     public function destroy(Request $request, Rol $rol)
     {
