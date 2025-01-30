@@ -10,13 +10,12 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     })
     .then(response => {
         const token = response.data.token;
-        const id_rol = response.data.id_rol;
         const pestanas = response.data.pestanas || [];
 
         // Guardar el token en localStorage
         localStorage.setItem('jwt_token', token);
-        localStorage.setItem('id_rol', id_rol);
         localStorage.setItem('pestanas', JSON.stringify(pestanas));
+
 
         const rutaDashboard = pestanas.length > 0 ? pestanas[0] : '/dashboard';
         
