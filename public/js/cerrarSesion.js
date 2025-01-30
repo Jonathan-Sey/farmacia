@@ -16,8 +16,8 @@ function logout() {
     })
     .then(response => {
         console.log(response.data.message);
-        // Elimina el token del almacenamiento local
-        localStorage.removeItem("jwt_token");
+        // Elimina el token del almacenamiento local y la demas informacion
+        localStorage.clear();
         // Redirige al usuario a la página de inicio de sesión o inicio
         window.location.href = "/";
     })
