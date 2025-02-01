@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (decodificarToken.exp < limiteDeTiempo) {
             alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
             //removemos
-            localStorage.removeItem('jwt_token');
+            localStorage.clear();
        
             window.location.href = '/';
         } else {
