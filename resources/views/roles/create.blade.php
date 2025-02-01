@@ -78,5 +78,5 @@
 @endsection
 
 @push('js')
-<script src="/js/selecciondePestañasCreate.js"></script>
+<script src="/js/selecciondePestañasCreateRol.js"></script>
 @endpush
