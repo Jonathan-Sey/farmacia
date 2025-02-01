@@ -136,8 +136,7 @@
         });
     }
     
-    
-    </script>
+</script>
     
     
 @endpush
