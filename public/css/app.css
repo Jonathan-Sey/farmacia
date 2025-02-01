@@ -3284,6 +3284,9 @@ input.tab:checked + .tab-content,
   font-size: 4.5rem;
   line-height: 1;
 }
+.text-\[0\.7rem\] {
+  font-size: 0.7rem;
+}
 .text-base {
   font-size: 1rem;
   line-height: 1.5rem;
@@ -3303,9 +3306,6 @@ input.tab:checked + .tab-content,
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
-}
-.text-\[0\.7rem\] {
-  font-size: 0.7rem;
 }
 .font-black {
   font-weight: 900;
