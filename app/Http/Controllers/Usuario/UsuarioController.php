@@ -119,10 +119,10 @@ class UsuarioController extends Controller
             'id_rol' => $request->input('id_rol'),
         ]);
 
-        auth()->attempt([
-            'email' => $request->email,
-            'password' => $request->password,
-        ]);
+        // auth()->attempt([
+        //     'email' => $request->email,
+        //     'password' => $request->password,
+        // ]);
 
         return redirect()->route('usuarios.index')->with('success', '¡Usuario registrado exitosamente!');
     }

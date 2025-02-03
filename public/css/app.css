@@ -2960,9 +2960,6 @@ input.tab:checked + .tab-content,
 .w-full {
   width: 100%;
 }
-.w-80 {
-  width: 20rem;
-}
 .min-w-full {
   min-width: 100%;
 }
@@ -3166,9 +3163,6 @@ input.tab:checked + .tab-content,
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
-.bg-\[\#00000050\] {
-  background-color: #00000050;
-}
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
 }
@@ -3239,18 +3233,6 @@ input.tab:checked + .tab-content,
 .py-4 {
   padding-top: 1rem;
   padding-bottom: 1rem;
-}
-.px-10 {
-  padding-left: 2.5rem;
-  padding-right: 2.5rem;
-}
-.px-11 {
-  padding-left: 2.75rem;
-  padding-right: 2.75rem;
-}
-.py-1 {
-  padding-top: 0.25rem;
-  padding-bottom: 0.25rem;
 }
 .pb-12 {
   padding-bottom: 3rem;

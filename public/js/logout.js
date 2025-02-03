@@ -16,13 +16,15 @@ document.addEventListener('DOMContentLoaded', function () {
             //Axios incluira el token en todas las peticiones
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
-            // Configurar las pestañas del menú
-            const pestanas = decodificarToken.pestanas || [];
+            // Obtener las pestañas permitidas del usuario
+            const pestanasPermitidas = decodificarToken.pestanas || [];
+            // Almacenar las pestañas permitidas en localStorage
+            localStorage.setItem('pestanas', JSON.stringify(pestanasPermitidas));
 
             const userName = decodificarToken.name;
             const userTabs = decodificarToken.pestanas;
 
-            document.getElementById('user-name').innerText = userName;   
+            document.getElementById('user-name').innerText = userName;
         }
     }
 });

@@ -1,6 +1,7 @@
+
 document.getElementById('login-form').addEventListener('submit', function (e) {
-    e.preventDefault(); 
-    
+    e.preventDefault();
+
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
 
@@ -12,19 +13,21 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
         const token = response.data.token;
         const id_rol = response.data.id_rol;
         const pestanas = response.data.pestanas || [];
+        const userName = response.data.user.name; // Obtener el nombre del usuario
 
-        // Guardar el token en localStorage
+        // Guardar el token y el nombre del usuario en localStorage (opcional)
         localStorage.setItem('jwt_token', token);
         localStorage.setItem('id_rol', id_rol);
         localStorage.setItem('pestanas', JSON.stringify(pestanas));
+        localStorage.setItem('user_name', userName); // Guardar el nombre del usuario
 
         const rutaDashboard = pestanas.length > 0 ? pestanas[0] : '/dashboard';
-        
+
         Swal.fire({
             icon: 'success',
             title: '¡Éxito!',
             text: 'Inicio de sesión exitoso. Redirigiendo...',
-            position: 'center',  
+            position: 'center',
             customClass: {
                 popup: 'z-50',
             },
