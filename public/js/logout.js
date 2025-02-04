@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const token = localStorage.getItem('jwt_token');
+    const pesta = localStorage.getItem('pestanas');
 
     if (!token) {
         window.location.href = '/';
@@ -10,12 +11,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (decodificarToken.exp < limiteDeTiempo) {
             alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
             //removemos
-            localStorage.removeItem('jwt_token');
+            localStorage.clear();
+       
             window.location.href = '/';
         } else {
             //Axios incluira el token en todas las peticiones
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
+<<<<<<< HEAD
             // Obtener las pestañas permitidas del usuario
             const pestanasPermitidas = decodificarToken.pestanas || [];
             // Almacenar las pestañas permitidas en localStorage
@@ -25,6 +28,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const userTabs = decodificarToken.pestanas;
 
             document.getElementById('user-name').innerText = userName;
+=======
+            // Configurar las pestañas del menú
+            const userName = decodificarToken.name;
+            document.getElementById('user-name').innerText = userName;   
+>>>>>>> main
         }
     }
 });

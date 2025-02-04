@@ -11,15 +11,14 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     })
     .then(response => {
         const token = response.data.token;
-        const id_rol = response.data.id_rol;
         const pestanas = response.data.pestanas || [];
         const userName = response.data.user.name; // Obtener el nombre del usuario
 
         // Guardar el token y el nombre del usuario en localStorage (opcional)
         localStorage.setItem('jwt_token', token);
-        localStorage.setItem('id_rol', id_rol);
         localStorage.setItem('pestanas', JSON.stringify(pestanas));
         localStorage.setItem('user_name', userName); // Guardar el nombre del usuario
+
 
         const rutaDashboard = pestanas.length > 0 ? pestanas[0] : '/dashboard';
 

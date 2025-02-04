@@ -3234,6 +3234,10 @@ input.tab:checked + .tab-content,
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
+.py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
+}
 .pb-12 {
   padding-bottom: 3rem;
 }

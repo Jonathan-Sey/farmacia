@@ -24,7 +24,7 @@
                 <!-- Pestañas seleccionadas -->
                 <div class="mt-4">
                     <label for="pestanas" class="block text-sm font-medium text-gray-900">Seleccionar Pestañas</label>
-                    <select name="pestanas[]" id="pestanas" multiple class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" onchange="updateSelectedTabs()">
+                    <select name="pestanas[]" id="pestanas" multiple class="block w-full rounded-md bg-white px-3 py-3.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" onchange="updateSelectedTabs()">
                         @foreach ($pestanas as $pestana)
                             <option value="{{ $pestana->id }}">{{ $pestana->nombre }}</option>
                         @endforeach
@@ -78,34 +78,5 @@
 @endsection
 
 @push('js')
-<script>
-   function updateSelectedTabs() {
-    const selectedTabs = document.getElementById('pestanas').selectedOptions;
-    const newTab = document.getElementById('nueva_pestana').value;  // Obtener el valor de la nueva pestaña seleccionada
-    const selectedTabsList = document.getElementById('selected-tabs-list');
-    
-    // Limpiar la lista
-    selectedTabsList.innerHTML = '';
-
-    // Crear una lista de pestañas seleccionadas, incluyendo la nueva pestaña
-    let tabsArray = Array.from(selectedTabs).map(option => option.text);
-
-    // Si hay una nueva pestaña seleccionada, agregarla al principio
-    if (newTab) {
-        const newTabText = document.querySelector(`#nueva_pestana option[value='${newTab}']`).text;
-        tabsArray.unshift(newTabText);  // Agregar al principio
-    }
-
-    // Añadir las pestañas a la lista
-    tabsArray.forEach(tab => {
-        const listItem = document.createElement('li');
-        listItem.textContent = tab;
-        selectedTabsList.appendChild(listItem);
-    });
-}
-
-// Llamar a la función al cargar la página en caso de que haya selecciones previas
-window.onload = updateSelectedTabs;
-
-</script>
+<script src="/js/selecciondePestañasCreateRol.js"></script>
 @endpush
