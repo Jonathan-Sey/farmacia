@@ -13,6 +13,7 @@ use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -63,9 +64,11 @@ Route::resource('ventas', VentaController::class)->parameters(['ventas' => 'vent
 Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' => 'almacen']);
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
+Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+
 
 
 

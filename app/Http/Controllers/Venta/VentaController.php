@@ -97,6 +97,8 @@ class VentaController extends Controller
 
         ]);
 
+       
+
         try{
             DB::beginTransaction();
             //creando el registro de venta
