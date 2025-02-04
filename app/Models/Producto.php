@@ -18,7 +18,6 @@ class Producto extends Model
         'id_categoria',
         'tipo',
         'estado',
-
     ];
 
     public function scopeActivos($query)
@@ -64,6 +63,18 @@ public function setPrecioVentaAttribute($value)
 {
         $this->attributes['precio_venta'] = round($value * 10) / 10;
 }
+
+  // Relación con la tabla lote
+  public function lotes()
+  {
+      return $this->hasMany(Lote::class, 'id_producto');
+  }
+
+  // Relación con la tabla inventario
+  public function inventarios()
+  {
+      return $this->hasMany(Inventario::class, 'id_producto');
+  }
 
 
 }
