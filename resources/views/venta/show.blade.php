@@ -69,13 +69,10 @@
     </div>
 </div>
 
-
-
-
- <div class="mt-5">
+<div class="mt-5">
     <h2 class="text-center m-5 font-bold text-lg">Detalle Venta</h2>
     <div class="overflow-x-auto">
-        <table id="tabla-productos" class="table  table-md table-pin-rows table-pin-cols">
+        <table id="tabla-productos" class="table table-md table-pin-rows table-pin-cols">
           <thead>
             <tr>
               <th></th>
@@ -90,23 +87,19 @@
             @foreach ($venta->productos as $producto)
             <tr>
                 <th></th>
-                <td class="bg-white" >{{$producto->nombre}} </td>
-                <td class="bg-white" >{{$producto->pivot->cantidad}} </td>
-                <td class="bg-white" >{{$producto->precio_venta}} </td>
+                <td class="bg-white">{{$producto->nombre}} </td>
+                <td class="bg-white">{{$producto->pivot->cantidad}} </td>
+                <td class="bg-white">{{$producto->precio_venta}} </td>
                 <td class="subTotal bg-white">{{ $producto->pivot->cantidad * $producto->precio_venta }}</td>
-
                 <th></th>
             </tr>
             @endforeach
-
-
           </tbody>
           <tfoot>
             <tr>
                 <th></th>
-                <td class="text-sm font-black">SUMA:  <span id="suma" class="font-black "> 0</span></td>
-
-                <td class="text-sm font-black">IVA: <span id="iva" class="font-black"> 0</span></td>
+                <td class="text-sm font-black">SUMA:  <span id="suma" class="font-black">0</span></td>
+                <td class="text-sm font-black">IVA: <span id="iva" class="font-black">0</span></td>
                 <td class="text-sm font-black"><input type="hidden" name="total" value="0" id="inputTotal"> TOTAL:  <span id="total" class="font-black">0</span></td>
                 <td class="text-sm font-black"></td>
                 <th></th>
@@ -122,24 +115,26 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 
 <script>
-    let subTotal = document.getElementsByClassName('subTotal');
-    let impuesto = document.getElementById('impuesto').innerHTML;
-    let cont = 0;
-    console.log(impuesto);
     $(document).ready(function(){
         calcularValores();
     });
+    function calcularValores() {
+    let suma = 0;
+    let subTotal = document.getElementsByClassName('subTotal');
+    let impuesto = parseFloat(document.getElementById('impuesto').innerHTML) || 0;
 
-    function calcularValores(){
-        for(let i = 0; i < subTotal.length; i++){
-            cont += parseFloat(subTotal[i].innerHTML);
-        }
-
-        $('#suma').html(cont);
-        $('#iva').html(impuesto);
-        $('#total').html(cont+ parseFloat(impuesto) );
+    for(let i = 0; i < subTotal.length; i++) {
+        suma += parseFloat(subTotal[i].innerHTML);
     }
 
+    let ivaCalculado = Math.round((suma * impuesto) / 100);
+    let totalCalculado = Math.round(suma + ivaCalculado);
+
+    $('#suma').html(Math.round(suma));
+    $('#iva').html(ivaCalculado);
+    $('#total').html(totalCalculado);
+    $('#inputTotal').val(totalCalculado);
+}
 
 </script>
 @endpush
