@@ -9,7 +9,7 @@ class Lote extends Model
 {
     use HasFactory;
 
-    protected $tabla = 'lote';
+    protected $table = 'lote';// correccion tabla a table
     protected $fillable = [
         'id_producto',
         'numero_lote',
