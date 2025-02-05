@@ -1,4 +1,4 @@
-// Mapear rutas
+// Rutas Mapeadas
 const rutasMapeadas = {
     'Dashboard': '/dashboard',
     'Rol': '/roles',
@@ -43,7 +43,7 @@ function verificarPermiso(ruta) {
     }
 }
 
-// Verificar permisos de la pagina
+// verificacion de permisos
 window.addEventListener('load', function () {
     const rutaActual = window.location.pathname; // Obtener la ruta actual
     verificarPermiso(rutaActual); // Verificar permisos
