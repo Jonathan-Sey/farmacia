@@ -70,9 +70,24 @@
                     @enderror
                 </div>
 
-
-
-
+                <div class="mt-2 mb-5">
+                    <label for="horarios" class="uppercase block text-sm font-medium text-gray-900">Días y Horarios</label>
+                    
+                    <div id="horarios-container">
+                        <!-- Aquí se agregarán los horarios dinámicamente -->
+                    </div>
+                
+                    <button type="button" onclick="agregarHorario()"
+                        class="mt-2 block w-full rounded-md bg-indigo-600 px-3 py-1.5 text-base text-white outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-indigo-700 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                        + Agregar Día y Horario
+                    </button>
+                
+                    @error('horarios')
+                    <div role="alert" class="alert alert-error mt-4 p-2">
+                        <span class="text-white font-bold">{{ $message }}</span>
+                    </div>
+                    @enderror
+                </div>
 
             </div>
 
@@ -101,7 +116,7 @@
 
         });
         // fin fecha
-
+        
         //uso del select2
         $(document).ready(function(){
             $('.select2').select2({
@@ -115,6 +130,50 @@
         document.querySelector('.select2-search__field').focus();
         });
     </script>
+
+<script>
+    function agregarHorario() {
+        let container = document.getElementById('horarios-container');
+        let index = container.children.length;
+
+        let div = document.createElement('div');
+        div.classList.add("mt-2", "mb-5", "p-3", "border", "border-gray-300", "rounded-md", "bg-white");
+
+        div.innerHTML = `
+            <label for="horarios[${index}][dia]" class="uppercase block text-sm font-medium text-gray-900">Día</label>
+            <select name="horarios[${index}][dia]" required
+                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                <option value="lunes">Lunes</option>
+                <option value="martes">Martes</option>
+                <option value="miércoles">Miércoles</option>
+                <option value="jueves">Jueves</option>
+                <option value="viernes">Viernes</option>
+                <option value="sábado">Sábado</option>
+                <option value="domingo">Domingo</option>
+            </select>
+
+            <label for="horarios[${index}][hora_inicio]" class="uppercase block text-sm font-medium text-gray-900 mt-2">Hora Inicio</label>
+            <input type="time" name="horarios[${index}][hora_inicio]" required
+                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+
+            <label for="horarios[${index}][hora_fin]" class="uppercase block text-sm font-medium text-gray-900 mt-2">Hora Fin</label>
+            <input type="time" name="horarios[${index}][hora_fin]" required
+                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+
+            <button type="button" onclick="eliminarHorario(this)"
+                class="mt-2 block w-full rounded-md bg-red-600 px-3 py-1.5 text-base text-white outline outline-1 -outline-offset-1 outline-gray-300 hover:bg-red-700 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-red-600 sm:text-sm">
+                ❌ Eliminar
+            </button>
+        `;
+
+        container.appendChild(div);
+    }
+
+    function eliminarHorario(element) {
+        element.parentElement.remove();
+    }
+</script>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
