@@ -23,6 +23,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Medico</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Especialidad</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Colegiado</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Horarios</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
@@ -37,6 +38,23 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$medico->usuario->name}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$medico->especialidad}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$medico->numero_colegiado}}</td>
+                    <td class="px-6 py-4">
+                        @if ($medico->horarios)
+                            @php
+                                $horarios = json_decode($medico->horarios, true);
+                            @endphp
+                            <ul class="list-disc pl-4">
+                                @foreach ($horarios as $horario)
+                                    <li>
+                                        <strong>{{ ucfirst($horario['dia']) }}:</strong> 
+                                        {{ $horario['hora_inicio'] }} - {{ $horario['hora_fin'] }}
+                                    </li>
+                                @endforeach
+                            </ul>
+                        @else
+                            <span class="text-gray-500">Sin horarios</span>
+                        @endif
+                    </td>
 
 
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
