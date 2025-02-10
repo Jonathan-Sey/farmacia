@@ -10,6 +10,13 @@ use Illuminate\Http\Request;
 
 class solicitudController extends Controller
 {
+
+    public function index()  {
+        $solicitudes = Solicitud::all()->where('estado', 1);
+        return view('solicitud.index', compact('solicitudes'));
+    }
+
+
     public function create()  {
         $sucursales = Sucursal::activos()->get();
         $productos = Almacen::activos()->get();
@@ -35,5 +42,19 @@ class solicitudController extends Controller
         ]);
 
         return redirect()->route('solicitud.index')->with('success', '¡Transferencia realizada !');
+    }
+
+    public function destroy(Request $request, Solicitud $solicitud)  {
+        $estado = $request->input('status', 0);
+        if($estado == 0){
+            $solicitud->update(['estado' => 0]);
+            return redirect()->route('solicitud.index')->with('success','Sucursal eliminado con éxito!');
+        }else{
+            $solicitud->estado = $estado;
+            $solicitud->save();
+            return response()->json(['success' => true]);
+        }
+        return response()->json(['success'=> false]);
+  
     }
 }
