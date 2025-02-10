@@ -38,7 +38,7 @@
                         $fechaActual = \Carbon\Carbon::now(); // Fecha actual
                         $fechaCaducidad = \Carbon\Carbon::parse($producto->fecha_caducidad); // Convierte la fecha de caducidad a Carbon
                         $diferenciaDias = $fechaActual->diffInDays($fechaCaducidad, false); // Diferencia en días (negativo si ya caducó)
-                   
+
                     @endphp
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
@@ -55,22 +55,22 @@
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->categoria->nombre}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <span
-                            class="
-                                @if($diferenciaDias < 0) text-red-500 font-bold
-                                @elseif($diferenciaDias <= 5  ) text-yellow-500 font-bold
-                                @else text-green-500 font-bold
-                                @endif
-                            ">
+                        @if($diferenciaDias < 0)
+                            <span class="text-red-500 font-bold">
                                 {{ $fechaCaducidad->format('d/m/Y') }}
-                                @if($diferenciaDias < 0)
-                                    (Caducado)
-                                @elseif($diferenciaDias <= 5)
+                                     (Caducado)
+                            </span>
+                        @elseif($diferenciaDias <= 5)
+                            <span class= "text-yellow-500 font-bold">
+                                {{ $fechaCaducidad->format('d/m/Y') }}
                                     (Próximo a caducar)
-                                @else
+                            </span>
+                        @else
+                            <span class="text-green-500 font-bold">
+                                {{ $fechaCaducidad->format('d/m/Y') }}
                                     (Vigente)
-                                @endif
-                        </span>
+                            </span>
+                        @endif
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->updated_at}}</td>
                     <td class="flex gap-2 justify-center">

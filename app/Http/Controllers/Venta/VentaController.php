@@ -97,63 +97,69 @@ class VentaController extends Controller
 
         ]);
 
-       
+    try {
+        DB::beginTransaction();
+        
+        // Redondear el impuesto y total
+        $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
+        $impuesto = round(($subtotal * $request->impuesto) / 100, 2); // Redondear impuesto
+        $total = round($subtotal + $impuesto, 2); // Redondear total
 
-        try{
-            DB::beginTransaction();
-            //creando el registro de venta
-            $venta = Venta::create([
-                'id_sucursal'=> $request->id_sucursal,
-                'fecha_venta'=>$request->fecha_venta,
-                'impuesto'=>$request->impuesto,
-                'total'=>$request->input('total'),
-                'id_usuario' => 1,
-                'id_persona'=> $request->id_persona,
-                'estado' => 1,
-            ]);
+        // Crear el registro de venta
+        $venta = Venta::create([
+            'id_sucursal' => $request->id_sucursal,
+            'fecha_venta' => $request->fecha_venta,
+            'impuesto' => $impuesto,
+            'total' => $total,
+            'id_usuario' => 1, // Usar el usuario actual o el correcto
+            'id_persona' => $request->id_persona,
+            'estado' => 1,
+        ]);
 
-            // obtener los arrays de detalles
-            $arrayProducto_id = $request->get('arrayIdProducto');
-            $arrayCantidad = $request->get('arraycantidad');
-            $arrayprecio= $request->get('arrayprecio');
+        // Obtener los arrays de detalles
+        $arrayProducto_id = $request->get('arrayIdProducto');
+        $arrayCantidad = $request->get('arraycantidad');
+        $arrayprecio = $request->get('arrayprecio');
 
-            //insertar los detalels
-            foreach($arrayProducto_id as $index => $idProducto){
-                $producto = Producto::findOrFail($idProducto);
+        // Insertar los detalles de venta
+        foreach ($arrayProducto_id as $index => $idProducto) {
+            $producto = Producto::findOrFail($idProducto);
 
-                // Validar productos físicos (tipo = 1)
+            // Validar productos físicos (tipo = 1)
             if ($producto->tipo == 1) {
                 $almacen = Almacen::where('id_sucursal', $request->id_sucursal)
                     ->where('id_producto', $idProducto)
                     ->first();
 
-                    if (!$almacen || $almacen->cantidad < $arrayCantidad[$index]) {
-                        throw new Exception("No hay suficiente inventario para el producto: {$producto->nombre}");
-                    }
-
-                    // Descontar inventario
-                    $almacen->cantidad -= $arrayCantidad[$index];
-                    $almacen->save();
+                if (!$almacen || $almacen->cantidad < $arrayCantidad[$index]) {
+                    throw new Exception("No hay suficiente inventario para el producto: {$producto->nombre}");
                 }
 
-
-                DetalleVenta::create([
-                    'id_venta' => $venta->id,
-                    'id_producto' => $idProducto,
-                    'cantidad' => $arrayCantidad[$index],
-                    'precio'=> $arrayprecio[$index]
-                ]);
+                // Descontar inventario
+                $almacen->cantidad -= $arrayCantidad[$index];
+                $almacen->save();
             }
 
-            DB::commit();
-            return redirect()->route('ventas.index')->with('success', 'Venta creado exitosamente');
-        }catch(Exception $e){
-            // cancelar transaccion
-            DB::rollBack();
-
-            return redirect()->route('ventas.create')->with('error', 'Error al crear la compra: ' . $e->getMessage());
+            // Crear el detalle de venta
+            DetalleVenta::create([
+                'id_venta' => $venta->id,
+                'id_producto' => $idProducto,
+                'cantidad' => $arrayCantidad[$index],
+                'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+            ]);
         }
+
+        DB::commit();
+
+        return redirect()->route('ventas.index')->with('success', 'Venta creada exitosamente');
+    } catch (Exception $e) {
+        // Cancelar transacción en caso de error
+        DB::rollBack();
+
+        return redirect()->route('ventas.create')->with('error', 'Error al crear la venta: ' . $e->getMessage());
     }
+}
+
 
     /**
      * Display the specified resource.
@@ -210,5 +216,6 @@ class VentaController extends Controller
             return response()->json(['success' => true]);
         }
         return response()->json(['success'=> false]);
+
     }
 }

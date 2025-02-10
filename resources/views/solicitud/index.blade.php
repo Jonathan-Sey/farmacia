@@ -39,7 +39,7 @@
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($traslado as $traslado)
+                @foreach ($solisitud as $traslado)
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->sucursal1->nombre}}</td>

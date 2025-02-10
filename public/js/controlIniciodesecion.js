@@ -10,11 +10,15 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
     })
     .then(response => {
         const token = response.data.token;
+        const pestanas = response.data.pestanas || [];
 
         // Guardar el token en localStorage
         localStorage.setItem('jwt_token', token);
+        localStorage.setItem('pestanas', JSON.stringify(pestanas));
 
-        // Redirigir al dashboard
+
+        const rutaDashboard = pestanas.length > 0 ? pestanas[0] : '/dashboard';
+        
         Swal.fire({
             icon: 'success',
             title: '¡Éxito!',
@@ -33,7 +37,7 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
                 document.body.style.marginRight = ''; // Elimina el margen adicional
             }
         }).then(() => {
-            window.location.href = '/dashboard';
+            window.location.href = rutaDashboard;
         });
     })
     .catch(error => {

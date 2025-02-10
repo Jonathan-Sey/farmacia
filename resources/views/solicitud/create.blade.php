@@ -7,13 +7,13 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3">
     <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl mb-10">
-        <form action="{{route('traslado.store')}}" method="POST">
+        <form action="{{route('solicitud.store')}}" method="POST">
             @csrf
             <div class="border-b border-gray-200 pb-6">
                 <div class="mb-5">
                     <div class="flex gap-6 justify-center">
                         <div class="w-1/2">
-                            <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal salida </label>
+                            <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal a solisitar </label>
                             <select
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_1"
@@ -35,7 +35,7 @@
                         </div>
 
                         <div class="w-1/2">
-                            <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal entrada</label>
+                            <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal que solisita</label>
                             <select
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_2"
@@ -57,7 +57,7 @@
 
                 <!-- Producto -->
                 <div class="mt-2 mb-5">
-                    <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto</label>
+                    <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto que nesecesita</label>
                     <select
                         class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         name="id_producto"
@@ -76,7 +76,7 @@
 
                 <!-- Cantidad -->
                 <div class="mt-2 mb-5">
-                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">cantidad</label>
+                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">cantidad que nececita</label>
                     <input
                         type="text"
                         name="cantidad"
@@ -91,6 +91,16 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
+                </div>
+
+                <!-- Usuario -->
+
+                <div class="mt-2">
+                <label for="descripcion" class="uppercase block text-sm/6 font-medium text-gray-900">Descripcion</label>
+                    <textarea name="descripcion" id="descripcion"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
+                    
+                    ></textarea>
                 </div>
             </div>
 
