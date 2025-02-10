@@ -66,9 +66,9 @@
                         name="id_producto"
                         id="id_producto">
                         <option value="">Seleccionar un producto</option>
-                        @foreach ($productos as $producto)
+                      <!--  @foreach ($productos as $producto)
                         <option value="{{ $producto->id }}" {{$producto->id == $traslado->id_producto ? 'selected' : ''}}>{{$producto->nombre}}</option>
-                        @endforeach
+                        @endforeach-->
                     </select>
                     @error('id_producto')
                     <div role="alert" class="alert alert-error mt-4 p-2">
@@ -115,6 +115,28 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+<script>
+      document.getElementById('id_sucursal_1').addEventListener('change', function() {
+                let sucursalId = this.value;
+                let productosSelect = document.getElementById('id_producto');
+
+                // Limpiar el select de productos
+                productosSelect.innerHTML = '<option value="">Seleccione un producto</option>';
+
+                if (sucursalId) {
+                    fetch(`/productos-por-sucursal/${sucursalId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            data.forEach(producto => {
+                                let option = document.createElement('option');
+                                option.value = producto.id_producto;
+                                option.textContent = producto.producto.nombre;
+                                productosSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => console.error('Error:', error));
+                }});
+</script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function(

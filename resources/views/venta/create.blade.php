@@ -94,6 +94,10 @@
                                 @enderror
                             </div>
                         </div>
+
+                        <label for="porcentaje">Incremento (%)</label>
+                        <input type="number" id="porcentaje" min="0" value="0">
+
                         {{-- end cantidad y precio --}}
                         <button id="btn-agregar" type="button" class=" cursor-pointer mt-3 rounded-md bg-indigo-600 px-3 w-full py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Agregar</button>
                     </div>
@@ -166,7 +170,7 @@
                                     @enderror
                                 </div>
                                 <div class="flex flex-col gap-1">
-                                    <label for="tipo">no / si</label>
+                                    <label class="text-[0.7rem]"  for="tipo">Aplicar IVA</label>
                                     <input name="tipo" id="impuesto-checkbox" type="checkbox" class="toggle toggle-success"
                                     {{ old('tipo') ? 'checked' : '' }}
                                     />
@@ -340,14 +344,25 @@
 
             $('#impuesto').val(impuesto + '%');
 
+            $('#porcentaje').on('input', function() {
+                mostrarValores();
+            });
+
+
         })
 
         let precioProducto
         let nombreProducto
-        function mostrarValores(){
+        function mostrarValores() {
             let selectProducto = document.getElementById('id_producto');
-            precioProducto = selectProducto.options[selectProducto.selectedIndex].getAttribute('data-precio');
+            let precioBase = parseFloat(selectProducto.options[selectProducto.selectedIndex].getAttribute('data-precio'));
+            
+            let porcentaje = parseFloat($('#porcentaje').val()) || 0;
+            let precioConAumento = round(precioBase + (precioBase * (porcentaje / 100)));
+
+            precioProducto = precioConAumento;
             nombreProducto = selectProducto.options[selectProducto.selectedIndex].getAttribute('data-nombre');
+
             $('#precio').val(precioProducto);
         }
 
@@ -362,58 +377,52 @@
 
         const impuesto = 12;
 
-        function agregarProducto(){
+        function agregarProducto() {
             let id_producto = $('#id_producto').val();
             let producto = nombreProducto;
             let cantidad = parseInt($('#cantidad').val());
-            let precio = parseFloat(precioProducto);
-            let stock = parseInt($('#stock').val()) || 0; // Si no tiene stock, usar 0
-            let tipo = $('#id_producto').find('option:selected').data('tipo'); // 1: Producto físico, 2: Servicio
-            let aplicarImpuesto = $('#impuesto-checkbox').is(':checked'); // proceso para verificar si incluye iva
+            let precio = parseFloat(precioProducto);  // Ya tiene el porcentaje aplicado
+            let stock = parseInt($('#stock').val()) || 0;
+            let tipo = $('#id_producto').find('option:selected').data('tipo');
+            let aplicarImpuesto = $('#impuesto-checkbox').is(':checked');
 
             if (id_producto != '' && producto != '' && precio > 0) {
-        if (tipo === 1) { // Producto físico
-            if (!cantidad || cantidad <= 0 || cantidad % 1 !== 0) {
-                mensaje('Favor ingresar una cantidad válida.');
-                return;
-            }
-            if (cantidad > stock) {
-                mensaje(`La cantidad ingresada (${cantidad}) supera el stock disponible (${stock}).`);
-                return;
-            }
-        } else { // Servicio
-            cantidad = 1; // Para servicios, la cantidad siempre es 1
-        }
+                if (tipo === 1) {
+                    if (!cantidad || cantidad <= 0 || cantidad % 1 !== 0) {
+                        mensaje('Favor ingresar una cantidad válida.');
+                        return;
+                    }
+                    if (cantidad > stock) {
+                        mensaje(`La cantidad ingresada (${cantidad}) supera el stock disponible (${stock}).`);
+                        return;
+                    }
+                } else {
+                    cantidad = 1;
+                }
 
-            // Sumador
-            contador++;
-            // Calcular subtotal
-            subtotal[contador] = round(cantidad * precio);
-            suma += subtotal[contador];
+                contador++;
+                subtotal[contador] = round(cantidad * precio);
+                suma += subtotal[contador];
 
-            // nota aca se valido si es tipo producto o servicio
-            if(tipo === 1 && aplicarImpuesto) { // aca se agrego el aplicar impuesto
-                iva += round((subtotal[contador]/100) * impuesto);
-            }
-            //iva = round((suma / 100) * impuesto); - esto tenia antes
+                if (tipo === 1 && aplicarImpuesto) {
+                    iva += round((subtotal[contador] / 100) * impuesto);
+                }
 
-            total = round(suma + iva);
+                total = round(suma + iva);
 
-            // Agregar producto a la tabla
-            $('#tabla-productos tbody').append(`
-                <tr id="fila${contador}">
-                    <th>${contador}</th>
-                    <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
-                    <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
-                    <td><input type="hidden" name="arrayprecio[]" value="${precio}">${precio}</td>
-                    <td>${subtotal[contador]}</td>
-                    <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
-                </tr>
-            `);
+                $('#tabla-productos tbody').append(`
+                    <tr id="fila${contador}">
+                        <th>${contador}</th>
+                        <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
+                        <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
+                        <td><input type="hidden" name="arrayprecio[]" value="${precio}">${precio}</td>
+                        <td>${subtotal[contador]}</td>
+                        <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `);
 
-            limpiar();
+                limpiar();
 
-                // Actualizar totales
                 $('#suma').html(suma);
                 $('#iva').html(iva);
                 $('#total').html(total);
@@ -422,8 +431,8 @@
             } else {
                 mensaje('Los campos están vacíos o son inválidos.');
             }
-
         }
+
 
         function eliminarProducto(index){
             // recalculamos el detalle de venta

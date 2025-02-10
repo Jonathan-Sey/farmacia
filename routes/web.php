@@ -13,8 +13,11 @@ use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\solicitud\solicitudController as SolicitudSolicitudController;
+use App\Http\Controllers\solicitudController;
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -55,6 +58,7 @@ Route::post('/usuarios/register', [UsuarioController::class, 'register'])->name(
 Route::patch('/usuarios/{usuario}/actualizar-estado',[UsuarioController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');
 Route::patch('usuarios/{id}', [UsuarioController::class, 'update'])->name('usuarios.update');
 Route::resource('roles', RolController::class)->parameters(['roles' => 'rol']);
+Route::post('/roles/{rol}', [RolController::class, 'update'])->name('roles.update');
 Route::post('roles/{rol}/estado', [RolController::class, 'changeStatus'])->name('roles.changeStatus');
 Route::resource('sucursales', SucursalController::class)->parameters(['sucursales' => 'sucursal']);
 Route::resource('productos', ProductoController::class)->parameters(['productos' => 'producto']);
@@ -65,9 +69,11 @@ Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' 
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
+Route::resource('solicitud', SolicitudSolicitudController::class)->parameters(['solicitud' => 'solicitud']);
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+Route::get('/productos-por-sucursal/{id_sucursal}', [trasladoController::class, 'obtenerProductos']);
 
 
 
