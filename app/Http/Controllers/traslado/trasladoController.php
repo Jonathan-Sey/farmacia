@@ -5,6 +5,7 @@ namespace App\Http\Controllers\traslado;
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
 use App\Models\Producto;
+use App\Models\Solicitud;
 use App\Models\Sucursal;
 use App\Models\traslado;
 use Illuminate\Http\Request;
@@ -15,7 +16,8 @@ class trasladoController extends Controller
     public function index()
     {
         $traslado = traslado::with('producto:id,nombre', "sucursal1:id,nombre")->where('estado', '!=', 0)->get();
-        return view('traslado.index', compact('traslado'));
+        $cantidadDeSolicitudes = Solicitud::where('estado', 1)->count();
+        return view('traslado.index', compact('traslado', "cantidadDeSolicitudes"));
     }
 
     public function create()
