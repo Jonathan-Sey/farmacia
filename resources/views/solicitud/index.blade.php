@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Trasferencia de articulos')
+@section('titulo', 'Solisitud de productos')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -8,18 +8,13 @@
 
 @section('contenido')
     {{-- Botón para crear nueva sucursal --}}
-    <a href="{{ route('traslado.create') }}">
-        <button class="btn btn-success text-white font-bold uppercase">
+    <a href="{{ route('solicitud.create') }}">
+        <button class="btn btn-success text-white font-bold uppercase m-2">
             Crear
         </button>
     </a>
 
-    {{-- Botón para crear nueva sucursal --}}
-    <a href="{{ route('solicitud.create') }}">
-        <button class="btn btn-success text-white font-bold uppercase">
-            solicitar producto
-        </button>
-    </a>
+
     <x-data-table>
         <x-slot name="thead">
             <thead class="text-white font-bold">
@@ -29,29 +24,29 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">sucursal de destino</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">producto</th>
                         <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">cantidad transferida</th>
-                        <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">usuario</th>
+                        <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Mensaje</th>
                         <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Fecha</th>
                         <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">activo</th>
-                        <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">acciones</th>
+                        <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">confirmar solicitud</th>
                 </tr>
             </thead>
         </x-slot>
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($solisitud as $traslado)
+                @foreach ($solicitudes as $solicitud)
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->id }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->sucursal1->nombre}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->sucursal2->nombre}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->producto->nombre }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->cantidad }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->user->name }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->created_at }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->sucursal1->nombre}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->sucursal2->nombre}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->producto->nombre }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->cantidad }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->descripcion }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->created_at }}</td>
 
                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $traslado->id }}" data-estado="{{ $traslado->estado }}">
-                            @if ($traslado->estado == 1)
+                        <a href="#" class="estado" data-id="{{ $solicitud->id }}" data-estado="{{ $solicitud->estado }}">
+                            @if ($solicitud->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
                             @else
                                 <span class="text-red-500 font-bold">Inactivo</span>
@@ -59,21 +54,15 @@
                         </a>
                     </td>
                     <td class="flex gap-2 justify-center">
-                        {{-- Botón Editar --}}
-                        <form action="{{ route('traslado.edit', ['traslado' => $traslado->id]) }}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </form>
+                 
 
                         {{-- Botón Eliminar --}}
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{ $traslado->id }}" data-info="{{ $traslado->nombre }}">
-                            <i class="fas fa-trash"></i>
+                        <button type="button" class="btn btn-success font-bold uppercase eliminar-btn btn-sm" data-id="{{ $solicitud->id }}" data-info="{{ $solicitud->nombre }}">
+                        <i class="fa-solid fa-check"></i>
                         </button>
 
                         {{-- Formulario oculto para eliminación --}}
-                        <form id="form-eliminar{{ $traslado->id }}" action="{{ route('traslado.destroy', $traslado->id) }}" method="POST" style="display: none;">
+                        <form id="form-eliminar{{ $solicitud->id }}" action="{{ route('solicitud.destroy', $solicitud->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
                         </form>
