@@ -95,9 +95,7 @@
                             </div>
                         </div>
 
-                        <label for="porcentaje">Incremento (%)</label>
-                        <input type="number" id="porcentaje" min="0" value="0">
-
+                       
                         {{-- end cantidad y precio --}}
                         <button id="btn-agregar" type="button" class=" cursor-pointer mt-3 rounded-md bg-indigo-600 px-3 w-full py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Agregar</button>
                     </div>
