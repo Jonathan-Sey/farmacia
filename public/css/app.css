@@ -2923,9 +2923,6 @@ input.tab:checked + .tab-content,
 .h-16 {
   height: 4rem;
 }
-.h-20 {
-  height: 5rem;
-}
 .h-40 {
   height: 10rem;
 }
@@ -2944,11 +2941,17 @@ input.tab:checked + .tab-content,
 .h-screen {
   height: 100vh;
 }
+.h-20 {
+  height: 5rem;
+}
 .max-h-\[400px\] {
   max-height: 400px;
 }
 .max-h-\[800px\] {
   max-height: 800px;
+}
+.max-h-screen {
+  max-height: 100vh;
 }
 .min-h-screen {
   min-height: 100vh;
@@ -3097,6 +3100,9 @@ input.tab:checked + .tab-content,
 }
 .overflow-x-auto {
   overflow-x: auto;
+}
+.overflow-y-auto {
+  overflow-y: auto;
 }
 .whitespace-nowrap {
   white-space: nowrap;
