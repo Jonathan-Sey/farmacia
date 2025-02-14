@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Almacen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
+use App\Models\Lote;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Sucursal;
+use App\Models\Traslado;
 
 class AlmacenController extends Controller
 {
@@ -17,11 +19,17 @@ class AlmacenController extends Controller
      */
     public function index()
     {
-
+        //$traslados = Traslado::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
         $almacenes = Almacen::with('producto:id,nombre')
         ->where('estado', '!=', 0)
         ->get();
         return view('almacen.index',compact('almacenes'));
+
+    }
+        public function getLotes($idProducto)
+    {
+        $lotes = Lote::where('id_producto', $idProducto)->get();
+        return response()->json($lotes);
     }
 
     /**
@@ -68,9 +76,10 @@ class AlmacenController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
         $this->validate($request,[
-            'id_sucursal' => ['required'],
-            'id_producto' => ['required'],
+            'id_sucursal_origen' => ['required'],
+            'id_sucursal_destino' => ['required'],
             'cantidad' => ['required','numeric'],
 
         ]);

@@ -15,6 +15,7 @@ use App\Http\Controllers\Inventario\InventarioController;
 use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\Traslado\TrasladoController;
 use App\Http\Controllers\Venta\VentaController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -72,10 +73,12 @@ Route::resource('personas', PersonaController::class)->parameters(['personas' =>
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
 Route::resource('lotes', LoteController::class)->parameters(['lote' => 'lote']);
+Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 
 
-
+Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
+Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 
