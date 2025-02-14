@@ -1,7 +1,7 @@
 <header>
     <div class="flex">
         <!-- Barra lateral fija -->
-        <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden fixed top-0 left-0 h-full">
+        <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden fixed top-0 left-0 h-full overflow-y-auto max-h-screen">
             <div class="flex items-center justify-center h-20 shadow-md">
                 <h1 class="text-3xl uppercase text-indigo-500">Farmacia</h1>
             </div>
@@ -87,6 +87,12 @@
                         <span class="text-sm font-medium">Consultas</span>
                     </a>
                 </li>
+                <li data-pestana="traslado" style="display:none;">
+                    <a href="{{ route('traslado.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-money-bill-transfer"></i></span>
+                        <span class="text-sm font-medium">traslado</span>
+                    </a>
+                </li>
                 <!-- Botón Logout -->
                 <li>
                     <a href="javascript:void(0);" id="logout-btn" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
@@ -148,6 +154,9 @@
             </li>
             <li data-pestanal="Consultas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('consultas.index') }}"><i class="fa-solid fa-book-medical"></i> Consultas</a>
+            </li>
+            <li data-pestanal="traslado" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('traslado.index') }}"><i class="fa-solid fa-book-medical"></i> traslado</a>
             </li>
             <li>
                 <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
