@@ -2923,6 +2923,9 @@ input.tab:checked + .tab-content,
 .h-16 {
   height: 4rem;
 }
+.h-20 {
+  height: 5rem;
+}
 .h-40 {
   height: 10rem;
 }
@@ -2940,9 +2943,6 @@ input.tab:checked + .tab-content,
 }
 .h-screen {
   height: 100vh;
-}
-.h-20 {
-  height: 5rem;
 }
 .max-h-\[400px\] {
   max-height: 400px;
@@ -3287,13 +3287,13 @@ input.tab:checked + .tab-content,
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
 }
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
-}
 .py-3\.5 {
   padding-top: 0.875rem;
   padding-bottom: 0.875rem;
+}
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 .pb-12 {
   padding-bottom: 3rem;
