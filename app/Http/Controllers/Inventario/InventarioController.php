@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inventario;
 
 use App\Http\Controllers\Controller;
 use App\Models\Inventario;
+use App\Models\Lote;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -31,11 +32,13 @@ class InventarioController extends Controller
             'sucursal.ubicacion as sucursal',
 
             DB::raw('COUNT(lote.id) as cantidad_lotes'),
-            DB::raw('SUM(lote.cantidad) as cantidad_total')
+            // DB::raw('SUM(lote.cantidad) as cantidad_total')
+            DB::raw('SUM(inventario.cantidad) as cantidad_total')
         )
         ->join('producto', 'inventario.id_producto', '=', 'producto.id')
         ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
         ->join('lote', 'inventario.id_lote', '=', 'lote.id')
+        ->where('inventario.cantidad','>', 0)
         ->groupBy('inventario.id_producto', 'inventario.id_sucursal') // agrupado por lote
         //->groupBy('inventario.id_inventario', 'producto.nombre', 'sucursal.ubicacion')
         //->groupBy('inventario.id_producto', 'inventario.id_sucursal')
@@ -48,8 +51,25 @@ class InventarioController extends Controller
         //     )
         ->get();
 
+        // nuevo validacion, validacion por lote en 0
+        $inventarioAgotado = Inventario::select(
+            'inventario.id_producto',
+            'inventario.id_sucursal',
+            'producto.nombre as producto',
+            'sucursal.ubicacion as sucursal',
+            DB::raw('COUNT(lote.id) as cantidad_lotes'),
+            DB::raw('SUM(inventario.cantidad) as cantidad_total')
+        )
+        ->join('producto', 'inventario.id_producto', '=', 'producto.id')
+        ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
+        ->join('lote', 'inventario.id_lote', '=', 'lote.id')
+        ->where('inventario.cantidad', '=', 0)
+        ->groupBy('inventario.id_producto', 'inventario.id_sucursal')
+        ->get();
+
+
         //return $inventario;
-        return view('Inventario.index',compact('inventario'));
+        return view('Inventario.index',compact('inventario','inventarioAgotado'));
     }
 
     /**
@@ -79,14 +99,20 @@ class InventarioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($idProducto, $idSucursal)
+
     {
-        $lotes = Inventario::with(['lote', 'producto', 'sucursal'])
-        ->where('id_inventario', $id)
+
+          // Obtener los lotes originales
+        $lotesOriginales = Lote::where('id_producto', $idProducto)->get();
+
+        $lotesDisponibles  = Inventario::with(['lote', 'producto', 'sucursal'])
+        ->where('id_producto', $idProducto)
+        ->where('id_sucursal', $idSucursal)
         ->get();
         // $inventario = Inventario::with('lote', 'producto', 'sucursal')->findOrFail($inventario->id);
         // return view('Inventario.show',compact('inventario'));
-         return view('Inventario.show',compact('lotes'));
+         return view('Inventario.show',compact('lotesDisponibles', 'lotesOriginales'));
     }
 
     /**

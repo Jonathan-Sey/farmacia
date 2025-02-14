@@ -12,7 +12,9 @@ const rutasMapeadas = {
     'Personas': '/personas',
     'Medicos': '/medicos',
     'Consultas': '/consultas',
-    'Usuarios': '/usuarios'
+    'Usuarios': '/usuarios',
+    'Inventario': '/inventario',
+    'Traslados': '/traslados'
 };
 
 function tienePermiso(ruta) {

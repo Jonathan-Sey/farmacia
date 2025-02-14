@@ -50,7 +50,7 @@
         <script src="{{ asset('/js/barraResponsive.js') }}"></script>
         <script type="module" src="/js/controldeNavPorRoles.js"></script>
         <script src="{{ asset('js/auth.js') }}"></script>
-        {{-- <script src="{{ asset('js/permisos.js') }}"></script> --}}
+        <script src="{{ asset('js/permisos.js') }}"></script>
         <script src="{{ asset('js/logout.js') }}"></script>
         <script src="{{ asset('js/cerrarSesion.js') }}"></script>
 
