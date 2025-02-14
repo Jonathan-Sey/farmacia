@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             RolPestanaSeeder::class,
             UnionRolPestanaSeeder::class,
             UserSeeder::class,
+            categoriaSeeder::class,
+            productoSeeder::class,
+            socursalesSeeder::class
         ]);
     }
 }
