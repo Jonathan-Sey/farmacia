@@ -38,7 +38,10 @@ class TrasladoController extends Controller
          // Obtener los lotes disponibles en el inventario de la sucursal de origen
         $lotes = Inventario::where('id_producto', $idProducto)
         ->where('id_sucursal', $idSucursal)
-        ->with('lote') // Cargar la relación con la tabla `lote`
+        ->where('cantidad', '>', 0)
+        ->with(['lote' => function($query) {
+            $query->orderBy('fecha_vencimiento', 'asc'); // Ordenar por fecha de vencimiento
+        }])
         ->get();
 
         Log::info('Lotes encontrados:', $lotes->toArray());
@@ -68,182 +71,126 @@ class TrasladoController extends Controller
      */
     public function store(Request $request)
     {
-
         Log::info('Datos recibidos en el request:', $request->all());
         $this->validate($request, [
             'id_sucursal_origen' => 'required',
             'id_sucursal_destino' => 'required',
             'id_producto' => 'required',
-            'id_lote' => 'required',
             'cantidad' => 'required|integer|min:1',
         ]);
 
-
         DB::beginTransaction();
-        try{
+        try {
             $producto = $request->id_producto;
-            $lote = $request->id_lote;
             $sucursal_origen = $request->id_sucursal_origen;
             $sucursal_destino = $request->id_sucursal_destino;
             $cantidad = $request->cantidad;
-            // revicion de inventario
 
-             // Depuración: Verificar el inventario de origen
-            Log::info('Buscando inventario de origen...');
+            Log::info('Iniciando proceso de traslado...');
+            Log::info('Producto:', ['id_producto' => $producto]);
+            Log::info('Sucursal Origen:', ['id_sucursal_origen' => $sucursal_origen]);
+            Log::info('Sucursal Destino:', ['id_sucursal_destino' => $sucursal_destino]);
+            Log::info('Cantidad:', ['cantidad' => $cantidad]);
 
-            // $inventarioOrigen = Inventario::where('id_sucursal', $request->id_sucursal_origen)
-            // ->where('id_producto', $request->id_producto)
-            // ->where('id_lote', $request->id_lote)
-            // ->first();
-            $inventarioOrigen  = Inventario::where('id_producto', $producto)
-            ->where('id_sucursal', $sucursal_origen)
-            ->where('id_lote', $lote)
-            ->first();
+            // Obtener los lotes disponibles en la sucursal de origen, ordenados por fecha de vencimiento
+            $lotesDisponibles = Inventario::where('id_producto', $producto)
+                ->where('id_sucursal', $sucursal_origen)
+                ->where('cantidad', '>', 0)
+                ->with(['lote' => function($query) {
+                    $query->orderBy('fecha_vencimiento', 'asc');
+                }])
+                ->get();
 
-            // validaciones entre invnetario y la cantidad solicitada
-            if(!$inventarioOrigen  || $inventarioOrigen ->cantidad < $request->cantidad){
+            Log::info('Lotes disponibles:', $lotesDisponibles->toArray());
+
+            // Verificar si hay suficiente inventario en la sucursal de origen
+            $cantidadTotalDisponible = $lotesDisponibles->sum('cantidad');
+            Log::info('Cantidad total disponible:', ['cantidad_total_disponible' => $cantidadTotalDisponible]);
+
+            if ($cantidadTotalDisponible < $cantidad) {
                 Log::error('No hay suficiente inventario en la sucursal de origen.');
-                return redirect()->back()->with('error','No hay suficiente inventario en la sucural origen');
+                return redirect()->back()->with('error', 'No hay suficiente inventario en la sucursal de origen.');
             }
 
-                // 2. Restar la cantidad en la sucursal de origen
-            $inventarioOrigen->cantidad -= $cantidad;
-            $inventarioOrigen->save();
+            // Distribuir la cantidad solicitada entre los lotes disponibles
+            $cantidadRestante = $cantidad;
+            Log::info('Cantidad restante a trasladar:', ['cantidad_restante' => $cantidadRestante]);
 
-            // 3. Verificar si el producto ya existe en la sucursal destino
-            $inventarioDestino = Inventario::where('id_producto', $producto)
-            ->where('id_sucursal', $sucursal_destino)
-            ->where('id_lote', $lote)
-            ->first();
+            foreach ($lotesDisponibles as $inventarioOrigen) {
+                if ($cantidadRestante <= 0) {
+                    Log::info('Cantidad restante es 0, terminando el proceso.');
+                    break;
+                }
 
-            if ($inventarioDestino) {
-                $inventarioDestino->cantidad += $cantidad;
-                $inventarioDestino->save();
-            }else{
-                // Log::error('No existe un registro de inventario para el producto y lote en la sucursal de destino.');
-                // return redirect()->back()->with('error', 'No existe un registro de inventario para el producto y lote en la sucursal de destino.');
-                Log::warning('Inventario en destino no encontrado. Creando un nuevo registro.');
-
-                //     Inventario::create([
-                //         'id_producto' => $producto,
-                //         'id_sucursal' => $sucursal_destino,
-                //         'id_lote' => $lote,
-                //         'cantidad' => $cantidad
-                // ]);
-            }
-
-            Log::info('Inventario de destino encontrado:', [$inventarioDestino]);
-
-
-            // // Restar la cantidad del inventario de origen
-            // $inventarioOrigen->cantidad -= $request->cantidad;
-            // $inventarioOrigen->save();
-            // Log::info('Buscando inventario de destino...');
-
-            //  // Restar la cantidad del inventario de origen
-            //  $inventarioDestino->cantidad += $request->cantidad;
-            //  $inventarioDestino->save();
-
-
-            // proceso para pasar los productos a la sucursal destino
-
-
-            // if ($inventarioDestino) {
-            //     $inventarioDestino->cantidad += $request->cantidad;
-            //     $inventarioDestino->save();
-            // } else {
-            //     Inventario::create([
-            //         'id_sucursal' => $request->id_sucursal_destino,
-            //         'id_producto' => $request->id_producto,
-            //         'id_lote' => $request->id_lote,
-            //         'cantidad' => $request->cantidad,
-            //     ]);
-            // }
-
-                // verificamos el inventario
-           /*
-                $inventarioDestino = Inventario::firstOrCreate(
-                    [
-                        'id_sucursal' => $request->id_sucursal_destino,
-                        'id_producto' => $request->id_producto,
-                        'id_lote' => $request->id_lote,
-                    ],
-                    [
-                        'cantidad' => 0, // Inicializar con cantidad 0 si no existe
-                    ]
-                );
-
-                // Actualizamos el inventario destino
-                $inventarioDestino->cantidad += $request->cantidad;
-                $inventarioDestino->save();
+                $cantidadATrasladar = min($inventarioOrigen->cantidad, $cantidadRestante);
+                Log::info('Cantidad a trasladar desde el lote:', [
+                    'id_lote' => $inventarioOrigen->id_lote,
+                    'cantidad_a_trasladar' => $cantidadATrasladar
+                ]);
 
                 // Restar la cantidad del inventario de origen
-                $inventarioOrigen->cantidad -= $request->cantidad;
+                $inventarioOrigen->cantidad -= $cantidadATrasladar;
                 $inventarioOrigen->save();
+                Log::info('Inventario de origen actualizado:', $inventarioOrigen->toArray());
 
-*/
+                $cantidadRestante -= $cantidadATrasladar;
+                Log::info('Cantidad restante después del traslado:', ['cantidad_restante' => $cantidadRestante]);
+            }
 
-
-              // Depuración: Registrar el traslado
-                Log::info('Registrando el traslado...');
-
-            // almacenar el traslado
-            Traslado::create([
-                'id_sucursal_origen' => $request->id_sucursal_origen,
-                'id_sucursal_destino' => $request->id_sucursal_destino,
-                'id_producto' => $request->id_producto,
-                'id_lote' => $request->id_lote,
-                'cantidad' => $request->cantidad,
-                'fecha_traslado' => now(),
-                'id_usuario' => 1,
-            ]);
-            // Depuración: Actualizar el almacén de origen
-                Log::info('Actualizando el almacén de origen...');
-
-            // proceso apra actualizar el almacen
-            $almacenOrigen = Almacen::where('id_sucursal', $request->id_sucursal_origen)
-            ->where('id_producto', $request->id_producto)
-            ->first();
+            // Actualizar el almacén de origen
+            $almacenOrigen = Almacen::where('id_sucursal', $sucursal_origen)
+                ->where('id_producto', $producto)
+                ->first();
 
             if ($almacenOrigen) {
-                $almacenOrigen->cantidad -= $request->cantidad;
+                $almacenOrigen->cantidad -= $cantidad;
                 $almacenOrigen->save();
+                Log::info('Almacén de origen actualizado:', $almacenOrigen->toArray());
             }
-             // Depuración: Actualizar el almacén de destino
-            Log::info('Actualizando el almacén de destino...');
 
-            // Actualizar la tabla almacen para la sucursal de destino
-            $almacenDestino = Almacen::where('id_sucursal', $request->id_sucursal_destino)
-                                     ->where('id_producto', $request->id_producto)
-                                     ->first();
+            // Actualizar el almacén de destino
+            $almacenDestino = Almacen::where('id_sucursal', $sucursal_destino)
+                ->where('id_producto', $producto)
+                ->first();
 
             if ($almacenDestino) {
-                $almacenDestino->cantidad += $request->cantidad;
+                $almacenDestino->cantidad += $cantidad;
                 $almacenDestino->save();
+                Log::info('Almacén de destino actualizado:', $almacenDestino->toArray());
             } else {
-                Almacen::create([
-                        'id_sucursal' => $request->id_sucursal_destino,
-                        'id_producto' => $request->id_producto,
-                        'cantidad' => $request->cantidad,
-                        'id_user' => 1,
-                        'estado' => 1, // Estado activo
-                        ]);
+                $almacenDestino = Almacen::create([
+                    'id_sucursal' => $sucursal_destino,
+                    'id_producto' => $producto,
+                    'cantidad' => $cantidad,
+                    'id_user' => 1,
+                    'estado' => 1, // Estado activo
+                ]);
+                Log::info('Nuevo almacén de destino creado:', $almacenDestino->toArray());
             }
 
-            DB::commit();
-             // Depuración: Traslado realizado con éxito
-            Log::info('Traslado realizado exitosamente.');
+            // Crear el registro de traslado
+            $traslado = Traslado::create([
+                'id_sucursal_origen' => $sucursal_origen,
+                'id_sucursal_destino' => $sucursal_destino,
+                'id_producto' => $producto,
+                'id_lote' => $lotesDisponibles->first()->id_lote, // Tomar el primer lote como referencia
+                'cantidad' => $cantidad,
+                'fecha_traslado' => now(),
+                'id_usuario' => 1, // Aquí deberías usar el ID del usuario autenticado
+            ]);
 
+            Log::info('Traslado registrado:', $traslado->toArray());
+
+            DB::commit();
+            Log::info('Traslado realizado exitosamente.');
             return redirect()->route('traslados.index')->with('success', 'Traslado realizado exitosamente.');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             DB::rollBack();
-               // Depuración: Error al realizar el traslado
             Log::error('Error al realizar el traslado: ' . $e->getMessage());
+            Log::error('Trace del error:', ['trace' => $e->getTraceAsString()]);
             return redirect()->back()->with('error', 'Error al realizar el traslado: ' . $e->getMessage());
         }
     }
-
     /**
      * Display the specified resource.
      *
