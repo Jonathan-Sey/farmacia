@@ -9,6 +9,7 @@ use App\Models\Solicitud;
 use App\Models\Sucursal;
 use App\Models\traslado;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpParser\Builder\Trait_;
 
 class trasladoController extends Controller
@@ -33,12 +34,14 @@ class trasladoController extends Controller
             'id_sucursal_1' => ['required'],
             'id_sucursal_2' => ['required'],
             'id_producto' => ['required'],
+            'idUsuario' => ['required'],
             'cantidad' => ['required', 'numeric']
         ]);
 
         $producto_id = $request->id_producto;
         $sucursal_origen_id = $request->id_sucursal_1;
         $sucursal_destino_id = $request->id_sucursal_2;
+     
         $cantidad = $request->cantidad;
 
         $almacen_origen = Almacen::where('id_producto', $producto_id)
@@ -66,7 +69,7 @@ class trasladoController extends Controller
                 "id_sucursal_destino" => $request->id_sucursal_2,
                 "id_producto" => $request->id_producto,
                 "cantidad" => $request->cantidad,
-                "id_user" => 1,
+                "id_user" => $request->idUsuario,
                 "estado" => 1
             ]
         );
