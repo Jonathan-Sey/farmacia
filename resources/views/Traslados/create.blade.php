@@ -43,14 +43,14 @@
                     </select>
                 </div>
 
-                <div class="mt-2 mb-5">
+                {{-- <div class="mt-2 mb-5">
                     <label for="id_lote" class="uppercase block text-sm font-medium text-gray-900">Lote</label>
                     <select class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             name="id_lote" id="id_lote" required>
                         <option value="">Seleccionar lote</option>
                         <!-- Los lotes se cargarán dinámicamente con JavaScript -->
                     </select>
-                </div>
+                </div> --}}
 
                 <div class="mt-2 mb-5">
                     <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>

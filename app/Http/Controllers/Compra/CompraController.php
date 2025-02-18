@@ -53,7 +53,7 @@ class CompraController extends Controller
      */
     public function store(Request $request)
     {
-       //dd($request);
+      // dd($request);
         $this->validate($request,[
             'arrayprecio' => 'required|array',
             'arraycantidad.*' => 'integer|min:1',
@@ -106,15 +106,39 @@ class CompraController extends Controller
                     'fecha_vencimiento' => $fechaVencimiento,
                     'cantidad' => $arrayCantidad[$index],
                     'id_compra' => $compra->id,
+                    //'estado' => 1,
                 ]);
 
-                //  proceso de inventario
-                Inventario::create([
-                    'id_producto' => $idPoducto,
-                    'id_sucursal' => 1, // Sucursal principal
-                    'id_lote' => $lote->id,
-                    'cantidad' => $arrayCantidad[$index],
-                ]);
+                    // Verificar si ya existe un registro en el inventario para este producto y lote
+                $inventarioExistente = Inventario::where('id_producto', $idPoducto)
+                ->where('id_lote', $lote->id)
+                ->where('id_sucursal', 1) // Sucursal principal
+                ->first();
+
+
+                if ($inventarioExistente) {
+                    // Si existe, actualizar la cantidad
+                    $inventarioExistente->cantidad += $arrayCantidad[$index];
+                    $inventarioExistente->save();
+
+                    // prueba de eliminacion
+                    // if ($inventarioExistente->cantidad > 0) {
+                    //     Inventario::where('id_producto', $idPoducto)
+                    //         ->where('id_lote', $lote->id)
+                    //         ->where('id_sucursal', 1)
+                    //         ->where('cantidad', 0)
+                    //         ->delete();
+                    // }
+                } else {
+
+                        //  proceso de inventario
+                        Inventario::create([
+                            'id_producto' => $idPoducto,
+                            'id_sucursal' => 1, // Sucursal principal
+                            'id_lote' => $lote->id,
+                            'cantidad' => $arrayCantidad[$index],
+                        ]);
+                }
 
             }
 

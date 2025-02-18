@@ -20,6 +20,7 @@ class CreateLoteTable extends Migration
             $table->date('fecha_vencimiento');
             $table->integer('cantidad');
             $table->unsignedBigInteger('id_compra');
+            //$table->tinyInteger('estado')->default(1);
             $table->timestamps();
             $table->foreign('id_producto')->references('id')->on('producto');  // Corregido para referenciar `id` en `producto`
             $table->foreign('id_compra')->references('id')->on('compra');

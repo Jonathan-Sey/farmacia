@@ -10,12 +10,19 @@
 @endpush
 
 @section('contenido')
+<div class="py-4">
     <a href="{{ route('compras.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
     </a>
-    <h2 class="text-xl font-bold mb-4">Lotes Activos</h2>
+    <a href="{{ route('traslados.create') }}">
+        <button class="btn btn-success text-white font-bold uppercase">
+            Traslado
+        </button>
+    </a>
+</div>
+    {{-- <h2 class="text-xl font-bold mb-4">Lotes Activos</h2> --}}
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
@@ -25,6 +32,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >No.lote</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad en inventario</th>
+                    {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th> --}}
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
             </thead>
@@ -39,6 +47,13 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->sucursal}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_lotes}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_total}}</td>
+                    {{-- <td class="px-6 py-4 whitespace-nowrap">
+                        @if ($index->estado == 'activo')
+                            <span class="bg-green-500 text-white px-2 py-1 rounded-full">Activo</span>
+                        @else
+                            <span class="bg-red-500 text-white px-2 py-1 rounded-full">Agotado</span>
+                        @endif
+                    </td> --}}
                     <td class="flex gap-2 justify-center">
 
                         {{-- <form action="{{route('lotes.index', ['producto' => $index->id_producto, 'sucursal'=>$index->id_sucursal])}}" method="GET">
@@ -72,26 +87,7 @@
 
                 @endforeach
 
-            </tbody>
-        </x-slot>
-    </x-data-table>
-    <h2 class="text-xl font-bold mt-8 mb-4">Lotes Agotados</h2>
-    <x-data-table>
-        <x-slot name="thead">
-            <thead class=" text-white font-bold">
-                <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >producto</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >No.lote</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad en inventario</th>
-                </tr>
-            </thead>
-        </x-slot>
-
-        <x-slot name="tbody">
-            <tbody>
-                @foreach ($inventarioAgotado  as $index)
+                {{-- @foreach ($inventarioAgotado as $index)
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->id_producto}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->producto}}</td>
@@ -99,37 +95,12 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_lotes}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_total}}</td>
                     <td class="flex gap-2 justify-center">
-
-                        {{-- <form action="{{route('lotes.index', ['producto' => $index->id_producto, 'sucursal'=>$index->id_sucursal])}}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                ver
-                            </button>
-                        </form> --}}
-
-                        {{-- <a href="{{ route('lotes.index', ['producto' => $index->id_producto, 'sucursal' => $index->id_sucursal]) }}" class="btn btn-primary font-bold uppercase btn-sm">
-                            Ver
-                        </a> --}}
                         <a href="{{ route('inventario.show', ['idProducto' => $index->id_producto, 'idSucursal' => $index->id_sucursal]) }}" class="btn btn-primary font-bold uppercase btn-sm">
                             Ver
                         </a>
-
-
-
-                        {{-- <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$index->id_inventario}}"  data-info="{{$index->producto->nombre}}">
-                            <i class="fas fa-trash"></i>
-                        </button> --}}
-
-{{--
-                        <form id="form-eliminar{{$compra->id}}" action="{{ route('compras.destroy', $compra->id) }}" method="POST" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form> --}}
                     </td>
-
                 </tr>
-
-                @endforeach
+                @endforeach --}}
 
             </tbody>
         </x-slot>
