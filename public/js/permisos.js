@@ -14,7 +14,7 @@ const rutasMapeadas = {
     'Consultas': '/consultas',
     'Usuarios': '/usuarios',
     'Inventario': '/inventario',
-    'Traslados': '/traslados'
+    'Requisiciones': '/requisiciones'
 };
 
 function tienePermiso(ruta) {
