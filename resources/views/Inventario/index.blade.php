@@ -16,7 +16,7 @@
             Crear
         </button>
     </a>
-    <a href="{{ route('traslados.create') }}">
+    <a href="{{ route('requisiciones.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Traslado
         </button>

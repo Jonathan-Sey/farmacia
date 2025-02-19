@@ -5,9 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Traslado extends Model
+class Requisicion extends Model
 {
-    protected $table = 'traslado';
+    protected $table = 'requisicion';
     use HasFactory;
 
     protected $fillable = [
