@@ -67,9 +67,26 @@ class InventarioController extends Controller
         ->groupBy('inventario.id_producto', 'inventario.id_sucursal')
         ->get();
 
+        $productosProximosAVencer = Inventario::select(
+            'inventario.id_producto',
+            'inventario.id_sucursal',
+            'producto.nombre as producto',
+            'sucursal.ubicacion as sucursal',
+            'lote.fecha_vencimiento',
+            DB::raw('SUM(inventario.cantidad) as cantidad_total')
+        )
+        ->join('producto', 'inventario.id_producto', '=', 'producto.id')
+        ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
+        ->join('lote', 'inventario.id_lote', '=', 'lote.id')
+        ->where('inventario.cantidad', '>', 0)
+        ->where('lote.fecha_vencimiento', '<=', now()->addDays(30)) // Productos que vencen en los próximos 30 días
+        ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'lote.fecha_vencimiento')
+        ->orderBy('lote.fecha_vencimiento', 'asc')
+        ->get();
+
 
         //return $inventario;
-        return view('Inventario.index',compact('inventario','inventarioAgotado'));
+        return view('Inventario.index',compact('inventario','inventarioAgotado','productosProximosAVencer'));
     }
 
     /**

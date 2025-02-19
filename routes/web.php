@@ -77,8 +77,6 @@ Route::resource('traslados', TrasladoController::class)->parameters(['traslado' 
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
-
-
 Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
 Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 

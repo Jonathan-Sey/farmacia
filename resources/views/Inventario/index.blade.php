@@ -87,7 +87,7 @@
 
                 @endforeach
 
-                {{-- @foreach ($inventarioAgotado as $index)
+                 {{-- @foreach ($inventarioAgotado as $index)
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->id_producto}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->producto}}</td>
@@ -104,7 +104,38 @@
 
             </tbody>
         </x-slot>
+
     </x-data-table>
+
+    {{-- <h2>Productos Próximos a Vencer</h2>
+    <x-data-table>
+        <x-slot name="thead">
+            <thead class=" text-white font-bold">
+                <tr class="bg-slate-600  ">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >No.lote</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad total</th>
+                </tr>
+            </thead>
+        </x-slot>
+
+        <x-slot name="tbody">
+            <tbody>
+                @foreach ($inventarioAgotado  as $index)
+                <tr>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->producto}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->sucursal}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_lotes}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_total}}</td>
+                </tr>
+
+                @endforeach
+            </tbody>
+        </x-slot>
+    </x-data-table> --}}
+
+
 @endsection
 
 @push('js')
