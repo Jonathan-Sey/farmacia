@@ -14,7 +14,12 @@ class DetalleMedico extends Model
         'especialidad',
         'numero_colegiado',
         'estado',
+        'horarios',
     ];
+    protected $casts = [
+        'horarios' => 'array', // Convierte automáticamente el JSON en un array
+    ];
+    
 
     public function scopeActivos($query)
     {
