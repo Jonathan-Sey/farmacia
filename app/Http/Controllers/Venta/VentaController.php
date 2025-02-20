@@ -86,13 +86,16 @@ class VentaController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-{
-    $this->validate($request, [
-        'arrayprecio' => 'required|array',
-        'estado' => 'integer',
-        'arraycantidad.*' => 'integer|min:1',
-        'arrayprecio.*' => 'numeric|min:0',
-    ]);
+    {
+
+
+        $this->validate($request,[
+            'arrayprecio' => 'required|array',
+            'estado'=>'integer',
+            'arraycantidad.*' => 'integer|min:1',
+            'arrayprecio.*' => 'numeric|min:0',
+
+        ]);
 
     try {
         DB::beginTransaction();
@@ -213,5 +216,6 @@ class VentaController extends Controller
             return response()->json(['success' => true]);
         }
         return response()->json(['success'=> false]);
+
     }
 }

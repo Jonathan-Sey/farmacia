@@ -22,7 +22,8 @@ class DatabaseSeeder extends Seeder
             UserSeeder::class,
             categoriaSeeder::class,
             productoSeeder::class,
-            socursalesSeeder::class
+            socursalesSeeder::class,
+            // FarmaciaSeeder::class,
         ]);
     }
 }

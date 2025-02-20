@@ -51,6 +51,10 @@
                         <!-- Los lotes se cargarán dinámicamente con JavaScript -->
                     </select>
                 </div> --}}
+                <div class="mt-2 mb-5">
+                    <label for="cantidad_disponible" class="uppercase block text-sm font-medium text-gray-900">Cantidad Disponible</label>
+                    <p id="cantidad_disponible" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">0</p>
+                </div>
 
                 <div class="mt-2 mb-5">
                     <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
@@ -124,14 +128,19 @@
                         //         </option>
                         //     `);
                         // });
-                        response.forEach(function(inventario) {
+                        response.lotes.forEach(function(inventario) {
                         $('#id_lote').append(`
                             <option value="${inventario.id_lote}">
                                 ${inventario.lote.numero_lote} (Cantidad: ${inventario.cantidad})
                             </option>
                         `);
                     });
-                        console.log("Lotes cargados:", response);
+
+                       // Actualizar la cantidad total disponible
+                    $('#cantidad_disponible').text(response.cantidadTotal);
+                    console.log("Lotes cargados:", response.lotes);
+                    console.log("Cantidad total:", response.cantidadTotal);
+
                     },
                     error: function() {
                         alert('Error al cargar los lotes');
@@ -140,6 +149,7 @@
             } else {
                 $('#id_lote').empty();
                 $('#id_lote').append('<option value="">Seleccionar lote</option>');
+                $('#cantidad_disponible').text('0');
             }
         });
     });

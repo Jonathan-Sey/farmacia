@@ -38,9 +38,15 @@ class RequisicionController extends Controller
         }])
         ->get();
 
+        $cantidadTotal = $lotes->sum('cantidad');
+
         Log::info('Lotes encontrados:', $lotes->toArray());
 
-    return response()->json($lotes);
+    return response()->json([
+        'lotes' => $lotes,
+        'cantidadTotal' => $cantidadTotal
+
+    ]);
 
     }
 
