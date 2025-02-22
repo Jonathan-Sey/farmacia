@@ -63,6 +63,9 @@
 
 @endsection
 @push('js')
+<<<<<<< HEAD
 <script src="/js/obtenerUsuario.js"></script>
 
+=======
+>>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
 @endpush

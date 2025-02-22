@@ -12,8 +12,12 @@ use App\Http\Controllers\bitacora\bitacoraController;
 use App\Http\Controllers\Usuario\UsuarioController;
 use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\Inventario\InventarioController;
+use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\Requisicion\RequisicionController;
+//use App\Http\Controllers\Traslado\TrasladoController;
 use App\Http\Controllers\solicitud\solicitudController as SolicitudSolicitudController;
 use App\Http\Controllers\solicitudController;
 use App\Http\Controllers\traslado\trasladoController;
@@ -39,12 +43,16 @@ Route::get('/', function () {
     return view('Login.login');
 })->name('login');
 
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
-});
+// Route::get('/dashboard', function () {
+//     return view('dashboard.index');
+// });
 
 
-Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+//Route::middleware('jwt.web')->group(function () {
+    Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
+    Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+//});
+//Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 
 //Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
@@ -53,7 +61,7 @@ Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->nam
 Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
 Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
-Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+//Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuario']);
 Route::post('/usuarios/register', [UsuarioController::class, 'register'])->name('usuarios.register');
 Route::patch('/usuarios/{usuario}/actualizar-estado',[UsuarioController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');
@@ -69,16 +77,37 @@ Route::resource('ventas', VentaController::class)->parameters(['ventas' => 'vent
 Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' => 'almacen']);
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
+<<<<<<< HEAD
 Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
 Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' => 'bitacora']);
 
 Route::resource('solicitud', SolicitudSolicitudController::class)->parameters(['solicitud' => 'solicitud']);
+=======
+Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
+Route::resource('lotes', LoteController::class)->parameters(['lote' => 'lote']);
+Route::resource('requisiciones', RequisicionController::class)->parameters(['requisicion' => 'requisicion']);
+
+>>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+Route::get('/get-lotes/{idProducto}/{idSucursal}', [RequisicionController::class, 'getLotes'])->name('get.lotes');
+Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
+
+Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
+Route::resource('solicitud', SolicitudSolicitudController::class)->parameters(['solicitud' => 'solicitud']);
+//Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
+//Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
+//Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 Route::get('/productos-por-sucursal/{id_sucursal}', [trasladoController::class, 'obtenerProductos']);
 
 
 
 
+// Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
+// Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
+// Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
+// Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+// Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
+// Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 

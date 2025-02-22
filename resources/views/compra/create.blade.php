@@ -9,10 +9,15 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-7xl mb-10 ">
+<<<<<<< HEAD
         <form action="{{ route('compras.store', ['id'=>1]) }}" method="POST" >
         <div id="usuario">
         </div> 
         
+=======
+        <form action="{{ route('compras.store') }}" method="POST" >
+            {{-- <form action="{{ route('compras.store', ['id'=>1]) }}" method="POST" > --}}
+>>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
             @csrf
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
@@ -160,7 +165,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-2 mb-5">
+                            {{-- <div class="mt-2 mb-5">
                                 <label for="fecha_compra" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
                                 <input
                                     readonly
@@ -171,6 +176,23 @@
                                     placeholder="Impuesto"
                                     class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                     value="<?php echo date("Y-m-d") ?>">
+
+                            </div> --}}
+                            <div class="mt-2 mb-5">
+                                <label for="fecha_vencimiento" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
+                                <input
+                                    type="date"
+                                    name="fecha_vencimiento"
+                                    id="fecha_vencimiento"
+                                    autocomplete="given-name"
+                                    class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    value="{{old('fecha_vencimiento')}}">
+
+                                    @error('fecha_vencimiento')
+                                    <div role="alert" class="alert alert-error mt-4 p-2">
+                                        <span class="text-white font-bold">{{ $message }}</span>
+                                    </div>
+                                    @enderror
 
                             </div>
                         </div>
@@ -190,6 +212,7 @@
                           <td>Producto</td>
                           <td>Cantidad</td>
                           <td>Precio</td>
+                          <td>Fecha vencimiento</td>
                           <td>SubTotal</td>
                           <th></th>
                         </tr>
@@ -283,9 +306,10 @@
             let producto = ($('#id_producto option:selected').text()).split(' ')[1];
             let cantidad = $('#cantidad').val();
             let precio = $('#precio').val();
+            let fecha_vencimiento = $('#fecha_vencimiento').val();
             let aplicarImpuesto = $('#impuesto-checkbox').is(':checked'); // aplicacion de impuesto
 
-            if(id_producto != '' && producto != '' && cantidad != '' && precio != '')
+            if(id_producto != '' && producto != '' && cantidad != '' && precio != '' && fecha_vencimiento !='')
             {
                if( parseInt(cantidad) > 0 && (cantidad % 1 == 0) && parseFloat(precio) > 0)
                {
@@ -309,6 +333,7 @@
                                 <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
                                 <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
                                 <td><input type="hidden" name="arrayprecio[]" value="${precio}">${precio}</td>
+                                <td><input type="hidden" name="arrayvencimiento[]" value="${fecha_vencimiento}">${fecha_vencimiento}</td>
                                 <td>${subtotal[contador]}</td>
                                 <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
                             </tr> `);
