@@ -28,6 +28,9 @@
                     @enderror
                 </div>
 
+                <div id="usuario">
+                </div> 
+
                 <div class="mt-2 mb-5">
                     <label for="ubicacion" class="uppercase block text-sm font-medium text-gray-900">Ubicacion</label>
                     <input
@@ -60,5 +63,6 @@
 
 @endsection
 @push('js')
+<script src="/js/obtenerUsuario.js"></script>
 
 @endpush

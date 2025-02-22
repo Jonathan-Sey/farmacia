@@ -10,7 +10,11 @@
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-7xl mb-10 ">
         <form action="{{ route('ventas.store') }}" method="POST" >
+        <div id="usuario">
+        </div> 
             @csrf
+           
+
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
                     <legend class="text-blue-500 font-bold">Venta</legend>
@@ -95,7 +99,7 @@
                             </div>
                         </div>
 
-                       
+                        
                         {{-- end cantidad y precio --}}
                         <button id="btn-agregar" type="button" class=" cursor-pointer mt-3 rounded-md bg-indigo-600 px-3 w-full py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Agregar</button>
                     </div>
@@ -146,6 +150,8 @@
                             @enderror
                         </div>
 
+
+                 
                         <div class="lg:grid grid-cols-2 gap-8">
 
                             <div   class="md:flex md:flex-row gap-5 flex flex-col">
@@ -247,6 +253,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/obtenerUsuario.js"></script>
+
+
     {{-- select2 de productos y sucursales --}}
     <script>
         //uso del select2 para proveedores

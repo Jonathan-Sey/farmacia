@@ -10,6 +10,7 @@
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('personas.store')}}" method="POST">
+        <div id="usuario"></div>
             @csrf
             <div class="border-b border-gray-900/10 pb-12">
 
@@ -24,6 +25,8 @@
                             placeholder="Nombre"
                             class="block w-full md:w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             value="{{ old('nombre') }}">
+
+                            
 
                         @error('nombre')
                         <div role="alert" class="alert alert-error mt-4 p-2">
@@ -119,6 +122,7 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/obtenerUsuario.js"></script>
 
 @endpush
 
