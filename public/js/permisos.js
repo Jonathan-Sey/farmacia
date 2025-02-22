@@ -16,6 +16,7 @@ const rutasMapeadas = {
     'Inventario': '/inventario',
     'Requisiciones': '/requisiciones',
     'Traslado': '/traslado',
+    'bitacora': '/bitacora',
     'Solicitud': '/solicitud'
 };
 

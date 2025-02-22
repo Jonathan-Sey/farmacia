@@ -39,7 +39,7 @@ class InventarioController extends Controller
         ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
         ->join('lote', 'inventario.id_lote', '=', 'lote.id')
         ->where('inventario.cantidad','>', 0)
-        ->groupBy('inventario.id_producto', 'inventario.id_sucursal') // agrupado por lote
+        ->groupBy('inventario.id_producto', 'inventario.id_sucursal')->get();// agrupado por lote
         //->groupBy('inventario.id_inventario', 'producto.nombre', 'sucursal.ubicacion')
         //->groupBy('inventario.id_producto', 'inventario.id_sucursal')
         // ->groupBy(
@@ -49,7 +49,7 @@ class InventarioController extends Controller
         //     'inventario.id_producto',
         //     'inventario.id_sucursal',
         //     )
-        ->get();
+       
 
         // nuevo validacion, validacion por lote en 0
         $inventarioAgotado = Inventario::select(

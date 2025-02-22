@@ -106,6 +106,13 @@
                         <span class="text-sm font-medium">traslado</span>
                     </a>
                 </li>
+                <li data-pestana="bitacora" style="display:none;">
+                    <a href="{{ route('bitacora.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book"></i>
+                        </span>
+                        <span class="text-sm font-medium">Bitacora</span>
+                    </a>
+                </li>
                 <!-- Botón Logout -->
                 <li>
                     <a href="javascript:void(0);" id="logout-btn" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
@@ -113,6 +120,7 @@
                         <span class="text-sm font-medium">Cerrar Sesión</span>
                     </a>
                 </li>
+               
             </ul>
         </div>
         <!-- Barra móvil (pantallas pequeñas) -->
@@ -170,6 +178,9 @@
             </li>
             <li data-pestanal="traslado" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('traslado.index') }}"><i class="fa-solid fa-book-medical"></i> traslado</a>
+            </li>
+            <li data-pestanal="bitacora" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book-medical"></i> traslado</a>
             </li>
             <li>
                 <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
