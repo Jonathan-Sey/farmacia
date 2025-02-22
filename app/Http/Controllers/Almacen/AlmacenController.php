@@ -4,11 +4,19 @@ namespace App\Http\Controllers\Almacen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
+<<<<<<< HEAD
 use App\Models\Bitacora;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Sucursal;
 use App\Models\User;
+=======
+use App\Models\Lote;
+use App\Models\Producto;
+use Illuminate\Http\Request;
+use App\Models\Sucursal;
+use App\Models\Traslado;
+>>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
 
 class AlmacenController extends Controller
 {
@@ -19,12 +27,21 @@ class AlmacenController extends Controller
      */
     public function index()
     {
-
+        //$traslados = Traslado::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
         $almacenes = Almacen::with('producto:id,nombre')
         ->where('estado', '!=', 0)
         ->get();
         return view('almacen.index',compact('almacenes'));
+<<<<<<< HEAD
       
+=======
+
+    }
+        public function getLotes($idProducto)
+    {
+        $lotes = Lote::where('id_producto', $idProducto)->get();
+        return response()->json($lotes);
+>>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
     }
 
     /**
@@ -71,9 +88,10 @@ class AlmacenController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
         $this->validate($request,[
-            'id_sucursal' => ['required'],
-            'id_producto' => ['required'],
+            'id_sucursal_origen' => ['required'],
+            'id_sucursal_destino' => ['required'],
             'cantidad' => ['required','numeric'],
 
         ]);

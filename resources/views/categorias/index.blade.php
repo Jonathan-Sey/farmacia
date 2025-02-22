@@ -203,7 +203,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <script>
-    function mostrarInformacionToken(decodedToken) { const tokenInfoElement = document.getElementById('token-info'); if (tokenInfoElement) { tokenInfoElement.innerHTML = ` <p>Email: ${decodedToken.email}</p> <p>Rol: ${decodedToken.rol}</p> <p>Nombre: ${decodedToken.name}</p> <p>Pestañas: ${decodedToken.pestanas.join(', ')}</p> `; } }
+
+   // function mostrarInformacionToken(decodedToken) { const tokenInfoElement = document.getElementById('token-info'); if (tokenInfoElement) { tokenInfoElement.innerHTML = ` <p>Email: ${decodedToken.email}</p> <p>Rol: ${decodedToken.rol}</p> <p>Nombre: ${decodedToken.name}</p> <p>Pestañas: ${decodedToken.pestanas.join(', ')}</p> `; } }
 </script>
 @endpush
 

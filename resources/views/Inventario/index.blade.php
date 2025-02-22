@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Medicos')
+@section('titulo','Inventario')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -10,21 +10,29 @@
 @endpush
 
 @section('contenido')
-    <a href="{{ route('medicos.create') }}">
+<div class="py-4">
+    <a href="{{ route('compras.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
     </a>
+    <a href="{{ route('requisiciones.create') }}">
+        <button class="btn btn-success text-white font-bold uppercase">
+            Traslado
+        </button>
+    </a>
+</div>
+    {{-- <h2 class="text-xl font-bold mb-4">Lotes Activos</h2> --}}
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Medico</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Especialidad</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Colegiado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Horarios</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >No.lote</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad en inventario</th>
+                    {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th> --}}
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
             </thead>
@@ -32,69 +40,102 @@
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($medicos as $medico)
+                @foreach ($inventario as $index)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->id}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->usuario->name}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->especialidad}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->numero_colegiado}}</td>
-                    <td class="px-6 py-4">
-                        @if ($medico->horarios)
-                            @php
-                                $horarios = json_decode($medico->horarios, true);
-                            @endphp
-                            <ul class="list-disc pl-4">
-                                @foreach ($horarios as $horario)
-                                    <li>
-                                        <strong>{{ ucfirst($horario['dia']) }}:</strong> 
-                                        {{ $horario['hora_inicio'] }} - {{ $horario['hora_fin'] }}
-                                    </li>
-                                @endforeach
-                            </ul>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->id_producto}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->producto}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->sucursal}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_lotes}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_total}}</td>
+                    {{-- <td class="px-6 py-4 whitespace-nowrap">
+                        @if ($index->estado == 'activo')
+                            <span class="bg-green-500 text-white px-2 py-1 rounded-full">Activo</span>
                         @else
-                            <span class="text-gray-500">Sin horarios</span>
+                            <span class="bg-red-500 text-white px-2 py-1 rounded-full">Agotado</span>
                         @endif
-                    </td>
-
-
-                    <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $medico->id}}" data-estado="{{$medico->estado}}">
-                            @if ($medico->estado == 1)
-                                <span class="text-green-500 font-bold">Activo</span>
-                            @elseif ($medico->estado == 2)
-                                <span class="text-red-500 font-bold">Inactivo</span>
-                            @else
-                                <span class="text-red-500 font-bold">Eliminado</span>
-                            @endif
-                        </a>
-                    </td>
+                    </td> --}}
                     <td class="flex gap-2 justify-center">
 
-                        <form action="{{route('medicos.edit',['medico'=>$medico->id])}}" method="GET">
+                        {{-- <form action="{{route('lotes.index', ['producto' => $index->id_producto, 'sucursal'=>$index->id_sucursal])}}" method="GET">
                             @csrf
                             <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
+                                ver
                             </button>
-                        </form>
+                        </form> --}}
+
+                        {{-- <a href="{{ route('lotes.index', ['producto' => $index->id_producto, 'sucursal' => $index->id_sucursal]) }}" class="btn btn-primary font-bold uppercase btn-sm">
+                            Ver
+                        </a> --}}
+                        <a href="{{ route('inventario.show', ['idProducto' => $index->id_producto, 'idSucursal' => $index->id_sucursal]) }}" class="btn btn-primary font-bold uppercase btn-sm">
+                            Ver
+                        </a>
 
 
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$medico->id}}"  data-info="{{$medico->especialidad}}">
+
+                        {{-- <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$index->id_inventario}}"  data-info="{{$index->producto->nombre}}">
                             <i class="fas fa-trash"></i>
-                        </button>
+                        </button> --}}
 
-
-                        <form id="form-eliminar{{$medico->id}}" action="{{ route('medicos.destroy', $medico->id) }}" method="POST" style="display: none;">
+{{--
+                        <form id="form-eliminar{{$compra->id}}" action="{{ route('compras.destroy', $compra->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
-                        </form>
+                        </form> --}}
                     </td>
 
                 </tr>
 
                 @endforeach
+
+                 {{-- @foreach ($inventarioAgotado as $index)
+                <tr>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->id_producto}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->producto}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->sucursal}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_lotes}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_total}}</td>
+                    <td class="flex gap-2 justify-center">
+                        <a href="{{ route('inventario.show', ['idProducto' => $index->id_producto, 'idSucursal' => $index->id_sucursal]) }}" class="btn btn-primary font-bold uppercase btn-sm">
+                            Ver
+                        </a>
+                    </td>
+                </tr>
+                @endforeach --}}
+
             </tbody>
         </x-slot>
+
     </x-data-table>
+
+    {{-- <h2>Productos Próximos a Vencer</h2>
+    <x-data-table>
+        <x-slot name="thead">
+            <thead class=" text-white font-bold">
+                <tr class="bg-slate-600  ">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >No.lote</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad total</th>
+                </tr>
+            </thead>
+        </x-slot>
+
+        <x-slot name="tbody">
+            <tbody>
+                @foreach ($inventarioAgotado  as $index)
+                <tr>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->producto}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->sucursal}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_lotes}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_total}}</td>
+                </tr>
+
+                @endforeach
+            </tbody>
+        </x-slot>
+    </x-data-table> --}}
+
+
 @endsection
 
 @push('js')
@@ -116,7 +157,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//copiar</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">//excel</script>
 
-
+<script src=""></script>
 
 <script>
     $(document).ready(function() {
@@ -134,7 +175,6 @@
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
-                { responsivePriority: 1, targets: 1 },
 
             ],
             drawCallback: function() {
@@ -183,7 +223,7 @@
             var estado = $(this).data('estado')
 
             $.ajax({
-                url: '/medicos/' + Id,
+                url: '/inventario/' + Id,
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token()}}',

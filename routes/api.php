@@ -4,7 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Consulta\consultaController;
-
+use App\Http\Controllers\Usuario\UsuarioController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -24,7 +24,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
      'middleware' => ['api', 'auth:api'],
      'prefix' => 'auth'
  ], function ($router) {
-     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
      Route::post('refresh', 'App\Http\Controllers\AuthController@refresh');
      Route::post('me', 'App\Http\Controllers\AuthController@me');
      //Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);

@@ -55,12 +55,12 @@
                             <i class="fas fa-edit"></i>
                         </button>
                     </form>
-    
+
                     {{-- Botón Eliminar --}}
                     <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{ $rol->id }}" data-info="{{ $rol->nombre }}">
                         <i class="fas fa-trash"></i>
                     </button>
-    
+
                     {{-- Formulario oculto para eliminación --}}
                     <form id="form-eliminar{{ $rol->id }}" action="{{ route('roles.destroy', $rol->id) }}" method="POST" style="display: none;">
                         @csrf
@@ -124,7 +124,7 @@ $(document).ready(function() {
             });
         });
     </script>
- 
+
 @if (session('success'))
 <script>
     //registro exitoso

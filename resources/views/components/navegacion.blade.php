@@ -1,7 +1,7 @@
 <header>
     <div class="flex">
         <!-- Barra lateral fija -->
-        <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden fixed top-0 left-0 h-full">
+        <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden fixed top-0 left-0 h-full overflow-y-auto max-h-screen">
             <div class="flex items-center justify-center h-20 shadow-md">
                 <h1 class="text-3xl uppercase text-indigo-500">Farmacia</h1>
             </div>
@@ -87,7 +87,20 @@
                         <span class="text-sm font-medium">Consultas</span>
                     </a>
                 </li>
-                <li data-pestana="traslado" style="display:none;">
+                <li data-pestana="Inventario" style="display:none;">
+                    <a href="{{ route('inventario.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
+                        <span class="text-sm font-medium">Inventario</span>
+                    </a>
+                </li>
+                <li data-pestana="Requisiciones" style="display:none;">
+                    <a href="{{ route('requisiciones.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
+                        <span class="text-sm font-medium">Requisiciones</span>
+                    </a>
+                </li>
+
+                <li data-pestana="Traslado" style="display:none;">
                     <a href="{{ route('traslado.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-money-bill-transfer"></i></span>
                         <span class="text-sm font-medium">traslado</span>
@@ -175,4 +188,5 @@
 </header>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 <script src="/js/logout.js"></script>
+
 

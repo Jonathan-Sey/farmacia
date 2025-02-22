@@ -5,9 +5,12 @@ namespace App\Http\Middleware;
 use Closure;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
+use Tymon\JWTAuth\Exceptions\TokenExpiredException;
+use Tymon\JWTAuth\Exceptions\TokenInvalidException;
 
 class JwtMiddleware
 {
@@ -21,22 +24,24 @@ class JwtMiddleware
     public function handle(Request $request, Closure $next)
     {
         try {
+            // Obtener el token JWT del encabezado de la solicitud
             $token = JWTAuth::parseToken();
-            $token = JWTAuth::getToken();
-            logger("Token recibido: " . $token);
-
-
             $user = $token->authenticate();
-        } catch (Exception $e) {
-            if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException) {
-                return response()->json(['error' => 'Token inválido'], 401);
-            } elseif ($e instanceof \Tymon\JWTAuth\Exceptions\TokenExpiredException) {
-                return response()->json(['error' => 'Token expirado'], 401);
-            } else {
-                return response()->json(['error' => 'Token no proporcionado'], 401);
-            }
-        }
 
-        return $next($request);
+            if (!$user) {
+                return response()->json(['error' => 'Usuario no autenticado'], 401);
+            }
+
+            // Obtener las pestañas permitidas para el usuario
+            $pestanasPermitidas = $user->pestanas;
+
+            // Adjuntar las pestañas permitidas a la solicitud
+            $request->merge(['pestanasPermitidas' => $pestanasPermitidas]);
+
+            return $next($request);
+        } catch (JWTException $e) {
+            return response()->json(['error' => 'Token inválido o expirado'], 401);
+
     }
+}
 }

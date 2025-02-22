@@ -18,6 +18,7 @@
 
 
 
+
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <a href="{{ route('productos.index') }}">
             <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3  ">
@@ -165,11 +166,6 @@
 @endsection
 
 @push('js')
-
-
-
-
-
         {{-- librerias para generar graficas --}}
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -311,11 +307,12 @@
             rangeSelectorZoom: "Periodo",
             }
         });
+        </script>
 
-
-
+        <script>
 
         </script>
+
 
 @endpush
 

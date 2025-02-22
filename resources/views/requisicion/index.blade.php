@@ -1,96 +1,42 @@
 @extends('template')
-
-@section('titulo','Medicos')
-
+@section('titulo', 'Requisiciones')
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
 
-
 @endpush
 
 @section('contenido')
-    <a href="{{ route('medicos.create') }}">
+    <a href="{{ route('requisiciones.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
     </a>
     <x-data-table>
         <x-slot name="thead">
-            <thead class=" text-white font-bold">
-                <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Medico</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Especialidad</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Colegiado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Horarios</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
+            <thead class="text-white font-bold">
+                <tr class="bg-slate-600">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">ID</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Sucursal Origen</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Sucursal Destino</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Cantidad</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Fecha</th>
                 </tr>
             </thead>
         </x-slot>
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($medicos as $medico)
-                <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->id}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->usuario->name}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->especialidad}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->numero_colegiado}}</td>
-                    <td class="px-6 py-4">
-                        @if ($medico->horarios)
-                            @php
-                                $horarios = json_decode($medico->horarios, true);
-                            @endphp
-                            <ul class="list-disc pl-4">
-                                @foreach ($horarios as $horario)
-                                    <li>
-                                        <strong>{{ ucfirst($horario['dia']) }}:</strong> 
-                                        {{ $horario['hora_inicio'] }} - {{ $horario['hora_fin'] }}
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @else
-                            <span class="text-gray-500">Sin horarios</span>
-                        @endif
-                    </td>
-
-
-                    <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $medico->id}}" data-estado="{{$medico->estado}}">
-                            @if ($medico->estado == 1)
-                                <span class="text-green-500 font-bold">Activo</span>
-                            @elseif ($medico->estado == 2)
-                                <span class="text-red-500 font-bold">Inactivo</span>
-                            @else
-                                <span class="text-red-500 font-bold">Eliminado</span>
-                            @endif
-                        </a>
-                    </td>
-                    <td class="flex gap-2 justify-center">
-
-                        <form action="{{route('medicos.edit',['medico'=>$medico->id])}}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </form>
-
-
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$medico->id}}"  data-info="{{$medico->especialidad}}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-
-
-                        <form id="form-eliminar{{$medico->id}}" action="{{ route('medicos.destroy', $medico->id) }}" method="POST" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form>
-                    </td>
-
-                </tr>
-
+                @foreach ($requisiciones as $traslado)
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->id_traslado }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->producto->nombre }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->sucursalOrigen->nombre }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->sucursalDestino->nombre }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->cantidad }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->fecha_traslado }}</td>
+                    </tr>
                 @endforeach
             </tbody>
         </x-slot>
@@ -116,7 +62,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//copiar</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">//excel</script>
 
-
+<script src=""></script>
 
 <script>
     $(document).ready(function() {
@@ -134,7 +80,6 @@
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
-                { responsivePriority: 1, targets: 1 },
 
             ],
             drawCallback: function() {
@@ -183,7 +128,7 @@
             var estado = $(this).data('estado')
 
             $.ajax({
-                url: '/medicos/' + Id,
+                url: '/almacenes/' + Id,
                 method: 'POST',
                 data: {
                     _token: '{{ csrf_token()}}',

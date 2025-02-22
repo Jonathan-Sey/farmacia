@@ -44,6 +44,7 @@ class traslado extends Model
     {
         return $this->belongsTo(User::class, 'id_user');
     }
+<<<<<<< HEAD
 /*
     public static function boot()
     {
@@ -88,4 +89,9 @@ class traslado extends Model
     
     }
     */
+=======
+
+
+
+>>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
 }

@@ -112,6 +112,10 @@
     <script src="/js/obtenerUsuario.js"></script>
 
     <script>
+
+
+
+
         // limitar la fecha a datos actuales
         document.addEventListener('DOMContentLoaded', function(){
             var DatoActual = new Date().toISOString().split('T')[0];
