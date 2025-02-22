@@ -32,6 +32,7 @@ class RolPestanaSeeder extends Seeder
         Pestana::create(['nombre' => 'Requisiciones', 'slug' => 'requisiciones','ruta' => '/requisiciones']);
         Pestana::create(['nombre' => 'Traslado', 'slug' => 'traslado','ruta' => '/traslado']);
         Pestana::create(['nombre' => 'Solicitud', 'slug' => 'solicitud','ruta' => '/solicitud']);
+        Pestana::create(['nombre' => 'bitacora', 'slug' => 'bitacora','ruta' => 'bitacora']);
 
     }
 }
