@@ -9,7 +9,7 @@ function logout() {
         return;
     }
 
-    axios.post('api/auth/logout', {}, {
+    axios.post('/api/auth/logout', {}, {
         headers: {
             Authorization: `Bearer ${token}`
         }
