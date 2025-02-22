@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class Rol extends Model
 {
@@ -24,5 +23,4 @@ class Rol extends Model
     {
         return $this->belongsToMany(Pestana::class, 'rol_pestana', 'rol_id', 'pestana_id');
     }
-  
 }

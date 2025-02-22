@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class Persona extends Model
 {
@@ -35,5 +34,4 @@ class Persona extends Model
     {
         return $this->hasMany(Venta::class, 'id_persona');
     }
-    
 }

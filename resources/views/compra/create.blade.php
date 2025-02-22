@@ -9,15 +9,8 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-7xl mb-10 ">
-<<<<<<< HEAD
-        <form action="{{ route('compras.store', ['id'=>1]) }}" method="POST" >
-        <div id="usuario">
-        </div> 
-        
-=======
         <form action="{{ route('compras.store') }}" method="POST" >
             {{-- <form action="{{ route('compras.store', ['id'=>1]) }}" method="POST" > --}}
->>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
             @csrf
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
@@ -43,8 +36,8 @@
                                 @enderror
                             </div>
 
-                             
-                            
+
+
                         <div class="lg:grid lg:grid-cols-2 lg:gap-x-4">
                                 {{-- cantidad --}}
                             <div class="mt-2 mb-5">
@@ -90,8 +83,6 @@
                         {{-- end cantidad y precio --}}
                         <button id="btn-agregar" type="button" class=" cursor-pointer mt-3 rounded-md bg-indigo-600 px-3 w-full py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Agregar</button>
                     </div>
-
-                   
 
                 </fieldset>
 
@@ -244,7 +235,6 @@
                 </a>
                 <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
             </div>
-            
         </form>
     </div>
 </div>
@@ -255,7 +245,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="/js/obtenerUsuario.js"></script>
 
     <script>
         //uso del select2 para proveedores

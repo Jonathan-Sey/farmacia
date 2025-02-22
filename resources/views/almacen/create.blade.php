@@ -9,7 +9,6 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{ route('almacenes.store') }}" method="POST">
             @csrf
-            <div id="usuario"></div>
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5">
                     <label for="id_sucursal_origen" class="uppercase block text-sm font-medium text-gray-900">Sucursal Origen</label>
@@ -53,8 +52,6 @@
                     </select>
                 </div>
 
-               
-
                 <div class="mt-2 mb-5">
                     <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
                     <input type="number" name="cantidad" id="cantidad" min="1" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" required>
@@ -74,9 +71,6 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<<<<<<< HEAD
-<script src="/js/obtenerUsuario.js"></script>
-=======
 <script>
     $(document).ready(function() {
         $('.select2-sucursal, .select2-producto, .select2-lote').select2();
@@ -148,7 +142,6 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script> --}}
 
->>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
 
 
 

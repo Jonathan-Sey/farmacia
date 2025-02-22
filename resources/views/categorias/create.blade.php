@@ -9,7 +9,6 @@
 <div class="flex justify-center items-center mx-3 ">
         <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form  action="{{route('categorias.store')}}" method="POST">
-        <div id="usuario"></div>
             @csrf
             <div class="border-b border-gray-900/10 pb-12">
                     <div class="mt-2 mb-5">
@@ -31,7 +30,7 @@
                                 @enderror
                     </div>
 
-                    
+
 
                     <div class="mt-2">
                         <label for="descripcion" class="uppercase block text-sm/6 font-medium text-gray-900">Descripcion</label>
@@ -64,6 +63,5 @@
 
 @endsection
 @push('js')
-<script src="/js/obtenerUsuario.js"></script>
 
 @endpush

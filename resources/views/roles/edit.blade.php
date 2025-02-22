@@ -10,7 +10,6 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-4xl mb-10">
         <form action="{{route('roles.update', ['rol' => $rol->id])}}" method="POST">
             @csrf
-            <div id="usuario"></div>
             @method('PATCH')
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5">
@@ -83,7 +82,6 @@
 @endsection
 
 @push('js')
-<script src="/js/obtenerUsuario.js"></script>
 
 <script>
     window.onload = function() {

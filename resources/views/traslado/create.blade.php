@@ -8,7 +8,6 @@
 <div class="flex justify-center items-center mx-3">
     <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('traslado.store')}}" method="POST">
-        <div id="usuario"></div>
             @csrf
             <div class="border-b border-gray-200 pb-6">
                 <div class="mb-5">
@@ -106,11 +105,6 @@
     </div>
 </div>
 
-
-@push('js')
-<script src="/js/obtenerUsuario.js"></script>
-
-@endpush
 <script>
     document.getElementById('id_sucursal_1').addEventListener('change', function() {
                 let sucursalId = this.value;
