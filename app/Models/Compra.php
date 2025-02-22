@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class Compra extends Model
 {
@@ -49,7 +48,7 @@ class Compra extends Model
         return $this->belongsToMany(Producto::class, 'detalle_compra', 'id_compra', 'id_producto')
                     ->withPivot('cantidad', 'precio'); // Incluye los campos adicionales de la tabla intermedia
     }
-    
-   
+
+
 
 }

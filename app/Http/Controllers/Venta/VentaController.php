@@ -9,7 +9,6 @@ use App\Models\Persona;
 use App\Models\Sucursal;
 use App\Models\Venta;
 use App\Models\Almacen;
-use App\Models\Bitacora;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -96,16 +95,6 @@ class VentaController extends Controller
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
 
-        ]);
-        // Bitacora
-        $usuario=User::find($request->idUsuario);
-        Bitacora::create([
-                'id_usuario' => $request->idUsuario,
-                'name_usuario' =>$usuario->name,
-                'accion' => 'Creación',
-                'tabla_afectada' => 'Venta',
-                'detalles' => "Se creó la venta: {$usuario->id}", //detalles especificos
-                'fecha_hora' => now(),
         ]);
 
     try {
@@ -206,16 +195,7 @@ class VentaController extends Controller
      */
     public function update(Request $request, $id)
     {
-         // Bitacora
-         $usuario=User::find($request->idUsuario);
-         Bitacora::create([
-                 'id_usuario' => $request->idUsuario,
-                 'name_usuario' =>$usuario->name,
-                 'accion' => 'Creación',
-                 'tabla_afectada' => 'Venta',
-                 'detalles' => "Se creó la venta: {$usuario->id_venta}", //detalles especificos
-                 'fecha_hora' => now(),
-         ]);
+        //
     }
 
     /**

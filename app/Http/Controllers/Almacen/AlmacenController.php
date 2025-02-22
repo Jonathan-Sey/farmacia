@@ -4,19 +4,11 @@ namespace App\Http\Controllers\Almacen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
-<<<<<<< HEAD
-use App\Models\Bitacora;
-use App\Models\Producto;
-use Illuminate\Http\Request;
-use App\Models\Sucursal;
-use App\Models\User;
-=======
 use App\Models\Lote;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Sucursal;
 use App\Models\Traslado;
->>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
 
 class AlmacenController extends Controller
 {
@@ -32,16 +24,12 @@ class AlmacenController extends Controller
         ->where('estado', '!=', 0)
         ->get();
         return view('almacen.index',compact('almacenes'));
-<<<<<<< HEAD
-      
-=======
 
     }
         public function getLotes($idProducto)
     {
         $lotes = Lote::where('id_producto', $idProducto)->get();
         return response()->json($lotes);
->>>>>>> 5ead12452b8f187d24d25f8c4a9b3741c2793571
     }
 
     /**
@@ -100,23 +88,8 @@ class AlmacenController extends Controller
             'id_producto' => $request->id_producto,
             'id_sucursal' => $request->id_sucursal,
             'cantidad'=> $request->cantidad,
-            'id_user' => $request->idUsuario,
+            'id_user' => 1,
         ]);
-      
-           // Bitacora
-           $usuario=User::find($request->idUsuario);
-           Bitacora::create([
-                   'id_usuario' => $request->idUsuario,
-                   'name_usuario' =>$usuario->name,
-                   'accion' => 'Creación',
-                   'tabla_afectada' => 'Almacenes',
-                   'detalles' => "Se creó el almacen: {$request->id_sucursal}", //detalles especificos
-                   'fecha_hora' => now(),
-           ]);
-            
-
-    
-         
 
         return redirect()->route('almacenes.index')->with('success', '¡Registro exitoso!');
 
@@ -162,18 +135,6 @@ class AlmacenController extends Controller
             'cantidad' => ['required','numeric'],
 
         ]);
-         // evento para registrar la actualización
-         $usuario=User::find($request->idUsuario);
-         Bitacora::create([
-                 'id_usuario' => $request->idUsuario,
-                 'name_usuario' =>$usuario->name,
-                 'accion' => 'Actualización',
-                 'tabla_afectada' => 'Almacenes',
-                 'detalles' => "Se actualizo el almacen: {$request->id_sucursal}", //detalles especificos
-                 'fecha_hora' => now(),
-         ]);
-       
-       
 
         $datosActualizados = $request->only(['id_sucursal','id_producto','cantidad']);
         $datosSinCambios = $almacen->only(['id_sucursal','id_producto','cantidad']);
@@ -183,7 +144,6 @@ class AlmacenController extends Controller
         }
         $almacen->update($datosActualizados);
         return redirect()->route('almacenes.index')->with('success','¡Almacen actualizado!');
-        
 
     }
 

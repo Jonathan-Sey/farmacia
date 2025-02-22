@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Proveedor;
 
 use App\Http\Controllers\Controller;
-use App\Models\Bitacora;
 use App\Models\Proveedor;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProveedorController extends Controller
@@ -59,15 +57,6 @@ class ProveedorController extends Controller
             'estado' => 1,
 
         ]);
-        $usuario=User::find($request->idUsuario);
-        Bitacora::create([
-                'id_usuario' => $request->idUsuario,
-                'name_usuario' =>$usuario->name,
-                'accion' => 'Creación',
-                'tabla_afectada' => 'Proveedores',
-                'detalles' => "Se creó el proveedor: {$request->nombre}", //detalles especificos
-                'fecha_hora' => now(),
-        ]);
         return redirect()->route('proveedores.index')->with('success', '¡Registro exitoso!');
     }
 
@@ -112,16 +101,6 @@ class ProveedorController extends Controller
             'correo'=>['required','string','max:35'],
             'direccion'=>['max:100','nullable','string'],
             'estado'=>'integer',
-        ]);
-        //Bitacora
-        $usuario=User::find($request->idUsuario);
-        Bitacora::create([
-                'id_usuario' => $request->idUsuario,
-                'name_usuario' =>$usuario->name,
-                'accion' => 'Actualización',
-                'tabla_afectada' => 'Proveedores',
-                'detalles' => "Se actualizo el proveedor: {$request->nombre}", //detalles especificos
-                'fecha_hora' => now(),
         ]);
 
         $datosActualizados = $request->only(['nombre','telefono','empresa','correo','direccion']);

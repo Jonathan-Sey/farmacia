@@ -3,9 +3,7 @@
 namespace App\Http\Controllers\Persona;
 
 use App\Http\Controllers\Controller;
-use App\Models\Bitacora;
 use App\Models\Persona;
-use App\Models\User;
 use Illuminate\Http\Request;
 
 class PersonaController extends Controller
@@ -56,17 +54,6 @@ class PersonaController extends Controller
             'telefono' => $request->telefono,
            'fecha_nacimiento' => $request->fecha_nacimiento,
         ]);
-         //Bitacora
-         $usuario=User::find($request->idUsuario);
-         Bitacora::create([
-                 'id_usuario' => $request->idUsuario,
-                 'name_usuario' =>$usuario->name,
-                 'accion' => 'Creación',
-                 'tabla_afectada' => 'Personas',
-                 'detalles' => "Se creó la persona: {$request->nombre}", //detalles especificos
-                 'fecha_hora' => now(),
-         ]);
- 
 
         return redirect()->route('personas.index')->with('success', 'Registro creado correctamente.');
     }
@@ -115,17 +102,7 @@ class PersonaController extends Controller
             'telefono' => 'max:20',
 
         ]);
-        
-        //Bitacora
-        $usuario=User::find($request->idUsuario);
-        Bitacora::create([
-                'id_usuario' => $request->idUsuario,
-                'name_usuario' =>$usuario->name,
-                'accion' => 'Actualización',
-                'tabla_afectada' => 'Personas',
-                'detalles' => "Se actualizo la persona: {$request->nombre}", //detalles especificos
-                'fecha_hora' => now(),
-        ]);
+
         $datosActualizados = $request->only(['nombre','nit','telefono','rol','fecha_nacimiento']);
         $datosSinCambio = $persona->only(['nombre','nit','telefono','rol','fecha_nacimiento']);
 

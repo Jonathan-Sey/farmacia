@@ -11,7 +11,6 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('productos.store')}}" method="POST">
             @csrf
-            
             <div class="border-b border-gray-900/10 pb-12">
 
                 <div class="mt-2 mb-5 flex flex-col gap-5 md:grid md:grid-cols-2 " >
@@ -33,9 +32,7 @@
                             </div>
                         @enderror
                     </div>
-                    
-                    <div id="usuario"></div>
-         
+
                     <div class="flex flex-row gap-5">
                         <div class="flex flex-col gap-1">
                             <label for="tipo">Servicio</label>
@@ -113,11 +110,6 @@
         </form>
     </div>
 </div>
-
-@push('js')
-<script src="/js/obtenerUsuario.js"></script>
-
-@endpush
 
 <script>
 let precioBase = 0; // almacena el precio original
