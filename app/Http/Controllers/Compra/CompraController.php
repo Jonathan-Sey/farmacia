@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Compra;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Compra;
 use App\Models\DetalleCompra;
 use App\Models\Producto;
 use App\Models\Proveedor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
@@ -56,23 +58,35 @@ class CompraController extends Controller
             'arrayprecio.*' => 'numeric|min:0',
             'estado'=>'integer',
         ]);
-
+    
 
         try{
             DB::beginTransaction();
-            // generacion de codigo
-            $ultimoId = Compra::max('id') ?? 0;
-            $codigo = 'CR-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
-            //creando el registro de compra
+            // Generación de código
+    $ultimoId = Compra::max('id') ?? 0;
+    $codigo = 'CR-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
+    
+            // Creando el registro de compra
             $compra = Compra::create([
-                'numero_compra'=> $codigo,
-                'id_proveedor'=> $request->id_proveedor,
+                'numero_compra' => $codigo,
+                'id_proveedor' => $request->id_proveedor,
                 'id_usuario' => 1,
-                'comprobante'=> $request->comprobante,
-                'impuesto'=>$request->impuesto,
-                'fecha_compra'=>$request->fecha_compra,
-                'total'=>$request->input('total'),
+                'comprobante' => $request->comprobante,
+                'impuesto' => $request->impuesto,
+                'fecha_compra' => $request->fecha_compra,
+                'total' => $request->input('total'),
                 'estado' => 1,
+            ]);
+
+            // bitacora
+            $usuario = User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Compras',
+                'detalles' => "Se creó la compra: {$compra->numero_compra}", 
+                'fecha_hora' => now(),
             ]);
 
             // obtener los arrays de detalles
@@ -132,7 +146,7 @@ class CompraController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
     }
 
     /**

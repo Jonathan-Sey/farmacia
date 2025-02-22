@@ -8,6 +8,7 @@ use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\bitacora\bitacoraController;
 use App\Http\Controllers\Usuario\UsuarioController;
 use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
@@ -69,6 +70,8 @@ Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' 
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
+Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' => 'bitacora']);
+
 Route::resource('solicitud', SolicitudSolicitudController::class)->parameters(['solicitud' => 'solicitud']);
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');

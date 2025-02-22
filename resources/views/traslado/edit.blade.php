@@ -10,6 +10,7 @@
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('traslado.update',['traslado'=> $traslado->id])}}" method="POST">
+        <div id="usuario"></div>
             @csrf
             @method('PATCH')
             <div class="border-b border-gray-200 pb-6">
@@ -114,7 +115,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+<script src="/js/obtenerUsuario.js"></script>
 <script>
       document.getElementById('id_sucursal_1').addEventListener('change', function() {
                 let sucursalId = this.value;

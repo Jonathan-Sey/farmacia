@@ -10,6 +10,7 @@
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('personas.update',['persona'=>$persona->id])}}" method="POST">
+        <div id="usuario"></div>
             @csrf
             @method('PATCH')
             <div class="border-b border-gray-900/10 pb-12">
@@ -31,6 +32,8 @@
                             <span class="text-white font-bold">{{ $message }}</span>
                         </div>
                         @enderror
+
+                    
 
                     </div>
                     <div class="flex flex-row gap-5">
@@ -120,6 +123,7 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/obtenerUsuario.js"></script>
 
 <script>
     @if($errors->any())

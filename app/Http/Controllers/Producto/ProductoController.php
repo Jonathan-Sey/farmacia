@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Producto;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Categoria;
 use App\Models\Producto;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -16,12 +18,9 @@ class ProductoController extends Controller
      */
     public function index()
     {
-
-        $productos = Producto::with('categoria:id,nombre')
-        ->select('id','codigo','nombre','tipo','precio_venta','estado','id_categoria','fecha_caducidad','updated_at')
-        ->where('estado', '!=', 0)
-        ->get();
-        return view('producto.index',['productos'=>$productos]);
+        $productos=Producto::all();
+        return view('producto.index',["productos"=>$productos]);
+        
     }
 
     /**
@@ -55,6 +54,17 @@ class ProductoController extends Controller
             'estado'=>'integer',
 
         ]);
+         //Bitacora
+         $usuario=User::find($request->idUsuario);
+         Bitacora::create([
+                 'id_usuario' => $request->idUsuario,
+                 'name_usuario' =>$usuario->name,
+                 'accion' => 'Creación',
+                 'tabla_afectada' => 'Producto',
+                 'detalles' => "Se creo el producto: {$request->nombre}", //detalles especificos
+                 'fecha_hora' => now(),
+         ]);
+
         $tipo = $request->has('tipo') ? 2 : 1;
         // generacion de codigo
         $ultimoId = Producto::max('id') ?? 0;
@@ -116,6 +126,16 @@ class ProductoController extends Controller
             //'fecha_caducidad'=>'required|date',
             'estado'=>'integer',
         ]);
+         //Bitacora
+         $usuario=User::find($request->idUsuario);
+         Bitacora::create([
+                 'id_usuario' => $request->idUsuario,
+                 'name_usuario' =>$usuario->name,
+                 'accion' => 'Actualización',
+                 'tabla_afectada' => 'Productos',
+                 'detalles' => "Se actualizo el producto: {$request->nombre}", //detalles especificos
+                 'fecha_hora' => now(),
+         ]);
 
         $datosActualizados = $request->only(['id_categoria','nombre','descripcion','precio_venta','tipo','fecha_caducidad']);
         $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_venta','tipo','fecha_caducidad']);

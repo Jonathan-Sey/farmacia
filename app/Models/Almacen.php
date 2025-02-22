@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Almacen extends Model
 {
@@ -36,6 +37,6 @@ class Almacen extends Model
     {
         return $this->belongsTo(User::class, 'id_user');
     }
-
+    
 
 }

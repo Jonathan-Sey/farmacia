@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Almacen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
+use App\Models\Bitacora;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Sucursal;
+use App\Models\User;
 
 class AlmacenController extends Controller
 {
@@ -22,6 +24,7 @@ class AlmacenController extends Controller
         ->where('estado', '!=', 0)
         ->get();
         return view('almacen.index',compact('almacenes'));
+      
     }
 
     /**
@@ -79,8 +82,23 @@ class AlmacenController extends Controller
             'id_producto' => $request->id_producto,
             'id_sucursal' => $request->id_sucursal,
             'cantidad'=> $request->cantidad,
-            'id_user' => 1,
+            'id_user' => $request->idUsuario,
         ]);
+      
+           // Bitacora
+           $usuario=User::find($request->idUsuario);
+           Bitacora::create([
+                   'id_usuario' => $request->idUsuario,
+                   'name_usuario' =>$usuario->name,
+                   'accion' => 'Creación',
+                   'tabla_afectada' => 'Almacenes',
+                   'detalles' => "Se creó el almacen: {$request->id_sucursal}", //detalles especificos
+                   'fecha_hora' => now(),
+           ]);
+            
+
+    
+         
 
         return redirect()->route('almacenes.index')->with('success', '¡Registro exitoso!');
 
@@ -126,6 +144,18 @@ class AlmacenController extends Controller
             'cantidad' => ['required','numeric'],
 
         ]);
+         // evento para registrar la actualización
+         $usuario=User::find($request->idUsuario);
+         Bitacora::create([
+                 'id_usuario' => $request->idUsuario,
+                 'name_usuario' =>$usuario->name,
+                 'accion' => 'Actualización',
+                 'tabla_afectada' => 'Almacenes',
+                 'detalles' => "Se actualizo el almacen: {$request->id_sucursal}", //detalles especificos
+                 'fecha_hora' => now(),
+         ]);
+       
+       
 
         $datosActualizados = $request->only(['id_sucursal','id_producto','cantidad']);
         $datosSinCambios = $almacen->only(['id_sucursal','id_producto','cantidad']);
@@ -135,6 +165,7 @@ class AlmacenController extends Controller
         }
         $almacen->update($datosActualizados);
         return redirect()->route('almacenes.index')->with('success','¡Almacen actualizado!');
+        
 
     }
 

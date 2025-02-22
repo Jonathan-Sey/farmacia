@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Medico;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\DetalleMedico;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -59,6 +60,16 @@ class MedicoController extends Controller
             'estado' => 1,
             'horarios' => json_encode($request->horarios), // Guardar horarios como JSON
         ]);
+        // Bitacora
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Medicos',
+                'detalles' => "Se creó el medico:{$request->numero_colegiado} especialidad-{$request->especialidad}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
 
         return redirect()->route('medicos.index')->with('success', '¡Registro exitoso!');
     }
@@ -86,6 +97,16 @@ class MedicoController extends Controller
             'horarios.*.dia' => 'required|string',
             'horarios.*.hora_inicio' => 'required|date_format:H:i',
             'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
+        ]);
+        // Bitacora
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Medicos',
+                'detalles' => "Se actualizo el medico:{$request->numero_colegiado} especialidad-{$request->especialidad}", //detalles especificos
+                'fecha_hora' => now(),
         ]);
 
         $datosActualizados = $request->only(['id_usuario', 'especialidad', 'numero_colegiado']);

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Rol;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Rol;
 use Illuminate\Http\Request;
 use App\Models\Pestana;
+use App\Models\User;
 
 class RolController extends Controller
 {
@@ -61,6 +63,17 @@ class RolController extends Controller
             'descripcion' => $request->descripcion,
             'estado' => 1,
         ]);
+        // Bitacora
+        $usuario=User::find($request->idUsuario);
+        
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Rol',
+                'detalles' => "Se creó el Rol: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
 
         // Obtener el array de pestañas seleccionadas
         $selectedTabs = $request->pestanas;
@@ -85,6 +98,16 @@ class RolController extends Controller
             'pestanas' => 'array|nullable',
             'nueva_pestana' => 'nullable|exists:pestanas,id',
         ]);
+         // Bitacora
+         $usuario=User::find($request->idUsuario);
+         Bitacora::create([
+                 'id_usuario' => $request->idUsuario,
+                 'name_usuario' =>$usuario->name,
+                 'accion' => 'Actualización',
+                 'tabla_afectada' => 'Rol',
+                 'detalles' => "Se actualizo el Rol: {$request->nombre}", //detalles especificos
+                 'fecha_hora' => now(),
+         ]);
         
         // Obtener las pestañas seleccionadas en el mismo orden en que fueron seleccionadas
         $selectedTabs = $request->input('pestanas', []);

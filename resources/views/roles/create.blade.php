@@ -9,6 +9,7 @@
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{ route('roles.store') }}" method="POST">
+        
             @csrf
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5">
@@ -35,6 +36,8 @@
                     </div>
                     @enderror
                 </div>
+
+
                 <!-- Nueva Pestaña -->
 <div class="mt-4">
     <label for="nueva_pestana" class="block text-sm font-medium text-gray-900">Seleccionar Nueva Pestaña</label>
@@ -46,7 +49,8 @@
     </select>
 </div>
 
-
+<div id="usuario">
+        </div> 
                 <!-- Mostrar las pestañas seleccionadas -->
                 <div class="mt-4">
                     <label class="block text-sm font-medium text-gray-900">Pestañas Seleccionadas</label>
@@ -79,4 +83,5 @@
 
 @push('js')
 <script src="/js/selecciondePestañasCreateRol.js"></script>
+<script src="/js/obtenerUsuario.js"></script>
 @endpush
