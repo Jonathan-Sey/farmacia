@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light" class="bg-gray-100">
     <head>
+        <link rel="icon" href="/favicon-32x32.png" type="image/x-icon">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>Laravel</title>
+        <title>Farmacias Antigua Guatemala</title>
         <link rel="stylesheet" href="{{ mix('css/app.css') }}">
         <title> @yield('titulo')</title>
         <link rel="stylesheet" href="{{ mix('js/app.js') }}">
@@ -19,6 +20,7 @@
         <script src="https://code.jquery.com/jquery-3.7.1.js" type="text/javascript"></script>
         <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js" type="text/javascript"></script>
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        
 
         <!-- Styles -->
         <!-- <style>
