@@ -55,7 +55,8 @@
         <script src="{{ asset('js/permisos.js') }}"></script>
         <script src="{{ asset('js/logout.js') }}"></script>
         <script src="{{ asset('js/cerrarSesion.js') }}"></script>
-
+        <script src="{{ asset('js/obtenerUsuario.js') }}"></script>
+     
         @stack('css')
         @stack('js')
     </body>

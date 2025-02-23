@@ -12,6 +12,7 @@
         <form action="{{route('consultas.update',['consulta' => $consulta->id])}}" method="POST">
             @csrf
             @method('PATCH')
+            <div id="usuario"></div>
             <div class="mt-2 mb-5">
                 <label for="asunto" class="uppercase block text-sm font-medium text-gray-900">Asunto</label>
                 <input
@@ -142,6 +143,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="/js/obtenerUsuario.js"></script>
 
     <script>
         // limitar la fecha a datos actuales
