@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Medico;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\DetalleMedico;
 use App\Models\User;
 use App\Models\Horario;
@@ -28,9 +29,9 @@ class MedicoController extends Controller
      */
     public function create()
     {
-    $usuarios = User::all();
-    $sucursales = Sucursal::all(); // Cargar sucursales para la vista
-    return view('medico.create', compact('usuarios', 'sucursales'));
+        $usuarios = User::all();
+        $sucursales = Sucursal::all(); // Cargar sucursales para la vista
+        return view('medico.create', compact('usuarios', 'sucursales'));
     }
 
     /**
@@ -45,7 +46,7 @@ class MedicoController extends Controller
             'numero_colegiado' => 'required|string|max:10',
             'estado' => 'integer',
             'horarios' => 'required|array',
-            'horarios.*.sucursal_id' => 'required|exists:sucursal,id',
+            'horarios.*.sucursal_id' => 'required|exists:sucursales,id',
             'horarios.*.dia' => 'required|string',
             'horarios.*.hora_inicio' => 'required|date_format:H:i',
             'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
@@ -59,7 +60,7 @@ class MedicoController extends Controller
             'estado' => 1, // Activo por defecto
         ]);
 
-        // Guardar los horarios en la tabla `horarios`
+        // Guardar los horarios
         foreach ($request->horarios as $horario) {
             Horario::create([
                 'medico_id' => $medico->id,
@@ -93,7 +94,7 @@ class MedicoController extends Controller
             'numero_colegiado' => 'required|string|max:10',
             'estado' => 'integer',
             'horarios' => 'required|array',
-            'horarios.*.sucursal_id' => 'required|exists:sucursal,id',
+            'horarios.*.sucursal_id' => 'required|exists:sucursales,id',
             'horarios.*.dia' => 'required|string',
             'horarios.*.hora_inicio' => 'required|date_format:H:i',
             'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
@@ -131,16 +132,10 @@ class MedicoController extends Controller
     public function destroy(Request $request, DetalleMedico $medico)
     {
         $estado = $request->input('status', 0);
+        $medico->update(['estado' => $estado]);
 
-        if ($estado == 0) {
-            $medico->update(['estado' => 0]);
-            return redirect()->route('medicos.index')->with('success', 'Médico desactivado con éxito!');
-        } else {
-            $medico->estado = $estado;
-            $medico->save();
-            return response()->json(['success' => true]);
-        }
-
-        return response()->json(['success' => false]);
+        return redirect()->route('medicos.index')->with(
+            'success', $estado == 0 ? 'Médico desactivado con éxito!' : 'Médico activado con éxito!'
+        );
     }
 }

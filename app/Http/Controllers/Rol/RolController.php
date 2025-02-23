@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Rol;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Rol;
 use Illuminate\Http\Request;
 use App\Models\Pestana;
+use App\Models\User;
 
 class RolController extends Controller
 {
@@ -73,7 +75,16 @@ class RolController extends Controller
         // Asignar las pestañas seleccionadas al rol
         $rol->pestanas()->sync($selectedTabs);  
 
-    
+        $usuario=User::find($request->idUsuario);
+        
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Rol',
+                'detalles' => "Se creó el Rol: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
         return redirect()->route('roles.index')->with('success', '¡Registro exitoso!');
     }
 
@@ -110,6 +121,17 @@ class RolController extends Controller
         $rol->update([
             'nombre' => $request->nombre,
             'descripcion' => $request->descripcion,
+        ]);
+
+        // Bitacora
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Rol',
+                'detalles' => "Se actualizo el Rol: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
         ]);
         
         return redirect()->route('roles.index')->with('success', 'Rol actualizado con éxito');

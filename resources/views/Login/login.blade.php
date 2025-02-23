@@ -2,7 +2,7 @@
 
 @section('contenido')
 <div class="min-h-screen flex items-center justify-center px-3">
-    <div class="max-w-4xl w-full bg-[#004D4D] p-6 md:p-9 rounded-2xl shadow-lg flex flex-col md:flex-row items-center h-full md:h-auto">
+    <div class="max-w-4xl w-full bg-[#004D4D] p-6 md:p-9 rounded-2xl shadow-lg flex flex-col md:flex-row items-center  md:h-auto">
         <!-- Sección del formulario -->
         <div class="w-full md:w-1/2 p-6 flex flex-col justify-center items-center text-center md:text-left h-full">
             <img src="/Logos/LOGO_MUNIANTIGUA_BLANCO.png" alt="Logo_Muni" height="100px" width="300px" class="mx-auto md:mx-0 mb-4 md:mb-0">

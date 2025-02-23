@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Producto;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Categoria;
 use App\Models\Producto;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -69,6 +71,16 @@ class ProductoController extends Controller
             'estado' => 1,
             'tipo' => $tipo,
             'codigo' => $codigo, // asignamos el codigo generado
+        ]);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Producto',
+                'detalles' => "Se creo el producto: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
         ]);
         return redirect()->route('productos.index')->with('success','¡Registro exitoso!');
 
@@ -137,6 +149,17 @@ class ProductoController extends Controller
             $producto->update($datosActualizados);
             return redirect()->route('productos.index')->with('success','¡Producto actualizado!');
         }
+
+        $usuario=User::find($request->idUsuario);
+         Bitacora::create([
+                 'id_usuario' => $request->idUsuario,
+                 'name_usuario' =>$usuario->name,
+                 'accion' => 'Actualización',
+                 'tabla_afectada' => 'Productos',
+                 'detalles' => "Se actualizo el producto: {$request->nombre}", //detalles especificos
+                 'fecha_hora' => now(),
+         ]);
+         
         return redirect()->route('productos.index');
 
     }
