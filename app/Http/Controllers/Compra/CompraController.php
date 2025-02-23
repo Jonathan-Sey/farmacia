@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Compra;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Compra;
 use App\Models\DetalleCompra;
 use App\Models\Inventario;
 use App\Models\Lote;
 use App\Models\Producto;
 use App\Models\Proveedor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
@@ -141,6 +143,16 @@ class CompraController extends Controller
                 }
 
             }
+
+            $usuario = User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Compras',
+                'detalles' => "Se creó la compra: {$compra->numero_compra}", 
+                'fecha_hora' => now(),
+            ]);
 
             DB::commit();
             return redirect()->route('compras.index')->with('success', 'Compra creado exitosamente');
