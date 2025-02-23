@@ -2943,6 +2943,9 @@ input.tab:checked + .tab-content,
 .h-full {
   height: 100%;
 }
+.h-screen {
+  height: 100vh;
+}
 .max-h-\[400px\] {
   max-height: 400px;
 }
