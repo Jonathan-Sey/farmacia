@@ -5,8 +5,6 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
-
-
 @endpush
 
 @section('contenido')
@@ -18,14 +16,15 @@
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
-                <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Medico</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Especialidad</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Colegiado</th>
+                <tr class="bg-slate-600">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Código</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Médico</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Especialidad</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Colegiado</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Sucursal</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Horarios</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Estado</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Acciones</th>
                 </tr>
             </thead>
         </x-slot>
@@ -33,69 +32,65 @@
         <x-slot name="tbody">
             <tbody>
                 @foreach ($medicos as $medico)
-                <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->id}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->usuario->name}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->especialidad}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$medico->numero_colegiado}}</td>
-                    <td class="px-6 py-4">
-                        @if ($medico->horarios)
-                            @php
-                                $horarios = json_decode($medico->horarios, true);
-                            @endphp
-                            <ul class="list-disc pl-4">
-                                @foreach ($horarios as $horario)
-                                    <li>
-                                        <strong>{{ ucfirst($horario['dia']) }}:</strong> 
-                                        {{ $horario['hora_inicio'] }} - {{ $horario['hora_fin'] }}
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @else
-                            <span class="text-gray-500">Sin horarios</span>
-                        @endif
-                    </td>
+                    @foreach ($medico->horarios as $horario)
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $medico->id }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $medico->usuario->name }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $medico->especialidad }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">{{ $medico->numero_colegiado }}</td>
+                            <td class="px-6 py-4 whitespace-nowrap font-bold text-blue-500">
+                                {{ $horario->sucursal->nombre }}
+                            </td>
+                            <td class="px-6 py-4">
+                                @php
+                                    $horarios = json_decode($horario->horarios, true);
+                                @endphp
+                                <ul class="list-disc pl-4">
+                                    @foreach ($horarios as $dia => $horas)
+                                        <li>
+                                            <strong class="text-indigo-500">{{ ucfirst($dia) }}:</strong>
+                                            {{ implode(', ', $horas) ?: 'Cerrado' }}
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-center">
+                                <a href="#" class="estado" data-id="{{ $medico->id }}" data-estado="{{ $medico->estado }}">
+                                    @if ($medico->estado == 1)
+                                        <span class="text-green-500 font-bold">Activo</span>
+                                    @elseif ($medico->estado == 2)
+                                        <span class="text-red-500 font-bold">Inactivo</span>
+                                    @else
+                                        <span class="text-red-500 font-bold">Eliminado</span>
+                                    @endif
+                                </a>
+                            </td>
+                            <td class="flex gap-2 justify-center">
+                                <form action="{{ route('medicos.edit', ['medico' => $medico->id]) }}" method="GET">
+                                    @csrf
+                                    <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                </form>
 
+                                <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm"
+                                    data-id="{{ $medico->id }}" data-info="{{ $medico->especialidad }}">
+                                    <i class="fas fa-trash"></i>
+                                </button>
 
-                    <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $medico->id}}" data-estado="{{$medico->estado}}">
-                            @if ($medico->estado == 1)
-                                <span class="text-green-500 font-bold">Activo</span>
-                            @elseif ($medico->estado == 2)
-                                <span class="text-red-500 font-bold">Inactivo</span>
-                            @else
-                                <span class="text-red-500 font-bold">Eliminado</span>
-                            @endif
-                        </a>
-                    </td>
-                    <td class="flex gap-2 justify-center">
-
-                        <form action="{{route('medicos.edit',['medico'=>$medico->id])}}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </form>
-
-
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$medico->id}}"  data-info="{{$medico->especialidad}}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-
-
-                        <form id="form-eliminar{{$medico->id}}" action="{{ route('medicos.destroy', $medico->id) }}" method="POST" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form>
-                    </td>
-
-                </tr>
-
+                                <form id="form-eliminar{{ $medico->id }}" action="{{ route('medicos.destroy', $medico->id) }}" method="POST" style="display: none;">
+                                    @csrf
+                                    @method('DELETE')
+                                </form>
+                            </td>
+                        </tr>
+                    @endforeach
                 @endforeach
             </tbody>
         </x-slot>
     </x-data-table>
 @endsection
+
 
 @push('js')
 
