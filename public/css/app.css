@@ -2832,17 +2832,13 @@ input.tab:checked + .tab-content,
   margin-left: 0.75rem;
   margin-right: 0.75rem;
 }
-.mx-4 {
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-.mx-8 {
-  margin-left: 2rem;
-  margin-right: 2rem;
-}
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
+}
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 .my-8 {
   margin-top: 2rem;
@@ -2926,9 +2922,6 @@ input.tab:checked + .tab-content,
 .h-16 {
   height: 4rem;
 }
-.h-20 {
-  height: 5rem;
-}
 .h-40 {
   height: 10rem;
 }
@@ -2941,11 +2934,14 @@ input.tab:checked + .tab-content,
 .h-8 {
   height: 2rem;
 }
+.h-\[200px\] {
+  height: 200px;
+}
+.h-auto {
+  height: auto;
+}
 .h-full {
   height: 100%;
-}
-.h-screen {
-  height: 100vh;
 }
 .max-h-\[400px\] {
   max-height: 400px;
@@ -3008,6 +3004,9 @@ input.tab:checked + .tab-content,
 .max-w-md {
   max-width: 28rem;
 }
+.max-w-sm {
+  max-width: 24rem;
+}
 .flex-1 {
   flex: 1 1 0%;
 }
@@ -3038,9 +3037,6 @@ input.tab:checked + .tab-content,
 }
 .flex-col {
   flex-direction: column;
-}
-.flex-wrap {
-  flex-wrap: wrap;
 }
 .items-start {
   align-items: flex-start;
@@ -3653,21 +3649,6 @@ input.tab:checked + .tab-content,
 }
 @media (min-width: 640px) {
 
-  .sm\:mx-2 {
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-  }
-
-  .sm\:mx-20 {
-    margin-left: 5rem;
-    margin-right: 5rem;
-  }
-
-  .sm\:my-20 {
-    margin-top: 5rem;
-    margin-bottom: 5rem;
-  }
-
   .sm\:ml-0 {
     margin-left: 0px;
   }
@@ -3686,10 +3667,6 @@ input.tab:checked + .tab-content,
 
   .sm\:h-20 {
     height: 5rem;
-  }
-
-  .sm\:w-80 {
-    width: 20rem;
   }
 
   .sm\:min-w-\[400px\] {
@@ -3788,12 +3765,25 @@ input.tab:checked + .tab-content,
     grid-column: span 2 / span 2;
   }
 
+  .md\:mx-0 {
+    margin-left: 0px;
+    margin-right: 0px;
+  }
+
+  .md\:mb-0 {
+    margin-bottom: 0px;
+  }
+
   .md\:ml-\[200px\] {
     margin-left: 200px;
   }
 
   .md\:mt-5 {
     margin-top: 1.25rem;
+  }
+
+  .md\:block {
+    display: block;
   }
 
   .md\:flex {
@@ -3806,6 +3796,14 @@ input.tab:checked + .tab-content,
 
   .md\:hidden {
     display: none;
+  }
+
+  .md\:h-auto {
+    height: auto;
+  }
+
+  .md\:w-1\/2 {
+    width: 50%;
   }
 
   .md\:w-1\/5 {
@@ -3844,13 +3842,17 @@ input.tab:checked + .tab-content,
     border-top-width: 0px;
   }
 
-  .md\:p-8 {
-    padding: 2rem;
+  .md\:p-9 {
+    padding: 2.25rem;
   }
 
   .md\:px-10 {
     padding-left: 2.5rem;
     padding-right: 2.5rem;
+  }
+
+  .md\:text-left {
+    text-align: left;
   }
 
   .md\:text-6xl {

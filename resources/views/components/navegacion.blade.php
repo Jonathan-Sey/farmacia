@@ -2,8 +2,8 @@
     <div class="flex">
         <!-- Barra lateral fija -->
         <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden fixed top-0 left-0 h-full overflow-y-auto max-h-screen">
-            <div class="flex items-center justify-center h-20 shadow-md">
-                <h1 class="text-3xl uppercase text-indigo-500">Farmacia</h1>
+            <div class="flex items-center justify-center h-[200px] shadow-md">
+              <img src="/Logos/LOGO_MUNIANTIGUA_AZUL.png" alt="Logo_Municipalidad" width="200px" class="p-3">
             </div>
             <ul class="flex flex-col py-4">
                 <!-- Dashboard -->
