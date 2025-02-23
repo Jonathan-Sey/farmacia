@@ -69,6 +69,12 @@
                         <span class="text-sm font-medium">Ventas</span>
                     </a>
                 </li>
+                <li data-pestana="Reporte_ventas" style="display:none;">
+                    <a href="{{ route('Reporte_ventas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-chart-simple"></i></span>
+                        <span class="text-sm font-medium">Reporte ventas</span>
+                    </a>
+                </li>
                 <li data-pestana="Personas" style="display:none;">
                     <a href="{{ route('personas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-person"></i></span>
@@ -165,7 +171,10 @@
                 <a href="{{ route('compras.index') }}"><i class="fa-solid fa-cart-shopping"></i> Compras</a>
             </li>
             <li data-pestanal="Ventas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('ventas.index') }}"><i class="fa-solid fa-bag-shopping"></i> Ventas</a>
+                <a href="{{ route('ventas.index') }}"><i class="fa-solid fa-chart-simple"></i> Ventas</a>
+            </li>
+            <li data-pestanal="Reporte_ventas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('Reporte_ventas.index') }}"><i class="fa-solid fa-bag-shopping"></i> Reporte ventas</a>
             </li>
             <li data-pestanal="Personas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('personas.index') }}"><i class="fa-solid fa-person"></i> Personas</a>
