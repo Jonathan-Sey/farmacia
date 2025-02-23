@@ -16,6 +16,7 @@ use App\Http\Controllers\Inventario\InventarioController;
 use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
 //use App\Http\Controllers\Traslado\TrasladoController;
 use App\Http\Controllers\solicitud\solicitudController;
@@ -79,6 +80,7 @@ Route::resource('personas', PersonaController::class)->parameters(['personas' =>
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
 Route::resource('lotes', LoteController::class)->parameters(['lote' => 'lote']);
+Route::resource('Reporte_ventas', ReporteVentasController::class)->parameters(['Reporte_ventas' => 'Reporte_ventas']);
 Route::resource('requisiciones', RequisicionController::class)->parameters(['requisicion' => 'requisicion']);
 
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);

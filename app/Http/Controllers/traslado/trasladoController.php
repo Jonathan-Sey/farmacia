@@ -48,7 +48,7 @@ class trasladoController extends Controller
             ->first();
 
         if (!$almacen_origen || $almacen_origen->cantidad < $cantidad) {
-            return response()->json(['error' => 'Stock insuficiente en la sucursal de origen'], 400);
+            return redirect()->back()->withErrors(['cantidad' => 'Stock insuficiente en la sucursal de origen']);
         }
 
         $almacen_origen->cantidad -= $cantidad;
