@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Consulta\consultaController;
+use App\Http\Controllers\solicitud\solicitudController;
 use App\Http\Controllers\Usuario\UsuarioController;
 /*
 |--------------------------------------------------------------------------

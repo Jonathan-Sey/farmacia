@@ -118,6 +118,8 @@ class User extends Authenticatable implements JWTSubject
         return $query->where('activo', true);
     }
 
+    
+
 
 
 }

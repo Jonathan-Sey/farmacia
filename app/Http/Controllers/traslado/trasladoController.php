@@ -4,10 +4,12 @@ namespace App\Http\Controllers\traslado;
 
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
+use App\Models\Bitacora;
 use App\Models\Producto;
 use App\Models\Solicitud;
 use App\Models\Sucursal;
 use App\Models\traslado;
+use App\Models\User;
 use Illuminate\Http\Request;
 use PhpParser\Builder\Trait_;
 
@@ -71,6 +73,17 @@ class trasladoController extends Controller
             ]
         );
 
+         // Bitacora
+         $usuario = User::find($request->idUsuario);
+         Bitacora::create([
+             'id_usuario' => $request->idUsuario,
+             'name_usuario' => $usuario->name,
+             'accion' => 'Creación',
+             'tabla_afectada' => 'Traslado',
+             'detalles' => "Se creo el traslado del producto {$request->id_producto} con la cantidad de {$request->cantidad}", // Se usa el nombre de la sucursal
+             'fecha_hora' => now(),
+         ]);
+
 
 
         return redirect()->route("traslado.index")->with('success', '¡Transferencia realizada !');
@@ -95,6 +108,19 @@ class trasladoController extends Controller
 
         $datosActualizados = $request->only(['id_sucursal_1', 'id_sucursal_2', 'id_producto', 'cantidad']);
         $datosSinCambios = $traslado->only(['id_sucursal_1', 'id_sucursal_2', 'id_producto', 'cantidad']);
+
+        // Bitacora
+        $usuario=User::find($request->idUsuario);
+        $sucursal_origen = Sucursal::find($request->id_sucursal_origen);
+        $sucursal_destino = Sucursal::find($request->id_sucursal_destino);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Traslado',
+                'detalles' => "Se actualizo el traslado del producto {$request->id_producto} con la cantidad de {$request->cantidad}",
+                'fecha_hora' => now(),
+        ]);
 
         if ($datosActualizados == $datosSinCambios) {
             return redirect()->route('traslado.index');
