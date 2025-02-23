@@ -11,6 +11,7 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{ route('medicos.store') }}" method="POST">
             @csrf
+            <div id="usuario"></div>
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5">
                     <label for="id_usuario" class="uppercase block text-sm font-medium text-gray-900">Usuario</label>
@@ -33,7 +34,6 @@
                     <input type="text" name="especialidad" id="especialidad" placeholder="Especialidad"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('especialidad') }}">
-
                     @error('especialidad')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
@@ -46,7 +46,6 @@
                     <input type="text" name="numero_colegiado" id="numero_colegiado" placeholder="Colegiado"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('numero_colegiado') }}">
-
                     @error('numero_colegiado')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
@@ -56,24 +55,13 @@
 
                 <div class="mt-2 mb-5">
                     <label for="horarios" class="uppercase block text-sm font-medium text-gray-900">Sucursales y Horarios</label>
-
-                    <div id="horarios-container">
-                        <!-- Se agregarán horarios dinámicamente aquí -->
-                    </div>
-
+                    <div id="horarios-container"></div>
                     <button type="button" onclick="agregarHorario()"
                         class="mt-2 block w-full rounded-md bg-indigo-600 px-3 py-1.5 text-base text-white hover:bg-indigo-700 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
                         + Agregar Sucursal y Horario
                     </button>
-
-                    @error('horarios')
-                    <div role="alert" class="alert alert-error mt-4 p-2">
-                        <span class="text-white font-bold">{{ $message }}</span>
-                    </div>
-                    @enderror
                 </div>
             </div>
-
             <div class="mt-6 flex items-center justify-end gap-x-6">
                 <a href="{{ route('medicos.index') }}">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
@@ -88,7 +76,6 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
 <script>
     $(document).ready(function() {
         $('.select2').select2({
@@ -101,23 +88,11 @@
     function agregarHorario() {
         let container = document.getElementById('horarios-container');
         let index = container.children.length;
-
         let div = document.createElement('div');
         div.classList.add("mt-2", "mb-5", "p-3", "border", "border-gray-300", "rounded-md", "bg-white");
-
         div.innerHTML = `
-            <label class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
-            <select name="horarios[${index}][sucursal_id]" required
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline focus:outline-2 focus:outline-indigo-600 sm:text-sm">
-                <option value="">Seleccione una sucursal</option>
-                @foreach ($sucursales as $sucursal)
-                    <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
-                @endforeach
-            </select>
-
-            <label class="uppercase block text-sm font-medium text-gray-900 mt-2">Día</label>
-            <select name="horarios[${index}][dia]" required
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 focus:outline focus:outline-2 focus:outline-indigo-600 sm:text-sm">
+            <label class="uppercase block text-sm font-medium text-gray-900">Día</label>
+            <select name="horarios[${index}][dia]" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900">
                 <option value="lunes">Lunes</option>
                 <option value="martes">Martes</option>
                 <option value="miércoles">Miércoles</option>
@@ -126,26 +101,12 @@
                 <option value="sábado">Sábado</option>
                 <option value="domingo">Domingo</option>
             </select>
-
             <label class="uppercase block text-sm font-medium text-gray-900 mt-2">Hora Inicio</label>
-            <input type="time" name="horarios[${index}][hora_inicio]" required
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 outline outline-1 outline-gray-300 sm:text-sm">
-
+            <input type="time" name="horarios[${index}][hora_inicio]" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
             <label class="uppercase block text-sm font-medium text-gray-900 mt-2">Hora Fin</label>
-            <input type="time" name="horarios[${index}][hora_fin]" required
-                class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 outline outline-1 outline-gray-300 sm:text-sm">
-
-            <button type="button" onclick="eliminarHorario(this)"
-                class="mt-2 block w-full rounded-md bg-red-600 px-3 py-1.5 text-white hover:bg-red-700">
-                ❌ Eliminar
-            </button>
+            <input type="time" name="horarios[${index}][hora_fin]" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
         `;
-
         container.appendChild(div);
-    }
-
-    function eliminarHorario(element) {
-        element.parentElement.remove();
     }
 </script>
 @endpush

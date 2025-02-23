@@ -13,7 +13,14 @@ class solicitudController extends Controller
 
     public function index()  {
         $solicitudes = Solicitud::all()->where('estado', 1);
+    
         return view('solicitud.index', compact('solicitudes'));
+        
+    }
+
+    public function cantidadDeSolicitudes()  {
+        $cantidadDeSolicitudes = Solicitud::where('estado', 1)->count();
+        return response()->json(['cantidad' => $cantidadDeSolicitudes]);
     }
 
 

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Sucursal;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Sucursal;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class SucursalController extends Controller
@@ -51,6 +53,17 @@ class SucursalController extends Controller
             'ubicacion'=>$request->ubicacion,
             'estado'=>1,
         ]);
+
+         //Bitacora
+         $usuario=User::find($request->idUsuario);
+         Bitacora::create([
+                 'id_usuario' => $request->idUsuario,
+                 'name_usuario' =>$usuario->name,
+                 'accion' => 'Creación',
+                 'tabla_afectada' => 'Sucursal',
+                 'detalles' => "Se creó la sucursal: {$request->nombre}", //detalles especificos
+                 'fecha_hora' => now(),
+         ]);
         return redirect()->route('sucursales.index')->with('success', '¡Registro exitoso!');
     }
 
@@ -101,6 +114,17 @@ class SucursalController extends Controller
 
          // Actualizar datos
          $sucursal->update($datosActualizados);
+
+          //Bitacora
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Sucursal',
+                'detalles' => "Se actualizo la sucursal: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
 
          return redirect()->route('sucursales.index')->with('success', '¡Sucursal actualizado!');
 
