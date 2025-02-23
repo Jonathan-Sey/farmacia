@@ -23,6 +23,7 @@ use App\Http\Controllers\solicitudController;
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
 
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
