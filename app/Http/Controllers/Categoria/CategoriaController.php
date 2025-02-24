@@ -162,4 +162,18 @@ class CategoriaController extends Controller
                }
                return response()->json(['success'=> false]);
     }
+
+    public function cambiarEstado($id)
+    {
+        $categoria = Categoria::find($id);
+
+        if ($categoria) {
+            $categoria->estado = $categoria->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $categoria->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
 }

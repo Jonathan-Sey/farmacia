@@ -56,6 +56,19 @@ Route::get('/', function () {
 //});
 //Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 
+//Rutas para cambio de estado.
+Route::post('/roles/{id}/cambiar-estado', [RolController::class, 'cambiarEstado']);
+Route::post('/usuario/{id}/cambiar-estado', [UsuarioController::class, 'cambiarEstado']);
+Route::post('/categoria/{id}/cambiar-estado', [CategoriaController::class, 'cambiarEstado']);
+Route::post('/proveedor/{id}/cambiar-estado', [ProveedorController::class, 'cambiarEstado']);
+Route::post('/sucursal/{id}/cambiar-estado', [SucursalController::class, 'cambiarEstado']);
+Route::post('/producto/{id}/cambiar-estado', [ProductoController::class, 'cambiarEstado']);
+Route::post('/almacen/{id}/cambiar-estado', [AlmacenController::class, 'cambiarEstado']);
+Route::post('/persona/{id}/cambiar-estado', [PersonaController::class, 'cambiarEstado']);
+Route::post('/medico/{id}/cambiar-estado', [MedicoController::class, 'cambiarEstado']);
+Route::post('/consulta/{id}/cambiar-estado', [consultaController::class, 'cambiarEstado']);
+Route::post('/traslado/{id}/cambiar-estado', [trasladoController::class, 'cambiarEstado']);
+
 //Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->name('dashboard.filtrarVentas');
