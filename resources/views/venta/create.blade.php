@@ -95,7 +95,7 @@
                             </div>
                         </div>
 
-                       
+
                         {{-- end cantidad y precio --}}
                         <button id="btn-agregar" type="button" class=" cursor-pointer mt-3 rounded-md bg-indigo-600 px-3 w-full py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Agregar</button>
                     </div>
@@ -265,6 +265,31 @@
 
     </script>
     <script>
+        $('form').on('submit', function(event) {
+            event.preventDefault(); // Evitar que el formulario se envíe automáticamente
+
+            // Generar el resumen de la venta
+            let resumen = generarResumenVenta();
+
+            // Mostrar el resumen y pedir confirmación
+            Swal.fire({
+                title: 'Confirmar Venta',
+                html: resumen,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar Venta',
+                cancelButtonText: 'Cancelar',
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Si el usuario confirma, enviar el formulario
+                    this.submit();
+                }
+            });
+        });
+    </script>
+    <script>
         $(document).ready(function(){
             // Escuchar el cambio en el select de sucursal
             $('#id_sucursal').change(function() {
@@ -354,7 +379,7 @@
         function mostrarValores() {
             let selectProducto = document.getElementById('id_producto');
             let precioBase = parseFloat(selectProducto.options[selectProducto.selectedIndex].getAttribute('data-precio'));
-            
+
             let porcentaje = parseFloat($('#porcentaje').val()) || 0;
             let precioConAumento = round(precioBase + (precioBase * (porcentaje / 100)));
 
@@ -376,6 +401,7 @@
         const impuesto = 12;
 
         function agregarProducto() {
+            let idSucursal = $('#id_sucursal').val(); // nuevo dato a obtener
             let id_producto = $('#id_producto').val();
             let producto = nombreProducto;
             let cantidad = parseInt($('#cantidad').val());
@@ -384,8 +410,17 @@
             let tipo = $('#id_producto').find('option:selected').data('tipo');
             let aplicarImpuesto = $('#impuesto-checkbox').is(':checked');
 
+            // nueva validacion aca verificamos si el producto ya esta en el detalle compra
+            let productoExistente = $(`#tabla-productos tbody tr input[name="arrayIdProducto[]"][value="${id_producto}"]`).closest('tr');
+                if (productoExistente.length > 0) {
+                    // Si el producto ya está en la tabla, editar la cantidad
+                    let index = productoExistente.find('th').text();
+                    editarProducto(index, idSucursal);
+                    return;
+                }
+
             if (id_producto != '' && producto != '' && precio > 0) {
-                if (tipo === 1) {
+                if (tipo === 1) { // validar si es producto
                     if (!cantidad || cantidad <= 0 || cantidad % 1 !== 0) {
                         mensaje('Favor ingresar una cantidad válida.');
                         return;
@@ -415,7 +450,11 @@
                         <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
                         <td><input type="hidden" name="arrayprecio[]" value="${precio}">${precio}</td>
                         <td>${subtotal[contador]}</td>
-                        <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
+                        <td>
+                            <button type="button" onclick="editarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button>
+                            <button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button>
+                        </td>
+
                     </tr>
                 `);
 
@@ -426,27 +465,138 @@
                 $('#total').html(total);
                 $('#impuesto').val(iva);
                 $('#inputTotal').val(total);
+
+
+
+
             } else {
                 mensaje('Los campos están vacíos o son inválidos.');
             }
         }
 
+function editarProducto(index) {
+    let idSucursal = $('#id_sucursal').val(); // Obtener el ID de la sucursal seleccionada
+    let cantidadActual = $(`#fila${index} input[name="arraycantidad[]"]`).val();
+    let idProducto = $(`#fila${index} input[name="arrayIdProducto[]"]`).val();
+    let tipo = $(`#fila${index} input[name="arrayIdProducto[]"]`).closest('tr').find('input[name="arraytipo[]"]').val();
+
+    if (tipo === 2) { // Si es servicio, no permitir editar la cantidad
+        mensaje('No se puede editar la cantidad de un servicio.');
+        return;
+    }
+
+    // Obtener el stock disponible del producto desde el servidor
+    $.ajax({
+        url: '/productos/stock/' + idProducto + '/' + idSucursal, // Ruta para obtener el stock del producto
+        method: 'GET',
+        success: function(response) {
+            let stockDisponible = response.stock;
+            if (stockDisponible === undefined) {
+                mensaje('No se pudo obtener el stock del producto.');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Editar Cantidad',
+                input: 'number',
+                inputValue: cantidadActual,
+                inputAttributes: {
+                    min: 1,
+                    max: stockDisponible,
+                    step: 1
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                inputValidator: (value) => {
+                    if (!value || value <= 0 || value > stockDisponible) {
+                        return `La cantidad debe ser mayor que 0 y no superar el stock disponible (${stockDisponible}).`;
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let nuevaCantidad = parseInt(result.value);
+                    let precio = parseFloat($(`#fila${index} input[name="arrayprecio[]"]`).val());
+                    let aplicarImpuesto = $('#impuesto-checkbox').is(':checked');
+
+                    // Recalcular el subtotal, suma, IVA y total
+                    subtotal[index] = round(nuevaCantidad * precio);
+                    suma = subtotal.reduce((a, b) => a + b, 0);
+
+                    if (aplicarImpuesto) {
+                        iva = round(suma / 100 * impuesto);
+                    } else {
+                        iva = 0;
+                    }
+
+                    total = round(suma + iva);
+
+                    // Actualizar los valores en la fila de la tabla
+                    $(`#fila${index} input[name="arraycantidad[]"]`).val(nuevaCantidad); // Actualizar cantidad en el input oculto
+                    $(`#fila${index} td:eq(1)`).html(`<input type="hidden" name="arraycantidad[]" value="${nuevaCantidad}">${nuevaCantidad}`); // Actualizar cantidad visible
+                    $(`#fila${index} input[name="arrayprecio[]"]`).val(precio); // Actualizar precio en el input oculto
+                    $(`#fila${index} td:eq(2)`).html(`<input type="hidden" name="arrayprecio[]" value="${precio}">${precio}`); // Actualizar precio visible
+                    $(`#fila${index} td:eq(3)`).text(subtotal[index].toFixed(2)); // Actualizar subtotal visible
+
+                    // Actualizar los valores en la interfaz
+                    $('#suma').html(suma.toFixed(2));
+                    $('#iva').html(iva.toFixed(2));
+                    $('#total').html(total.toFixed(2));
+                    $('#impuesto').val(iva.toFixed(2));
+                    $('#inputTotal').val(total.toFixed(2));
+                }
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error en la solicitud AJAX:', xhr.responseText);
+            mensaje('Error al obtener el stock disponible del producto.');
+        }
+    });
+}
+
+
 
         function eliminarProducto(index){
             // recalculamos el detalle de venta
-            suma -= round(subtotal[index]);
-            iva = round(suma / 100 * impuesto);
+            // suma -= round(subtotal[index]);
+            // iva = round(suma / 100 * impuesto);
+            // total = round(suma + iva);
+
+            // segunda foram, recalcular los precios
+            suma -= subtotal[index];
+            let producto = $(`#fila${index} input[name="arrayIdProducto[]"]`).closest('tr');
+            let tipo = producto.find('input[name="arraytipo[]"]').val();
+
+            // Si el producto tenía IVA aplicado, restar el IVA correspondiente
+            if (tipo === 1 && $('#impuesto-checkbox').is(':checked')) {
+                    iva -= round((subtotal[index] / 100) * impuesto);
+                }
+            // Recalcular el total
             total = round(suma + iva);
 
+             // Si no hay productos, restablecer los valores a 0
+            if ($('#tabla-productos tbody tr').length === 1) { // Solo queda la fila de encabezado
+                suma = 0;
+                iva = 0;
+                total = 0;
+            }
+
             // mostramos los nuevos datos
-            $('#suma').html(suma);
-            $('#iva').html(iva);
-            $('#total').html(total);
-            $('#impuesto').val(iva);
-            $('#inputTotal').val(total);
+            // $('#suma').html(suma);
+            // $('#iva').html(iva);
+            // $('#total').html(total);
+            // $('#impuesto').val(iva);
+            // $('#inputTotal').val(total);
+            $('#suma').html(suma.toFixed(2));
+            $('#iva').html(iva.toFixed(2));
+            $('#total').html(total.toFixed(2));
+            $('#impuesto').val(iva.toFixed(2));
+            $('#inputTotal').val(total.toFixed(2));
 
             //eliminamos la fila
             $('#fila'+index).remove();
+                // Eliminar el subtotal del array
+                delete subtotal[index];
         }
 
 
@@ -458,6 +608,38 @@
                 $('#cantidad').val('');
                 $('#precio').val('');
         }
+
+        function mensaje(texto) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: texto,
+        });
+    }
+
+    function generarResumenVenta() {
+        let resumen = '<h4>Resumen de la Venta</h4>';
+        resumen += '<table class="table table-bordered">';
+        resumen += '<thead><tr><th>Producto</th><th>Cantidad</th><th>Precio</th><th>Subtotal</th></tr></thead>';
+        resumen += '<tbody>';
+
+        $('#tabla-productos tbody tr').each(function() {
+            let producto = $(this).find('td:eq(0)').text();
+            let cantidad = $(this).find('td:eq(1)').text();
+            let precio = $(this).find('td:eq(2)').text();
+            let subtotal = $(this).find('td:eq(3)').text();
+
+            resumen += `<tr><td>${producto}</td><td>${cantidad}</td><td>${precio}</td><td>${subtotal}</td></tr>`;
+        });
+
+        resumen += '</tbody></table>';
+        resumen += `<p><strong>Subtotal:</strong> ${$('#suma').text()}</p>`;
+        resumen += `<p><strong>IVA:</strong> ${$('#iva').text()}</p>`;
+        resumen += `<p><strong>Total:</strong> ${$('#total').text()}</p>`;
+
+        return resumen;
+}
+
 
         // modal para canselar la compra
         document.getElementById('btn-cancelar').addEventListener('click', function(event){
