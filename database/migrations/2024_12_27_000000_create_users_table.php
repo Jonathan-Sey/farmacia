@@ -21,7 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->foreignId('id_rol')->constrained('rol');
             $table->rememberToken();
-            $table->boolean('activo')->default(true); // Nueva columna 'activo' con valor predeterminado 'true'
+            $table->tinyInteger('estado')->default(1);
             $table->timestamps();
         });
     }
