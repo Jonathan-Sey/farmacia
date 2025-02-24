@@ -76,7 +76,8 @@ class VentaController extends Controller
     {
         // Obtener los productos disponibles en la sucursal con stock > 0
         $productos = Almacen::where('id_sucursal', $id)
-            ->where('cantidad', '>', 0) // Solo productos con cantidad disponible
+            ->where('cantidad', '>', 0)
+            ->where('estado', 1) // validar estado
             ->with('producto')  // Obtener la relación con el producto
             ->get()
             ->map(function($almacen) {

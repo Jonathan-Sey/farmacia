@@ -10,7 +10,9 @@
         <form action="{{ route('requisiciones.store') }}" method="POST">
             @csrf
             <div class="border-b border-gray-900/10 pb-12">
-                <div class="mt-2 mb-5">
+                <!-- Campo oculto para la sucursal de origen -->
+                <input type="hidden" name="id_sucursal_origen" id="id_sucursal_origen" value="1">
+                {{-- <div class="mt-2 mb-5">
                     <label for="id_sucursal_origen" class="uppercase block text-sm font-medium text-gray-900">Sucursal Origen</label>
                     <select class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             name="id_sucursal_origen" id="id_sucursal_origen" required>
@@ -19,7 +21,7 @@
                             <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
                         @endforeach
                     </select>
-                </div>
+                </div> --}}
 
                 <div class="mt-2 mb-5">
                     <label for="id_sucursal_destino" class="uppercase block text-sm font-medium text-gray-900">Sucursal Destino</label>
