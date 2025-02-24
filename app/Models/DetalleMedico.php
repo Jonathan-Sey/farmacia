@@ -10,13 +10,14 @@ class DetalleMedico extends Model
     use HasFactory;
 
     protected $table = 'detalle_medico';
-    
+
 
     protected $fillable = [
         'id_usuario',
         'especialidad',
         'numero_colegiado',
         'estado',
+        'horarios',
     ];
 
     public function scopeActivos($query)
