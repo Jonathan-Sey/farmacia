@@ -111,6 +111,8 @@ class User extends Authenticatable implements JWTSubject
         return $query->where('estado', [1,2]);
     }
 
+    
+
 
 
 }

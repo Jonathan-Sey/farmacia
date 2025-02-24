@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Consulta;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Consulta;
 use App\Models\DetalleMedico;
 use App\Models\Persona;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class consultaController extends Controller
@@ -87,6 +89,16 @@ class consultaController extends Controller
             'estado' => 1,
 
         ]);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Consultas',
+                'detalles' => "Se creó la consulta por: {$request->asunto}-Del paciente{$request->id_persona}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
         return redirect()->route('consultas.index')->with('success', 'Registro creado correctamente.');
     }
 
@@ -136,6 +148,17 @@ class consultaController extends Controller
             $consulta->update($datosActualizados);
             return redirect()->route('consultas.index')->with('success','¡Consulta actualizado!');
         }
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Consultas',
+                'detalles' => "Se creó la consulta por: {$request->asunto} -Del paciente{$request->id_persona}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
+
         return redirect()->route('consultas.index');
     }
 

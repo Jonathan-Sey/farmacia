@@ -11,6 +11,10 @@
         <form action="{{route('roles.update', ['rol' => $rol->id])}}" method="POST">
             @csrf
             @method('PATCH')
+
+            <div id="usuario">
+
+            </div>
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5">
                     <label for="nombre" class="uppercase block text-sm font-medium text-gray-900">Nombre del Rol</label>

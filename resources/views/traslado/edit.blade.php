@@ -12,6 +12,9 @@
         <form action="{{route('traslado.update',['traslado'=> $traslado->id])}}" method="POST">
             @csrf
             @method('PATCH')
+            <div id="usuario">
+
+            </div>
             <div class="border-b border-gray-200 pb-6">
                 <div class="mb-5">
                     <div class="flex gap-6 justify-center">
