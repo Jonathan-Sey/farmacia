@@ -57,7 +57,7 @@
                     @enderror
                 </div>
 
-                <div class="mt-2 mb-5">
+                {{-- <div class="mt-2 mb-5">
                     <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
                     <input
                         type="number"
@@ -74,7 +74,7 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
-                </div>
+                </div> --}}
 
 
 

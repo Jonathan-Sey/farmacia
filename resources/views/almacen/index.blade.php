@@ -12,15 +12,17 @@
 @section('contenido')
     <a href="{{ route('almacenes.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
-            Crear
+            Asignar servicio
         </button>
     </a>
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >ID</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Tipo</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
@@ -35,15 +37,29 @@
                 @foreach ($almacenes as $almacen)
                 <tr>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->id}}</td>
+                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->codigo}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap text-center">
+                        <a href="#" class="estado">
+                            @if ($almacen->producto->tipo == 1)
+                                <span class="text-green-500 font-bold">Producto</span>
+                            @else
+                                <span class="text-red-500 font-bold">Servicio</span>
+                            @endif
+                        </a>
+                    </td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->sucursal->nombre}}</td>
                     <td class="text-left px-6 py-4 whitespace-nowrap">
-                        <span class="{{ $almacen->cantidad <= 10 ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
-                            {{$almacen->cantidad}}
-                            @if ($almacen->cantidad <= 10)
-                                <span class="text-red-400">(Poco stock)</span>
+                            @if ($almacen->producto->tipo == 2)
+                            <span class="text-green-500 font-bold">{{$almacen->cantidad}}</span>
+                            @else
+                                <span class="{{ $almacen->cantidad <= 10 ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
+                                    {{$almacen->cantidad}}
+                                    @if ($almacen->cantidad <= 10)
+                                        <span class="text-red-400">(Poco stock)</span>
+                                    @endif
+                                </span>
                             @endif
-                        </span>
                     </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a href="#" class="estado" data-id="{{ $almacen->id}}" data-estado="{{$almacen->estado}}">
@@ -56,24 +72,24 @@
                     </td>
 
                     <td class="flex gap-2 justify-center">
+                        @if ($almacen->producto->tipo == 2)
+                            <form action="{{route('almacenes.edit',['almacen'=>$almacen->id])}}" method="GET">
+                                @csrf
+                                <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </form>
+                        @endif
 
-                        <form action="{{route('almacenes.edit',['almacen'=>$almacen->id])}}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
+                            <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$almacen->id}}"  data-info="{{$almacen->id}}">
+                                <i class="fas fa-trash"></i>
                             </button>
-                        </form>
 
 
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$almacen->id}}"  data-info="{{$almacen->id}}">
-                            <i class="fas fa-trash"></i>
-                        </button>
-
-
-                        <form id="form-eliminar{{$almacen->id}}" action="{{ route('almacenes.destroy', $almacen->id) }}" method="POST" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form>
+                            <form id="form-eliminar{{$almacen->id}}" action="{{ route('almacenes.destroy', $almacen->id) }}" method="POST" style="display: none;">
+                                @csrf
+                                @method('DELETE')
+                            </form>
                     </td>
 
                 </tr>

@@ -41,7 +41,7 @@ class CompraController extends Controller
     {
         // $proveedores = Proveedor::whereNotIn('estado',[0,2])->get();
         $proveedores = Proveedor::activos()->get();
-        $productos = Producto::activos()->get();
+        $productos = Producto::activos()->where('tipo',1)->get();
         return view('compra.create',compact('proveedores','productos'));
     }
 
