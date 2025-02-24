@@ -42,67 +42,42 @@
                                     $decodedHorario = json_decode($horario->horarios, true);
                                 @endphp
                                 @if (is_array($decodedHorario))
-                                <div class="bg-white p-2 rounded-md shadow-md border border-gray-200 mb-2 w-64">
-                                    <span class="font-bold text-indigo-600 flex items-center">
-                                        <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
-                                        {{ $horario->sucursal->nombre ?? 'Sin sucursal' }}
-                                    </span>
-                                    <table class="w-full mt-1 text-xs">
-                                        <thead>
-                                            <tr class="border-b">
-                                                <th class="text-left font-semibold">Día</th>
-                                                <th class="text-left font-semibold">Horario</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($decodedHorario as $dia => $horas)
-                                                @if (is_array($horas))
-                                                    @foreach ($horas as $rango)
+                                    <div class="bg-white p-2 rounded-md shadow-md border border-gray-200 mb-2 w-64">
+                                        <span class="font-bold text-indigo-600 flex items-center">
+                                            <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                                            {{ $horario->sucursal->nombre ?? 'Sin sucursal' }}
+                                        </span>
+                                        <table class="w-full mt-1 text-xs">
+                                            <thead>
+                                                <tr class="border-b">
+                                                    <th class="text-left font-semibold">Día</th>
+                                                    <th class="text-left font-semibold">Horario</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach ($decodedHorario as $dia => $horas)
+                                                    @if (is_array($horas))
+                                                        @foreach ($horas as $rango)
+                                                            <tr class="border-b">
+                                                                <td class="py-1">{{ ucfirst($dia) }}</td>
+                                                                <td class="py-1">{{ $rango }}</td>
+                                                            </tr>
+                                                        @endforeach
+                                                    @else
                                                         <tr class="border-b">
                                                             <td class="py-1">{{ ucfirst($dia) }}</td>
-                                                            <td class="py-1">{{ $rango }}</td>
+                                                            <td class="py-1">{{ $horas }}</td>
                                                         </tr>
-                                                    @endforeach
-                                                @else
-                                                    <tr class="border-b">
-                                                        <td class="py-1">{{ ucfirst($dia) }}</td>
-                                                        <td class="py-1">{{ $horas }}</td>
-                                                    </tr>
-                                                @endif
-                                            @endforeach
-                                        </tbody>
-                                    </table>
-                                </div>                                
+                                                    @endif
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
                                 @endif
                             @endforeach
-
-
-                        @if ($medico->horarios)
-
-                            @php
-                                $horarios = json_decode($medico->horarios, true);
-                            @endphp
-
-                            <ul class="list-disc pl-4">
-
-                                @foreach ($horarios as $horario)
-                                    @php
-                                        $horario_dias = json_decode($horario['horarios'], true);
-                                    @endphp
-
-                                    @foreach ($horario_dias as $dia => $horas)
-                                        <li>
-                                            <strong>{{ ucfirst($dia) }}:</strong>
-                                            {{ implode(", ", $horas) }}
-                                        </li>
-                                    @endforeach
-
-                                @endforeach
-                            </ul>
                         @else
                             <span class="text-gray-500">Sin horarios</span>
                         @endif
-
                     </td>
                     <td class="px-6 py-4 text-center">
                         <a class="estado" data-id="{{ $medico->id }}" data-estado="{{$medico->estado}}">
@@ -112,6 +87,7 @@
                         </a>
                     </td>
                     <td class="px-6 py-4 text-center h-full align-middle">
+                        {{-- boton editar --}}
                         <div class="flex flex-col justify-center items-center gap-2">
                             <form action="{{ route('medicos.edit', ['medico' => $medico->id]) }}" method="GET">
                                 @csrf
@@ -119,19 +95,14 @@
                                     <i class="fas fa-edit"></i>
                                 </button>
                             </form>
+                            {{-- boton cambio de estado --}}
                             <button type="button" class="btn btn-warning btn-sm cambiar-estado-btn" data-id="{{ $medico->id }}" data-estado="{{ $medico->estado }}" data-info="{{ $medico->usuario->name }}">
                                 <i class="fas fa-sync-alt"></i>
                             </button>
                         </div>
-                    </td>                    
-                        </form>
-                        {{-- Botón Cambiar estado --}}
-                        <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $medico->id }}" data-estado="{{ $medico->estado }}" data-info="{{ $medico->nombre }}">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
                     </td>
                 </tr>
-                @endforeach
+            @endforeach            
             </tbody>
         </x-slot>
     </x-data-table>
