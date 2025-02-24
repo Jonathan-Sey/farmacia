@@ -38,21 +38,34 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$medico->especialidad}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$medico->numero_colegiado}}</td>
                     <td class="px-6 py-4">
+
                         @if ($medico->horarios)
+
                             @php
                                 $horarios = json_decode($medico->horarios, true);
                             @endphp
+
                             <ul class="list-disc pl-4">
+
                                 @foreach ($horarios as $horario)
-                                    <li>
-                                        <strong>{{ ucfirst($horario['dia']) }}:</strong> 
-                                        {{ $horario['hora_inicio'] }} - {{ $horario['hora_fin'] }}
-                                    </li>
+                                    @php
+                                        $horario_dias = json_decode($horario['horarios'], true);
+                                    @endphp
+
+                                    @foreach ($horario_dias as $dia => $horas)
+                                        <li>
+                                            <strong>{{ ucfirst($dia) }}:</strong>
+                                            {{ implode(", ", $horas) }}
+                                        </li>
+                                    @endforeach
+
                                 @endforeach
                             </ul>
+
                         @else
                             <span class="text-gray-500">Sin horarios</span>
                         @endif
+
                     </td>
 
 
@@ -75,14 +88,14 @@
                         </form>
                         {{-- Botón Cambiar estado --}}
                         <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $medico->id }}" data-estado="{{ $medico->estado }}" data-info="{{ $medico->nombre }}">
-                            <i class="fas fa-sync-alt"></i> 
+                            <i class="fas fa-sync-alt"></i>
                         </button>
                     </td>
                 </tr>
 
 
                 @endforeach
-            </tbody>             
+            </tbody>
         </x-slot>
     </x-data-table>
 @endsection
@@ -204,12 +217,12 @@
                                     // Actualizamos la columna de estado en el frontend
                                     const estadoElement = $('a[data-id="' + Id + '"]');
                                     estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
-                                    
+
                                     // Actualizamos el valor del estado en el data-estado para el siguiente clic
-                                    estadoElement.data('estado', estado); 
+                                    estadoElement.data('estado', estado);
 
                                     // Recargamos la página después de actualizar el estado
-                                    location.reload(); 
+                                    location.reload();
                                 } else {
                                     alert('Error al cambiar el estado');
                                 }

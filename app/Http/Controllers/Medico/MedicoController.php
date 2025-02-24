@@ -21,6 +21,7 @@ class MedicoController extends Controller
             ->select('id', 'id_usuario', 'especialidad', 'estado', 'numero_colegiado')
             ->get();
 
+        //return $medicos;
         return view('medico.index', compact('medicos'));
     }
 
@@ -60,6 +61,7 @@ class MedicoController extends Controller
             'especialidad' => $request->especialidad,
             'numero_colegiado' => $request->numero_colegiado,
             'estado' => 1, // Activo por defecto
+            'horarios' => json_encode($request->horarios),
         ]);
 
         // Guardar los horarios
