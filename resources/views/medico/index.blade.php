@@ -5,8 +5,6 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
-
-
 @endpush
 
 @section('contenido')
@@ -18,14 +16,14 @@
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
-                <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Medico</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Especialidad</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Colegiado</th>
+                <tr class="bg-slate-600">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Código</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Médico</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Especialidad</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Colegiado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Horarios</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Estado</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Acciones</th>
                 </tr>
             </thead>
         </x-slot>
@@ -33,6 +31,7 @@
         <x-slot name="tbody">
             <tbody>
                 @foreach ($medicos as $medico)
+
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$medico->id}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$medico->usuario->name}}</td>
@@ -81,11 +80,13 @@
                     </td>
                 </tr>
 
+
                 @endforeach
-            </tbody>
+            </tbody>             
         </x-slot>
     </x-data-table>
 @endsection
+
 
 @push('js')
 

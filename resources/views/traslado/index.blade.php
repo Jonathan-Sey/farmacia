@@ -27,21 +27,6 @@
         </a>
     </div>
 
-    <div class="flex justify-center items-center  bg-gray-100">
-
-    <a href="{{ route('solicitud.index') }}">
-         <button class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300" aria-label="5 notifications">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span class="sr-only">Notifications</span>
-            <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2">
-                {{$cantidadDeSolicitudes}}
-            </div>
-        </button> 
-    </a>
-      
-    </div>
 </div>
 <x-data-table>
     <x-slot name="thead">

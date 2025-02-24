@@ -11,6 +11,8 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-7xl mb-10 ">
         <form action="{{ route('ventas.store') }}" method="POST" >
             @csrf
+
+            <div id="usuario"></div>
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
                     <legend class="text-blue-500 font-bold">Venta</legend>

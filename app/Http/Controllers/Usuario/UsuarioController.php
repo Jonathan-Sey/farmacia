@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Usuario;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
@@ -81,6 +82,17 @@ class UsuarioController extends Controller
             // Guardar los cambios
             $user->save();
 
+              // Bitacora
+         $usuario = User::find($request->idUsuario);
+         Bitacora::create([
+             'id_usuario' => $request->idUsuario,
+             'name_usuario' => $usuario->name,
+             'accion' => 'Actualizacion',
+             'tabla_afectada' => 'Usuario',
+             'detalles' => "Se actualizo el usuario  {$request->name}", // Se usa el nombre de la sucursal
+             'fecha_hora' => now(),
+         ]);
+
             // Redirigir con mensaje de éxito
             return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
         }
@@ -116,6 +128,17 @@ class UsuarioController extends Controller
             'password' => bcrypt($request->input('password')),
             'id_rol' => $request->input('id_rol'),
         ]);
+
+             // Bitacora
+             $usuario = User::find($request->idUsuario);
+             Bitacora::create([
+                 'id_usuario' => $request->idUsuario,
+                 'name_usuario' => $usuario->name,
+                 'accion' => 'Creación',
+                 'tabla_afectada' => 'Usuario',
+                 'detalles' => "Se creo el usuario {$request->nombre}", // Se usa el nombre de la sucursal
+                 'fecha_hora' => now(),
+             ]);
 
         // auth()->attempt([
         //     'email' => $request->email,

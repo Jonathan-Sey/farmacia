@@ -11,7 +11,11 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('productos.store')}}" method="POST">
             @csrf
+            <div id="usuario">
+
+            </div>
             <div class="border-b border-gray-900/10 pb-12">
+                
 
                 <div class="mt-2 mb-5 flex flex-col gap-5 md:grid md:grid-cols-2 " >
                     <div class="mt-2 mb-5">
@@ -111,6 +115,7 @@
     </div>
 </div>
 
+<script src="/js/obtenerUsuario.js"></script>
 <script>
 let precioBase = 0; // almacena el precio original
 

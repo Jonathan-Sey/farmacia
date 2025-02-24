@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Almacen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
+use App\Models\Bitacora;
 use App\Models\Lote;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Sucursal;
 use App\Models\Traslado;
+use App\Models\User;
 
 class AlmacenController extends Controller
 {
@@ -91,6 +93,16 @@ class AlmacenController extends Controller
             'id_user' => 1,
         ]);
 
+        $usuario=User::find($request->idUsuario);
+           Bitacora::create([
+                   'id_usuario' => $request->idUsuario,
+                   'name_usuario' =>$usuario->name,
+                   'accion' => 'Creación',
+                   'tabla_afectada' => 'Almacenes',
+                   'detalles' => "Se creó el almacen: {$request->id_sucursal}", //detalles especificos
+                   'fecha_hora' => now(),
+           ]);
+
         return redirect()->route('almacenes.index')->with('success', '¡Registro exitoso!');
 
     }
@@ -143,6 +155,16 @@ class AlmacenController extends Controller
             return redirect()->route('almacenes.index');
         }
         $almacen->update($datosActualizados);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Almacenes',
+                'detalles' => "Se actualizo el almacen: {$request->id_sucursal}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
         return redirect()->route('almacenes.index')->with('success','¡Almacen actualizado!');
 
     }
