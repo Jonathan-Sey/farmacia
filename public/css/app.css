@@ -3155,6 +3155,10 @@ input.tab:checked + .tab-content,
   border-top-left-radius: 0.75rem;
   border-top-right-radius: 0.75rem;
 }
+.rounded-r-2xl {
+  border-top-right-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+}
 .border {
   border-width: 1px;
 }
@@ -3303,6 +3307,78 @@ input.tab:checked + .tab-content,
 .bg-\[\#979494\] {
   --tw-bg-opacity: 1;
   background-color: rgb(151 148 148 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#3e6163\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(62 97 99 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#517b7e\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(81 123 126 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#71a6aa\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(113 166 170 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#94aaaa\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(148 170 170 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#FFFFF0\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 240 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#a3d1d1\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(163 209 209 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#658080\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(101 128 128 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#B3E5FC\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(179 229 252 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#a1becc\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(161 190 204 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#bccdd4\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(188 205 212 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#175858\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(23 88 88 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#bcd4cd\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(188 212 205 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#164739\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(22 71 57 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#d7e9f1\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(215 233 241 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#487375\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(72 115 117 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#073359\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(7 51 89 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#3FA659\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(63 166 89 / var(--tw-bg-opacity, 1));
+}
+.bg-\[\#ffffff\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
@@ -3554,6 +3630,9 @@ input.tab:checked + .tab-content,
 .text-indigo-600 {
   --tw-text-opacity: 1;
   color: rgb(79 70 229 / var(--tw-text-opacity, 1));
+}
+.text-\[\] {
+  color: ;
 }
 .underline {
   text-decoration-line: underline;
