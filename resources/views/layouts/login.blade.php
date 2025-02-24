@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Farmacias Antigua Guatemala</title>
 </head>
-<body class="bg-gradient-to-r from-[#072E33] from-10% via-[#0C7075] via-30% to-[#0F969C] to-90%  flex items-center justify-center h-full">
+<body class="bg-[#979494] flex items-center justify-center h-full">
    @yield('contenido') 
 
 </body>
