@@ -29,7 +29,7 @@
                                     id="id_producto">
                                     <option value="">Buscar un producto</option>
                                     @foreach ($productos as $producto)
-                                        <option value="{{ $producto->id }}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
+                                        <option value="{{ $producto->id }}" data-nombre="{{$producto->nombre}}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
                                     @endforeach
                                 </select>
                                 @error('id_producto')
@@ -295,7 +295,8 @@
 
         function agregarProducto(){
             let id_producto = $('#id_producto').val();
-            let producto = ($('#id_producto option:selected').text()).split(' ')[1];
+            //let producto = ($('#id_producto option:selected').text()).split(' ')[1];
+            let producto = $('#id_producto option:selected').data('nombre');
             let cantidad = $('#cantidad').val();
             let precio = $('#precio').val();
             let fecha_vencimiento = $('#fecha_vencimiento').val();

@@ -26,6 +26,7 @@ class ProductoController extends Controller
         return view('producto.index',['productos'=>$productos]);
     }
 
+
     /**
      * Show the form for creating a new resource.
      *
@@ -34,6 +35,7 @@ class ProductoController extends Controller
 
     public function create()
     {
+
         // $categorias = Categoria::all(['id', 'nombre']);
         $categorias = Categoria::activos()->get();
         return view('producto.create', compact('categorias'));
@@ -159,7 +161,7 @@ class ProductoController extends Controller
                  'detalles' => "Se actualizo el producto: {$request->nombre}", //detalles especificos
                  'fecha_hora' => now(),
          ]);
-         
+
         return redirect()->route('productos.index');
 
     }

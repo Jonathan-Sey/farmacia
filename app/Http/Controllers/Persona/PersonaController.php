@@ -33,6 +33,26 @@ class PersonaController extends Controller
         return view('persona.create');
     }
 
+
+    protected function crearPersona(Request $request)
+    {
+        $this->validate($request, [
+            'nombre' => 'required|string|max:45',
+            'nit' => 'max:10',
+            'telefono' => 'max:20',
+        ]);
+
+        $rol = $request->has('rol') ? 2 : 1; // Rol 1 para cliente, 2 para paciente
+
+        return Persona::create([
+            'nombre' => $request->nombre,
+            'nit' => $request->nit,
+            'rol' => $rol,
+            'telefono' => $request->telefono,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+        ]);
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -41,21 +61,7 @@ class PersonaController extends Controller
      */
     public function store(Request $request)
     {
-        $this -> validate($request,[
-            'nombre' => 'required|string|max:45',
-            'nit' => 'max:10',
-            'telefono' => 'max:20',
-
-        ]);
-        $rol = $request->has('rol') ? 2 : 1;
-
-        Persona::create([
-            'nombre' => $request->nombre,
-            'nit' => $request->nit,
-            'rol' => $rol,
-            'telefono' => $request->telefono,
-           'fecha_nacimiento' => $request->fecha_nacimiento,
-        ]);
+        $persona = $this->crearPersona($request);
 
         $usuario=User::find($request->idUsuario);
         Bitacora::create([
@@ -69,6 +75,43 @@ class PersonaController extends Controller
 
 
         return redirect()->route('personas.index')->with('success', 'Registro creado correctamente.');
+
+        // $this -> validate($request,[
+        //     'nombre' => 'required|string|max:45',
+        //     'nit' => 'max:10',
+        //     'telefono' => 'max:20',
+
+        // ]);
+        // $rol = $request->has('rol') ? 2 : 1;
+
+        // Persona::create([
+        //     'nombre' => $request->nombre,
+        //     'nit' => $request->nit,
+        //     'rol' => $rol,
+        //     'telefono' => $request->telefono,
+        //    'fecha_nacimiento' => $request->fecha_nacimiento,
+        // ]);
+
+        // return redirect()->route('personas.index')->with('success', 'Registro creado correctamente.');
+        // return response()->json([
+        //     'success' => true,
+        //     'persona' => [
+        //         'id' => $persona->id,
+        //         'nombre' => $persona->nombre,
+        //     ],
+        // ]);
+    }
+    public function storeFromVentas(Request $request)
+    {
+        $persona = $this->crearPersona($request);
+
+        return response()->json([
+            'success' => true,
+            'persona' => [
+                'id' => $persona->id,
+                'nombre' => $persona->nombre,
+            ],
+        ]);
     }
 
     /**
