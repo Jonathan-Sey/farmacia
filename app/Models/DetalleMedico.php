@@ -10,6 +10,7 @@ class DetalleMedico extends Model
     use HasFactory;
 
     protected $table = 'detalle_medico';
+    
 
     protected $fillable = [
         'id_usuario',
@@ -35,6 +36,7 @@ class DetalleMedico extends Model
         return $this->hasMany(Consulta::class, 'id_medico');
     }
 
+    protected $with = ['horarios.sucursal'];
     // Relación con Horarios
     public function horarios()
     {

@@ -29,10 +29,12 @@ class MedicoController extends Controller
      */
     public function create()
     {
-        $usuarios = User::all();
-        $sucursales = Sucursal::all(); // Cargar sucursales para la vista
-        return view('medico.create', compact('usuarios', 'sucursales'));
+    $usuarios = User::all();
+    $sucursales = Sucursal::all(); // Asegúrate de que esta consulta está correcta
+
+    return view('medico.create', compact('usuarios', 'sucursales'));
     }
+
 
     /**
      * Guardar un nuevo médico y sus horarios en la base de datos.
@@ -46,7 +48,7 @@ class MedicoController extends Controller
             'numero_colegiado' => 'required|string|max:10',
             'estado' => 'integer',
             'horarios' => 'required|array',
-            'horarios.*.sucursal_id' => 'required|exists:sucursales,id',
+            'horarios.*.sucursal_id' => 'required|exists:sucursal,id',
             'horarios.*.dia' => 'required|string',
             'horarios.*.hora_inicio' => 'required|date_format:H:i',
             'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
@@ -80,8 +82,17 @@ class MedicoController extends Controller
     public function edit(DetalleMedico $medico)
     {
         $usuarios = User::all();
-        return view('medico.edit', compact('medico', 'usuarios'));
+        $sucursales = Sucursal::all();
+
+        // Asegurar que los horarios y sucursales se carguen correctamente
+        $medico->load(['horarios.sucursal']);
+
+        // Verificar si ahora los horarios aparecen correctamente    dd($medico->toArray());
+        return view('medico.edit', compact('medico', 'usuarios', 'sucursales'));
     }
+
+
+
 
     /**
      * Actualizar los datos de un médico y sus horarios.
@@ -92,15 +103,15 @@ class MedicoController extends Controller
             'id_usuario' => 'required|exists:users,id',
             'especialidad' => 'required|string|max:75',
             'numero_colegiado' => 'required|string|max:10',
-            'estado' => 'integer',
+            'estado' => 'required|integer',
             'horarios' => 'required|array',
-            'horarios.*.sucursal_id' => 'required|exists:sucursales,id',
+            'horarios.*.sucursal_id' => 'required|exists:sucursal,id',
             'horarios.*.dia' => 'required|string',
             'horarios.*.hora_inicio' => 'required|date_format:H:i',
             'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
         ]);
 
-        // Actualizar datos del médico
+        // ✅ 1. Actualizar los datos del médico
         $medico->update([
             'id_usuario' => $request->id_usuario,
             'especialidad' => $request->especialidad,
@@ -108,23 +119,23 @@ class MedicoController extends Controller
             'estado' => $request->estado,
         ]);
 
-        // Actualizar o insertar nuevos horarios
+        // ✅ 2. Eliminar todos los horarios anteriores del médico
+        $medico->horarios()->delete();
+
+        // ✅ 3. Insertar los nuevos horarios
         foreach ($request->horarios as $horario) {
-            Horario::updateOrCreate(
-                [
-                    'medico_id' => $medico->id,
-                    'sucursal_id' => $horario['sucursal_id'],
-                ],
-                [
-                    'horarios' => json_encode([
-                        $horario['dia'] => [$horario['hora_inicio'] . '-' . $horario['hora_fin']]
-                    ]),
-                ]
-            );
+            Horario::create([
+                'medico_id' => $medico->id,
+                'sucursal_id' => $horario['sucursal_id'],
+                'horarios' => json_encode([
+                    $horario['dia'] => [$horario['hora_inicio'] . '-' . $horario['hora_fin']]
+                ]),
+            ]);
         }
 
         return redirect()->route('medicos.index')->with('success', '¡Médico actualizado exitosamente!');
     }
+
 
     /**
      * Desactivar o eliminar un médico.
