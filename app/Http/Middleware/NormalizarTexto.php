@@ -8,7 +8,7 @@ class NormalizarTexto
 {
     public function handle($request, Closure $next)
     {
-        $excepciones = ['email', 'username', 'correo', 'usuario', 'password', '_token']; // Asegurar que el password y el token CSRF no se toquen
+        $excepciones = ['email', 'username', 'correo', 'usuario', 'password', '_token']; 
         
         $datos = $request->all();
 
@@ -19,12 +19,10 @@ class NormalizarTexto
             }
         }
 
-        // ✅ Mantener el token CSRF para evitar error 419
         if ($request->has('_token')) {
             $datos['_token'] = $request->input('_token');
         }
 
-        // ✅ No modificar el password (muy importante para autenticación)
         if ($request->has('password')) {
             $datos['password'] = $request->input('password');
         }
