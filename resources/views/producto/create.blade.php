@@ -130,6 +130,7 @@
 
 <script src="/js/obtenerUsuario.js"></script>
 <script>
+
 let precioBase = 0; // almacena el precio original
 
 // Función para desformatear el valor ingresado (para cálculos)
