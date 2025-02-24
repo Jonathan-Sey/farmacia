@@ -9,13 +9,14 @@ class Horario extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'horarios' => 'array', // Convierte automáticamente el JSON en un array PHP
+    ];
+
     protected $table = 'horarios';
 
     protected $fillable = ['medico_id', 'sucursal_id', 'estado', 'horarios'];
 
-    protected $casts = [
-        'horarios' => 'array', // Convierte automáticamente el JSON en un array PHP
-    ];
 
     public function medico()
     {

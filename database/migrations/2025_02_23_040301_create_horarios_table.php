@@ -12,7 +12,7 @@ return new class extends Migration {
             $table->foreignId('medico_id')->constrained('detalle_medico')->onDelete('cascade');
             $table->foreignId('sucursal_id')->constrained('sucursal')->onDelete('cascade');
             $table->string('estado')->default('activo'); // Asegurar que "estado" exista antes
-            $table->json('horarios')->nullable()->after('estado'); // Agregar después de "estado"
+            $table->json('horarios')->nullable(); // Agregar después de "estado"
             $table->timestamps();
         });
     }
