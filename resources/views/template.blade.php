@@ -31,6 +31,8 @@
     </head>
     <body class="relative min-h-screen flex flex-col bg-gray-100">
         <!-- Navegación -->
+        
+       
         <x-navegacion class="w-full md:w-1/5 bg-white shadow fixed top-0 left-0 h-full"/>
 
         <!-- Contenido principal -->
@@ -55,6 +57,7 @@
         <script src="{{ asset('js/permisos.js') }}"></script>
         <script src="{{ asset('js/logout.js') }}"></script>
         <script src="{{ asset('js/cerrarSesion.js') }}"></script>
+
 
         @stack('css')
         @stack('js')

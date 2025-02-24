@@ -114,5 +114,19 @@ class MedicoController extends Controller
 
         return response()->json(['success' => false]);
     }
+
+    public function cambiarEstado($id)
+    {
+        $medico = DetalleMedico::find($id);
+
+        if ($medico) {
+            $medico->estado = $medico->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $medico->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
 }
 

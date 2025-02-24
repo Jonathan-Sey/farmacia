@@ -21,9 +21,7 @@ class UsuarioController extends Controller
 
         $roles = Rol::where('estado', '!=', 0)->get();
         // Filtrar solo usuarios activos y cargar el rol relacionado con las columnas específicas
-        $usuarios = User::where('activo', true)->with('rol:id,nombre') // Solo cargar 'id' y 'nombre' de la tabla 'rol'
-        ->get();
-
+        $usuarios = User::whereIn('estado', [1, 2])->with('rol:id,nombre')->get();
         // Pasar los usuarios y roles a la vista
         return view('usuarios.index', compact('roles', 'usuarios'));
         }
@@ -93,7 +91,7 @@ class UsuarioController extends Controller
             $usuario = User::findOrFail($id); // Busca al usuario por ID
 
             // Cambiar el estado de 'activo' a false
-            $usuario->activo = false;
+            $usuario->estado = 2;
             $usuario->save();
 
             return response()->json(['success' => 'Usuario desactivado correctamente']);
@@ -126,4 +124,19 @@ class UsuarioController extends Controller
 
         return redirect()->route('usuarios.index')->with('success', '¡Usuario registrado exitosamente!');
     }
+
+    public function cambiarEstado($id)
+    {
+        $user = User::find($id);
+
+        if ($user) {
+            $user->estado = $user->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $user->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
 }

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Rol;
 use Illuminate\Http\Request;
 use App\Models\Pestana;
+use Illuminate\Support\Facades\DB;
 
 class RolController extends Controller
 {
@@ -76,46 +77,60 @@ class RolController extends Controller
     
         return redirect()->route('roles.index')->with('success', '¡Registro exitoso!');
     }
-
+   
     public function update(Request $request, Rol $rol)
-    {
-        $request->validate([
-            'nombre' => 'required|string|max:255',
-            'descripcion' => 'nullable|string|max:255',
-            'pestanas' => 'array|nullable',
-            'nueva_pestana' => 'nullable|exists:pestanas,id',
-        ]);
-        
-        // Obtener las pestañas seleccionadas en el mismo orden en que fueron seleccionadas
-        $selectedTabs = $request->input('pestanas', []);
-        
-        // Si hay una nueva pestaña seleccionada, reemplazar la primera pestaña
-        if ($request->input('nueva_pestana')) {
-            $newTab = $request->input('nueva_pestana');
-            
-            // Verificar si la nueva pestaña ya está en el array
-            if (!in_array($newTab, $selectedTabs)) {
-                // Invertir el array para poner el nuevo valor al principio
-                array_unshift($selectedTabs, $newTab);  
-            }
+{
+    $request->validate([
+        'nombre' => 'required|string|max:255',
+        'descripcion' => 'nullable|string|max:255',
+        'pestanas' => 'array|nullable',
+        'nueva_pestana' => 'nullable|exists:pestanas,id', // Verifica si la pestaña existe en la base de datos
+    ]);
+
+    // Obtener las pestañas seleccionadas en el mismo orden en que fueron seleccionadas
+    $selectedTabs = $request->input('pestanas', []); // Pestañas ya seleccionadas
+
+    // Si hay una nueva pestaña seleccionada, agregarla al principio
+    if ($request->input('nueva_pestana')) {
+        $newTab = $request->input('nueva_pestana');
+
+        // Verificar si la nueva pestaña no está ya en el array
+        if (!in_array($newTab, $selectedTabs)) {
+            array_unshift($selectedTabs, $newTab); // Agregar la nueva pestaña al principio
         }
-    
-        // Asegurarse de que las pestañas estén únicas
-        $selectedTabs = array_unique($selectedTabs);
-        
-        // Asignar las pestañas al rol en el mismo orden
-        $rol->pestanas()->sync($selectedTabs);
-        
-     
-        $rol->update([
-            'nombre' => $request->nombre,
-            'descripcion' => $request->descripcion,
-        ]);
-        
-        return redirect()->route('roles.index')->with('success', 'Rol actualizado con éxito');
     }
-    
-    
+
+    // Asegurarse de que las pestañas estén únicas
+    $selectedTabs = array_unique($selectedTabs); // Eliminar duplicados
+
+    // Preparar los datos para insertar en la tabla pivote
+    $pestanasConOrden = [];
+    foreach ($selectedTabs as $index => $pestanaId) {
+        $pestanasConOrden[] = [
+            'rol_id' => $rol->id,
+            'pestana_id' => $pestanaId,
+            'orden' => $index + 1, // +1 para evitar orden 0
+        ];
+    }
+
+    // Depuración: Verificar el array antes de guardar
+    //dd($selectedTabs, $pestanasConOrden);
+
+    // Eliminar todas las pestañas asociadas al rol
+    DB::table('rol_pestana')->where('rol_id', $rol->id)->delete();
+
+    // Insertar las pestañas con el orden correcto
+    DB::table('rol_pestana')->insert($pestanasConOrden);
+
+    // Actualizar los demás datos del rol
+    $rol->update([
+        'nombre' => $request->nombre,
+        'descripcion' => $request->descripcion,
+    ]);
+
+    return redirect()->route('roles.index')->with('success', 'Rol actualizado con éxito');
+}
+
     public function destroy(Request $request, Rol $rol)
     {
         //dd($rol);
@@ -130,6 +145,19 @@ class RolController extends Controller
         }
         return response()->json(['success'=> false]);
     }
-
     
+    public function cambiarEstado($id)
+    {
+        $rol = Rol::find($id);
+
+        if ($rol) {
+            $rol->estado = $rol->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $rol->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
 }

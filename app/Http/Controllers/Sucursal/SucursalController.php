@@ -125,4 +125,19 @@ class SucursalController extends Controller
           }
           return response()->json(['success'=> false]);
     }
+
+    public function cambiarEstado($id)
+    {
+        $sucursal = Sucursal::find($id);
+
+        if ($sucursal) {
+            $sucursal->estado = $sucursal->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $sucursal->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
 }

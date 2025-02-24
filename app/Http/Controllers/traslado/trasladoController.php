@@ -128,4 +128,19 @@ class trasladoController extends Controller
 
         return response()->json($productos);
     }
+
+    public function cambiarEstado($id)
+    {
+        $traslado = traslado::find($id);
+
+        if ($traslado) {
+            $traslado->estado = $traslado->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $traslado->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
 }

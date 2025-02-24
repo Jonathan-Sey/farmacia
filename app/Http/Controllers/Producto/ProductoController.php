@@ -160,4 +160,18 @@ class ProductoController extends Controller
         }
         return response()->json(['success'=> false]);
     }
+
+    public function cambiarEstado($id)
+    {
+        $producto = Producto::find($id);
+
+        if ($producto) {
+            $producto->estado = $producto->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $producto->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
 }
