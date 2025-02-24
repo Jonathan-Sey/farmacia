@@ -22,16 +22,17 @@
                     @enderror
                 </div>
 
-                <!-- Vista Principal -->
-                <div class="mt-4">
-                    <label for="nueva_pestana" class="block text-sm font-medium text-gray-900">Seleccionar Vista Principal</label>
-                    <select name="nueva_pestana" id="nueva_pestana" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" onchange="updateSelectedTabs()">
-                        <option value="">-- Selecciona una Vista Principal --</option>
+                <div class="mt-2 mb-5">
+                    <label for="nueva_pestana" class="uppercase block text-sm font-medium text-gray-900">Vista Principal</label>
+                    <input list="pestanas-list" id="nueva_pestana" name="nueva_pestana" placeholder="Selecciona una Vista Principal" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                    <datalist id="pestanas-list">
                         @foreach($pestanas as $pestana)
-                            <option value="{{ $pestana->id }}">{{ $pestana->nombre }}</option>
+                            <option value="{{ $pestana->nombre }}" data-id="{{ $pestana->id }}">
                         @endforeach
-                    </select>
+                    </datalist>
                 </div>
+                
+                <button id="addNewTab">Agregar nueva pestaña</button>  
 
                 <!-- Pestañas seleccionadas -->
                 <div class="mt-4">
@@ -50,6 +51,7 @@
                     </div>
                     @enderror
                 </div>
+                
 
                 <!-- Mostrar las pestañas seleccionadas -->
                 <div class="mt-4">
@@ -83,60 +85,140 @@
 
 @push('js')
 
+
 <script>
-    window.onload = function() {
-        updateSelectedTabs();
-        updateSelectTabs();
-    };
-    
-    // Función para actualizar las pestañas seleccionadas
+document.addEventListener("DOMContentLoaded", function () {
+    const selectPestanas = document.getElementById("pestanas");
+    const selectedTabsList = document.getElementById("selected-tabs-list");
+    const nuevaPestanaInput = document.getElementById("nueva_pestana");
+    const pestanasList = document.getElementById("pestanas-list");
+
+    // Pestañas que ya están seleccionadas al editar el rol (esto viene del servidor)
+    let selectedTabs = @json($rol->pestanas->pluck('id')->toArray()); // Pestañas seleccionadas previamente
+
+    console.log("Array inicial:", selectedTabs); // Depuración: Ver el array inicial
+
+    // Función para actualizar la lista visual de pestañas seleccionadas
     function updateSelectedTabs() {
-        const selectedTabs = document.getElementById('pestanas').selectedOptions;
-        const newTab = document.getElementById('nueva_pestana').value;
-        const selectedTabsList = document.getElementById('selected-tabs-list');
-    
-        // Crear una lista de pestañas seleccionadas
-        let tabsArray = Array.from(selectedTabs).map(option => option.text);
-    
-        // Si hay una nueva pestaña seleccionada y no está en la lista, reemplazar la primera pestaña
-        if (newTab) {
-            const newTabText = document.querySelector(`#nueva_pestana option[value='${newTab}']`).text;
-    
-            // Si la nueva pestaña no está en el array, reemplazar la primera
-            if (!tabsArray.includes(newTabText)) {
-                tabsArray[0] = newTabText; 
+        selectedTabsList.innerHTML = ""; // Limpiar la lista antes de actualizar
+
+        // Recorrer el array selectedTabs y agregar cada pestaña a la lista visual
+        selectedTabs.forEach(tabId => {
+            const pestana = Array.from(selectPestanas.options).find(option => parseInt(option.value) === tabId);
+            if (pestana) {
+                let li = document.createElement("li");
+                li.textContent = pestana.textContent;
+                selectedTabsList.appendChild(li);
             }
+        });
+
+        console.log("Array después de actualizar la lista visual:", selectedTabs); // Depuración: Ver el array después de actualizar
+    }
+
+    // Llamar a la función inicial para cargar las pestañas seleccionadas previamente
+    updateSelectedTabs();
+
+    // Manejar la selección en el input de "nueva_pestana"
+    nuevaPestanaInput.addEventListener("change", function () {
+        const selectedPestanaName = nuevaPestanaInput.value;
+
+        // Buscar el ID de la pestaña seleccionada en el datalist
+        const selectedOption = Array.from(pestanasList.options).find(option => option.value === selectedPestanaName);
+
+        if (selectedOption) {
+            const nuevaPestanaId = parseInt(selectedOption.getAttribute("data-id"));
+
+            console.log("Nueva pestaña seleccionada (ID):", nuevaPestanaId); // Depuración: Ver el ID de la nueva pestaña
+
+            // Verificar si la pestaña ya está en el array para evitar duplicados
+            if (!selectedTabs.includes(nuevaPestanaId)) {
+                // Agregar la nueva pestaña al principio del array usando unshift()
+                selectedTabs.unshift(nuevaPestanaId);
+
+                console.log("Array después de agregar la nueva pestaña:", selectedTabs); // Depuración: Ver el array después de agregar
+
+                // Actualizar la lista visual
+                updateSelectedTabs();
+
+                // Actualizar el select múltiple para reflejar los cambios
+                Array.from(selectPestanas.options).forEach(option => {
+                    if (selectedTabs.includes(parseInt(option.value))) {
+                        option.selected = true;
+                    } else {
+                        option.selected = false;
+                    }
+                });
+            }
+
+            // Limpiar el input después de agregar la pestaña
+            nuevaPestanaInput.value = "";
         }
-    
-        // Limpiar la lista visual y volver a llenarla con el orden correcto
-        selectedTabsList.innerHTML = '';
-        tabsArray.forEach(tab => {
-            const listItem = document.createElement('li');
-            listItem.textContent = tab;
-            selectedTabsList.appendChild(listItem);
-        });
-    
-        // Actualizar las opciones seleccionadas en el select
-        const selectElement = document.getElementById('pestanas');
-        Array.from(selectElement.options).forEach(option => {
-            option.selected = tabsArray.includes(option.text);
-        });
-    
-     
-    }
-    
-    // Función para actualizar el selector múltiple
-    function updateSelectTabs() {
-        const selectedTabs = document.getElementById('pestanas');
-        const currentSelectedTabs = @json($rol->pestanas->pluck('id')->toArray()); 
-        Array.from(selectedTabs.options).forEach(option => {
-            if (currentSelectedTabs.includes(parseInt(option.value))) {
-                option.selected = true;
+    });
+
+    // Cambiar el comportamiento predeterminado del evento 'mousedown' en el select
+    selectPestanas.addEventListener("mousedown", function (event) {
+        event.preventDefault(); // Evita la selección automática por el navegador
+
+        let clickedOption = event.target;
+
+        // Si el elemento clickeado es una opción dentro del select
+        if (clickedOption.tagName === "OPTION") {
+            clickedOption.selected = !clickedOption.selected; // Alterna la selección
+
+            // Actualizar el array selectedTabs
+            const clickedOptionId = parseInt(clickedOption.value);
+            if (clickedOption.selected) {
+                // Si la opción está seleccionada, agregarla al array (pero no al principio)
+                if (!selectedTabs.includes(clickedOptionId)) {
+                    selectedTabs.push(clickedOptionId);
+                }
+            } else {
+                // Si la opción está deseleccionada, quitarla del array
+                selectedTabs = selectedTabs.filter(id => id !== clickedOptionId);
             }
+
+            console.log("Array después de interactuar con el select múltiple:", selectedTabs); // Depuración: Ver el array después de interactuar
+
+            // Actualizar la lista visual
+            updateSelectedTabs();
+        }
+    });
+
+    // Asegurarnos de que el array selectedTabs se envíe correctamente al backend
+    const form = document.querySelector("form");
+    form.addEventListener("submit", function (event) {
+        // Eliminar cualquier campo oculto previo de "pestanas[]"
+        document.querySelectorAll("input[name='pestanas[]']").forEach(input => input.remove());
+
+        // Crear un campo oculto por cada elemento en selectedTabs (en el orden correcto)
+        selectedTabs.forEach(tabId => {
+            const hiddenInput = document.createElement("input");
+            hiddenInput.type = "hidden";
+            hiddenInput.name = "pestanas[]"; // Nombre del campo como array
+            hiddenInput.value = tabId; // Valor del campo
+
+            // Agregar el campo oculto al formulario
+            form.appendChild(hiddenInput);
         });
-    }
-    
+
+        console.log("Array enviado al backend:", selectedTabs); // Depuración: Ver el array que se envía
+    });
+});
 </script>
+
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const selectNuevaPestana = document.getElementById("nueva_pestana");
     
-    
+        selectNuevaPestana.addEventListener("change", function () {
+            const nuevaPestanaId = selectNuevaPestana.value;
+            console.log("Nueva Pestaña Seleccionada: ", nuevaPestanaId); // Verifica que el valor está bien
+        });
+    });
+
+    </script>
+
+
 @endpush
+

@@ -151,4 +151,18 @@ class PersonaController extends Controller
         }
         return response()->json(['success'=> false]);
     }
+
+    public function cambiarEstado($id)
+    {
+        $persona = Persona::find($id);
+
+        if ($persona) {
+            $persona->estado = $persona->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $persona->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
 }
