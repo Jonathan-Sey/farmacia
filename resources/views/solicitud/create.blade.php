@@ -57,7 +57,7 @@
 
                 <!-- Producto -->
                 <div class="mt-2 mb-5">
-                    <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto que nesecesita</label>
+                    <label for="id_producto6" class="uppercase block text-sm font-medium text-gray-900">Producto que nesecesita</label>
                     <select
                         class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         name="id_producto"
@@ -96,46 +96,149 @@
                 <!-- Usuario -->
 
                 <div class="mt-2">
-                <label for="descripcion" class="uppercase block text-sm/6 font-medium text-gray-900">Descripcion</label>
+                    <label for="descripcion" class="uppercase block text-sm/6 font-medium text-gray-900">Descripcion</label>
                     <textarea name="descripcion" id="descripcion"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
-                    
-                    ></textarea>
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"></textarea>
                 </div>
             </div>
 
             <!-- Botones -->
             <div class="mt-6 flex items-center justify-end space-x-4">
                 <a href="{{route('sucursales.index')}}" class="text-sm font-semibold p-4 text-gray-600 hover:text-gray-800">Cancelar</a>
-                <button type="submit" class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
-                    Guardar
-                </button>
+                <button id="btn-agregar" type="button" class=" cursor-pointer mt-3 rounded-md bg-indigo-600 px-3 w-full py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Agregar</button>
             </div>
-        </form>
+
     </div>
+</div>
+
+
+{{-- tabla --}}
+<div class="mt-5">
+    <h2 class="text-center m-5 font-bold text-lg">Detalle compra</h2>
+    <div class="overflow-x-auto">
+        <table id="tabla-productos" class="table  table-md table-pin-rows table-pin-cols">
+            <thead>
+                <tr>
+                    <th></th>
+                    <td>Sucursal de salida</td>
+                    <td>Sucursal de entrada</td>
+                    <td>Producto</td>
+                    <td>Cantidad</td>
+                    <td>descripcion</td>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{--
+                        <tr>
+                            <th></th>
+                        </tr> --}}
+
+            </tbody>
+            <tfoot>
+
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="mt-6 flex items-center justify-end gap-x-6">
+
+    <a href="{{route('ventas.index')}} " id="btn-cancelar">
+        <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
+    </a>
+    <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
+</div>
+</form>
+</div>
 </div>
 
 <script>
     document.getElementById('id_sucursal_1').addEventListener('change', function() {
-                let sucursalId = this.value;
-                let productosSelect = document.getElementById('id_producto');
+        let sucursalId = this.value;
+        let productosSelect = document.getElementById('id_producto');
 
-                // Limpiar el select de productos
-                productosSelect.innerHTML = '<option value="">Seleccione un producto</option>';
+        // Limpiar el select de productos
+        productosSelect.innerHTML = '<option value="">Seleccione un producto</option>';
 
-                if (sucursalId) {
-                    fetch(`/productos-por-sucursal/${sucursalId}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            data.forEach(producto => {
-                                let option = document.createElement('option');
-                                option.value = producto.id_producto;
-                                option.textContent = producto.producto.nombre;
-                                productosSelect.appendChild(option);
-                            });
-                        })
-                        .catch(error => console.error('Error:', error));
-                }});
+        if (sucursalId) {
+            fetch(`/productos-por-sucursal/${sucursalId}`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(producto => {
+                        let option = document.createElement('option');
+                        option.value = producto.id_producto;
+                        option.textContent = producto.producto.nombre;
+                        productosSelect.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#btn-agregar').click(function() {
+            agregarProducto();
+        });
+
+
+    })
+
+    let contador = 0;
+
+    function agregarProducto() {
+        let id_producto = $('#id_producto').val();
+        const selectProducto = document.getElementById("id_producto");
+        const opciones = Array.from(selectProducto.options);
+
+        const opcionBuscada = opciones.find(option => option.value === id_producto);      
+            let producto = opcionBuscada.text;
+
+        let cantidad = $('#cantidad').val();
+        let descripcion = $('#descripcion').val();
+        
+        let sucursal_1 = $('#id_sucursal_1').val();
+        const selectsucursal1 = document.getElementById("id_sucursal_1");
+        const opcionesSucursal1 = Array.from(selectsucursal1.options);
+        const opcionBuscadaSucursal = opcionesSucursal1.find(option => option.value === sucursal_1);      
+            let sucursal_1T = opcionBuscadaSucursal.text;
+        
+        let sucursal_2 = $('#id_sucursal_2').val();
+        const selectsucursal2 = document.getElementById("id_sucursal_2");
+        const opcionesSucursal2 = Array.from(selectsucursal2.options);
+        const opcionBuscadaSucursa2 = opcionesSucursal2.find(option => option.value === sucursal_2);      
+            let sucursal_2T = opcionBuscadaSucursa2.text;
+
+        if (id_producto != '' && producto != '' && cantidad != '' && descripcion != '' && sucursal_1 != '' && sucursal_2 != '') {
+            if (parseInt(cantidad) > 0 && (cantidad % 1 == 0)) {
+
+                contador++;
+                $('#tabla-productos tbody').append(`
+                            <tr id="fila${contador}">
+                                <th>${contador}</th>
+                                 <td><input type="hidden" name="arraySucursal1[]" value="${sucursal_1}">${sucursal_1T}</td>
+                                <td><input type="hidden" name="arraySucursal2[]" value="${sucursal_2}">${sucursal_2T}</td>
+                                <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
+                                <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
+                                <td><input type="hidden" name="arrayDescripcion[]" value="${descripcion}">${descripcion}</td>
+
+                        
+                                <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
+                            </tr> `);
+
+                limpiar();
+
+            } else {
+                mensaje('favor ingresar una cantidad entera');
+            }
+
+        } else {
+            mensaje('Los campos estan vacios');
+        }
+    }
+    
 </script>
 
 <script>
@@ -158,6 +261,8 @@
         });
     });
 </script>
+
+
 
 
 

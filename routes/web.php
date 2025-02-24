@@ -81,8 +81,9 @@ Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'm
 Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
 Route::resource('lotes', LoteController::class)->parameters(['lote' => 'lote']);
 Route::resource('Reporte_ventas', ReporteVentasController::class)->parameters(['Reporte_ventas' => 'Reporte_ventas']);
+Route::get('/reporte/ventas/filtrar', [ReporteVentasController::class, 'filtrarPorFecha'])->name('Reporte_ventas.filtrarPorFecha');
 Route::resource('requisiciones', RequisicionController::class)->parameters(['requisicion' => 'requisicion']);
-
+Route::get("/ventas-informe", [ReporteVentasController::class, 'generateReport'])->name('ventas.informe');
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
