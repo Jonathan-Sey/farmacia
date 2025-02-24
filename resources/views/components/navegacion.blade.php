@@ -195,7 +195,7 @@
                 <a href="{{ route('traslado.index') }}"><i class="fa-solid fa-book-medical"></i> traslado</a>
             </li>
             <li data-pestanal="bitacora" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book-medical"></i> traslado</a>
+                <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book-medical"></i> Bitacora</a>
             </li>
             <li>
                 <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
