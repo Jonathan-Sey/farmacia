@@ -103,7 +103,7 @@
                     </div>
                     @enderror
                 </div>
-                <div class="mt-2 mb-5" id="fecha_caducidad_container">
+                {{-- <div class="mt-2 mb-5" id="fecha_caducidad_container">
                     <label for="fecha_caducidad" class="uppercase block text-sm font-medium text-gray-900">Fecha caducidad</label>
                     <input
                         type="date"
@@ -121,7 +121,7 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
-                </div>
+                </div> --}}
 
                 <div class="mt-2">
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
@@ -159,11 +159,11 @@
     <script src="/js/obtenerUsuario.js"></script>
     <script>
         // limitar la fecha a datos actuales
-        document.addEventListener('DOMContentLoaded', function(){
-            var DatoActual = new Date().toISOString().split('T')[0];
-            document.getElementById('fecha_caducidad').setAttribute('min', DatoActual);
+        // document.addEventListener('DOMContentLoaded', function(){
+        //     var DatoActual = new Date().toISOString().split('T')[0];
+        //     document.getElementById('fecha_caducidad').setAttribute('min', DatoActual);
 
-        });
+        // });
         // fin fecha
 
         //uso del select2
@@ -180,7 +180,7 @@
         });
     </script>
 
-<script>
+{{-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         const tipoCheckbox = document.getElementById('tipo');
         const fechaCaducidadContainer = document.getElementById('fecha_caducidad_container');
@@ -200,7 +200,7 @@
         tipoCheckbox.addEventListener('change', toggleFechaCaducidad);
         // Ejecutar la función al cargar la página para establecer el estado inicial
         toggleFechaCaducidad(); });
-</script>
+</script> --}}
 
 
 @endpush

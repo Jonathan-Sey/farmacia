@@ -58,7 +58,7 @@ class RequisicionController extends Controller
      */
     public function create()
     {
-        $productos = Producto::activos()->get();
+        $productos = Producto::activos()->where('tipo',1)->get();
         $sucursales = Sucursal::activos()->get();
         $inventario = Inventario::all();
         return view('requisicion.create',compact('productos','sucursales','inventario'));
@@ -83,7 +83,8 @@ class RequisicionController extends Controller
         DB::beginTransaction();
         try {
             $producto = $request->id_producto;
-            $sucursal_origen = $request->id_sucursal_origen;
+            // $sucursal_origen = $request->id_sucursal_origen;
+            $sucursal_origen = 1;
             $sucursal_destino = $request->id_sucursal_destino;
             $cantidad = $request->cantidad;
 

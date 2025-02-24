@@ -24,7 +24,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Caducidad</th>
+                    {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Caducidad</th> --}}
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Actualizado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
@@ -54,7 +54,7 @@
                         </a>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->categoria->nombre}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
+                    {{-- <td class="px-6 py-4 whitespace-nowrap">
                         @if($diferenciaDias < 0)
                             <span class="text-red-500 font-bold">
                                 {{ $fechaCaducidad->format('d/m/Y') }}
@@ -71,7 +71,7 @@
                                     (Vigente)
                             </span>
                         @endif
-                    </td>
+                    </td> --}}
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->updated_at}}</td>
                     <td class="flex gap-2 justify-center">
 
