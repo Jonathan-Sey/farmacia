@@ -80,7 +80,7 @@
                 @endforeach
             </tbody>
         </x-slot>
-    </x-data-table>
+    </x-data-ta ble>
 @endsection
 
 @push('js')
