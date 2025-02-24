@@ -181,4 +181,18 @@ class consultaController extends Controller
         }
         return response()->json(['success'=> false]);
     }
+
+    public function cambiarEstado($id)
+    {
+        $consulta = Consulta::find($id);
+
+        if ($consulta) {
+            $consulta->estado = $consulta->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $consulta->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
 }

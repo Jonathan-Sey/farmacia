@@ -156,4 +156,18 @@ class ProveedorController extends Controller
         }
         return response()->json(['success'=> false]);
     }
+
+    public function cambiarEstado($id)
+    {
+        $proveedor = Proveedor::find($id);
+
+        if ($proveedor) {
+            $proveedor->estado = $proveedor->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $proveedor->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
 }

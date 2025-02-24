@@ -29,6 +29,7 @@
         </style> -->
 
 
+
 </head>
 
 <body class="relative min-h-screen flex flex-col bg-gray-100">
@@ -50,6 +51,7 @@
     <!-- Navegación -->
 
     <x-navegacion class="w-full md:w-1/5 bg-white shadow fixed top-0 left-0 h-full" />
+
 
     <!-- Contenido principal -->
     <main class="flex-1 ml-[10px] md:ml-[200px] mt-20 md:mt-5 pb-16 px-4 md:px-10">
@@ -76,9 +78,11 @@
     <script src="{{ asset('js/obtenerUsuario.js') }}"></script>
     <script src="{{ asset('js/cantidad.js') }}"></script>
 
+
     @stack('css')
     @stack('js')
 </body>
+
 
 
 
