@@ -5,8 +5,6 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
-
-
 @endpush
 
 @section('contenido')
@@ -18,14 +16,14 @@
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
-                <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Medico</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Especialidad</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Colegiado</th>
+                <tr class="bg-slate-600">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Código</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Médico</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Especialidad</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Colegiado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Horarios</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Estado</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Acciones</th>
                 </tr>
             </thead>
         </x-slot>
@@ -33,6 +31,7 @@
         <x-slot name="tbody">
             <tbody>
                 @foreach ($medicos as $medico)
+
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$medico->id}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$medico->usuario->name}}</td>
@@ -58,13 +57,11 @@
 
 
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $medico->id}}" data-estado="{{$medico->estado}}">
+                        <a class="estado" data-id="{{ $medico->id}}" data-estado="{{$medico->estado}}">
                             @if ($medico->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
-                            @elseif ($medico->estado == 2)
-                                <span class="text-red-500 font-bold">Inactivo</span>
                             @else
-                                <span class="text-red-500 font-bold">Eliminado</span>
+                                <span class="text-red-500 font-bold">Inactivo</span>
                             @endif
                         </a>
                     </td>
@@ -76,26 +73,20 @@
                                 <i class="fas fa-edit"></i>
                             </button>
                         </form>
-
-
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$medico->id}}"  data-info="{{$medico->especialidad}}">
-                            <i class="fas fa-trash"></i>
+                        {{-- Botón Cambiar estado --}}
+                        <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $medico->id }}" data-estado="{{ $medico->estado }}" data-info="{{ $medico->nombre }}">
+                            <i class="fas fa-sync-alt"></i> 
                         </button>
-
-
-                        <form id="form-eliminar{{$medico->id}}" action="{{ route('medicos.destroy', $medico->id) }}" method="POST" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form>
                     </td>
-
                 </tr>
 
+
                 @endforeach
-            </tbody>
+            </tbody>             
         </x-slot>
     </x-data-table>
 @endsection
+
 
 @push('js')
 
@@ -173,62 +164,64 @@
         });
 </script>
 @endif
-
-{{-- Cambio de estado --}}
+{{-- cambio de estado --}}
 <script>
-    $(document).ready(function(){
-        $('.estado').click(function(e){
-            e.preventDefault();
-            var Id = $(this).data('id')
-            var estado = $(this).data('estado')
+    document.addEventListener('DOMContentLoaded', function () {
+        const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
 
-            $.ajax({
-                url: '/medicos/' + Id,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token()}}',
-                    _method: 'DELETE',
-                    status: estado == 1 ? 2 : 1
-                },
-                success: function(response){
-                    if(response.success){
-                        location.reload()
-                    }else{
-                        alert('Error al cambiar el estado')
+        changeStateButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const Id = this.getAttribute('data-id');
+                let estado = this.getAttribute('data-estado'); // Tomamos el estado actual del data-estado
+                const nombre = this.getAttribute('data-info'); // Este es informacion
+
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "¡Deseas cambiar el estado de " + nombre + "!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, cambiar estado",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Realizar la solicitud Ajax para cambiar el estado
+                        $.ajax({
+                            url: '/medico/' + Id + '/cambiar-estado',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                estado: estado == 1 ? 2 : 1, // Cambiar entre activo (1) y inactivo (2)
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // Después de cambiar el estado en la base de datos, actualizamos el frontend
+                                    estado = estado == 1 ? 2: 1; // Actualizamos la variable de estado
+                                    const estadoText = estado == 1 ? 'Activo' : 'Inactivo';
+                                    const estadoColor = estado == 1 ? 'text-green-500' : 'text-red-500';
+
+                                    // Actualizamos la columna de estado en el frontend
+                                    const estadoElement = $('a[data-id="' + Id + '"]');
+                                    estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
+                                    
+                                    // Actualizamos el valor del estado en el data-estado para el siguiente clic
+                                    estadoElement.data('estado', estado); 
+
+                                    // Recargamos la página después de actualizar el estado
+                                    location.reload(); 
+                                } else {
+                                    alert('Error al cambiar el estado');
+                                }
+                            },
+                            error: function () {
+                                alert('Ocurrió un error en la solicitud.');
+                            }
+                        });
                     }
-                }
-            })
-        })
-    });
-</script>
-
-
-
-{{-- Modal para eliminar  --}}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.eliminar-btn');
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const Id = this.getAttribute('data-id');
-            const nombre = this.getAttribute('data-info');
-            Swal.fire({
-                title: "¿Estás seguro?",
-                text: "¡Deseas eliminar! " + nombre,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí, ¡elimínalo!",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('form-eliminar' + Id).submit();
-                }
+                });
             });
         });
     });
-});
 </script>
 @endpush

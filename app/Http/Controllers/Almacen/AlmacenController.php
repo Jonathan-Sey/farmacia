@@ -190,4 +190,18 @@ class AlmacenController extends Controller
             return response()->json(['success'=> false]);
 
     }
+
+    public function cambiarEstado($id)
+    {
+        $almacen = Almacen::find($id);
+
+        if ($almacen) {
+            $almacen->estado = $almacen->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $almacen->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
 }
