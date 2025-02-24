@@ -60,4 +60,40 @@ class ReporteVentasController extends Controller
        return view('reportes.ventas',compact('NumeroVentas','ventas','ventasFiltro','ventasPorDia','totalGeneral', 'diasMes', 'año','mes','nombreSucursales'));
     
     }
+
+    public function filtrarPorFecha(){
+        $sucursales = Sucursal::all();
+        return view('reportes.venstasFecha',compact('sucursales'));
+      }
+
+      public function generateReport(Request $request)
+    {
+        $query = Venta::query();
+
+        // Filtrar por día específico
+        if ($request->has('fecha')) {
+            $query->whereDate('fecha_venta', $request->fecha);
+        }
+    
+        // Filtrar por mes y año
+        if ($request->has('mes')) {
+            $query->whereMonth('fecha_venta', date('m', strtotime($request->mes)))
+                  ->whereYear('fecha_venta', date('Y', strtotime($request->mes)));
+        }
+    
+        if ($request->has('año')) {
+            $query->whereYear('fecha_venta', $request->año);
+        }
+    
+        // Filtrar por rango de fechas
+        if ($request->has('fechaInicio') && $request->has('fechaFin')) {
+            $query->whereBetween('fecha_venta', [$request->fechaInicio, $request->fechaFin]);
+        }
+    
+        //\Log::info($query->toSql(), $query->getBindings());
+        // Obtener las ventas filtradas
+        $ventas = $query->get();
+    
+        return response()->json($ventas);
+    }
 }

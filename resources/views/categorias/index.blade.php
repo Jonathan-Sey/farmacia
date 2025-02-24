@@ -37,7 +37,7 @@
                 <td class="px-6 py-4 whitespace-nowrap">{{ $categoria->nombre }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $categoria->descripcion }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                    <a href="#" class="estado" data-id="{{ $categoria->id }}" data-estado="{{ $categoria->estado }}">
+                    <a class="estado" data-id="{{ $categoria->id }}" data-estado="{{ $categoria->estado }}">
                         @if ($categoria->estado == 1)
                             <span class="text-green-500 font-bold">Activo</span>
                         @else
@@ -54,16 +54,12 @@
                         </button>
                     </form>
 
-                    {{-- Botón Eliminar --}}
-                    <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{ $categoria->id }}" data-info="{{ $categoria->nombre }}">
-                        <i class="fas fa-trash"></i>
-                    </button>
+                    {{-- Botón Cambiar estado --}}
+                <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $categoria->id }}" data-estado="{{ $categoria->estado }}" data-info="{{ $categoria->nombre }}">
+                    <i class="fas fa-sync-alt"></i> 
+                </button>
 
-                    {{-- Formulario oculto para eliminación --}}
-                    <form id="form-eliminar{{ $categoria->id }}" action="{{ route('categorias.destroy', $categoria->id) }}" method="POST" style="display: none;">
-                        @csrf
-                        @method('DELETE')
-                    </form>
+                   
                 </td>
             </tr>
             @endforeach
@@ -146,65 +142,65 @@ $(document).ready(function() {
     });
 </script>
 @endif
-
-{{-- Cambio de estado --}}
+{{-- cambio de estado --}}
 <script>
-    $(document).ready(function() {
-        $('.estado').click(function(e) {
-            e.preventDefault();
-            const id = $(this).data('id');
-            const estado = $(this).data('estado');
-            $.ajax({
-                url: `/categorias/${id}`,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    _method: 'PUT',
-                    estado: estado == 1 ? 0 : 1 // Cambia el estado
-                },
-                success: function(response) {
-                    if (response.success) {
-                        location.reload();
-                    } else {
-                        alert('Error al cambiar el estado');
+    document.addEventListener('DOMContentLoaded', function () {
+        const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
+
+        changeStateButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const Id = this.getAttribute('data-id');
+                let estado = this.getAttribute('data-estado'); // Tomamos el estado actual del data-estado
+                const nombre = this.getAttribute('data-info'); // Este es informacion
+
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "¡Deseas cambiar el estado de " + nombre + "!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, cambiar estado",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Realizar la solicitud Ajax para cambiar el estado
+                        $.ajax({
+                            url: '/categoria/' + Id + '/cambiar-estado',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                estado: estado == 1 ? 2 : 1, // Cambiar entre activo (1) y inactivo (2)
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // Después de cambiar el estado en la base de datos, actualizamos el frontend
+                                    estado = estado == 1 ? 2: 1; // Actualizamos la variable de estado
+                                    const estadoText = estado == 1 ? 'Activo' : 'Inactivo';
+                                    const estadoColor = estado == 1 ? 'text-green-500' : 'text-red-500';
+
+                                    // Actualizamos la columna de estado en el frontend
+                                    const estadoElement = $('a[data-id="' + Id + '"]');
+                                    estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
+                                    
+                                    // Actualizamos el valor del estado en el data-estado para el siguiente clic
+                                    estadoElement.data('estado', estado); 
+
+                                    // Recargamos la página después de actualizar el estado
+                                    location.reload(); 
+                                } else {
+                                    alert('Error al cambiar el estado');
+                                }
+                            },
+                            error: function () {
+                                alert('Ocurrió un error en la solicitud.');
+                            }
+                        });
                     }
-                }
+                });
             });
         });
     });
-</script>
-
-{{-- Modal para eliminar --}}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.eliminar-btn');
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const id = this.getAttribute('data-id');
-            const nombre = this.getAttribute('data-info');
-            Swal.fire({
-                title: "¿Estás seguro?",
-                text: `¡Deseas eliminar la categoría ${nombre}!`,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí, ¡elimínalo!",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById(`form-eliminar${id}`).submit();
-                }
-            });
-        });
-    });
-});
-</script>
-
-<script>
-
-   // function mostrarInformacionToken(decodedToken) { const tokenInfoElement = document.getElementById('token-info'); if (tokenInfoElement) { tokenInfoElement.innerHTML = ` <p>Email: ${decodedToken.email}</p> <p>Rol: ${decodedToken.rol}</p> <p>Nombre: ${decodedToken.name}</p> <p>Pestañas: ${decodedToken.pestanas.join(', ')}</p> `; } }
 </script>
 @endpush
 
