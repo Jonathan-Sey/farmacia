@@ -1,15 +1,15 @@
 <header>
     <div class="flex">
         <!-- Barra lateral fija -->
-        <div class="hidden md:flex flex-col w-56 bg-white rounded-r-3xl overflow-hidden fixed top-0 left-0 h-full overflow-y-auto max-h-screen">
+        <div class="hidden md:flex flex-col w-56 bg-[#073359] rounded-r-1xl overflow-hidden fixed top-0 left-0 h-full overflow-y-auto max-h-screen">
             <div class="flex items-center justify-center h-[200px] shadow-md">
-              <img src="/Logos/LOGO_MUNIANTIGUA_AZUL.png" alt="Logo_Municipalidad" width="200px" class="p-3">
+              <img src="/Logos/LOGO_MUNIANTIGUA_BLANCO.png" alt="Logo_Municipalidad" width="200px" class="p-3">
             </div>
             <ul class="flex flex-col py-4">
                 <!-- Dashboard -->
                 <li data-pestana="Dashboard">
-                    <a href="/dashboard" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-home"></i></span>
+                    <a href="/dashboard" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-gray-800">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-home"></i></span>
                         <span class="text-sm font-medium">Dashboard</span>
                     </a>
                 </li>
