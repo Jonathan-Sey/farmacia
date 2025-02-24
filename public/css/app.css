@@ -2895,6 +2895,9 @@ input.tab:checked + .tab-content,
 .mb-2 {
   margin-bottom: 0.5rem;
 }
+.mt-1 {
+  margin-top: 0.25rem;
+}
 .block {
   display: block;
 }
@@ -2990,6 +2993,9 @@ input.tab:checked + .tab-content,
 }
 .w-\[2500px\] {
   width: 2500px;
+}
+.w-64 {
+  width: 16rem;
 }
 .min-w-full {
   min-width: 100%;
@@ -3452,6 +3458,10 @@ input.tab:checked + .tab-content,
   font-size: 1.25rem;
   line-height: 1.75rem;
 }
+.text-xs {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
 .font-black {
   font-weight: 900;
 }
@@ -3540,6 +3550,10 @@ input.tab:checked + .tab-content,
 .text-yellow-500 {
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity, 1));
+}
+.text-indigo-600 {
+  --tw-text-opacity: 1;
+  color: rgb(79 70 229 / var(--tw-text-opacity, 1));
 }
 .underline {
   text-decoration-line: underline;
