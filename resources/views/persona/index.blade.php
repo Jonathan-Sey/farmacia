@@ -68,7 +68,7 @@
 
                              {{-- Botón Cambiar estado --}}
                         <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $persona->id }}" data-estado="{{ $persona->estado }}" data-info="{{ $persona->nombre }}">
-                            <i class="fas fa-sync-alt"></i> 
+                            <i class="fas fa-sync-alt"></i>
                         </button>
                     </td>
                 </tr>
@@ -116,6 +116,7 @@
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
+                { responsivePriority: 2, targets: 6 },
 
             ],
             drawCallback: function() {
@@ -194,12 +195,12 @@
                                     // Actualizamos la columna de estado en el frontend
                                     const estadoElement = $('a[data-id="' + Id + '"]');
                                     estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
-                                    
+
                                     // Actualizamos el valor del estado en el data-estado para el siguiente clic
-                                    estadoElement.data('estado', estado); 
+                                    estadoElement.data('estado', estado);
 
                                     // Recargamos la página después de actualizar el estado
-                                    location.reload(); 
+                                    location.reload();
                                 } else {
                                     alert('Error al cambiar el estado');
                                 }

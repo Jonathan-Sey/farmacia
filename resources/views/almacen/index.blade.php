@@ -12,15 +12,17 @@
 @section('contenido')
     <a href="{{ route('almacenes.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
-            Crear
+            Asignar servicio
         </button>
     </a>
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >ID</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Tipo</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
@@ -35,15 +37,29 @@
                 @foreach ($almacenes as $almacen)
                 <tr>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->id}}</td>
+                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->codigo}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap text-center">
+                        <a href="#" class="estado">
+                            @if ($almacen->producto->tipo == 1)
+                                <span class="text-green-500 font-bold">Producto</span>
+                            @else
+                                <span class="text-red-500 font-bold">Servicio</span>
+                            @endif
+                        </a>
+                    </td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->sucursal->nombre}}</td>
                     <td class="text-left px-6 py-4 whitespace-nowrap">
-                        <span class="{{ $almacen->cantidad <= 10 ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
-                            {{$almacen->cantidad}}
-                            @if ($almacen->cantidad <= 10)
-                                <span class="text-red-400">(Poco stock)</span>
+                            @if ($almacen->producto->tipo == 2)
+                            <span class="text-green-500 font-bold">{{$almacen->cantidad}}</span>
+                            @else
+                                <span class="{{ $almacen->cantidad <= 10 ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
+                                    {{$almacen->cantidad}}
+                                    @if ($almacen->cantidad <= 10)
+                                        <span class="text-red-400">(Poco stock)</span>
+                                    @endif
+                                </span>
                             @endif
-                        </span>
                     </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a class="estado" data-id="{{ $almacen->id}}" data-estado="{{$almacen->estado}}">
@@ -56,18 +72,17 @@
                     </td>
 
                     <td class="flex gap-2 justify-center">
+                        @if ($almacen->producto->tipo == 2)
+                            <form action="{{route('almacenes.edit',['almacen'=>$almacen->id])}}" method="GET">
+                                @csrf
+                                <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </form>
+                        @endif
 
-                        <form action="{{route('almacenes.edit',['almacen'=>$almacen->id])}}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </form>
-
-
-                        {{-- Botón Cambiar estado --}}
                         <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $almacen->id }}" data-estado="{{ $almacen->estado }}" data-info="{{ $almacen->nombre }}">
-                            <i class="fas fa-sync-alt"></i> 
+                            <i class="fas fa-sync-alt"></i>
                         </button>
                     </td>
                 </tr>
@@ -114,8 +129,11 @@
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
-
+                { responsivePriority: 1, targets: 2 },
+                { responsivePriority: 2, targets: 7 },
             ],
+
+
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
                 setTimeout(function() {
@@ -192,12 +210,12 @@
                                     // Actualizamos la columna de estado en el frontend
                                     const estadoElement = $('a[data-id="' + Id + '"]');
                                     estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
-                                    
+
                                     // Actualizamos el valor del estado en el data-estado para el siguiente clic
-                                    estadoElement.data('estado', estado); 
+                                    estadoElement.data('estado', estado);
 
                                     // Recargamos la página después de actualizar el estado
-                                    location.reload(); 
+                                    location.reload();
                                 } else {
                                     alert('Error al cambiar el estado');
                                 }

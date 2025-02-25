@@ -13,7 +13,7 @@
 
             </div>
             <div class="border-b border-gray-200 pb-6">
-                
+
                 <div class="mb-5">
                     <div class="flex gap-6 justify-center">
                         <div class="w-1/2">
@@ -122,10 +122,12 @@
                         .then(response => response.json())
                         .then(data => {
                             data.forEach(producto => {
+                                if (producto.producto.tipo === 1) {
                                 let option = document.createElement('option');
                                 option.value = producto.id_producto;
                                 option.textContent = producto.producto.nombre;
                                 productosSelect.appendChild(option);
+                            }
                             });
                         })
                         .catch(error => console.error('Error:', error));
