@@ -81,13 +81,9 @@
                             </form>
                         @endif
 
-                            <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$almacen->id}}"  data-info="{{$almacen->id}}">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                            <form id="form-eliminar{{$almacen->id}}" action="{{ route('almacenes.destroy', $almacen->id) }}" method="POST" style="display: none;">
-                                @csrf
-                                @method('DELETE')
-                            </form>
+                        <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $almacen->id }}" data-estado="{{ $almacen->estado }}" data-info="{{ $almacen->nombre }}">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
                     </td>
                 </tr>
                 @endforeach

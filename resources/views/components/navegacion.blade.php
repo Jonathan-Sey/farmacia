@@ -102,14 +102,14 @@
                 <li data-pestana="Requisiciones" style="display:none;">
                     <a href="{{ route('requisiciones.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
-                        <span class="text-sm font-medium">Traslado</span>
+                        <span class="text-sm font-medium">Requisiciones</span>
                     </a>
                 </li>
 
                 <li data-pestana="Traslado" style="display:none;">
                     <a href="{{ route('traslado.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-money-bill-transfer"></i></span>
-                        <span class="text-sm font-medium">traslado</span>
+                        <span class="text-sm font-medium">Traslados</span>
                     </a>
                 </li>
                 <li data-pestana="bitacora" style="display:none;">
@@ -189,10 +189,10 @@
                 <a href="{{ route('inventario.index') }}"><i class="fa-solid fa-book-medical"></i>Inventario</a>
             </li>
             <li data-pestanal="Requisiciones" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('requisiciones.index') }}"><i class="fa-solid fa-book-medical"></i> Traslado</a>
+                <a href="{{ route('requisiciones.index') }}"><i class="fa-solid fa-book-medical"></i>Requisiciones</a>
             </li>
-            <li data-pestanal="Traslado" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('traslado.index') }}"><i class="fa-solid fa-book-medical"></i> traslado</a>
+            <li data-pestanal="Traslados" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('traslado.index') }}"><i class="fa-solid fa-book-medical"></i>do</a>
             </li>
             <li data-pestanal="bitacora" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book-medical"></i> Bitacora</a>
