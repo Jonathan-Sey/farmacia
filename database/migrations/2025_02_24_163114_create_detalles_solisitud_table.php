@@ -17,7 +17,7 @@ class CreateDetallesSolisitudTable extends Migration
             $table->id();
             $table->foreignId('solicitud_salida')->constrained('sucursal');
             $table->foreignId('solicitud_entrada')->constrained('sucursal');
-            $table->foreignId('producto')->constrained('producto');
+            $table->foreignId('producto_id')->constrained('producto');
             $table->foreignId('id_solicitud')->constrained('solicitud_producto');
             $table->integer('cantidad');
             $table->foreignId('Id_usuario')->constrained('users');

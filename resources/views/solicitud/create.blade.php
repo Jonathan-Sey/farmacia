@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Crear traslado de articulos ')
+@section('titulo', 'Crear solicitud de articulos ')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endpush
@@ -7,8 +7,8 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3">
     <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl mb-10">
-        <form action="{{route('solicitud.store')}}" method="POST">
-            @csrf
+       
+           
             <div class="border-b border-gray-200 pb-6">
                 <div class="mb-5">
                     <div class="flex gap-6 justify-center">
@@ -113,8 +113,11 @@
 
 
 {{-- tabla --}}
+
+<form action="{{route('solicitud.store')}}" method="POST">
+@csrf
 <div class="mt-5">
-    <h2 class="text-center m-5 font-bold text-lg">Detalle compra</h2>
+    <h2 class="text-center m-5 font-bold text-lg">Detalle de la solicitud</h2>
     <div class="overflow-x-auto">
         <table id="tabla-productos" class="table  table-md table-pin-rows table-pin-cols">
             <thead>
@@ -144,7 +147,7 @@
 
 <div class="mt-6 flex items-center justify-end gap-x-6">
 
-    <a href="{{route('ventas.index')}} " id="btn-cancelar">
+    <a href="{{route('solicitud.index')}} " id="btn-cancelar">
         <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
     </a>
     <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
