@@ -102,7 +102,7 @@
                 <li data-pestana="Requisiciones" style="display:none;">
                     <a href="{{ route('requisiciones.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-shipping-fast"></i></span>
-                        <span class="text-sm font-medium">Solicitud</span>
+                        <span class="text-sm font-medium">Requisición</span>
                     </a>
                 </li>
 
