@@ -8,121 +8,121 @@
             <ul class="flex flex-col py-4">
                 <!-- Dashboard -->
                 <li data-pestana="Dashboard">
-                    <a href="/dashboard" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-gray-800">
+                    <a href="/dashboard" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-home"></i></span>
                         <span class="text-sm font-medium">Dashboard</span>
                     </a>
                 </li>
 
                 <li data-pestana="Usuarios" style="display:none;">
-                    <a href="{{ route('usuarios.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class='bx bxs-user'></i></span>
+                    <a href="{{ route('usuarios.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class='bx bxs-user'></i></span>
                         <span class="text-sm font-medium">Usuarios</span>
                     </a>
                 </li>
                 <li data-pestana="Rol" style="display:none;">
-                    <a href="{{ route('roles.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-briefcase-alt"></i></span>
+                    <a href="{{ route('roles.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-briefcase-alt"></i></span>
                         <span class="text-sm font-medium">Roles</span>
                     </a>
                 </li>
                 <li data-pestana="Categorias" style="display:none;">
-                    <a href="{{ route('categorias.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-category"></i></span>
+                    <a href="{{ route('categorias.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-category"></i></span>
                         <span class="text-sm font-medium">Categorías</span>
                     </a>
                 </li>
                 <li data-pestana="Proveedores" style="display:none;">
-                    <a href="{{ route('proveedores.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bxs-package"></i></span>
+                    <a href="{{ route('proveedores.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bxs-package"></i></span>
                         <span class="text-sm font-medium">Proveedores</span>
                     </a>
                 </li>
                 <li data-pestana="Sucursales" style="display:none;">
-                    <a href="{{ route('sucursales.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bxs-building"></i></span>
+                    <a href="{{ route('sucursales.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bxs-building"></i></span>
                         <span class="text-sm font-medium">Sucursal</span>
                     </a>
                 </li>
                 <li data-pestana="Productos" style="display:none;">
-                    <a href="{{ route('productos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bxs-package"></i></span>
+                    <a href="{{ route('productos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bxs-package"></i></span>
                         <span class="text-sm font-medium">Productos</span>
                     </a>
                 </li>
 
                 <li data-pestana="Almacenes" style="display:none;">
-                    <a href="{{ route('almacenes.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-store"></i></span>
+                    <a href="{{ route('almacenes.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-store"></i></span>
                         <span class="text-sm font-medium">Almacenes</span>
                     </a>
                 </li>
                 <li data-pestana="Compras" style="display:none;">
-                    <a href="{{ route('compras.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-cart-shopping"></i></span>
+                    <a href="{{ route('compras.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-cart-shopping"></i></span>
                         <span class="text-sm font-medium">Compras</span>
                     </a>
                 </li>
                 <li data-pestana="Ventas" style="display:none;">
-                    <a href="{{ route('ventas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-bag-shopping"></i></span>
+                    <a href="{{ route('ventas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-bag-shopping"></i></span>
                         <span class="text-sm font-medium">Ventas</span>
                     </a>
                 </li>
                 <li data-pestana="Reporte_ventas" style="display:none;">
-                    <a href="{{ route('Reporte_ventas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-chart-simple"></i></span>
+                    <a href="{{ route('Reporte_ventas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-chart-simple"></i></span>
                         <span class="text-sm font-medium">Reporte ventas</span>
                     </a>
                 </li>
                 <li data-pestana="Personas" style="display:none;">
-                    <a href="{{ route('personas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-person"></i></span>
+                    <a href="{{ route('personas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-person"></i></span>
                         <span class="text-sm font-medium">Personas</span>
                     </a>
                 </li>
                 <li data-pestana="Medicos" style="display:none;">
-                    <a href="{{ route('medicos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-briefcase-medical"></i></span>
+                    <a href="{{ route('medicos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-briefcase-medical"></i></span>
                         <span class="text-sm font-medium">Medicos</span>
                     </a>
                 </li>
                 <li data-pestana="Consultas" style="display:none;">
-                    <a href="{{ route('consultas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
+                    <a href="{{ route('consultas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book-medical"></i></span>
                         <span class="text-sm font-medium">Consultas</span>
                     </a>
                 </li>
                 <li data-pestana="Inventario" style="display:none;">
-                    <a href="{{ route('inventario.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
+                    <a href="{{ route('inventario.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book-medical"></i></span>
                         <span class="text-sm font-medium">Inventario</span>
                     </a>
                 </li>
                 <li data-pestana="Requisiciones" style="display:none;">
-                    <a href="{{ route('requisiciones.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book-medical"></i></span>
+                    <a href="{{ route('requisiciones.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book-medical"></i></span>
                         <span class="text-sm font-medium">Requisiciones</span>
                     </a>
                 </li>
 
                 <li data-pestana="Traslado" style="display:none;">
-                    <a href="{{ route('traslado.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-money-bill-transfer"></i></span>
+                    <a href="{{ route('traslado.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-money-bill-transfer"></i></span>
                         <span class="text-sm font-medium">Traslados</span>
                     </a>
                 </li>
                 <li data-pestana="bitacora" style="display:none;">
-                    <a href="{{ route('bitacora.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="fa-solid fa-book"></i>
+                    <a href="{{ route('bitacora.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book"></i>
                         </span>
                         <span class="text-sm font-medium">Bitacora</span>
                     </a>
                 </li>
                 <!-- Botón Logout -->
                 <li>
-                    <a href="javascript:void(0);" id="logout-btn" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-gray-500 hover:text-gray-800">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-gray-400"><i class="bx bx-log-out"></i></span>
+                    <a href="javascript:void(0);" id="logout-btn" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-log-out"></i></span>
                         <span class="text-sm font-medium">Cerrar Sesión</span>
                     </a>
                 </li>
