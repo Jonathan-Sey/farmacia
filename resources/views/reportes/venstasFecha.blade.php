@@ -2,6 +2,8 @@
 @section('titulo', 'Reporte de ventas por fecha')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
 @endpush
 
 @section('contenido')
@@ -131,48 +133,69 @@
 
 
     <script>
-   document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
-    const fecha = document.getElementById('fecha').value;  // Obtener el valor
+  document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
+    // Obtener valores de los inputs
+    const fecha = document.getElementById('fecha').value;
     const mes = document.getElementById('mes').value;
     const año = document.getElementById('año').value;
     const fechaInicio = document.getElementById('fechaInicio').value;
     const fechaFin = document.getElementById('fechaFin').value;
 
-    // Construimos la URL con los filtros seleccionados
+    // Construir URL
     let url = '/ventas-informe?';
-    if (fecha) url += `fecha=${encodeURIComponent(fecha)}&`;
-    if (mes) url += `mes=${encodeURIComponent(mes)}&`;
-    if (año) url += `año=${encodeURIComponent(año)}&`;
-    if (fechaInicio && fechaFin) url += `fechaInicio=${encodeURIComponent(fechaInicio)}&fechaFin=${encodeURIComponent(fechaFin)}&`;
+    if (fecha) url += `fecha=${fecha}&`;
+    if (mes) url += `mes=${mes}&`;
+    if (año) url += `año=${año}&`;
+    if (fechaInicio && fechaFin) url += `fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
 
-    console.log("URL generada:", url); // Verifica que los valores sean correctos
+    try {
+        // Fetch data
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Error en la respuesta');
+        const data = await response.json();
 
-    // Hacemos la petición al backend con los filtros
-    const response = await fetch(url, { method: 'GET' });
-    const data = await response.json();
+        // Generar HTML de las filas
+        const rows = data.map(venta => `
+            <tr>
+                <td class="px-6 py-3">${venta.venta_id}</td>
+                <td class="px-6 py-3">${venta.nombre_sucursal || 'N/A'}</td>
+                <td class="px-6 py-3">${venta.fecha_venta}</td>
+                <td class="px-6 py-3">${venta.impuesto}</td>
+                <td class="px-6 py-3">${venta.total}</td>
+                <td class="px-6 py-3">${venta.nombre_usuario}</td>
+                <td class="px-6 py-3">${venta.nombre_persona}</td>
+            </tr>
+        `).join('');
 
-    console.log("Datos recibidos:", data);
+        // Insertar filas en la tabla
+        const tbody = document.getElementById('tabla');
+        tbody.innerHTML = rows;
 
-        // Generar la tabla con los datos filtrados
-        let tablaHTML = `
-        
-                    ${data.map(venta => `
-                        <tr class="border-b">
-                            <td class="px-6 py-3">${venta.id}</td>
-                            <td class="px-6 py-3">${venta.id_sucursal || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.fecha_venta || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.impuesto || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.total || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.id_usuario || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.id_persona || 'N/A'}</td>
-                           
-                        </tr>
-                    `).join('')}
-          `;
+        // Destruir DataTable si existe
+        if ($.fn.DataTable.isDataTable('#example')) {
+            $('#example').DataTable().destroy();
+            tbody.innerHTML = ''; // Limpiar temporalmente
+            tbody.innerHTML = rows; // Volver a insertar
+        }
 
-        // Insertar la tabla generada en el contenedor
-        document.getElementById('tabla').innerHTML = tablaHTML;
-    });
+        // Inicializar DataTable
+        $('#example').DataTable({
+            responsive: true,
+            order: [[0, 'desc']],
+            language: { url: '/js/i18n/Spanish.json' },
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf', 'print', 'colvis'],
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 }
+            ]
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
+    }
+});
 </script>
 
 
