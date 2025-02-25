@@ -141,11 +141,11 @@
                 },
                 {
                     responsivePriority: 2,
-                    targets: 1
+                    targets: 3
                 },
                 {
                     responsivePriority: 3,
-                    targets: 2
+                    targets: 8
                 },
             ],
             drawCallback: function() {

@@ -130,9 +130,9 @@
                 }
             },
             columnDefs: [
-                { responsivePriority: 3, targets: 0 },
-                { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 6 },
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 },
+                { responsivePriority: 3, targets: 7 },
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
