@@ -38,13 +38,13 @@
                 </div>
 
                 <div class="mt-2 mb-5">
-                    <label for="telefono" class="uppercase block text-sm font-medium text-gray-900">Telefono</label>
+                    <label for="telefono" class="uppercase block text-sm font-medium text-gray-900">Teléfono</label>
                     <input
                         type="text"
                         name="telefono"
                         id="telefono"
                         autocomplete="given-name"
-                        placeholder="Telefono"
+                        placeholder="Teléfono"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('telefono',$proveedor->telefono) }}">
 
@@ -90,10 +90,11 @@
                 </div>
 
                 <div class="mt-2">
-                    <label for="direccion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
+                    <label for="direccion" class="uppercase block text-sm font-medium text-gray-900">Dirección</label>
                     <textarea name="direccion"
+                    required
                     id="direccion" rows="3"
-                    placeholder="Direccion"
+                    placeholder="Dirección"
                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('direccion',$proveedor->direccion) }}</textarea>
                     @error('direccion')
                     <div role="alert" class="alert alert-error mt-4 p-2">

@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Trasferencia de articulos')
+@section('titulo', 'Traslado de artículos')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">

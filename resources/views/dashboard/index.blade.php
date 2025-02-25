@@ -82,7 +82,7 @@
                     <div class="flex flex-col items-center ">
                         <i class='fa-solid fa-user-nurse text-7xl lg:text-6xl sm:text-6xl text-white'  ></i>
 
-                        <p class="uppercase text-lg font-bold text-white">Medicos</p>
+                        <p class="uppercase text-lg font-bold text-white">Médicos</p>
                     </div>
                     <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
                         <p class="text-5xl sm:text-3xl font-bold lg:text-3xl text-white">{{$medicos}} </p>
@@ -95,7 +95,7 @@
 
     <div class="grid gap-5 sm:grid-cols-1 lg:grid-cols-2 items-start mb-8">
         <div class=" max-h-[400px] overflow-x-auto bg-[#045951] p-2 rounded-lg shadow-lg text-center">
-            <h2 class="text-2xl m-2 font-bold  text-white">Ultimas ventas</h2>
+            <h2 class="text-2xl m-2 font-bold  text-white">Últimas ventas</h2>
             <table class="table table-xs table-pin-rows table-pin-cols min-w-full sm:min-w-[400px]">
                 <thead>
                     <tr>
@@ -130,7 +130,7 @@
         </div>
 
         <div class="max-h-[800px] overflow-x-auto bg-[#045951] p-2 rounded-lg shadow-lg text-center">
-            <h2 class="text-2xl m-2 text-white">Productos mas vendidos</h2>
+            <h2 class="text-2xl m-2 text-white">Productos más vendidos</h2>
             <div id="productosVendidos">
 
             </div>
@@ -194,7 +194,7 @@
                 xAxis: {
                     categories: diasMes,
                     accessibility: {
-                        description: 'Dias del mes'
+                        description: 'Días del mes'
                     }
                 },
                 yAxis: {
@@ -222,7 +222,7 @@
                     }
                 },
                 series: [{
-                    name: 'Ventas del dia ',
+                    name: 'Ventas del día ',
                     marker: {
                         enabled: true,
                         symbol: 'circle'
