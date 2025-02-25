@@ -13,31 +13,6 @@
                         <span class="text-sm font-medium">Dashboard</span>
                     </a>
                 </li>
-
-                <li data-pestana="Usuarios" style="display:none;">
-                    <a href="{{ route('usuarios.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class='bx bxs-user'></i></span>
-                        <span class="text-sm font-medium">Usuarios</span>
-                    </a>
-                </li>
-                <li data-pestana="Rol" style="display:none;">
-                    <a href="{{ route('roles.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-briefcase-alt"></i></span>
-                        <span class="text-sm font-medium">Roles</span>
-                    </a>
-                </li>
-                <li data-pestana="Categorias" style="display:none;">
-                    <a href="{{ route('categorias.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-category"></i></span>
-                        <span class="text-sm font-medium">Categorías</span>
-                    </a>
-                </li>
-                <li data-pestana="Proveedores" style="display:none;">
-                    <a href="{{ route('proveedores.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bxs-package"></i></span>
-                        <span class="text-sm font-medium">Proveedores</span>
-                    </a>
-                </li>
                 <li data-pestana="Sucursales" style="display:none;">
                     <a href="{{ route('sucursales.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bxs-building"></i></span>
@@ -119,6 +94,30 @@
                         <span class="text-sm font-medium">Bitacora</span>
                     </a>
                 </li>
+                <li data-pestana="Categorias" style="display:none;">
+                    <a href="{{ route('categorias.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-category"></i></span>
+                        <span class="text-sm font-medium">Categorías</span>
+                    </a>
+                </li>
+                <li data-pestana="Proveedores" style="display:none;">
+                    <a href="{{ route('proveedores.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bxs-package"></i></span>
+                        <span class="text-sm font-medium">Proveedores</span>
+                    </a>
+                </li>
+                <li data-pestana="Usuarios" style="display:none;">
+                    <a href="{{ route('usuarios.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class='bx bxs-user'></i></span>
+                        <span class="text-sm font-medium">Usuarios</span>
+                    </a>
+                </li>
+                <li data-pestana="Rol" style="display:none;">
+                    <a href="{{ route('roles.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-briefcase-alt"></i></span>
+                        <span class="text-sm font-medium">Roles</span>
+                    </a>
+                </li>
                 <!-- Botón Logout -->
                 <li>
                     <a href="javascript:void(0);" id="logout-btn" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
@@ -145,18 +144,6 @@
 
             <li data-pestanal="Dashboard" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
                 <a href="/dashboard"><i class="bx bx-home"></i> Dashboard</a>
-            </li>
-            <li data-pestanal="Usuarios" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('usuarios.index') }}"><i class='bx bxs-user'></i> Usuarios</a>
-            </li>
-            <li data-pestanal="Rol" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('roles.index') }}"><i class="bx bx-briefcase-alt"></i> Roles</a>
-            </li>
-            <li data-pestanal="Categorias" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('categorias.index') }}"><i class="bx bx-category"></i> Categorias</a>
-            </li>
-            <li data-pestanal="Proveedores" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('proveedores.index') }}"><i class="bx bxs-package"></i> Proveedores</a>
             </li>
             <li data-pestanal="Sucursales" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('sucursales.index') }}"><i class="bx bxs-building"></i> Sucursales</a>
@@ -196,6 +183,18 @@
             </li>
             <li data-pestanal="bitacora" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book-medical"></i> Bitacora</a>
+            </li>
+            <li data-pestanal="Categorias" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('categorias.index') }}"><i class="bx bx-category"></i> Categorias</a>
+            </li>
+            <li data-pestanal="Proveedores" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('proveedores.index') }}"><i class="bx bxs-package"></i> Proveedores</a>
+            </li>
+            <li data-pestanal="Usuarios" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('usuarios.index') }}"><i class='bx bxs-user'></i> Usuarios</a>
+            </li>
+            <li data-pestanal="Rol" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('roles.index') }}"><i class="bx bx-briefcase-alt"></i> Roles</a>
             </li>
             <li>
                 <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
