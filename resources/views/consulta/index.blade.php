@@ -64,14 +64,14 @@
 
                            {{-- Botón Cambiar estado --}}
                         <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $consulta->id }}" data-estado="{{ $consulta->estado }}" data-info="{{ $consulta->nombre }}">
-                            <i class="fas fa-sync-alt"></i> 
+                            <i class="fas fa-sync-alt"></i>
                         </button>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </x-slot>
-    </x-data-ta ble>
+    </x-data-table>
 @endsection
 
 @push('js')
@@ -147,6 +147,8 @@ function renderConsultas(consultas) {
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
+                { responsivePriority: 2, targets: 7 },
+
 
             ],
             drawCallback: function() {
@@ -225,12 +227,12 @@ function renderConsultas(consultas) {
                                     // Actualizamos la columna de estado en el frontend
                                     const estadoElement = $('a[data-id="' + Id + '"]');
                                     estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
-                                    
+
                                     // Actualizamos el valor del estado en el data-estado para el siguiente clic
-                                    estadoElement.data('estado', estado); 
+                                    estadoElement.data('estado', estado);
 
                                     // Recargamos la página después de actualizar el estado
-                                    location.reload(); 
+                                    location.reload();
                                 } else {
                                     alert('Error al cambiar el estado');
                                 }

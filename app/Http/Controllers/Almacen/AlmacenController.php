@@ -22,16 +22,12 @@ class AlmacenController extends Controller
     public function index()
     {
         //$traslados = Traslado::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
-        $almacenes = Almacen::with('producto:id,nombre')
+        $almacenes = Almacen::with('producto:id,codigo,nombre,tipo')
         ->where('estado', '!=', 0)
         ->get();
+        //return($almacenes);
         return view('almacen.index',compact('almacenes'));
 
-    }
-        public function getLotes($idProducto)
-    {
-        $lotes = Lote::where('id_producto', $idProducto)->get();
-        return response()->json($lotes);
     }
 
     /**
@@ -41,7 +37,7 @@ class AlmacenController extends Controller
      */
     public function create()
     {
-        $productos = Producto::activos()->get();
+        $productos = Producto::activos()->where('tipo',2)->get();
         $sucursales = Sucursal::activos()->get();
         return view('almacen.create',compact('productos','sucursales'));
     }
@@ -78,18 +74,25 @@ class AlmacenController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request);
         $this->validate($request,[
-            'id_sucursal_origen' => ['required'],
-            'id_sucursal_destino' => ['required'],
-            'cantidad' => ['required','numeric'],
+            'id_sucursal' => ['required'],
+            'id_producto' => ['required',
+            function ($attribute, $value, $fail) use ($request) {
+            $existe = Almacen::where('id_sucursal', $request->id_sucursal)
+                             ->where('id_producto', $value)
+                             ->exists();
+            if ($existe) {
+                $fail('El servicio ya existe en esta sucursal.');
+            }
+        }],
+            // 'cantidad' => ['required','numeric'],
 
         ]);
 
         Almacen::create([
             'id_producto' => $request->id_producto,
             'id_sucursal' => $request->id_sucursal,
-            'cantidad'=> $request->cantidad,
+            'cantidad'=> 1,
             'id_user' => 1,
         ]);
 
@@ -106,6 +109,7 @@ class AlmacenController extends Controller
         return redirect()->route('almacenes.index')->with('success', '¡Registro exitoso!');
 
     }
+
 
     /**
      * Display the specified resource.
@@ -126,7 +130,8 @@ class AlmacenController extends Controller
      */
     public function edit(Almacen $almacen)
     {
-        $productos = Producto::activos()->get();
+        // $productos = Producto::activos()->get();
+        $productos = Producto::activos()->where('tipo',2)->get();
         $sucursales = Sucursal::activos()->get();
         return view('almacen.edit',compact('almacen','productos','sucursales'));
     }
@@ -143,8 +148,16 @@ class AlmacenController extends Controller
 
         $this->validate($request,[
             'id_sucursal' => ['required'],
-            'id_producto' => ['required'],
-            'cantidad' => ['required','numeric'],
+            'id_producto' => ['required',
+            function ($attribute, $value, $fail) use ($request) {
+            $existe = Almacen::where('id_sucursal', $request->id_sucursal)
+                             ->where('id_producto', $value)
+                             ->exists();
+            if ($existe) {
+                $fail('El servicio ya existe en esta sucursal.');
+            }
+        }],
+            // 'cantidad' => ['required','numeric'],
 
         ]);
 

@@ -104,6 +104,9 @@ Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getPro
 Route::get('/get-lotes/{idProducto}/{idSucursal}', [RequisicionController::class, 'getLotes'])->name('get.lotes');
 Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 Route::get("solicitudes/cantidad", [solicitudController::class, 'cantidadDeSolicitudes'])->name('solicitudes.cantidad');
+Route::get('/productos/stock/{id}/{sucursal}', [VentaController::class, 'obtenerStock']);
+Route::post('/personas/from-ventas', [PersonaController::class, 'storeFromVentas'])->name('personas.storeFromVentas');
+
 Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
 Route::resource('solicitud', solicitudController::class)->parameters(['solicitud' => 'solicitud']);
 //Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);

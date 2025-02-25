@@ -41,6 +41,7 @@ class InventarioController extends Controller
         ->get();
         
 
+
         // nuevo validacion, validacion por lote en 0
         $inventarioAgotado = Inventario::select(
             'inventario.id_producto',
@@ -57,6 +58,7 @@ class InventarioController extends Controller
         ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion')
         ->get();
         
+
 
         $productosProximosAVencer = Inventario::select(
             'inventario.id_producto',
@@ -75,6 +77,7 @@ class InventarioController extends Controller
         ->orderBy('lote.fecha_vencimiento', 'asc')
         ->get();
         
+
 
 
         //return $inventario;

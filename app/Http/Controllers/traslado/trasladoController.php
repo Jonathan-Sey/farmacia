@@ -25,7 +25,13 @@ class trasladoController extends Controller
     public function create()
     {
         $sucursales = Sucursal::activos()->get();
-        $productos = Almacen::activos()->get();
+        $productos = Almacen::activos()
+        ->whereHas('producto', function ($query) {
+            $query->where('tipo', 1);
+            })
+            ->with('producto:id,nombre,tipo')
+        ->get();
+
         return view('traslado.create', compact('sucursales', 'productos'));
     }
 
