@@ -24,7 +24,7 @@ class User extends Authenticatable implements JWTSubject
         'email',
         'password',
         'id_rol',
-        'activo',
+        'estado',
 
     ];
 
@@ -37,14 +37,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
-
-    protected static function booted()
-    {
-        static::addGlobalScope('activo', function ($query) {
-            $query->where('activo', true);
-        });
-    }
-
+    
     public function getJWTIdentifier() {
         return $this->getKey();
     }
@@ -115,8 +108,10 @@ class User extends Authenticatable implements JWTSubject
         // En el modelo User
     public function scopeActivo($query)
     {
-        return $query->where('activo', true);
+        return $query->where('estado', [1,2]);
     }
+
+    
 
 
 

@@ -27,21 +27,6 @@
         </a>
     </div>
 
-    <div class="flex justify-center items-center  bg-gray-100">
-
-    <a href="{{ route('solicitud.index') }}">
-         <button class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300" aria-label="5 notifications">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span class="sr-only">Notifications</span>
-            <div class="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-2 -right-2">
-                {{$cantidadDeSolicitudes}}
-            </div>
-        </button> 
-    </a>
-      
-    </div>
 </div>
 <x-data-table>
     <x-slot name="thead">
@@ -54,7 +39,7 @@
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">cantidad transferida</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">usuario</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Fecha</th>
-                <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">activo</th>
+                <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">estado</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">acciones</th>
             </tr>
         </thead>
@@ -73,7 +58,7 @@
                 <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->created_at }}</td>
 
                 <td class="px-6 py-4 whitespace-nowrap text-center">
-                    <a href="#" class="estado" data-id="{{ $traslado->id }}" data-estado="{{ $traslado->estado }}">
+                    <a class="estado" data-id="{{ $traslado->id }}" data-estado="{{ $traslado->estado }}">
                         @if ($traslado->estado == 1)
                         <span class="text-green-500 font-bold">Activo</span>
                         @else
@@ -90,16 +75,10 @@
                         </button>
                     </form>
 
-                    {{-- Botón Eliminar --}}
-                    <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{ $traslado->id }}" data-info="{{ $traslado->nombre }}">
-                        <i class="fas fa-trash"></i>
+                     {{-- Botón Cambiar estado --}}
+                     <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $traslado->id }}" data-estado="{{ $traslado->estado }}" data-info="{{ $traslado->nombre }}">
+                        <i class="fas fa-sync-alt"></i> 
                     </button>
-
-                    {{-- Formulario oculto para eliminación --}}
-                    <form id="form-eliminar{{ $traslado->id }}" action="{{ route('traslado.destroy', $traslado->id) }}" method="POST" style="display: none;">
-                        @csrf
-                        @method('DELETE')
-                    </form>
                 </td>
             </tr>
             @endforeach
@@ -203,56 +182,60 @@
     });
 </script>
 @endif
-
-{{-- Cambio de estado --}}
+{{-- cambio de estado --}}
 <script>
-    $(document).ready(function() {
-        $('.estado').click(function(e) {
-            e.preventDefault();
-            var Id = $(this).data('id');
-            var estado = $(this).data('estado');
+    document.addEventListener('DOMContentLoaded', function () {
+        const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
 
-            $.ajax({
-                url: '/sucursales/' + Id,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    _method: 'PATCH',
-                    status: estado == 1 ? 0 : 1
-                },
-                success: function(response) {
-                    if (response.success) {
-                        location.reload();
-                    } else {
-                        alert('Error al cambiar el estado');
-                    }
-                }
-            });
-        });
-    });
-</script>
-
-{{-- Modal para eliminar  --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const deleteButtons = document.querySelectorAll('.eliminar-btn');
-
-        deleteButtons.forEach(button => {
-            button.addEventListener('click', function() {
+        changeStateButtons.forEach(button => {
+            button.addEventListener('click', function () {
                 const Id = this.getAttribute('data-id');
-                const nombre = this.getAttribute('data-info');
+                let estado = this.getAttribute('data-estado'); // Tomamos el estado actual del data-estado
+                const nombre = this.getAttribute('data-info'); // Este es informacion
+
                 Swal.fire({
                     title: "¿Estás seguro?",
-                    text: "¡Deseas eliminar! " + nombre,
+                    text: "¡Deseas cambiar el estado de " + nombre + "!",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
                     cancelButtonColor: "#d33",
-                    confirmButtonText: "Sí, ¡elimínalo!",
+                    confirmButtonText: "Sí, cambiar estado",
                     cancelButtonText: "Cancelar"
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        document.getElementById('form-eliminar' + Id).submit();
+                        // Realizar la solicitud Ajax para cambiar el estado
+                        $.ajax({
+                            url: '/traslado/' + Id + '/cambiar-estado',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                estado: estado == 1 ? 2 : 1, // Cambiar entre activo (1) y inactivo (2)
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // Después de cambiar el estado en la base de datos, actualizamos el frontend
+                                    estado = estado == 1 ? 2: 1; // Actualizamos la variable de estado
+                                    const estadoText = estado == 1 ? 'Activo' : 'Inactivo';
+                                    const estadoColor = estado == 1 ? 'text-green-500' : 'text-red-500';
+
+                                    // Actualizamos la columna de estado en el frontend
+                                    const estadoElement = $('a[data-id="' + Id + '"]');
+                                    estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
+                                    
+                                    // Actualizamos el valor del estado en el data-estado para el siguiente clic
+                                    estadoElement.data('estado', estado); 
+
+                                    // Recargamos la página después de actualizar el estado
+                                    location.reload(); 
+                                } else {
+                                    alert('Error al cambiar el estado');
+                                }
+                            },
+                            error: function () {
+                                alert('Ocurrió un error en la solicitud.');
+                            }
+                        });
                     }
                 });
             });

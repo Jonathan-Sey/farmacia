@@ -12,6 +12,10 @@
         <form action="{{route('almacenes.store')}}" method="POST">
             @csrf
             <div class="border-b border-gray-900/10 pb-12">
+                <div id="usuario">
+
+                </div>
+
 
                 <div class="mt-2 mb-5">
                     <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Servicio</label>
@@ -131,4 +135,3 @@
     </script>
 
 @endpush
-
