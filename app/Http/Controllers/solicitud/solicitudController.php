@@ -37,6 +37,7 @@ class solicitudController extends Controller
     {
 
 
+
         $request->validate([
             'arraySucursal1' => 'required|array',
             'arraySucursal2' => 'required|array',
@@ -51,6 +52,15 @@ class solicitudController extends Controller
         $idProductos = $request->input('arrayIdProducto');
         $cantidades = $request->input('arraycantidad');
         $descripciones = $request->input('arrayDescripcion');
+
+        Solicitud::create([
+            'id_sucursal_origen' => 1,
+            'id_sucursal_destino' => 2,
+            'id_producto' => 1,
+            'cantidad' => 211,
+            'descripcion' => "solicitud de prueba",
+            'estado' => 1
+        ]);
 
 
         for ($i = 0; $i < count($idProductos); $i++) {

@@ -21,9 +21,8 @@ class DatabaseSeeder extends Seeder
             UnionRolPestanaSeeder::class,
             UserSeeder::class,
             categoriaSeeder::class,
-            productoSeeder::class,
-            socursalesSeeder::class,
             productos::class,
+            socursalesSeeder::class,
             // FarmaciaSeeder::class,
         ]);
     }
