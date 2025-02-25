@@ -106,7 +106,7 @@ $(document).ready(function() {
         columnDefs: [
             { responsivePriority: 1, targets: 0 },
             { responsivePriority: 2, targets: 1 },
-            { responsivePriority: 3, targets: 2 },
+            { responsivePriority: 3, targets: 4 },
         ],
         drawCallback: function() {
             // Esperar un momento para asegurarse de que los botones se hayan cargado
