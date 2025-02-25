@@ -11,7 +11,7 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('consultas.store')}}" method="POST">
             @csrf
-            <div class="usuario">
+            <div id="usuario">
 
             </div>
             <div class="mt-2 mb-5">
