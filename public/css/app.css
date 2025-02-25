@@ -3054,6 +3054,9 @@ input.tab:checked + .tab-content,
 .h-screen {
   height: 100vh;
 }
+.h-\[500px\] {
+  height: 500px;
+}
 .max-h-\[400px\] {
   max-height: 400px;
 }
