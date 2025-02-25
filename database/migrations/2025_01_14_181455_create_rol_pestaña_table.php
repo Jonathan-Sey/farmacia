@@ -14,13 +14,16 @@ class CreateRolPestañaTable extends Migration
     public function up(): void
     {
         Schema::create('rol_pestana', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('rol_id') // Llave foránea a la tabla roles
                   ->constrained('rol') // Asume que tu tabla de roles se llama 'rol'
                   ->onDelete('cascade');
             $table->foreignId('pestana_id') // Llave foránea a la tabla pestañas
                   ->constrained('pestanas') 
                   ->onDelete('cascade');
+                  $table->unsignedInteger('orden')->default(0);
+
+            // Clave primaria compuesta
+            $table->primary(['rol_id', 'pestana_id']);
             $table->timestamps();
         });
     }

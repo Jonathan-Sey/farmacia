@@ -10,6 +10,7 @@
         <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form  action="{{route('categorias.store')}}" method="POST">
             @csrf
+            <div id="usuario"></div>
             <div class="border-b border-gray-900/10 pb-12">
                     <div class="mt-2 mb-5">
                             <label for="nombre" class=" uppercase block text-sm/6 font-medium text-gray-900">Nombre de la categoria</label>
@@ -60,7 +61,7 @@
     </div>
 </div>
 
-
+<script src="/js/obtenerUsuario.js"></script>
 @endsection
 @push('js')
 

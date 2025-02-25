@@ -10,6 +10,10 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{ route('roles.store') }}" method="POST">
             @csrf
+
+            <div id="usuario">
+
+            </div>
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5">
                     <label for="nombre" class="uppercase block text-sm font-medium text-gray-900">Nombre del Rol</label>
@@ -37,7 +41,7 @@
                 </div>
                 <!-- Nueva Pestaña -->
 <div class="mt-4">
-    <label for="nueva_pestana" class="block text-sm font-medium text-gray-900">Seleccionar Nueva Pestaña</label>
+    <label for="nueva_pestana" class="block text-sm font-medium text-gray-900">Seleccionar Pagina de Inicio</label>
     <select name="nueva_pestana" id="nueva_pestana" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" onchange="updateSelectedTabs()">
         <option value="">-- Selecciona una Pestaña --</option>
         @foreach ($pestanas as $pestana)
@@ -79,4 +83,38 @@
 
 @push('js')
 <script src="/js/selecciondePestañasCreateRol.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectPestanas = document.getElementById("pestanas");
+    const selectedTabsList = document.getElementById("selected-tabs-list");
+
+    selectPestanas.addEventListener("mousedown", function (event) {
+        event.preventDefault(); // Evita la selección automática por el navegador
+
+        let clickedOption = event.target;
+
+        // Si el elemento clickeado es una opción dentro del select
+        if (clickedOption.tagName === "OPTION") {
+            clickedOption.selected = !clickedOption.selected; // Alterna selección
+        }
+
+        updateSelectedTabs(); // Llamamos a la función para actualizar la lista
+    });
+
+    function updateSelectedTabs() {
+        selectedTabsList.innerHTML = ""; // Limpiar la lista antes de actualizar
+
+        // Obtener todas las opciones seleccionadas
+        const selectedOptions = Array.from(selectPestanas.selectedOptions);
+
+        selectedOptions.forEach(option => {
+            let li = document.createElement("li");
+            li.textContent = option.textContent;
+            selectedTabsList.appendChild(li);
+        });
+    }
+});
+
+</script>
 @endpush

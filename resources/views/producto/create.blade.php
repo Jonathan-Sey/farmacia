@@ -11,7 +11,11 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('productos.store')}}" method="POST">
             @csrf
+            <div id="usuario">
+
+            </div>
             <div class="border-b border-gray-900/10 pb-12">
+
 
                 <div class="mt-2 mb-5 flex flex-col gap-5 md:grid md:grid-cols-2 " >
                     <div class="mt-2 mb-5">
@@ -106,7 +110,7 @@
                     <textarea name="descripcion"
                     id="descripcion" rows="3"
                     placeholder="Descripción del producto"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('descripcion',$producto->descripcion) }}</textarea>
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"></textarea>
                     @error('descripcion')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
@@ -124,7 +128,9 @@
     </div>
 </div>
 
+<script src="/js/obtenerUsuario.js"></script>
 <script>
+
 let precioBase = 0; // almacena el precio original
 
 // Función para desformatear el valor ingresado (para cálculos)

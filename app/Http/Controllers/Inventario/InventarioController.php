@@ -39,6 +39,7 @@ class InventarioController extends Controller
         ->where('inventario.cantidad', '>', 0)
         ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion')
         ->get();
+        
 
 
         // nuevo validacion, validacion por lote en 0
@@ -56,6 +57,7 @@ class InventarioController extends Controller
         ->where('inventario.cantidad', '=', 0)
         ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion')
         ->get();
+        
 
 
         $productosProximosAVencer = Inventario::select(
@@ -74,6 +76,7 @@ class InventarioController extends Controller
         ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion', 'lote.fecha_vencimiento')
         ->orderBy('lote.fecha_vencimiento', 'asc')
         ->get();
+        
 
 
 

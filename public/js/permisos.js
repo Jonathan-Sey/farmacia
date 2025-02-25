@@ -16,7 +16,10 @@ const rutasMapeadas = {
     'Inventario': '/inventario',
     'Requisiciones': '/requisiciones',
     'Traslado': '/traslado',
-    'Solicitud': '/solicitud'
+    'bitacora': '/bitacora',
+    'Solicitud': '/solicitud',
+    'Reporte_ventas': '/Reporte_ventas',
+    'Reporte_ventas_filtro': '/reporte/ventas/filtrar'
 };
 
 function tienePermiso(ruta) {
