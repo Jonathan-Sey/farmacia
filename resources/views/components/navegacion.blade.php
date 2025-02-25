@@ -109,7 +109,7 @@
                 <li data-pestana="Traslado" style="display:none;">
                     <a href="{{ route('traslado.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-money-bill-transfer"></i></span>
-                        <span class="text-sm font-medium">traslado</span>
+                        <span class="text-sm font-medium">Traslados</span>
                     </a>
                 </li>
                 <li data-pestana="bitacora" style="display:none;">
