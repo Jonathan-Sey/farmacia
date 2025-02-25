@@ -36,6 +36,7 @@ class solicitudController extends Controller
     public function store(Request $request)
     {
 
+
       
         $request->validate([
             'arraySucursal1' => 'required|array',
@@ -52,12 +53,21 @@ class solicitudController extends Controller
         $cantidades = $request->input('arraycantidad');
         $descripciones = $request->input('arrayDescripcion');
 
+        Solicitud::create([
+            'id_sucursal_origen' => 1,
+            'id_sucursal_destino' => 2,
+            'id_producto' => 1,
+            'cantidad' => 211,
+            'descripcion' => "solicitud de prueba",
+            'estado' => 1
+        ]);
+
 
         for ($i = 0; $i < count($idProductos); $i++) {
             detalleSolicitud::create([
                 'solicitud_salida' => $sucursal1[$i],
                 'solicitud_entrada' => $sucursal2[$i],
-                'producto' => $idProductos[$i],
+                'producto_id' => $idProductos[$i],
                 'id_solicitud' => 1,
                 'cantidad' => $cantidades[$i],
                 'Id_usuario' => 1,
