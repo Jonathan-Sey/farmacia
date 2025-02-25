@@ -24,7 +24,7 @@ const rutasMapeadas = {
 
 function tienePermiso(ruta) {
     const pestanasPermitidas = JSON.parse(localStorage.getItem('pestanas')) || [];
-    console.log('Pestañas permitidas:', pestanasPermitidas);
+    //console.log('Pestañas permitidas:', pestanasPermitidas);
 
     // Filtro y mapear de pestañas en la url
     const rutasPermitidas = pestanasPermitidas
