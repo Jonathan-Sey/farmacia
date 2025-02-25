@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Crear traslado de articulos ')
+@section('titulo', 'Crear traslado de artículos ')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endpush
@@ -22,7 +22,7 @@
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_1"
                                 id="id_sucursal_1">
-                                <option value="">Seleccionar una Socursal</option>
+                                <option value="">Seleccionar una Sucursal</option>
                                 @foreach ($sucursales as $sucursal)
                                 <option value="{{ $sucursal->id }}" {{old('id_sucursal_1') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}}</option>
                                 @endforeach
@@ -44,7 +44,7 @@
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_2"
                                 id="id_sucursal_2">
-                                <option value="">Seleccionar una Socursal</option>
+                                <option value="">Seleccionar una Sucursal</option>
                                 @foreach ($sucursales as $sucursal)
                                 <option value="{{ $sucursal->id }}" {{old('id_sucursal_2') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}}</option>
                                 @endforeach
@@ -80,13 +80,13 @@
 
                 <!-- Cantidad -->
                 <div class="mt-2 mb-5">
-                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">cantidad</label>
+                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
                     <input
                         type="text"
                         name="cantidad"
                         id="cantidad"
                         autocomplete="given-name"
-                        placeholder="cantidad"
+                        placeholder="Cantidad"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('cantidad') }}">
 
