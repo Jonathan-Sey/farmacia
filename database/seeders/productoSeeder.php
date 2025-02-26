@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\Producto;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 
 class productoSeeder extends Seeder
 {
@@ -14,18 +16,31 @@ class productoSeeder extends Seeder
      */
     public function run()
     {
-        Producto::create(
+        DB::table('proveedor')->insert([
             [
-         'nombre' => "Aspirina",
-            'descripcion' => "para dolor de cabeza  ",
-            'precio_venta' => 1.50,
-            'fecha_caducidad' => "2030/10/10",
-            'id_categoria' =>1,
-            'estado' => 1,
-            'tipo' => 1,
-            'codigo' => "C-00001"// asignamos el codigo generado
- 
-            ] 
-            );
+                'nombre' => 'Proveedor 1',
+                'telefono' => '123456789',
+                'empresa' => 'Empresa 1',
+                'correo' => 'proveedor1@empresa1.com',
+                'direccion' => 'Dirección 1',
+                'estado' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+        ]);
+
+        DB::table('persona')->insert([
+            [
+                'nombre' => 'CF',
+                'nit' => 00000,
+                'rol' => 2,
+                'telefono' => '123456789',
+                'fecha_nacimiento' => '1990-01-01',
+                'estado' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+        ]);
     }
+
 }

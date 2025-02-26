@@ -32,7 +32,7 @@ class CategoriaController extends Controller
      */
     public function index()
     {
-        $categorias = Categoria::select('id','nombre','estado','created_at')
+        $categorias = Categoria::select('id','nombre','descripcion','estado','created_at')
         ->where('estado', '!=', 0)
         ->get();
         return view('categorias.index',['categorias'=>$categorias]);
@@ -58,7 +58,7 @@ class CategoriaController extends Controller
     {
         $this->validate($request,[
             'nombre'=>['required','string','max:35','unique:categoria,nombre'],
-            'descripcion'=>'nullable|max:100',
+            'descripcion'=>'required|max:100',
             'estado'=>'integer',
         ]);
         Categoria::create([
@@ -114,7 +114,7 @@ class CategoriaController extends Controller
         // Validaciones de los datos
         $this->validate($request, [
             'nombre' => ['required', 'string', 'max:35', 'unique:categoria,nombre,' . $categoria->id],
-            'descripcion' => 'nullable|max:100',
+            'descripcion' => 'required|max:100',
             'estado' => 'integer',
         ]);
 

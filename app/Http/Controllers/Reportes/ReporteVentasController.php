@@ -68,32 +68,67 @@ class ReporteVentasController extends Controller
 
       public function generateReport(Request $request)
     {
-        $query = Venta::query();
-
-        // Filtrar por día específico
-        if ($request->has('fecha')) {
-            $query->whereDate('fecha_venta', $request->fecha);
-        }
+        $query = Venta::with(['detalles.producto', 'sucursal', 'usuario', 'persona']) // Se agregan las relaciones necesarias
+        ->select(
+            'venta.id as venta_id',
+            'venta.fecha_venta',
+            'venta.total',
+            'venta.impuesto',
+            'venta.id_sucursal',
+            'venta.id_usuario',
+            'venta.id_persona',
+            'venta.estado as estado_venta'
+        );
     
-        // Filtrar por mes y año
-        if ($request->has('mes')) {
-            $query->whereMonth('fecha_venta', date('m', strtotime($request->mes)))
-                  ->whereYear('fecha_venta', date('Y', strtotime($request->mes)));
-        }
+    // Filtrar por día específico
+    if ($request->has('fecha')) {
+        $query->whereDate('fecha_venta', $request->fecha);
+    }
     
-        if ($request->has('año')) {
-            $query->whereYear('fecha_venta', $request->año);
-        }
+    // Filtrar por mes y año
+    if ($request->has('mes')) {
+        $query->whereMonth('fecha_venta', date('m', strtotime($request->mes)))
+              ->whereYear('fecha_venta', date('Y', strtotime($request->mes)));
+    }
     
-        // Filtrar por rango de fechas
-        if ($request->has('fechaInicio') && $request->has('fechaFin')) {
-            $query->whereBetween('fecha_venta', [$request->fechaInicio, $request->fechaFin]);
-        }
+    if ($request->has('año')) {
+        $query->whereYear('fecha_venta', $request->año);
+    }
     
-        //\Log::info($query->toSql(), $query->getBindings());
-        // Obtener las ventas filtradas
-        $ventas = $query->get();
+    // Filtrar por rango de fechas
+    if ($request->has('fechaInicio') && $request->has('fechaFin')) {
+        $query->whereBetween('fecha_venta', [$request->fechaInicio, $request->fechaFin]);
+    }
     
-        return response()->json($ventas);
+    // Obtener las ventas filtradas con los detalles y datos adicionales
+    $ventas = $query->get()->map(function ($venta) {
+        return [
+            'venta_id' => $venta->venta_id,
+            'fecha_venta' => $venta->fecha_venta,
+            'total' => $venta->total,
+            'impuesto' => $venta->impuesto,
+            'id_sucursal' => $venta->id_sucursal,
+            'nombre_sucursal' => $venta->sucursal->nombre ?? 'No especificado', // Se obtiene el nombre de la sucursal
+            'id_usuario' => $venta->id_usuario,
+            'nombre_usuario' => $venta->usuario->name ?? 'No especificado', // Se obtiene el nombre del usuario
+            'id_persona' => $venta->id_persona,
+            'nombre_persona' => $venta->persona->nombre ?? 'No especificado', // Se obtiene el nombre de la persona
+            'estado_venta' => $venta->estado_venta,
+            'detalles' => $venta->detalles->map(function ($detalle) {
+                return [
+                    'id_detalle' => $detalle->id,
+                    'id_producto' => $detalle->id_producto,
+                    'nombre_producto' => $detalle->producto->nombre ?? 'No especificado', // Se obtiene el nombre del producto
+                    'cantidad' => $detalle->cantidad,
+                    'precio' => $detalle->precio,
+                    'subtotal' => $detalle->cantidad * $detalle->precio,
+                    'estado_detalle' => $detalle->estado,
+                ];
+            }),
+        ];
+    });
+    
+    return response()->json($ventas);
+    
     }
 }
