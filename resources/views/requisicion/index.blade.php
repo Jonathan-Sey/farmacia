@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Requisiciones')
+@section('titulo', 'Requisición de artículos')
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">

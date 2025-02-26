@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Almacenes')
+@section('titulo','Inventario Farmacias ')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -12,15 +12,17 @@
 @section('contenido')
     <a href="{{ route('almacenes.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
-            Crear
+            Asignar servicio
         </button>
     </a>
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >ID</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Tipo</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
@@ -35,18 +37,32 @@
                 @foreach ($almacenes as $almacen)
                 <tr>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->id}}</td>
+                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->codigo}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap text-center">
+                        <a href="#" class="estado">
+                            @if ($almacen->producto->tipo == 1)
+                                <span class="text-green-500 font-bold">Producto</span>
+                            @else
+                                <span class="text-red-500 font-bold">Servicio</span>
+                            @endif
+                        </a>
+                    </td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->sucursal->nombre}}</td>
                     <td class="text-left px-6 py-4 whitespace-nowrap">
-                        <span class="{{ $almacen->cantidad <= 10 ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
-                            {{$almacen->cantidad}}
-                            @if ($almacen->cantidad <= 10)
-                                <span class="text-red-400">(Poco stock)</span>
+                            @if ($almacen->producto->tipo == 2)
+                            <span class="text-green-500 font-bold">{{$almacen->cantidad}}</span>
+                            @else
+                                <span class="{{ $almacen->cantidad <= 10 ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
+                                    {{$almacen->cantidad}}
+                                    @if ($almacen->cantidad <= 10)
+                                        <span class="text-red-400">(Poco stock)</span>
+                                    @endif
+                                </span>
                             @endif
-                        </span>
                     </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $almacen->id}}" data-estado="{{$almacen->estado}}">
+                        <a class="estado" data-id="{{ $almacen->id}}" data-estado="{{$almacen->estado}}">
                             @if ($almacen->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
                             @else
@@ -56,30 +72,21 @@
                     </td>
 
                     <td class="flex gap-2 justify-center">
+                        @if ($almacen->producto->tipo == 2)
+                            <form action="{{route('almacenes.edit',['almacen'=>$almacen->id])}}" method="GET">
+                                @csrf
+                                <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </form>
+                        @endif
 
-                        <form action="{{route('almacenes.edit',['almacen'=>$almacen->id])}}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </form>
-
-
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$almacen->id}}"  data-info="{{$almacen->id}}">
-                            <i class="fas fa-trash"></i>
+                        <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $almacen->id }}" data-estado="{{ $almacen->estado }}" data-info="{{ $almacen->nombre }}">
+                            <i class="fas fa-sync-alt"></i>
                         </button>
-
-
-                        <form id="form-eliminar{{$almacen->id}}" action="{{ route('almacenes.destroy', $almacen->id) }}" method="POST" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form>
                     </td>
-
                 </tr>
-
                 @endforeach
-
             </tbody>
         </x-slot>
     </x-data-table>
@@ -122,8 +129,11 @@
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
-
+                { responsivePriority: 1, targets: 2 },
+                { responsivePriority: 2, targets: 7 },
             ],
+
+
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
                 setTimeout(function() {
@@ -160,62 +170,64 @@
         });
 </script>
 @endif
-
-{{-- Cambio de estado --}}
+{{-- cambio de estado --}}
 <script>
-    $(document).ready(function(){
-        $('.estado').click(function(e){
-            e.preventDefault();
-            var Id = $(this).data('id')
-            var estado = $(this).data('estado')
+    document.addEventListener('DOMContentLoaded', function () {
+        const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
 
-            $.ajax({
-                url: '/almacenes/' + Id,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token()}}',
-                    _method: 'DELETE',
-                    status: estado == 1 ? 2 : 1
-                },
-                success: function(response){
-                    if(response.success){
-                        location.reload()
-                    }else{
-                        alert('Error al cambiar el estado')
+        changeStateButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const Id = this.getAttribute('data-id');
+                let estado = this.getAttribute('data-estado'); // Tomamos el estado actual del data-estado
+                const nombre = this.getAttribute('data-info'); // Este es informacion
+
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "¡Deseas cambiar el estado de " + nombre + "!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, cambiar estado",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Realizar la solicitud Ajax para cambiar el estado
+                        $.ajax({
+                            url: '/almacen/' + Id + '/cambiar-estado',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                estado: estado == 1 ? 2 : 1, // Cambiar entre activo (1) y inactivo (2)
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // Después de cambiar el estado en la base de datos, actualizamos el frontend
+                                    estado = estado == 1 ? 2: 1; // Actualizamos la variable de estado
+                                    const estadoText = estado == 1 ? 'Activo' : 'Inactivo';
+                                    const estadoColor = estado == 1 ? 'text-green-500' : 'text-red-500';
+
+                                    // Actualizamos la columna de estado en el frontend
+                                    const estadoElement = $('a[data-id="' + Id + '"]');
+                                    estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
+
+                                    // Actualizamos el valor del estado en el data-estado para el siguiente clic
+                                    estadoElement.data('estado', estado);
+
+                                    // Recargamos la página después de actualizar el estado
+                                    location.reload();
+                                } else {
+                                    alert('Error al cambiar el estado');
+                                }
+                            },
+                            error: function () {
+                                alert('Ocurrió un error en la solicitud.');
+                            }
+                        });
                     }
-                }
-            })
-        })
-    });
-</script>
-
-
-
-{{-- Modal para eliminar  --}}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.eliminar-btn');
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const Id = this.getAttribute('data-id');
-            const nombre = this.getAttribute('data-info');
-            Swal.fire({
-                title: "¿Estás seguro?",
-                text: "¡Deseas eliminar! " + nombre,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí, ¡elimínalo!",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('form-eliminar' + Id).submit();
-                }
+                });
             });
         });
     });
-});
 </script>
 @endpush

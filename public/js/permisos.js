@@ -16,12 +16,15 @@ const rutasMapeadas = {
     'Inventario': '/inventario',
     'Requisiciones': '/requisiciones',
     'Traslado': '/traslado',
-    'Solicitud': '/solicitud'
+    'bitacora': '/bitacora',
+    'Solicitud': '/solicitud',
+    'Reporte_ventas': '/Reporte_ventas',
+    'Reporte_ventas_filtro': '/reporte/ventas/filtrar'
 };
 
 function tienePermiso(ruta) {
     const pestanasPermitidas = JSON.parse(localStorage.getItem('pestanas')) || [];
-    console.log('Pestañas permitidas:', pestanasPermitidas);
+    //console.log('Pestañas permitidas:', pestanasPermitidas);
 
     // Filtro y mapear de pestañas en la url
     const rutasPermitidas = pestanasPermitidas

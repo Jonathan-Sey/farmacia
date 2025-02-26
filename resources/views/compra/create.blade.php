@@ -12,6 +12,9 @@
         <form action="{{ route('compras.store') }}" method="POST" >
             {{-- <form action="{{ route('compras.store', ['id'=>1]) }}" method="POST" > --}}
             @csrf
+            <div id="usuario">
+
+            </div>
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
                     <legend class="text-blue-500 font-bold">Compras</legend>
@@ -26,7 +29,7 @@
                                     id="id_producto">
                                     <option value="">Buscar un producto</option>
                                     @foreach ($productos as $producto)
-                                        <option value="{{ $producto->id }}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
+                                        <option value="{{ $producto->id }}" data-nombre="{{$producto->nombre}}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
                                     @endforeach
                                 </select>
                                 @error('id_producto')
@@ -245,7 +248,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+<script src="/js/obtenerUsuario.js"></script>
     <script>
         //uso del select2 para proveedores
         $(document).ready(function(){
@@ -292,7 +295,8 @@
 
         function agregarProducto(){
             let id_producto = $('#id_producto').val();
-            let producto = ($('#id_producto option:selected').text()).split(' ')[1];
+            //let producto = ($('#id_producto option:selected').text()).split(' ')[1];
+            let producto = $('#id_producto option:selected').data('nombre');
             let cantidad = $('#cantidad').val();
             let precio = $('#precio').val();
             let fecha_vencimiento = $('#fecha_vencimiento').val();

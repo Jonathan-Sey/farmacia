@@ -8,6 +8,7 @@ use App\Http\Controllers\RegistrarController;
 use App\Http\Controllers\Rol\RolController;
 use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\bitacora\bitacoraController;
 use App\Http\Controllers\Usuario\UsuarioController;
 use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
@@ -15,12 +16,14 @@ use App\Http\Controllers\Inventario\InventarioController;
 use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
 //use App\Http\Controllers\Traslado\TrasladoController;
-use App\Http\Controllers\solicitud\solicitudController as SolicitudSolicitudController;
-use App\Http\Controllers\solicitudController;
+use App\Http\Controllers\solicitud\solicitudController;
+
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
+
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -53,6 +56,19 @@ Route::get('/', function () {
 //});
 //Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
 
+//Rutas para cambio de estado.
+Route::post('/roles/{id}/cambiar-estado', [RolController::class, 'cambiarEstado']);
+Route::post('/usuario/{id}/cambiar-estado', [UsuarioController::class, 'cambiarEstado']);
+Route::post('/categoria/{id}/cambiar-estado', [CategoriaController::class, 'cambiarEstado']);
+Route::post('/proveedor/{id}/cambiar-estado', [ProveedorController::class, 'cambiarEstado']);
+Route::post('/sucursal/{id}/cambiar-estado', [SucursalController::class, 'cambiarEstado']);
+Route::post('/producto/{id}/cambiar-estado', [ProductoController::class, 'cambiarEstado']);
+Route::post('/almacen/{id}/cambiar-estado', [AlmacenController::class, 'cambiarEstado']);
+Route::post('/persona/{id}/cambiar-estado', [PersonaController::class, 'cambiarEstado']);
+Route::post('/medico/{id}/cambiar-estado', [MedicoController::class, 'cambiarEstado']);
+Route::post('/consulta/{id}/cambiar-estado', [consultaController::class, 'cambiarEstado']);
+Route::post('/traslado/{id}/cambiar-estado', [trasladoController::class, 'cambiarEstado']);
+
 //Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->name('dashboard.filtrarVentas');
@@ -78,21 +94,26 @@ Route::resource('personas', PersonaController::class)->parameters(['personas' =>
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
 Route::resource('lotes', LoteController::class)->parameters(['lote' => 'lote']);
+Route::resource('Reporte_ventas', ReporteVentasController::class)->parameters(['Reporte_ventas' => 'Reporte_ventas']);
+Route::get('/reporte/ventas/filtrar', [ReporteVentasController::class, 'filtrarPorFecha'])->name('Reporte_ventas.filtrarPorFecha');
 Route::resource('requisiciones', RequisicionController::class)->parameters(['requisicion' => 'requisicion']);
-
+Route::get("/ventas-informe", [ReporteVentasController::class, 'generateReport'])->name('ventas.informe');
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 Route::get('/get-lotes/{idProducto}/{idSucursal}', [RequisicionController::class, 'getLotes'])->name('get.lotes');
 Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
+Route::get("solicitudes/cantidad", [solicitudController::class, 'cantidadDeSolicitudes'])->name('solicitudes.cantidad');
+Route::get('/productos/stock/{id}/{sucursal}', [VentaController::class, 'obtenerStock']);
+Route::post('/personas/from-ventas', [PersonaController::class, 'storeFromVentas'])->name('personas.storeFromVentas');
 
 Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
-Route::resource('solicitud', SolicitudSolicitudController::class)->parameters(['solicitud' => 'solicitud']);
+Route::resource('solicitud', solicitudController::class)->parameters(['solicitud' => 'solicitud']);
 //Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 //Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 //Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 Route::get('/productos-por-sucursal/{id_sucursal}', [trasladoController::class, 'obtenerProductos']);
-
+Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' => 'bitacora']);
 
 
 

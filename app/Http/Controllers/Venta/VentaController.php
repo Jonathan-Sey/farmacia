@@ -9,8 +9,10 @@ use App\Models\Persona;
 use App\Models\Sucursal;
 use App\Models\Venta;
 use App\Models\Almacen;
+use App\Models\Bitacora;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Exception;
 use App\Models\User;
 
@@ -32,7 +34,22 @@ class VentaController extends Controller
 
         return view('venta.index',compact('ventas'));
     }
+    public function obtenerStock($id, $sucursal) {
+        Log::info('Solicitud para obtener stock:', ['id_producto' => $id, 'id_sucursal' => $sucursal]);
 
+        // Buscar el almacén que contiene el producto en la sucursal específica
+        $almacen = Almacen::where('id_producto', $id)
+                          ->where('id_sucursal', $sucursal)
+                          ->first();
+
+        if ($almacen) {
+            Log::info('Stock encontrado:', ['stock' => $almacen->cantidad]);
+            return response()->json(['stock' => $almacen->cantidad]);
+        } else {
+            Log::error('Producto no encontrado en el almacén:', ['id_producto' => $id, 'id_sucursal' => $sucursal]);
+            return response()->json(['error' => 'Producto no encontrado en el almacén de la sucursal seleccionada'], 404);
+        }
+    }
     /**
      * Show the form for creating a new resource.
      *
@@ -60,7 +77,8 @@ class VentaController extends Controller
     {
         // Obtener los productos disponibles en la sucursal con stock > 0
         $productos = Almacen::where('id_sucursal', $id)
-            ->where('cantidad', '>', 0) // Solo productos con cantidad disponible
+            ->where('cantidad', '>', 0)
+            ->where('estado', 1) // validar estado
             ->with('producto')  // Obtener la relación con el producto
             ->get()
             ->map(function($almacen) {
@@ -87,8 +105,7 @@ class VentaController extends Controller
      */
     public function store(Request $request)
     {
-
-
+        //dd($request);
         $this->validate($request,[
             'arrayprecio' => 'required|array',
             'estado'=>'integer',
@@ -97,9 +114,18 @@ class VentaController extends Controller
 
         ]);
 
+        //         // Verificar que el total enviado coincida con el recalculado
+        // $subtotal = array_sum($request->get('arrayprecio'));
+        // $impuesto = round(($subtotal * $request->impuesto) / 100, 2);
+        // $totalCalculado = round($subtotal + $impuesto, 2);
+
+        // if ($totalCalculado != $request->total) {
+        //     throw new Exception("El total enviado no coincide con el cálculo en el servidor.");
+        // }
+
     try {
         DB::beginTransaction();
-        
+
         // Redondear el impuesto y total
         $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
         $impuesto = round(($subtotal * $request->impuesto) / 100, 2); // Redondear impuesto
@@ -110,7 +136,7 @@ class VentaController extends Controller
             'id_sucursal' => $request->id_sucursal,
             'fecha_venta' => $request->fecha_venta,
             'impuesto' => $impuesto,
-            'total' => $total,
+            'total' => $request->total,
             'id_usuario' => 1, // Usar el usuario actual o el correcto
             'id_persona' => $request->id_persona,
             'estado' => 1,
@@ -150,6 +176,16 @@ class VentaController extends Controller
         }
 
         DB::commit();
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Venta',
+                'detalles' => "Se creó la venta: {$usuario->id}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
 
         return redirect()->route('ventas.index')->with('success', 'Venta creada exitosamente');
     } catch (Exception $e) {
