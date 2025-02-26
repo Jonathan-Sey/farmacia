@@ -3042,8 +3042,8 @@ input.tab:checked + .tab-content,
 .h-\[200px\] {
   height: 200px;
 }
-.h-auto {
-  height: auto;
+.h-\[500px\] {
+  height: 500px;
 }
 .h-full {
   height: 100%;
@@ -3053,6 +3053,9 @@ input.tab:checked + .tab-content,
 }
 .h-screen {
   height: 100vh;
+}
+.h-auto {
+  height: auto;
 }
 .max-h-\[400px\] {
   max-height: 400px;
@@ -3284,6 +3287,10 @@ input.tab:checked + .tab-content,
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
 }
+.bg-\[\#045951\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(4 89 81 / var(--tw-bg-opacity, 1));
+}
 .bg-\[\#073359\] {
   --tw-bg-opacity: 1;
   background-color: rgb(7 51 89 / var(--tw-bg-opacity, 1));
@@ -3310,10 +3317,6 @@ input.tab:checked + .tab-content,
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity, 1));
-}
-.bg-gray-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
 .bg-gray-300 {
   --tw-bg-opacity: 1;
@@ -3363,9 +3366,9 @@ input.tab:checked + .tab-content,
   --tw-bg-opacity: 1;
   background-color: rgb(0 77 77 / var(--tw-bg-opacity, 1));
 }
-.bg-\[\#045951\] {
+.bg-gray-200 {
   --tw-bg-opacity: 1;
-  background-color: rgb(4 89 81 / var(--tw-bg-opacity, 1));
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
 }
 .bg-gradient-to-r {
   background-image: linear-gradient(to right, var(--tw-gradient-stops));
@@ -3546,6 +3549,10 @@ input.tab:checked + .tab-content,
 .tracking-wider {
   letter-spacing: 0.05em;
 }
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
+}
 .text-blue-500 {
   --tw-text-opacity: 1;
   color: rgb(59 130 246 / var(--tw-text-opacity, 1));
@@ -3577,10 +3584,6 @@ input.tab:checked + .tab-content,
 .text-gray-700 {
   --tw-text-opacity: 1;
   color: rgb(55 65 81 / var(--tw-text-opacity, 1));
-}
-.text-gray-800 {
-  --tw-text-opacity: 1;
-  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
 }
 .text-gray-900 {
   --tw-text-opacity: 1;
@@ -3618,9 +3621,9 @@ input.tab:checked + .tab-content,
   --tw-text-opacity: 1;
   color: rgb(234 179 8 / var(--tw-text-opacity, 1));
 }
-.text-black {
+.text-gray-800 {
   --tw-text-opacity: 1;
-  color: rgb(0 0 0 / var(--tw-text-opacity, 1));
+  color: rgb(31 41 55 / var(--tw-text-opacity, 1));
 }
 .underline {
   text-decoration-line: underline;
