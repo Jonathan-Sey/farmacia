@@ -46,7 +46,7 @@ class ProveedorController extends Controller
             'telefono'=>['required','string','max:20'],
             'empresa'=>['required','string','max:35'],
             'correo'=>['required','string','max:35'],
-            'direccion'=>['max:100','nullable','string'],
+            'direccion'=>['max:100','required','string'],
             'estado'=>'integer',
         ]);
 
@@ -111,7 +111,7 @@ class ProveedorController extends Controller
             'telefono'=>['required','string','max:20'],
             'empresa'=>['required','string','max:35'],
             'correo'=>['required','string','max:35'],
-            'direccion'=>['max:100','nullable','string'],
+            'direccion'=>['max:100','required','string'],
             'estado'=>'integer',
         ]);
 
