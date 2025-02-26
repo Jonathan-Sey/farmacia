@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Crear Sucursal')
+@section('titulo', 'Crear Farmacia')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endpush

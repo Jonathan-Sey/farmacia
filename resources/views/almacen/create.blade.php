@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="mt-2 mb-5">
-                    <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
+                    <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Farmacia</label>
                     <select
                         class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         name="id_sucursal"
@@ -112,7 +112,7 @@
         //uso del select2 para proveedores
             $('.select2-sucursal').select2({
                 width: '100%',
-                placeholder: "Buscar sucursal",
+                placeholder: "Buscar Farmacia",
                 allowClear: true
             });
         // pocicionar el cursor en el input para buscar producto
