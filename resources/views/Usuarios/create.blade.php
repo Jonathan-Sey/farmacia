@@ -10,6 +10,8 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{ route('usuarios.register') }}" method="POST">
             @csrf
+
+            <div id="usuario"></div>
             <div class="border-b border-gray-900/10 pb-12">
                 <!-- Nombre del Usuario -->
                 <div class="mt-2 mb-5">

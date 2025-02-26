@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Sucursales')
+@section('titulo', 'Farmacias')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -37,7 +37,7 @@
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->ubicacion }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->updated_at }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado" data-id="{{ $sucursal->id }}" data-estado="{{ $sucursal->estado }}">
+                        <a class="estado" data-id="{{ $sucursal->id }}" data-estado="{{ $sucursal->estado }}">
                             @if ($sucursal->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
                             @else
@@ -54,16 +54,11 @@
                             </button>
                         </form>
 
-                        {{-- Botón Eliminar --}}
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{ $sucursal->id }}" data-info="{{ $sucursal->nombre }}">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        {{-- Botón Cambiar estado --}}
+                    <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $sucursal->id }}" data-estado="{{ $sucursal->estado }}" data-info="{{ $sucursal->nombre }}">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
 
-                        {{-- Formulario oculto para eliminación --}}
-                        <form id="form-eliminar{{ $sucursal->id }}" action="{{ route('sucursales.destroy', $sucursal->id) }}" method="POST" style="display: none;">
-                            @csrf
-                            @method('DELETE')
-                        </form>
                     </td>
                 </tr>
                 @endforeach
@@ -109,9 +104,9 @@ $(document).ready(function() {
                 }
             },
             columnDefs: [
-                { responsivePriority: 1, targets: 0 },
-                { responsivePriority: 2, targets: 1 },
-                { responsivePriority: 3, targets: 2 },
+                { responsivePriority: 3, targets: 0 },
+                { responsivePriority: 1, targets: 1 },
+                { responsivePriority: 2, targets: 5 },
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -146,60 +141,64 @@ $(document).ready(function() {
         });
 </script>
 @endif
-
-{{-- Cambio de estado --}}
+{{-- cambio de estado --}}
 <script>
-$(document).ready(function(){
-    $('.estado').click(function(e){
-        e.preventDefault();
-        var Id = $(this).data('id');
-        var estado = $(this).data('estado');
+    document.addEventListener('DOMContentLoaded', function () {
+        const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
 
-        $.ajax({
-            url: '/sucursales/' + Id,
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                _method: 'PATCH',
-                status: estado == 1 ? 0 : 1
-            },
-            success: function(response){
-                if(response.success){
-                    location.reload();
-                }else{
-                    alert('Error al cambiar el estado');
-                }
-            }
-        });
-    });
-});
-</script>
+        changeStateButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const Id = this.getAttribute('data-id');
+                let estado = this.getAttribute('data-estado'); // Tomamos el estado actual del data-estado
+                const nombre = this.getAttribute('data-info'); // Este es informacion
 
-{{-- Modal para eliminar  --}}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.eliminar-btn');
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "¡Deseas cambiar el estado de " + nombre + "!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, cambiar estado",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Realizar la solicitud Ajax para cambiar el estado
+                        $.ajax({
+                            url: '/sucursal/' + Id + '/cambiar-estado',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                estado: estado == 1 ? 2 : 1, // Cambiar entre activo (1) y inactivo (2)
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // Después de cambiar el estado en la base de datos, actualizamos el frontend
+                                    estado = estado == 1 ? 2: 1; // Actualizamos la variable de estado
+                                    const estadoText = estado == 1 ? 'Activo' : 'Inactivo';
+                                    const estadoColor = estado == 1 ? 'text-green-500' : 'text-red-500';
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const Id = this.getAttribute('data-id');
-            const nombre = this.getAttribute('data-info');
-            Swal.fire({
-                title: "¿Estás seguro?",
-                text: "¡Deseas eliminar! " + nombre,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí, ¡elimínalo!",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('form-eliminar' + Id).submit();
-                }
+                                    // Actualizamos la columna de estado en el frontend
+                                    const estadoElement = $('a[data-id="' + Id + '"]');
+                                    estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
+
+                                    // Actualizamos el valor del estado en el data-estado para el siguiente clic
+                                    estadoElement.data('estado', estado);
+
+                                    // Recargamos la página después de actualizar el estado
+                                    location.reload();
+                                } else {
+                                    alert('Error al cambiar el estado');
+                                }
+                            },
+                            error: function () {
+                                alert('Ocurrió un error en la solicitud.');
+                            }
+                        });
+                    }
+                });
             });
         });
     });
-});
 </script>
 @endpush

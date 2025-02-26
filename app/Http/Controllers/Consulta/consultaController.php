@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Consulta;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Consulta;
 use App\Models\DetalleMedico;
 use App\Models\Persona;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class consultaController extends Controller
@@ -74,6 +76,7 @@ class consultaController extends Controller
             'asunto' => 'required',
             'id_persona' => 'required',
             'id_medico' => 'required',
+            'detalle' => 'required',
         ]);
 
 
@@ -86,6 +89,16 @@ class consultaController extends Controller
             'detalle' => $request->detalle,
             'estado' => 1,
 
+        ]);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Consultas',
+                'detalles' => "Se creó la consulta por: {$request->asunto}-Del paciente{$request->id_persona}", //detalles especificos
+                'fecha_hora' => now(),
         ]);
         return redirect()->route('consultas.index')->with('success', 'Registro creado correctamente.');
     }
@@ -127,6 +140,7 @@ class consultaController extends Controller
             'asunto' => 'required|max:35',
             'id_persona' => 'required',
             'id_medico' => 'required',
+            'detalle' => 'required',
         ]);
 
         $datosActualizados = $request->only(['asunto','id_persona','id_medico','fecha_consulta','proxima_cita','detalle']);
@@ -136,6 +150,17 @@ class consultaController extends Controller
             $consulta->update($datosActualizados);
             return redirect()->route('consultas.index')->with('success','¡Consulta actualizado!');
         }
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Consultas',
+                'detalles' => "Se creó la consulta por: {$request->asunto} -Del paciente{$request->id_persona}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
+
         return redirect()->route('consultas.index');
     }
 
@@ -157,5 +182,19 @@ class consultaController extends Controller
             return response()->json(['success' => true]);
         }
         return response()->json(['success'=> false]);
+    }
+
+    public function cambiarEstado($id)
+    {
+        $consulta = Consulta::find($id);
+
+        if ($consulta) {
+            $consulta->estado = $consulta->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $consulta->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
     }
 }

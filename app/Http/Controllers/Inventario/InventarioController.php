@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\DB;
 
 class InventarioController extends Controller
 {
-    /**
+   /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -30,26 +30,17 @@ class InventarioController extends Controller
             'inventario.id_sucursal',
             'producto.nombre as producto',
             'sucursal.ubicacion as sucursal',
-
             DB::raw('COUNT(lote.id) as cantidad_lotes'),
-            // DB::raw('SUM(lote.cantidad) as cantidad_total')
             DB::raw('SUM(inventario.cantidad) as cantidad_total')
         )
         ->join('producto', 'inventario.id_producto', '=', 'producto.id')
         ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
         ->join('lote', 'inventario.id_lote', '=', 'lote.id')
-        ->where('inventario.cantidad','>', 0)
-        ->groupBy('inventario.id_producto', 'inventario.id_sucursal') // agrupado por lote
-        //->groupBy('inventario.id_inventario', 'producto.nombre', 'sucursal.ubicacion')
-        //->groupBy('inventario.id_producto', 'inventario.id_sucursal')
-        // ->groupBy(
-        //     'inventario.id_inventario',
-        //     'producto.nombre',
-        //     'sucursal.ubicacion',
-        //     'inventario.id_producto',
-        //     'inventario.id_sucursal',
-        //     )
+        ->where('inventario.cantidad', '>', 0)
+        ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion')
         ->get();
+        
+
 
         // nuevo validacion, validacion por lote en 0
         $inventarioAgotado = Inventario::select(
@@ -64,8 +55,10 @@ class InventarioController extends Controller
         ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
         ->join('lote', 'inventario.id_lote', '=', 'lote.id')
         ->where('inventario.cantidad', '=', 0)
-        ->groupBy('inventario.id_producto', 'inventario.id_sucursal')
+        ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion')
         ->get();
+        
+
 
         $productosProximosAVencer = Inventario::select(
             'inventario.id_producto',
@@ -79,10 +72,12 @@ class InventarioController extends Controller
         ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
         ->join('lote', 'inventario.id_lote', '=', 'lote.id')
         ->where('inventario.cantidad', '>', 0)
-        ->where('lote.fecha_vencimiento', '<=', now()->addDays(30)) // Productos que vencen en los próximos 30 días
-        ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'lote.fecha_vencimiento')
+        ->where('lote.fecha_vencimiento', '<=', now()->addDays(30))
+        ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion', 'lote.fecha_vencimiento')
         ->orderBy('lote.fecha_vencimiento', 'asc')
         ->get();
+        
+
 
 
         //return $inventario;

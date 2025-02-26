@@ -23,6 +23,7 @@
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nombre</th>
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Email</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Rol</th>
+                <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Estado</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Acciones</th>
             </tr>
         </thead>
@@ -36,32 +37,35 @@
                 <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->email }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->rol->nombre ?? 'Sin rol asignado' }} <!-- Mostrar el nombre del rol --></td>
-                
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <a class="estado" data-id="{{ $usuario->id }}" data-estado="{{ $usuario->estado }}">
+                        @if ($usuario->estado == 1)
+                            <span class="text-green-500 font-bold">Activo</span>
+                        @else
+                            <span class="text-red-500 font-bold">Inactivo</span>
+                        @endif
+                    </a>
+                </td>
                 <td class="flex gap-2 justify-center">
                     <!-- Botón Editar -->
             <form action="{{ route('usuarios.edit', ['usuario' => $usuario->id]) }}" method="GET" style="display:inline;">
                 @csrf
-                <button type="submit" class="btn btn-primary font-bold uppercase">
-                    <i class="fas fa-edit"></i> Editar
+                <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                    <i class="fas fa-edit"></i>
                 </button>
             </form>
-    
-                    <!-- Botón Eliminar -->
-            <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn" data-id="{{ $usuario->id }}" data-info="{{ $usuario->name }}">
-                <i class="fas fa-trash"></i> Eliminar
-            </button>
+                  {{-- Botón Cambiar estado --}}
+                <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $usuario->id }}" data-estado="{{ $usuario->estado }}" data-info="{{ $usuario->nombre }}">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
 
-            <!-- Formulario oculto para eliminación -->
-            <form id="form-eliminar{{ $usuario->id }}" action="{{ route('usuarios.actualizarEstado', ['usuario' => $usuario->id]) }}" method="POST" style="display: none;">
-                @csrf
-                @method('PATCH') <!-- Usamos PATCH para actualizar el estado -->
-            </form>
+
                 </td>
             </tr>
             @endforeach
         </tbody>
     </x-slot>
-    
+
 </x-data-table>
 @endsection
 
@@ -100,9 +104,9 @@
             }
         },
         columnDefs: [
-            { responsivePriority: 1, targets: 0 },
-            { responsivePriority: 2, targets: 1 },
-            { responsivePriority: 3, targets: 2 },
+            { responsivePriority: 3, targets: 0 },
+            { responsivePriority: 1, targets: 1 },
+            { responsivePriority: 2, targets: 5 },
         ],
         drawCallback: function() {
             // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -137,66 +141,64 @@
 </script>
 @endif
 
-{{-- Modal para eliminar --}}
+{{-- cambio de estado --}}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.eliminar-btn');
+    document.addEventListener('DOMContentLoaded', function () {
+        const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const usuarioId = this.getAttribute('data-id');
-            const usuarioNombre = this.getAttribute('data-info');
+        changeStateButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const Id = this.getAttribute('data-id');
+                let estado = this.getAttribute('data-estado'); // Tomamos el estado actual del data-estado
+                const nombre = this.getAttribute('data-info'); // Este es informacion
 
-            Swal.fire({
-                title: "¿Estás seguro?",
-                text: "¡Deseas eliminar al usuario " + usuarioNombre + "!",
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí, ¡elimínalo!",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Enviar solicitud AJAX
-                    $.ajax({
-                        url: '/usuarios/' + usuarioId + '/actualizar-estado',
-                        type: 'PATCH',
-                        data: {
-                            _token: '{{ csrf_token() }}' // Asegúrate de que este token sea válido
-                        },
-                        success: function(response) {
-                          
-                            console.log(response); // Depura la respuesta
-                            Swal.fire(
-                                'Eliminado!',
-                                'El usuario ha sido desactivado.',
-                                'success',
-                                
-                            );
-                            // Recarga la página después de 1.5 segundos
-                            setTimeout(function() {
-                                location.reload(); 
-                            }, 1500); 
-                            // Remover el usuario de la lista
-                            document.getElementById('usuario-' + usuarioId).remove();
-                            
-                        },
-                        
-                        error: function(xhr) {
-                            console.error("Error:", xhr.responseText); // Depura el error
-                            Swal.fire(
-                                'Error',
-                                'Ocurrió un error al intentar eliminar al usuario.',
-                                'error'
-                            );
-                        }
-                    });
-                }
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "¡Deseas cambiar el estado de " + nombre + "!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, cambiar estado",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Realizar la solicitud Ajax para cambiar el estado
+                        $.ajax({
+                            url: '/usuario/' + Id + '/cambiar-estado',
+                            method: 'POST',
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                estado: estado == 1 ? 2 : 1, // Cambiar entre activo (1) y inactivo (2)
+                            },
+                            success: function (response) {
+                                if (response.success) {
+                                    // Después de cambiar el estado en la base de datos, actualizamos el frontend
+                                    estado = estado == 1 ? 2: 1; // Actualizamos la variable de estado
+                                    const estadoText = estado == 1 ? 'Activo' : 'Inactivo';
+                                    const estadoColor = estado == 1 ? 'text-green-500' : 'text-red-500';
+
+                                    // Actualizamos la columna de estado en el frontend
+                                    const estadoElement = $('a[data-id="' + Id + '"]');
+                                    estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
+
+                                    // Actualizamos el valor del estado en el data-estado para el siguiente clic
+                                    estadoElement.data('estado', estado);
+
+                                    // Recargamos la página después de actualizar el estado
+                                    location.reload();
+                                } else {
+                                    alert('Error al cambiar el estado');
+                                }
+                            },
+                            error: function () {
+                                alert('Ocurrió un error en la solicitud.');
+                            }
+                        });
+                    }
+                });
             });
         });
     });
-});
-
 </script>
 @endpush

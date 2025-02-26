@@ -51,7 +51,7 @@
                         </form>
 
 
-                        <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$venta->id}}"  data-info="{{$venta->id}}">
+                        {{-- <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$venta->id}}"  data-info="{{$venta->id}}">
                             <i class="fas fa-trash"></i>
                         </button>
 
@@ -59,7 +59,7 @@
                         <form id="form-eliminar{{$venta->id}}" action="{{ route('ventas.destroy', $venta->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
-                        </form>
+                        </form> --}}
                     </td>
 
                 </tr>
@@ -107,7 +107,9 @@
                 }
             },
             columnDefs: [
-                { responsivePriority: 3, targets: 0 },
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 },
+                { responsivePriority: 3, targets: 6 },
 
             ],
             drawCallback: function() {

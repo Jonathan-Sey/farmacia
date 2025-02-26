@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Categoria;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Categoria;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -30,7 +32,7 @@ class CategoriaController extends Controller
      */
     public function index()
     {
-        $categorias = Categoria::select('id','nombre','estado','created_at')
+        $categorias = Categoria::select('id','nombre','descripcion','estado','created_at')
         ->where('estado', '!=', 0)
         ->get();
         return view('categorias.index',['categorias'=>$categorias]);
@@ -56,13 +58,23 @@ class CategoriaController extends Controller
     {
         $this->validate($request,[
             'nombre'=>['required','string','max:35','unique:categoria,nombre'],
-            'descripcion'=>'nullable|max:100',
+            'descripcion'=>'required|max:100',
             'estado'=>'integer',
         ]);
         Categoria::create([
             'nombre'=> $request->nombre,
             'descripcion'=> $request->descripcion,
             'estado'=> 1,
+        ]);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Categorías',
+                'detalles' => "Se creó la categoria: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
         ]);
             return redirect()->route('categorias.index')->with('success', '¡Registro exitoso!');
     }
@@ -102,7 +114,7 @@ class CategoriaController extends Controller
         // Validaciones de los datos
         $this->validate($request, [
             'nombre' => ['required', 'string', 'max:35', 'unique:categoria,nombre,' . $categoria->id],
-            'descripcion' => 'nullable|max:100',
+            'descripcion' => 'required|max:100',
             'estado' => 'integer',
         ]);
 
@@ -116,6 +128,16 @@ class CategoriaController extends Controller
 
         // Actualizar datos
         $categoria->update($datosActualizados);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Categorías',
+                'detalles' => "Se actualizo la categoria: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
 
         return redirect()->route('categorias.index')->with('success', '¡Categoria actualizado!');
     }
@@ -139,5 +161,19 @@ class CategoriaController extends Controller
                    return response()->json(['success' => true]);
                }
                return response()->json(['success'=> false]);
+    }
+
+    public function cambiarEstado($id)
+    {
+        $categoria = Categoria::find($id);
+
+        if ($categoria) {
+            $categoria->estado = $categoria->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $categoria->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
     }
 }
