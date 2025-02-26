@@ -76,6 +76,7 @@ class consultaController extends Controller
             'asunto' => 'required',
             'id_persona' => 'required',
             'id_medico' => 'required',
+            'detalle' => 'required',
         ]);
 
 
@@ -139,6 +140,7 @@ class consultaController extends Controller
             'asunto' => 'required|max:35',
             'id_persona' => 'required',
             'id_medico' => 'required',
+            'detalle' => 'required',
         ]);
 
         $datosActualizados = $request->only(['asunto','id_persona','id_medico','fecha_consulta','proxima_cita','detalle']);

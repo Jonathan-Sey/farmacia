@@ -2,19 +2,21 @@
 @section('titulo', 'Reporte de ventas por fecha')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
 @endpush
 
 @section('contenido')
 
    <!--<div class="flex flex-col gap-6 p-6 bg-gray-100 rounded-lg shadow-md">
-    
+
         <div class="flex gap-4">
             <div class="flex flex-col gap-2 w-full">
                 <label for="dia" class="text-sm font-semibold text-gray-700">Día</label>
                 <select name="dia" id="dia" class="p-3 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 w-full bg-white">
                     <option value="1">1</option>
                     <option value="2">2</option>
-                
+
                 </select>
             </div>
 
@@ -23,7 +25,7 @@
                 <select name="mes" id="mes" class="p-3 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 w-full bg-white">
                     <option value="1">Enero</option>
                     <option value="2">Febrero</option>
-                    
+
                 </select>
             </div>
 
@@ -47,27 +49,27 @@
         <button type="button" id="btnGenerarInforme" class="mt-4 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300">Generar Informe</button>
     </div>-->
 
-    
+
     <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
-    
+
     <form id="formReporte" class="space-y-4">
         <!-- Fila Día, Mes, Año -->
         <div class="flex gap-4">
             <div class="flex-1 m-2">
                 <label for="fecha" class="block text-sm font-medium text-gray-600 ">Día:</label>
-                <input type="date" id="fecha" name="fecha" 
+                <input type="date" id="fecha" name="fecha"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
 
             <div class="flex-1 m-2">
                 <label for="mes" class="block text-sm font-medium text-gray-600">Mes:</label>
-                <input type="month" id="mes" name="mes" 
+                <input type="month" id="mes" name="mes"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
 
             <div class="flex-1 m-2">
                 <label for="año" class="block text-sm font-medium text-gray-600">Año:</label>
-                <input type="number" id="año" name="año" min="2000" max="2100" 
+                <input type="number" id="año" name="año" min="2000" max="2100"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
         </div>
@@ -76,13 +78,13 @@
         <div class="flex gap-4">
             <div class="flex-1 m-2">
                 <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
-                <input type="date" id="fechaInicio" name="fechaInicio" 
+                <input type="date" id="fechaInicio" name="fechaInicio"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
 
             <div class="flex-1 m-2">
                 <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
-                <input type="date" id="fechaFin" name="fechaFin" 
+                <input type="date" id="fechaFin" name="fechaFin"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
         </div>
@@ -105,13 +107,13 @@
                 <thead class="text-white font-bold">
                     <tr class="bg-slate-600">
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Código</th>
-                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">socursal</th>
+                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Sucursal</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">fecha</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">impuesto</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">total</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">usuario</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">persona</th>
-                        
+
                     </tr>
                 </thead>
             </x-slot>
@@ -131,48 +133,69 @@
 
 
     <script>
-   document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
-    const fecha = document.getElementById('fecha').value;  // Obtener el valor
+  document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
+    // Obtener valores de los inputs
+    const fecha = document.getElementById('fecha').value;
     const mes = document.getElementById('mes').value;
     const año = document.getElementById('año').value;
     const fechaInicio = document.getElementById('fechaInicio').value;
     const fechaFin = document.getElementById('fechaFin').value;
 
-    // Construimos la URL con los filtros seleccionados
+    // Construir URL
     let url = '/ventas-informe?';
-    if (fecha) url += `fecha=${encodeURIComponent(fecha)}&`;
-    if (mes) url += `mes=${encodeURIComponent(mes)}&`;
-    if (año) url += `año=${encodeURIComponent(año)}&`;
-    if (fechaInicio && fechaFin) url += `fechaInicio=${encodeURIComponent(fechaInicio)}&fechaFin=${encodeURIComponent(fechaFin)}&`;
+    if (fecha) url += `fecha=${fecha}&`;
+    if (mes) url += `mes=${mes}&`;
+    if (año) url += `año=${año}&`;
+    if (fechaInicio && fechaFin) url += `fechaInicio=${fechaInicio}&fechaFin=${fechaFin}`;
 
-    console.log("URL generada:", url); // Verifica que los valores sean correctos
+    try {
+        // Fetch data
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Error en la respuesta');
+        const data = await response.json();
 
-    // Hacemos la petición al backend con los filtros
-    const response = await fetch(url, { method: 'GET' });
-    const data = await response.json();
+        // Generar HTML de las filas
+        const rows = data.map(venta => `
+            <tr>
+                <td class="px-6 py-3">${venta.venta_id}</td>
+                <td class="px-6 py-3">${venta.nombre_sucursal || 'N/A'}</td>
+                <td class="px-6 py-3">${venta.fecha_venta}</td>
+                <td class="px-6 py-3">${venta.impuesto}</td>
+                <td class="px-6 py-3">${venta.total}</td>
+                <td class="px-6 py-3">${venta.nombre_usuario}</td>
+                <td class="px-6 py-3">${venta.nombre_persona}</td>
+            </tr>
+        `).join('');
 
-    console.log("Datos recibidos:", data);
+        // Insertar filas en la tabla
+        const tbody = document.getElementById('tabla');
+        tbody.innerHTML = rows;
 
-        // Generar la tabla con los datos filtrados
-        let tablaHTML = `
-        
-                    ${data.map(venta => `
-                        <tr class="border-b">
-                            <td class="px-6 py-3">${venta.id}</td>
-                            <td class="px-6 py-3">${venta.id_sucursal || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.fecha_venta || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.impuesto || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.total || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.id_usuario || 'N/A'}</td>
-                            <td class="px-6 py-3">${venta.id_persona || 'N/A'}</td>
-                           
-                        </tr>
-                    `).join('')}
-          `;
+        // Destruir DataTable si existe
+        if ($.fn.DataTable.isDataTable('#example')) {
+            $('#example').DataTable().destroy();
+            tbody.innerHTML = ''; // Limpiar temporalmente
+            tbody.innerHTML = rows; // Volver a insertar
+        }
 
-        // Insertar la tabla generada en el contenedor
-        document.getElementById('tabla').innerHTML = tablaHTML;
-    });
+        // Inicializar DataTable
+        $('#example').DataTable({
+            responsive: true,
+            order: [[0, 'desc']],
+            language: { url: '/js/i18n/Spanish.json' },
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf', 'print', 'colvis'],
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 }
+            ]
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
+    }
+});
 </script>
 
 

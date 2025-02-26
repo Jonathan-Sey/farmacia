@@ -51,21 +51,21 @@
             <form action="{{ route('usuarios.edit', ['usuario' => $usuario->id]) }}" method="GET" style="display:inline;">
                 @csrf
                 <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                    <i class="fas fa-edit"></i> 
+                    <i class="fas fa-edit"></i>
                 </button>
             </form>
                   {{-- Botón Cambiar estado --}}
                 <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $usuario->id }}" data-estado="{{ $usuario->estado }}" data-info="{{ $usuario->nombre }}">
-                    <i class="fas fa-sync-alt"></i> 
+                    <i class="fas fa-sync-alt"></i>
                 </button>
 
-           
+
                 </td>
             </tr>
             @endforeach
         </tbody>
     </x-slot>
-    
+
 </x-data-table>
 @endsection
 
@@ -104,9 +104,9 @@
             }
         },
         columnDefs: [
-            { responsivePriority: 1, targets: 0 },
-            { responsivePriority: 2, targets: 1 },
-            { responsivePriority: 3, targets: 5 },
+            { responsivePriority: 3, targets: 0 },
+            { responsivePriority: 1, targets: 1 },
+            { responsivePriority: 2, targets: 5 },
         ],
         drawCallback: function() {
             // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -181,12 +181,12 @@
                                     // Actualizamos la columna de estado en el frontend
                                     const estadoElement = $('a[data-id="' + Id + '"]');
                                     estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
-                                    
+
                                     // Actualizamos el valor del estado en el data-estado para el siguiente clic
-                                    estadoElement.data('estado', estado); 
+                                    estadoElement.data('estado', estado);
 
                                     // Recargamos la página después de actualizar el estado
-                                    location.reload(); 
+                                    location.reload();
                                 } else {
                                     alert('Error al cambiar el estado');
                                 }

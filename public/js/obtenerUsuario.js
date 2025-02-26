@@ -16,12 +16,8 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
         const UserId = decodificarToken.id;
 
       console.log(UserId)
-      console.log("Ejecutando obtenerUsuario");
-
     crearUsuario.innerHTML = ` <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
     document.getElementById("idUsuario").style.display = "none";
-
-
 
 }
 

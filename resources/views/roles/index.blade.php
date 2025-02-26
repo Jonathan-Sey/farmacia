@@ -57,7 +57,7 @@
                     </form>
                   {{-- Botón Cambiar estado --}}
                     <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $rol->id }}" data-estado="{{ $rol->estado }}" data-info="{{ $rol->nombre }}">
-                        <i class="fas fa-sync-alt"></i> 
+                        <i class="fas fa-sync-alt"></i>
                     </button>
                 </td>
             </tr>
@@ -102,9 +102,9 @@ $(document).ready(function() {
                 }
             },
             columnDefs: [
-                { responsivePriority: 1, targets: 0 },
-                { responsivePriority: 2, targets: 1 },
-                { responsivePriority: 3, targets: 4 },
+                { responsivePriority: 3, targets: 0 },
+                { responsivePriority: 1, targets: 1 },
+                { responsivePriority: 2, targets: 4 },
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -178,12 +178,12 @@ $(document).ready(function() {
                                     // Actualizamos la columna de estado en el frontend
                                     const estadoElement = $('a[data-id="' + Id + '"]');
                                     estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
-                                    
+
                                     // Actualizamos el valor del estado en el data-estado para el siguiente clic
-                                    estadoElement.data('estado', estado); 
+                                    estadoElement.data('estado', estado);
 
                                     // Recargamos la página después de actualizar el estado
-                                    location.reload(); 
+                                    location.reload();
                                 } else {
                                     alert('Error al cambiar el estado');
                                 }
