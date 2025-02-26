@@ -110,7 +110,7 @@
                 </thead>
                 <tbody>
                     @foreach ($ventas as $venta)
-                    <tr>
+                    <tr  class="bg-white">
                         <th>{{ $loop->iteration }}</th>
                         <td>{{ $venta->persona->nombre }}</td>
                         <td>
