@@ -2743,17 +2743,6 @@ html {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
-<<<<<<< HEAD
-.mx-4 {
-  margin-left: 1rem;
-  margin-right: 1rem;
-}
-.mx-8 {
-  margin-left: 2rem;
-  margin-right: 2rem;
-}
-=======
->>>>>>> main
 .-mt-px {
   margin-top: -1px;
 }
@@ -2859,15 +2848,6 @@ html {
 .h-full {
   height: 100%;
 }
-<<<<<<< HEAD
-.h-20 {
-  height: 5rem;
-}
-.h-screen {
-  height: 100vh;
-}
-=======
->>>>>>> main
 .max-h-\[400px\] {
   max-height: 400px;
 }
@@ -3091,13 +3071,6 @@ html {
 .border-gray-900\/10 {
   border-color: rgb(17 24 39 / 0.1);
 }
-<<<<<<< HEAD
-.border-white {
-  --tw-border-opacity: 1;
-  border-color: rgb(255 255 255 / var(--tw-border-opacity, 1));
-}
-=======
->>>>>>> main
 .bg-\[\#045951\] {
   --tw-bg-opacity: 1;
   background-color: rgb(4 89 81 / var(--tw-bg-opacity, 1));
@@ -3173,41 +3146,6 @@ html {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity, 1));
 }
-<<<<<<< HEAD
-.bg-\[\#004D4D\] {
-  --tw-bg-opacity: 1;
-  background-color: rgb(0 77 77 / var(--tw-bg-opacity, 1));
-}
-.bg-gray-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(229 231 235 / var(--tw-bg-opacity, 1));
-}
-.bg-gradient-to-r {
-  background-image: linear-gradient(to right, var(--tw-gradient-stops));
-}
-.from-\[\#072E33\] {
-  --tw-gradient-from: #072E33 var(--tw-gradient-from-position);
-  --tw-gradient-to: rgb(7 46 51 / 0) var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-.from-10\% {
-  --tw-gradient-from-position: 10%;
-}
-.via-\[\#0C7075\] {
-  --tw-gradient-to: rgb(12 112 117 / 0)  var(--tw-gradient-to-position);
-  --tw-gradient-stops: var(--tw-gradient-from), #0C7075 var(--tw-gradient-via-position), var(--tw-gradient-to);
-}
-.via-30\% {
-  --tw-gradient-via-position: 30%;
-}
-.to-\[\#0F969C\] {
-  --tw-gradient-to: #0F969C var(--tw-gradient-to-position);
-}
-.to-90\% {
-  --tw-gradient-to-position: 90%;
-}
-=======
->>>>>>> main
 .p-2 {
   padding: 0.5rem;
 }
@@ -3838,13 +3776,6 @@ html {
 
   .md\:p-9 {
     padding: 2.25rem;
-<<<<<<< HEAD
-  }
-
-  .md\:p-8 {
-    padding: 2rem;
-=======
->>>>>>> main
   }
 
   .md\:px-10 {
