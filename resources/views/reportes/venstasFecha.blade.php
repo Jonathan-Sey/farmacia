@@ -9,14 +9,14 @@
 @section('contenido')
 
    <!--<div class="flex flex-col gap-6 p-6 bg-gray-100 rounded-lg shadow-md">
-    
+
         <div class="flex gap-4">
             <div class="flex flex-col gap-2 w-full">
                 <label for="dia" class="text-sm font-semibold text-gray-700">Día</label>
                 <select name="dia" id="dia" class="p-3 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 w-full bg-white">
                     <option value="1">1</option>
                     <option value="2">2</option>
-                
+
                 </select>
             </div>
 
@@ -25,7 +25,7 @@
                 <select name="mes" id="mes" class="p-3 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 w-full bg-white">
                     <option value="1">Enero</option>
                     <option value="2">Febrero</option>
-                    
+
                 </select>
             </div>
 
@@ -49,27 +49,27 @@
         <button type="button" id="btnGenerarInforme" class="mt-4 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300">Generar Informe</button>
     </div>-->
 
-    
+
     <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
-    
+
     <form id="formReporte" class="space-y-4">
         <!-- Fila Día, Mes, Año -->
         <div class="flex gap-4">
             <div class="flex-1 m-2">
                 <label for="fecha" class="block text-sm font-medium text-gray-600 ">Día:</label>
-                <input type="date" id="fecha" name="fecha" 
+                <input type="date" id="fecha" name="fecha"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
 
             <div class="flex-1 m-2">
                 <label for="mes" class="block text-sm font-medium text-gray-600">Mes:</label>
-                <input type="month" id="mes" name="mes" 
+                <input type="month" id="mes" name="mes"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
 
             <div class="flex-1 m-2">
                 <label for="año" class="block text-sm font-medium text-gray-600">Año:</label>
-                <input type="number" id="año" name="año" min="2000" max="2100" 
+                <input type="number" id="año" name="año" min="2000" max="2100"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
         </div>
@@ -78,13 +78,13 @@
         <div class="flex gap-4">
             <div class="flex-1 m-2">
                 <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
-                <input type="date" id="fechaInicio" name="fechaInicio" 
+                <input type="date" id="fechaInicio" name="fechaInicio"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
 
             <div class="flex-1 m-2">
                 <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
-                <input type="date" id="fechaFin" name="fechaFin" 
+                <input type="date" id="fechaFin" name="fechaFin"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
             </div>
         </div>
@@ -107,13 +107,13 @@
                 <thead class="text-white font-bold">
                     <tr class="bg-slate-600">
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Código</th>
-                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">socursal</th>
+                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Sucursal</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">fecha</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">impuesto</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">total</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">usuario</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">persona</th>
-                        
+
                     </tr>
                 </thead>
             </x-slot>

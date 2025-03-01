@@ -41,7 +41,7 @@
                 </div>
                 <!-- Nueva Pestaña -->
 <div class="mt-4">
-    <label for="nueva_pestana" class="block text-sm font-medium text-gray-900">Seleccionar Pagina de Inicio</label>
+    <label for="nueva_pestana" class="block text-sm font-medium text-gray-900">Seleccionar Página de Inicio</label>
     <select name="nueva_pestana" id="nueva_pestana" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" onchange="updateSelectedTabs()">
         <option value="">-- Selecciona una Pestaña --</option>
         @foreach ($pestanas as $pestana)
@@ -61,7 +61,7 @@
 
                 <div class="mt-2">
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
-                    <textarea name="descripcion" id="descripcion" rows="3" placeholder="Descripción del Rol" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('descripcion') }}</textarea>
+                    <textarea name="descripcion" require id="descripcion" rows="3" placeholder="Descripción del Rol" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('descripcion') }}</textarea>
                     @error('descripcion')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>

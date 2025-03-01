@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Editar Sucursal')
+@section('titulo', 'Editar Farmacia')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endpush
@@ -33,13 +33,13 @@
                 </div>
 
                 <div class="mt-2 mb-5">
-                    <label for="ubicacion" class="uppercase block text-sm font-medium text-gray-900">Ubicacion</label>
+                    <label for="ubicacion" class="uppercase block text-sm font-medium text-gray-900">Ubicación</label>
                     <input
                         type="text"
                         name="ubicacion"
                         id="ubicacion"
                         autocomplete="given-name"
-                        placeholder="Ubicacion"
+                        placeholder="Ubicación"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('ubicacion',$sucursal->ubicacion) }}">
 

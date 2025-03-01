@@ -52,7 +52,7 @@ class RolController extends Controller
   
         $this->validate($request, [
             'nombre' => ['required', 'string', 'max:20', 'unique:rol,nombre'],
-            'descripcion' => 'nullable|max:100',
+            'descripcion' => 'required|max:100',
             'estado' => 'integer',
             'pestanas' => 'required|array', // Se valida que pestanas sea un array
             'pestanas.*' => 'exists:pestanas,id', // Se valida que cada ID de pestaña exista en la base de datos
@@ -94,7 +94,7 @@ class RolController extends Controller
 {
     $request->validate([
         'nombre' => 'required|string|max:255',
-        'descripcion' => 'nullable|string|max:255',
+        'descripcion' => 'required|string|max:255',
         'pestanas' => 'array|nullable',
         'nueva_pestana' => 'nullable|exists:pestanas,id', // Verifica si la pestaña existe en la base de datos
     ]);

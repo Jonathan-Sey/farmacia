@@ -37,7 +37,7 @@ class solicitudController extends Controller
     {
 
 
-      
+
         $request->validate([
             'arraySucursal1' => 'required|array',
             'arraySucursal2' => 'required|array',
