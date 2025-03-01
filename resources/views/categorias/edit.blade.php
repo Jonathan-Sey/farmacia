@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo','Editar Categoria')
+@section('titulo','Editar Categoría')
 
 @push('css')
 
@@ -14,7 +14,7 @@
             <div class="border-b border-gray-900/10 pb-12">
                 <div id="usuario"></div>
                     <div class="mt-2 mb-5">
-                            <label for="nombre" class=" uppercase block text-sm/6 font-medium text-gray-900">Nombre de la categoria</label>
+                            <label for="nombre" class=" uppercase block text-sm/6 font-medium text-gray-900">Nombre de la categoría</label>
                             <input
                             type="text"
                             name="nombre"
@@ -35,12 +35,13 @@
 
 
                     <div class="mt-2">
-                        <label for="descripcion" class="uppercase block text-sm/6 font-medium text-gray-900">Descripcion</label>
+                        <label for="descripcion" class="uppercase block text-sm/6 font-medium text-gray-900">Descripción</label>
                         <textarea
                         name="descripcion"
+                        require
                         id="descripcion"
                         rows="3"
-                        placeholder="Descripcion de la categoria"
+                        placeholder="Descripción de la categoría"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6"
                         >{{old('descripcion', $categoria->descripcion)}}</textarea>
                         @error('descripcion')

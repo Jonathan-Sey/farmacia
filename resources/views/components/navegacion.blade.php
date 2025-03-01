@@ -1,4 +1,5 @@
 <header>
+   
     <div class="flex">
         <!-- Barra lateral fija -->
         <div class="hidden md:flex flex-col w-56 bg-[#073359] rounded-r-1xl overflow-hidden fixed top-0 left-0 h-full overflow-y-auto max-h-screen">
@@ -16,7 +17,7 @@
                 <li data-pestana="Sucursales" style="display:none;">
                     <a href="{{ route('sucursales.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bxs-building"></i></span>
-                        <span class="text-sm font-medium">Sucursal</span>
+                        <span class="text-sm font-medium">Farmacias</span>
                     </a>
                 </li>
                 <li data-pestana="Productos" style="display:none;">
@@ -29,7 +30,7 @@
                 <li data-pestana="Almacenes" style="display:none;">
                     <a href="{{ route('almacenes.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-store"></i></span>
-                        <span class="text-sm font-medium">Almacenes</span>
+                        <span class="text-sm font-medium">Inventario Farmacias</span>
                     </a>
                 </li>
                 <li data-pestana="Compras" style="display:none;">
@@ -59,39 +60,39 @@
                 <li data-pestana="Medicos" style="display:none;">
                     <a href="{{ route('medicos.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-briefcase-medical"></i></span>
-                        <span class="text-sm font-medium">Medicos</span>
+                        <span class="text-sm font-medium">Médicos</span>
                     </a>
                 </li>
                 <li data-pestana="Consultas" style="display:none;">
                     <a href="{{ route('consultas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book-medical"></i></span>
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-stethoscope"></i></span>
                         <span class="text-sm font-medium">Consultas</span>
                     </a>
                 </li>
                 <li data-pestana="Inventario" style="display:none;">
                     <a href="{{ route('inventario.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book-medical"></i></span>
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-shopping-basket"></i></i></span>
                         <span class="text-sm font-medium">Inventario</span>
                     </a>
                 </li>
                 <li data-pestana="Requisiciones" style="display:none;">
                     <a href="{{ route('requisiciones.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book-medical"></i></span>
-                        <span class="text-sm font-medium">Requisiciones</span>
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-shipping-fast"></i></span>
+                        <span class="text-sm font-medium">Requisición</span>
                     </a>
                 </li>
 
                 <li data-pestana="Traslado" style="display:none;">
                     <a href="{{ route('traslado.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-money-bill-transfer"></i></span>
-                        <span class="text-sm font-medium">Traslados</span>
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-exchange-alt"></i></span>
+                        <span class="text-sm font-medium">Traslado</span>
                     </a>
                 </li>
                 <li data-pestana="bitacora" style="display:none;">
                     <a href="{{ route('bitacora.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book"></i>
                         </span>
-                        <span class="text-sm font-medium">Bitacora</span>
+                        <span class="text-sm font-medium">Bitácora</span>
                     </a>
                 </li>
                 <li data-pestana="Categorias" style="display:none;">
@@ -146,13 +147,13 @@
                 <a href="/dashboard"><i class="bx bx-home"></i> Dashboard</a>
             </li>
             <li data-pestanal="Sucursales" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('sucursales.index') }}"><i class="bx bxs-building"></i> Sucursales</a>
+                <a href="{{ route('sucursales.index') }}"><i class="bx bxs-building"></i> Farmacias</a>
             </li>
             <li data-pestanal="Productos" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('productos.index') }}"><i class="bx bxs-package"></i> Productos</a>
             </li>
             <li data-pestanal="Almacenes" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('almacenes.index') }}"><i class="fa-solid fa-store"></i> Almacenes</a>
+                <a href="{{ route('almacenes.index') }}"><i class="fa-solid fa-store"></i> Inventario Farmacias</a>
             </li>
             <li data-pestanal="Comptas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('compras.index') }}"><i class="fa-solid fa-cart-shopping"></i> Compras</a>

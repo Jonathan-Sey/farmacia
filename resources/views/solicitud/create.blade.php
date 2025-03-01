@@ -7,18 +7,18 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3">
     <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl mb-10">
-       
-           
+
+
             <div class="border-b border-gray-200 pb-6">
                 <div class="mb-5">
                     <div class="flex gap-6 justify-center">
                         <div class="w-1/2">
-                            <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal a solisitar </label>
+                            <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal a solicitar </label>
                             <select
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_1"
                                 id="id_sucursal_1">
-                                <option value="">Seleccionar una Socursal</option>
+                                <option value="">Seleccionar una Sucursal</option>
                                 @foreach ($sucursales as $sucursal)
                                 <option value="{{ $sucursal->id }}" {{old('id_sucursal_1') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}}</option>
                                 @endforeach
@@ -35,12 +35,12 @@
                         </div>
 
                         <div class="w-1/2">
-                            <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal que solisita</label>
+                            <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal que solicita</label>
                             <select
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_2"
                                 id="id_sucursal_2">
-                                <option value="">Seleccionar una Socursal</option>
+                                <option value="">Seleccionar una Sucursal</option>
                                 @foreach ($sucursales as $sucursal)
                                 <option value="{{ $sucursal->id }}" {{old('id_sucursal_2') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}}</option>
                                 @endforeach
@@ -196,22 +196,22 @@
         const selectProducto = document.getElementById("id_producto");
         const opciones = Array.from(selectProducto.options);
 
-        const opcionBuscada = opciones.find(option => option.value === id_producto);      
+        const opcionBuscada = opciones.find(option => option.value === id_producto);
             let producto = opcionBuscada.text;
 
         let cantidad = $('#cantidad').val();
         let descripcion = $('#descripcion').val();
-        
+
         let sucursal_1 = $('#id_sucursal_1').val();
         const selectsucursal1 = document.getElementById("id_sucursal_1");
         const opcionesSucursal1 = Array.from(selectsucursal1.options);
-        const opcionBuscadaSucursal = opcionesSucursal1.find(option => option.value === sucursal_1);      
+        const opcionBuscadaSucursal = opcionesSucursal1.find(option => option.value === sucursal_1);
             let sucursal_1T = opcionBuscadaSucursal.text;
-        
+
         let sucursal_2 = $('#id_sucursal_2').val();
         const selectsucursal2 = document.getElementById("id_sucursal_2");
         const opcionesSucursal2 = Array.from(selectsucursal2.options);
-        const opcionBuscadaSucursa2 = opcionesSucursal2.find(option => option.value === sucursal_2);      
+        const opcionBuscadaSucursa2 = opcionesSucursal2.find(option => option.value === sucursal_2);
             let sucursal_2T = opcionBuscadaSucursa2.text;
 
         if (id_producto != '' && producto != '' && cantidad != '' && descripcion != '' && sucursal_1 != '' && sucursal_2 != '') {
@@ -227,7 +227,7 @@
                                 <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
                                 <td><input type="hidden" name="arrayDescripcion[]" value="${descripcion}">${descripcion}</td>
 
-                        
+
                                 <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
                             </tr> `);
 
@@ -241,7 +241,7 @@
             mensaje('Los campos estan vacios');
         }
     }
-    
+
 </script>
 
 <script>
