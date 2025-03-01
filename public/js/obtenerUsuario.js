@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
         alert("No se encontró un token activo");
         return;
     }
+<<<<<<< HEAD
     
     const decodificarToken = jwt_decode(token);
     const limiteDeTiempo = Date.now() / 1000;
@@ -23,3 +24,21 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
 }
 
 obtenerUsuario();})
+=======
+
+    const decodificarToken = jwt_decode(token);
+
+
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+
+        const UserId = decodificarToken.id;
+
+      console.log(UserId)
+    crearUsuario.innerHTML = ` <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
+    document.getElementById("idUsuario").style.display = "none";
+
+}
+
+obtenerUsuario();})
+>>>>>>> main

@@ -40,10 +40,10 @@ class Venta extends Model
         return $this->belongsTo(Persona::class, 'id_persona');
     }
 
-    public function detalleVentas()
-    {
-        return $this->hasMany(DetalleVenta::class, 'id_venta');
-    }
+    public function detalles()
+{
+    return $this->hasMany(DetalleVenta::class, 'id_venta', 'id');
+}
 
      public function productos()
  {

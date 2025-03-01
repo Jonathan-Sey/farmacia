@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Crear Almacen')
+@section('titulo', 'Asignar servicio')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
@@ -12,9 +12,13 @@
         <form action="{{route('almacenes.store')}}" method="POST">
             @csrf
             <div class="border-b border-gray-900/10 pb-12">
+                <div id="usuario">
+
+                </div>
+
 
                 <div class="mt-2 mb-5">
-                    <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto</label>
+                    <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Servicio</label>
                     <select
                         class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         name="id_producto"
@@ -33,7 +37,7 @@
                 </div>
 
                 <div class="mt-2 mb-5">
-                    <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
+                    <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Farmacia</label>
                     <select
                         class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         name="id_sucursal"
@@ -51,7 +55,7 @@
                     @enderror
                 </div>
 
-                <div class="mt-2 mb-5">
+                {{-- <div class="mt-2 mb-5">
                     <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
                     <input
                         type="number"
@@ -68,7 +72,7 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
-                </div>
+                </div> --}}
 
 
             </div>
@@ -97,7 +101,7 @@
         $(document).ready(function(){
             $('.select2-producto').select2({
                 width: '100%',
-                placeholder: "Buscar producto",
+                placeholder: "Buscar servicio",
                 allowClear: true
             });
         // pocicionar el cursor en el input para buscar producto
@@ -108,7 +112,7 @@
         //uso del select2 para proveedores
             $('.select2-sucursal').select2({
                 width: '100%',
-                placeholder: "Buscar sucursal",
+                placeholder: "Buscar Farmacia",
                 allowClear: true
             });
         // pocicionar el cursor en el input para buscar producto
@@ -131,4 +135,3 @@
     </script>
 
 @endpush
-

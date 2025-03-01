@@ -29,4 +29,10 @@ class Sucursal extends Model
     {
         return $this->hasMany(Venta::class, 'id_sucursal');
     }
+
+     // Relación con la tabla inventario
+     public function inventarios()
+     {
+         return $this->hasMany(Inventario::class, 'id_sucursal');
+     }
 }

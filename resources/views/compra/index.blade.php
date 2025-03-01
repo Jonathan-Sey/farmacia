@@ -47,7 +47,7 @@
                             </button>
                         </form>
 
-
+{{--
                         <button type="button" class="btn btn-warning font-bold uppercase eliminar-btn btn-sm" data-id="{{$compra->id}}"  data-info="{{$compra->numero_compra}}">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -56,7 +56,7 @@
                         <form id="form-eliminar{{$compra->id}}" action="{{ route('compras.destroy', $compra->id) }}" method="POST" style="display: none;">
                             @csrf
                             @method('DELETE')
-                        </form>
+                        </form> --}}
                     </td>
 
                 </tr>
@@ -104,7 +104,9 @@
                 }
             },
             columnDefs: [
-                { responsivePriority: 3, targets: 0 },
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 },
+                { responsivePriority: 3, targets: 5 },
 
             ],
             drawCallback: function() {

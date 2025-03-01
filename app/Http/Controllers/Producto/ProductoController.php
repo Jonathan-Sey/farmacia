@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Producto;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Categoria;
 use App\Models\Producto;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -24,6 +26,7 @@ class ProductoController extends Controller
         return view('producto.index',['productos'=>$productos]);
     }
 
+
     /**
      * Show the form for creating a new resource.
      *
@@ -32,6 +35,7 @@ class ProductoController extends Controller
 
     public function create()
     {
+
         // $categorias = Categoria::all(['id', 'nombre']);
         $categorias = Categoria::activos()->get();
         return view('producto.create', compact('categorias'));
@@ -49,7 +53,7 @@ class ProductoController extends Controller
             // 'codigo'=>['nullable'],
             'id_categoria'=>'required',
             'nombre'=>['required','string','max:50'],
-            'descripcion'=>['max:100','nullable','string'],
+            'descripcion'=>['max:100','required','string'],
             'precio_venta'=>'numeric|required|min:0',
             //'fecha_caducidad'=>'required|date',
             'estado'=>'integer',
@@ -69,6 +73,16 @@ class ProductoController extends Controller
             'estado' => 1,
             'tipo' => $tipo,
             'codigo' => $codigo, // asignamos el codigo generado
+        ]);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Producto',
+                'detalles' => "Se creo el producto: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
         ]);
         return redirect()->route('productos.index')->with('success','¡Registro exitoso!');
 
@@ -111,7 +125,7 @@ class ProductoController extends Controller
             // 'codigo'=>['nullable'],
             'id_categoria'=>'required|exists:categoria,id',
             'nombre'=>['required','string','max:50'],
-            'descripcion'=>['nullable','string','max:100'],
+            'descripcion'=>['required','string','max:100'],
             'precio_venta'=>'numeric|required|min:0',
             //'fecha_caducidad'=>'required|date',
             'estado'=>'integer',
@@ -137,6 +151,17 @@ class ProductoController extends Controller
             $producto->update($datosActualizados);
             return redirect()->route('productos.index')->with('success','¡Producto actualizado!');
         }
+
+        $usuario=User::find($request->idUsuario);
+         Bitacora::create([
+                 'id_usuario' => $request->idUsuario,
+                 'name_usuario' =>$usuario->name,
+                 'accion' => 'Actualización',
+                 'tabla_afectada' => 'Productos',
+                 'detalles' => "Se actualizo el producto: {$request->nombre}", //detalles especificos
+                 'fecha_hora' => now(),
+         ]);
+
         return redirect()->route('productos.index');
 
     }
@@ -159,5 +184,19 @@ class ProductoController extends Controller
             return response()->json(['success' => true]);
         }
         return response()->json(['success'=> false]);
+    }
+
+    public function cambiarEstado($id)
+    {
+        $producto = Producto::find($id);
+
+        if ($producto) {
+            $producto->estado = $producto->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $producto->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
     }
 }

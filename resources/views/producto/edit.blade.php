@@ -12,6 +12,9 @@
         <form action="{{route('productos.update',['producto'=> $producto->id])}}" method="POST">
             @csrf
             @method('PATCH')
+            <div id="usuario">
+
+            </div>
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5 flex flex-col gap-5 md:grid md:grid-cols-2 " >
                     <div class="mt-2 mb-5">
@@ -100,7 +103,7 @@
                     </div>
                     @enderror
                 </div>
-                <div class="mt-2 mb-5" id="fecha_caducidad_container">
+                {{-- <div class="mt-2 mb-5" id="fecha_caducidad_container">
                     <label for="fecha_caducidad" class="uppercase block text-sm font-medium text-gray-900">Fecha caducidad</label>
                     <input
                         type="date"
@@ -118,11 +121,12 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
-                </div>
+                </div> --}}
 
                 <div class="mt-2">
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
                     <textarea name="descripcion"
+                    require
                     id="descripcion" rows="3"
                     placeholder="Descripción del producto"
                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('descripcion',$producto->descripcion) }}</textarea>
@@ -153,14 +157,14 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+    <script src="/js/obtenerUsuario.js"></script>
     <script>
         // limitar la fecha a datos actuales
-        document.addEventListener('DOMContentLoaded', function(){
-            var DatoActual = new Date().toISOString().split('T')[0];
-            document.getElementById('fecha_caducidad').setAttribute('min', DatoActual);
+        // document.addEventListener('DOMContentLoaded', function(){
+        //     var DatoActual = new Date().toISOString().split('T')[0];
+        //     document.getElementById('fecha_caducidad').setAttribute('min', DatoActual);
 
-        });
+        // });
         // fin fecha
 
         //uso del select2
@@ -177,7 +181,7 @@
         });
     </script>
 
-<script>
+{{-- <script>
     document.addEventListener("DOMContentLoaded", function() {
         const tipoCheckbox = document.getElementById('tipo');
         const fechaCaducidadContainer = document.getElementById('fecha_caducidad_container');
@@ -197,7 +201,7 @@
         tipoCheckbox.addEventListener('change', toggleFechaCaducidad);
         // Ejecutar la función al cargar la página para establecer el estado inicial
         toggleFechaCaducidad(); });
-</script>
+</script> --}}
 
 
 @endpush

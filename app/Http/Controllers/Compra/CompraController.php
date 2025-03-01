@@ -3,14 +3,20 @@
 namespace App\Http\Controllers\Compra;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use App\Models\Compra;
 use App\Models\DetalleCompra;
+use App\Models\Inventario;
+use App\Models\Lote;
 use App\Models\Producto;
 use App\Models\Proveedor;
+use App\Models\User;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class CompraController extends Controller
 {
@@ -37,7 +43,7 @@ class CompraController extends Controller
     {
         // $proveedores = Proveedor::whereNotIn('estado',[0,2])->get();
         $proveedores = Proveedor::activos()->get();
-        $productos = Producto::activos()->get();
+        $productos = Producto::activos()->where('tipo',1)->get();
         return view('compra.create',compact('proveedores','productos'));
     }
 
@@ -49,11 +55,12 @@ class CompraController extends Controller
      */
     public function store(Request $request)
     {
+      // dd($request);
         $this->validate($request,[
             'arrayprecio' => 'required|array',
-            'estado'=>'integer',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
+            'arrayvencimiento.*' => 'required|date', // nuevo campo
             'estado'=>'integer',
         ]);
 
@@ -70,7 +77,8 @@ class CompraController extends Controller
                 'id_usuario' => 1,
                 'comprobante'=> $request->comprobante,
                 'impuesto'=>$request->impuesto,
-                'fecha_compra'=>$request->fecha_compra,
+                //'fecha_compra'=>$request->fecha_compra,
+                'fecha_compra' => Carbon::now()->format('Y-m-d'),
                 'total'=>$request->input('total'),
                 'estado' => 1,
             ]);
@@ -79,6 +87,7 @@ class CompraController extends Controller
             $arrayProducto_id = $request->get('arrayIdProducto');
             $arrayCantidad = $request->get('arraycantidad');
             $arrayprecio= $request->get('arrayprecio');
+            $arrayvencimiento = $request->get('arrayvencimiento');
 
             //insertar los detalels
             foreach($arrayProducto_id as $index => $idPoducto){
@@ -88,14 +97,70 @@ class CompraController extends Controller
                     'cantidad' => $arrayCantidad[$index],
                     'precio'=> $arrayprecio[$index]
                 ]);
+
+                //  manejo de lotes
+                $fechaVencimiento = $arrayvencimiento[$index];
+                $numeroLote = 'LOTE-' . date('Ymd', strtotime($fechaVencimiento)) . '-' . str_pad($compra->id, 3, '0', STR_PAD_LEFT);
+                // intento de registro por lote, esto en la tabla lote
+                $lote = Lote::create([
+                    'id_producto' => $idPoducto,
+                    'numero_lote' => $numeroLote,
+                    'fecha_vencimiento' => $fechaVencimiento,
+                    'cantidad' => $arrayCantidad[$index],
+                    'id_compra' => $compra->id,
+                    //'estado' => 1,
+                ]);
+
+                    // Verificar si ya existe un registro en el inventario para este producto y lote
+                $inventarioExistente = Inventario::where('id_producto', $idPoducto)
+                ->where('id_lote', $lote->id)
+                ->where('id_sucursal', 1) // Sucursal principal
+                ->first();
+
+
+                if ($inventarioExistente) {
+                    // Si existe, actualizar la cantidad
+                    $inventarioExistente->cantidad += $arrayCantidad[$index];
+                    $inventarioExistente->save();
+
+                    // prueba de eliminacion
+                    // if ($inventarioExistente->cantidad > 0) {
+                    //     Inventario::where('id_producto', $idPoducto)
+                    //         ->where('id_lote', $lote->id)
+                    //         ->where('id_sucursal', 1)
+                    //         ->where('cantidad', 0)
+                    //         ->delete();
+                    // }
+                } else {
+
+                        //  proceso de inventario
+                        Inventario::create([
+                            'id_producto' => $idPoducto,
+                            'id_sucursal' => 1, // Sucursal principal
+                            'id_lote' => $lote->id,
+                            'cantidad' => $arrayCantidad[$index],
+                        ]);
+                }
+
             }
+
+            $usuario = User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Compras',
+                'detalles' => "Se creó la compra: {$compra->numero_compra}", 
+                'fecha_hora' => now(),
+            ]);
 
             DB::commit();
             return redirect()->route('compras.index')->with('success', 'Compra creado exitosamente');
         }catch(Exception $e){
             // cancelar transaccion
-            DB::reset();
-            return redirect()->route('compra.create')->with('error', 'Error al crear la compra: ' . $e->getMessage());
+            Log::error('Error al crear la compra: ' . $e->getMessage());
+            DB::rollBack();
+            return redirect()->route('compras.create')->with('error', 'Error al crear la compra: ' . $e->getMessage());
         }
     }
 

@@ -9,8 +9,12 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-7xl mb-10 ">
-        <form action="{{ route('compras.store', ['id'=>1]) }}" method="POST" >
+        <form action="{{ route('compras.store') }}" method="POST" >
+            {{-- <form action="{{ route('compras.store', ['id'=>1]) }}" method="POST" > --}}
             @csrf
+            <div id="usuario">
+
+            </div>
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
                     <legend class="text-blue-500 font-bold">Compras</legend>
@@ -25,7 +29,7 @@
                                     id="id_producto">
                                     <option value="">Buscar un producto</option>
                                     @foreach ($productos as $producto)
-                                        <option value="{{ $producto->id }}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
+                                        <option value="{{ $producto->id }}" data-nombre="{{$producto->nombre}}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
                                     @endforeach
                                 </select>
                                 @error('id_producto')
@@ -155,7 +159,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-2 mb-5">
+                            {{-- <div class="mt-2 mb-5">
                                 <label for="fecha_compra" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
                                 <input
                                     readonly
@@ -166,6 +170,23 @@
                                     placeholder="Impuesto"
                                     class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                     value="<?php echo date("Y-m-d") ?>">
+
+                            </div> --}}
+                            <div class="mt-2 mb-5">
+                                <label for="fecha_vencimiento" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
+                                <input
+                                    type="date"
+                                    name="fecha_vencimiento"
+                                    id="fecha_vencimiento"
+                                    autocomplete="given-name"
+                                    class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    value="{{old('fecha_vencimiento')}}">
+
+                                    @error('fecha_vencimiento')
+                                    <div role="alert" class="alert alert-error mt-4 p-2">
+                                        <span class="text-white font-bold">{{ $message }}</span>
+                                    </div>
+                                    @enderror
 
                             </div>
                         </div>
@@ -185,6 +206,7 @@
                           <td>Producto</td>
                           <td>Cantidad</td>
                           <td>Precio</td>
+                          <td>Fecha vencimiento</td>
                           <td>SubTotal</td>
                           <th></th>
                         </tr>
@@ -226,7 +248,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-
+<script src="/js/obtenerUsuario.js"></script>
     <script>
         //uso del select2 para proveedores
         $(document).ready(function(){
@@ -273,12 +295,14 @@
 
         function agregarProducto(){
             let id_producto = $('#id_producto').val();
-            let producto = ($('#id_producto option:selected').text()).split(' ')[1];
+            //let producto = ($('#id_producto option:selected').text()).split(' ')[1];
+            let producto = $('#id_producto option:selected').data('nombre');
             let cantidad = $('#cantidad').val();
             let precio = $('#precio').val();
+            let fecha_vencimiento = $('#fecha_vencimiento').val();
             let aplicarImpuesto = $('#impuesto-checkbox').is(':checked'); // aplicacion de impuesto
 
-            if(id_producto != '' && producto != '' && cantidad != '' && precio != '')
+            if(id_producto != '' && producto != '' && cantidad != '' && precio != '' && fecha_vencimiento !='')
             {
                if( parseInt(cantidad) > 0 && (cantidad % 1 == 0) && parseFloat(precio) > 0)
                {
@@ -302,6 +326,7 @@
                                 <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
                                 <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
                                 <td><input type="hidden" name="arrayprecio[]" value="${precio}">${precio}</td>
+                                <td><input type="hidden" name="arrayvencimiento[]" value="${fecha_vencimiento}">${fecha_vencimiento}</td>
                                 <td>${subtotal[contador]}</td>
                                 <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
                             </tr> `);
