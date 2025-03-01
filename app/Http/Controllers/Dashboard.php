@@ -8,13 +8,12 @@ use App\Models\Producto;
 use App\Models\Sucursal;
 use App\Models\Venta;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Contracts\Providers\Auth;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class Dashboard extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
+
     public function index(Request $request){
 
       //  dd(auth()->user());

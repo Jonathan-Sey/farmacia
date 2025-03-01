@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo','Detalle compra')
+@section('titulo','Detalle venta')
 @push('css')
 
 @endpush

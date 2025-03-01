@@ -45,5 +45,5 @@ class traslado extends Model
     }
 
 
-    
+
 }

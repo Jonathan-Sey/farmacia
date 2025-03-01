@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Solisitud de productos')
+@section('titulo', 'Solicitud de productos')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -39,7 +39,7 @@
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->sucursal1->nombre}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->sucursal2->nombre}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->producto->nombre }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->producto->nombre}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->cantidad }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->descripcion }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->created_at }}</td>

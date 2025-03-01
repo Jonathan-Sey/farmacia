@@ -4,10 +4,12 @@ namespace App\Http\Controllers\traslado;
 
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
+use App\Models\Bitacora;
 use App\Models\Producto;
 use App\Models\Solicitud;
 use App\Models\Sucursal;
 use App\Models\traslado;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpParser\Builder\Trait_;
@@ -24,7 +26,13 @@ class trasladoController extends Controller
     public function create()
     {
         $sucursales = Sucursal::activos()->get();
-        $productos = Almacen::activos()->get();
+        $productos = Almacen::activos()
+        ->whereHas('producto', function ($query) {
+            $query->where('tipo', 1);
+            })
+            ->with('producto:id,nombre,tipo')
+        ->get();
+
         return view('traslado.create', compact('sucursales', 'productos'));
     }
 
@@ -49,7 +57,7 @@ class trasladoController extends Controller
             ->first();
 
         if (!$almacen_origen || $almacen_origen->cantidad < $cantidad) {
-            return response()->json(['error' => 'Stock insuficiente en la sucursal de origen'], 400);
+            return redirect()->back()->withErrors(['cantidad' => 'Stock insuficiente en la sucursal de origen']);
         }
 
         $almacen_origen->cantidad -= $cantidad;
@@ -73,6 +81,17 @@ class trasladoController extends Controller
                 "estado" => 1
             ]
         );
+
+         // Bitacora
+         $usuario = User::find($request->idUsuario);
+         Bitacora::create([
+             'id_usuario' => $request->idUsuario,
+             'name_usuario' => $usuario->name,
+             'accion' => 'Creación',
+             'tabla_afectada' => 'Traslado',
+             'detalles' => "Se creo el traslado del producto {$request->id_producto} con la cantidad de {$request->cantidad}", // Se usa el nombre de la sucursal
+             'fecha_hora' => now(),
+         ]);
 
 
 
@@ -98,6 +117,19 @@ class trasladoController extends Controller
 
         $datosActualizados = $request->only(['id_sucursal_1', 'id_sucursal_2', 'id_producto', 'cantidad']);
         $datosSinCambios = $traslado->only(['id_sucursal_1', 'id_sucursal_2', 'id_producto', 'cantidad']);
+
+        // Bitacora
+        $usuario=User::find($request->idUsuario);
+        $sucursal_origen = Sucursal::find($request->id_sucursal_origen);
+        $sucursal_destino = Sucursal::find($request->id_sucursal_destino);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Traslado',
+                'detalles' => "Se actualizo el traslado del producto {$request->id_producto} con la cantidad de {$request->cantidad}",
+                'fecha_hora' => now(),
+        ]);
 
         if ($datosActualizados == $datosSinCambios) {
             return redirect()->route('traslado.index');
@@ -131,4 +163,19 @@ class trasladoController extends Controller
 
         return response()->json($productos);
     }
+
+    public function cambiarEstado($id)
+    {
+        $traslado = traslado::find($id);
+
+        if ($traslado) {
+            $traslado->estado = $traslado->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $traslado->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
 }

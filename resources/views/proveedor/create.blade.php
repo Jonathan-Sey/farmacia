@@ -12,7 +12,9 @@
         <form action="{{route('proveedores.store')}}" method="POST">
             @csrf
             <div class="border-b border-gray-900/10 pb-12">
+            <div id="usuario">
 
+                </div>
 
                 <div class="mt-2 mb-5">
                     <label for="nombre" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
@@ -33,13 +35,13 @@
                 </div>
 
                 <div class="mt-2 mb-5">
-                    <label for="telefono" class="uppercase block text-sm font-medium text-gray-900">Telefono</label>
+                    <label for="telefono" class="uppercase block text-sm font-medium text-gray-900">Teléfono</label>
                     <input
                         type="text"
                         name="telefono"
                         id="telefono"
                         autocomplete="given-name"
-                        placeholder="Telefono"
+                        placeholder="Teléfono"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('telefono') }}">
 
@@ -85,10 +87,11 @@
                 </div>
 
                 <div class="mt-2">
-                    <label for="direccion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
+                    <label for="direccion" class="uppercase block text-sm font-medium text-gray-900">Dirección</label>
                     <textarea name="direccion"
+                    require
                     id="direccion" rows="3"
-                    placeholder="Direccion"
+                    placeholder="Dirección"
                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('direccion') }}</textarea>
                     @error('direccion')
                     <div role="alert" class="alert alert-error mt-4 p-2">
@@ -116,5 +119,6 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 @endpush
 

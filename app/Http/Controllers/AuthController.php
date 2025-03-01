@@ -30,46 +30,60 @@ class AuthController extends Controller
 
      public function login(Request $request)
      {
-         try {
-             $request->validate([
-                 'email' => 'required|email',
-                 'password' => 'required|min:6',
-             ]);
-         } catch (\Illuminate\Validation\ValidationException $e) {
-             return response()->json([
-                 'error' => 'Errores de validación',
-                 'messages' => $e->errors()
-             ], 422);
-         }
-     
-         $credentials = $request->only('email', 'password');
-     
-         if (!$token = auth('api')->attempt($credentials)) {
-             return response()->json(['error' => 'Credenciales incorrectas'], 401);
-         }
-     
-         $user = auth('api')->user();
-        
-         if (!$user) {
-             return response()->json(['error' => 'Usuario no encontrado'], 404);
-         }
-     
-         if (!$user->id_rol) {
-             return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
-         }
-     
-         //$user->load('rol.pestanas');
-         $rol = $user->rol;
-         $pestanas = $rol->pestanas()->pluck('ruta')->toArray();
-         
-         return response()->json([
-             'success' => true,
-             'token' => $token,
-             'user' => $user,
-             'pestanas' => $pestanas,
-         ]);
+        try {
+            $request->validate([
+                'email' => 'required|email',
+                'password' => 'required|min:6',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'error' => 'Errores de validación',
+                'messages' => $e->errors()
+            ], 422);
+        }
+
+        $credentials = $request->only('email', 'password');
+
+        // Usar el guardia de JWT ('api')
+        if (!$token = auth('api')->attempt($credentials)) {
+            return response()->json(['error' => 'Credenciales incorrectas'], 401);
+        }
+
+        $user = auth('api')->user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado'], 404);
+        }
+
+        if (!$user->id_rol) {
+            return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
+        }
+
+        $rol = $user->rol;
+        $pestanas = $rol->pestanas()->pluck('ruta')->toArray();
+
+        // Crear la cookie con el token JWT
+        $cookie = cookie(
+            'jwt_token', // Nombre de la cookie
+            $token, // Valor de la cookie
+            config('jwt.ttl') * 60, // Tiempo de expiración (en minutos)
+            '/', // Ruta (accesible en todo el dominio)
+            null, // Dominio (null para el dominio actual)
+            false, // Solo HTTPS (false para desarrollo local)
+            true, // HttpOnly (para evitar acceso desde JavaScript)
+            'Strict' // SameSite (para evitar ataques CSRF)
+        );
+
+        return response()
+            ->json([
+                'success' => true,
+                'token' => $token,
+                'user' => $user,
+                'pestanas' => $pestanas,
+            ])
+            ->withCookie($cookie);
      }
-     
+
     /**
      * Get the authenticated User.
      *

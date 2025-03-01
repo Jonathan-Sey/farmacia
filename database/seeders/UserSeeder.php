@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('admin123'), // Cambia 'password' por la contraseña que desees
             'id_rol' => 1,
             'remember_token' => null,
-            'activo' => 1,
+            'estado' => 1,
             'created_at' => now(),
             'updated_at' => now(),
         ]);

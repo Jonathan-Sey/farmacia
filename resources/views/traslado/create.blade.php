@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Crear traslado de articulos ')
+@section('titulo', 'Crear traslado de artículos ')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 @endpush
@@ -9,7 +9,11 @@
     <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('traslado.store')}}" method="POST">
             @csrf
+            <div id="usuario">
+
+            </div>
             <div class="border-b border-gray-200 pb-6">
+
                 <div class="mb-5">
                     <div class="flex gap-6 justify-center">
                         <div class="w-1/2">
@@ -18,7 +22,7 @@
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_1"
                                 id="id_sucursal_1">
-                                <option value="">Seleccionar una Socursal</option>
+                                <option value="">Seleccionar una Sucursal</option>
                                 @foreach ($sucursales as $sucursal)
                                 <option value="{{ $sucursal->id }}" {{old('id_sucursal_1') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}}</option>
                                 @endforeach
@@ -40,7 +44,7 @@
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_2"
                                 id="id_sucursal_2">
-                                <option value="">Seleccionar una Socursal</option>
+                                <option value="">Seleccionar una Sucursal</option>
                                 @foreach ($sucursales as $sucursal)
                                 <option value="{{ $sucursal->id }}" {{old('id_sucursal_2') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}}</option>
                                 @endforeach
@@ -82,20 +86,20 @@
 
                 <!-- Cantidad -->
                 <div class="mt-2 mb-5">
-                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">cantidad</label>
+                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
                     <input
                         type="text"
                         name="cantidad"
                         id="cantidad"
                         autocomplete="given-name"
-                        placeholder="cantidad"
+                        placeholder="Cantidad"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('cantidad') }}">
 
-                    @error('cantidad')
-                    <div role="alert" class="alert alert-error mt-4 p-2">
-                        <span class="text-white font-bold">{{ $message }}</span>
-                    </div>
+                        @error('cantidad')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message }}</span>
+                        </div>
                     @enderror
                 </div>
             </div>
@@ -124,10 +128,12 @@
                         .then(response => response.json())
                         .then(data => {
                             data.forEach(producto => {
+                                if (producto.producto.tipo === 1) {
                                 let option = document.createElement('option');
                                 option.value = producto.id_producto;
                                 option.textContent = producto.producto.nombre;
                                 productosSelect.appendChild(option);
+                            }
                             });
                         })
                         .catch(error => console.error('Error:', error));

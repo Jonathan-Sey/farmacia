@@ -11,80 +11,81 @@
 
 
 
-<p class="bg-gray-200 p-4 rounded-lg shadow-md max-w-max text-lg font-semibold text-gray-800">
+<p class="bg-gray-300 p-4 rounded-lg shadow-md max-w-max text-lg font-semibold text-white">
     Bienvenido
-    <span id="user-name" class="text-blue-600 transition-all duration-300 ease-in-out">Cargando...</span>
+    <span id="user-name" class="text-black transition-all duration-300 ease-in-out">Cargando...</span>
 </p>
+
 
 
 
     <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         <a href="{{ route('productos.index') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3  ">
+            <div class="w-auto h-40 bg-[#045951] rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3  ">
                     <div class="flex flex-col items-center">
-                        <i class='bx bxs-package text-7xl lg:text-6xl md:text-6xl sm:text-6xl' ></i>
-                        <p class="uppercase text-lg font-bold">Productos</p>
+                        <i class='bx bxs-package text-7xl lg:text-6xl md:text-6xl sm:text-6xl text-white' ></i>
+                        <p class="uppercase text-lg font-bold text-white">Productos</p>
                     </div>
                     <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl">{{$productos}}</p>
+                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl text-white">{{$productos}}</p>
                     </div>
             </div>
         </a>
         <a href="{{ route('sucursales.index') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2  sm:p-3 ">
+            <div class="w-auto h-40 bg-[#045951] rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2  sm:p-3 ">
                     <div class="flex flex-col items-center">
-                        <i class='bx bxs-building text-7xl lg:text-6xl  sm:text-6xl' ></i>
-                        <p class="uppercase text-lg font-bold">Sucursales</p>
+                        <i class='bx bxs-building text-7xl lg:text-6xl  sm:text-6xl text-white' ></i>
+                        <p class="uppercase text-lg font-bold text-white">Sucursales</p>
                     </div>
                     <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl">{{$sucursales}}</p>
+                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl text-white">{{$sucursales}}</p>
                     </div>
             </div>
         </a>
         <a href="{{ route('compras.index') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2  sm:p-3 ">
+            <div class="w-auto h-40 bg-[#045951] rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2  sm:p-3 ">
                     <div class="flex flex-col items-center">
-                        <i class='fa-solid fa-cart-shopping text-7xl lg:text-6xl sm:text-6xl' ></i>
-                        <p class="uppercase text-lg font-bold">Compras</p>
+                        <i class='fa-solid fa-cart-shopping text-7xl lg:text-6xl sm:text-6xl text-white' ></i>
+                        <p class="uppercase text-lg font-bold text-white">Compras</p>
                     </div>
                     <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl">{{$compras}}</p>
+                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl text-white">{{$compras}}</p>
                     </div>
             </div>
         </a>
         <a href="{{ route('ventas.index') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3">
+            <div class="w-auto h-40 bg-[#045951] rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3">
                     <div class="flex flex-col items-center">
-                        <i class='fa-solid fa-bag-shopping text-7xl lg:text-6xl sm:text-6xl' ></i>
-                        <p class="uppercase text-lg font-bold">Ventas</p>
+                        <i class='fa-solid fa-bag-shopping text-7xl lg:text-6xl sm:text-6xl text-white' ></i>
+                        <p class="uppercase text-lg font-bold text-white">Ventas</p>
                     </div>
                     <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl">{{$NumeroVentas}}</p>
+                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl text-white">{{$NumeroVentas}}</p>
                     </div>
             </div>
         </a>
         <a href="{{ route('productos.index') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3">
+            <div class="w-auto h-40 bg-[#045951] rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3">
                     <div class="flex flex-col items-center">
-                        <i class='fa-solid fa-heart-circle-check text-7xl lg:text-6xl sm:text-6xl' ></i>
+                        <i class='fa-solid fa-heart-circle-check text-7xl lg:text-6xl sm:text-6xl text-white' ></i>
 
-                        <p class="uppercase text-lg font-bold">Servicios variados</p>
+                        <p class="uppercase text-lg font-bold text-white">Servicios variados</p>
                     </div>
                     <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl">{{$servicios}} </p>
+                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl text-white">{{$servicios}} </p>
                     </div>
             </div>
 
         </a>
         <a href="{{ route('medicos.index') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3">
-                    <div class="flex flex-col items-center">
-                        <i class='fa-solid fa-user-nurse text-7xl lg:text-6xl sm:text-6xl' ></i>
+            <div class="w-auto h-40 bg-[#045951] rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3">
+                    <div class="flex flex-col items-center ">
+                        <i class='fa-solid fa-user-nurse text-7xl lg:text-6xl sm:text-6xl text-white'  ></i>
 
-                        <p class="uppercase text-lg font-bold">Medicos</p>
+                        <p class="uppercase text-lg font-bold text-white">Médicos</p>
                     </div>
                     <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl">{{$medicos}} </p>
+                        <p class="text-5xl sm:text-3xl font-bold lg:text-3xl text-white">{{$medicos}} </p>
                     </div>
             </div>
 
@@ -93,8 +94,8 @@
 
 
     <div class="grid gap-5 sm:grid-cols-1 lg:grid-cols-2 items-start mb-8">
-        <div class=" max-h-[400px] overflow-x-auto bg-white p-2 rounded-lg shadow-lg text-center">
-            <h2 class="text-2xl m-2 font-bold">Ultimas ventas</h2>
+        <div class=" max-h-[400px] overflow-x-auto bg-[#045951] p-2 rounded-lg shadow-lg text-center">
+            <h2 class="text-2xl m-2 font-bold  text-white">Últimas ventas</h2>
             <table class="table table-xs table-pin-rows table-pin-cols min-w-full sm:min-w-[400px]">
                 <thead>
                     <tr>
@@ -109,7 +110,7 @@
                 </thead>
                 <tbody>
                     @foreach ($ventas as $venta)
-                    <tr>
+                    <tr  class="bg-white">
                         <th>{{ $loop->iteration }}</th>
                         <td>{{ $venta->persona->nombre }}</td>
                         <td>
@@ -128,8 +129,8 @@
             </table>
         </div>
 
-        <div class="max-h-[800px] overflow-x-auto bg-white p-2 rounded-lg shadow-lg text-center">
-            <h2 class="text-2xl m-2">Productos mas vendidos</h2>
+        <div class="max-h-[800px] overflow-x-auto bg-[#045951] p-2 rounded-lg shadow-lg text-center">
+            <h2 class="text-2xl m-2 text-white">Productos más vendidos</h2>
             <div id="productosVendidos">
 
             </div>
@@ -165,11 +166,6 @@
 @endsection
 
 @push('js')
-
-
-
-
-
         {{-- librerias para generar graficas --}}
         <script src="https://code.highcharts.com/highcharts.js"></script>
         <script src="https://code.highcharts.com/modules/exporting.js"></script>
@@ -198,7 +194,7 @@
                 xAxis: {
                     categories: diasMes,
                     accessibility: {
-                        description: 'Dias del mes'
+                        description: 'Días del mes'
                     }
                 },
                 yAxis: {
@@ -226,7 +222,7 @@
                     }
                 },
                 series: [{
-                    name: 'Ventas del dia ',
+                    name: 'Ventas del día ',
                     marker: {
                         enabled: true,
                         symbol: 'circle'
@@ -311,11 +307,12 @@
             rangeSelectorZoom: "Periodo",
             }
         });
+        </script>
 
-
-
+        <script>
 
         </script>
+
 
 @endpush
 

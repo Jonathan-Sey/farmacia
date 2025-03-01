@@ -4,9 +4,13 @@ namespace App\Http\Controllers\Almacen;
 
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
+use App\Models\Bitacora;
+use App\Models\Lote;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Sucursal;
+use App\Models\Traslado;
+use App\Models\User;
 
 class AlmacenController extends Controller
 {
@@ -17,11 +21,13 @@ class AlmacenController extends Controller
      */
     public function index()
     {
-
-        $almacenes = Almacen::with('producto:id,nombre')
+        //$traslados = Traslado::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
+        $almacenes = Almacen::with('producto:id,codigo,nombre,tipo')
         ->where('estado', '!=', 0)
         ->get();
+        //return($almacenes);
         return view('almacen.index',compact('almacenes'));
+
     }
 
     /**
@@ -31,7 +37,7 @@ class AlmacenController extends Controller
      */
     public function create()
     {
-        $productos = Producto::activos()->get();
+        $productos = Producto::activos()->where('tipo',2)->get();
         $sucursales = Sucursal::activos()->get();
         return view('almacen.create',compact('productos','sucursales'));
     }
@@ -70,21 +76,40 @@ class AlmacenController extends Controller
     {
         $this->validate($request,[
             'id_sucursal' => ['required'],
-            'id_producto' => ['required'],
-            'cantidad' => ['required','numeric'],
+            'id_producto' => ['required',
+            function ($attribute, $value, $fail) use ($request) {
+            $existe = Almacen::where('id_sucursal', $request->id_sucursal)
+                             ->where('id_producto', $value)
+                             ->exists();
+            if ($existe) {
+                $fail('El servicio ya existe en esta sucursal.');
+            }
+        }],
+            // 'cantidad' => ['required','numeric'],
 
         ]);
 
         Almacen::create([
             'id_producto' => $request->id_producto,
             'id_sucursal' => $request->id_sucursal,
-            'cantidad'=> $request->cantidad,
+            'cantidad'=> 1,
             'id_user' => 1,
         ]);
+
+        $usuario=User::find($request->idUsuario);
+           Bitacora::create([
+                   'id_usuario' => $request->idUsuario,
+                   'name_usuario' =>$usuario->name,
+                   'accion' => 'Creación',
+                   'tabla_afectada' => 'Almacenes',
+                   'detalles' => "Se creó el almacen: {$request->id_sucursal}", //detalles especificos
+                   'fecha_hora' => now(),
+           ]);
 
         return redirect()->route('almacenes.index')->with('success', '¡Registro exitoso!');
 
     }
+
 
     /**
      * Display the specified resource.
@@ -105,7 +130,8 @@ class AlmacenController extends Controller
      */
     public function edit(Almacen $almacen)
     {
-        $productos = Producto::activos()->get();
+        // $productos = Producto::activos()->get();
+        $productos = Producto::activos()->where('tipo',2)->get();
         $sucursales = Sucursal::activos()->get();
         return view('almacen.edit',compact('almacen','productos','sucursales'));
     }
@@ -122,8 +148,16 @@ class AlmacenController extends Controller
 
         $this->validate($request,[
             'id_sucursal' => ['required'],
-            'id_producto' => ['required'],
-            'cantidad' => ['required','numeric'],
+            'id_producto' => ['required',
+            function ($attribute, $value, $fail) use ($request) {
+            $existe = Almacen::where('id_sucursal', $request->id_sucursal)
+                             ->where('id_producto', $value)
+                             ->exists();
+            if ($existe) {
+                $fail('El servicio ya existe en esta sucursal.');
+            }
+        }],
+            // 'cantidad' => ['required','numeric'],
 
         ]);
 
@@ -134,6 +168,16 @@ class AlmacenController extends Controller
             return redirect()->route('almacenes.index');
         }
         $almacen->update($datosActualizados);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Almacenes',
+                'detalles' => "Se actualizo el almacen: {$request->id_sucursal}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
         return redirect()->route('almacenes.index')->with('success','¡Almacen actualizado!');
 
     }
@@ -158,5 +202,19 @@ class AlmacenController extends Controller
             }
             return response()->json(['success'=> false]);
 
+    }
+
+    public function cambiarEstado($id)
+    {
+        $almacen = Almacen::find($id);
+
+        if ($almacen) {
+            $almacen->estado = $almacen->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $almacen->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
     }
 }

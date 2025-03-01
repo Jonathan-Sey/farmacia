@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Usuario;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Models\Bitacora;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
@@ -21,9 +22,7 @@ class UsuarioController extends Controller
 
         $roles = Rol::where('estado', '!=', 0)->get();
         // Filtrar solo usuarios activos y cargar el rol relacionado con las columnas específicas
-        $usuarios = User::where('activo', true)->with('rol:id,nombre') // Solo cargar 'id' y 'nombre' de la tabla 'rol'
-        ->get();
-
+        $usuarios = User::whereIn('estado', [1, 2])->with('rol:id,nombre')->get();
         // Pasar los usuarios y roles a la vista
         return view('usuarios.index', compact('roles', 'usuarios'));
         }
@@ -83,6 +82,17 @@ class UsuarioController extends Controller
             // Guardar los cambios
             $user->save();
 
+              // Bitacora
+         $usuario = User::find($request->idUsuario);
+         Bitacora::create([
+             'id_usuario' => $request->idUsuario,
+             'name_usuario' => $usuario->name,
+             'accion' => 'Actualizacion',
+             'tabla_afectada' => 'Usuario',
+             'detalles' => "Se actualizo el usuario  {$request->name}", // Se usa el nombre de la sucursal
+             'fecha_hora' => now(),
+         ]);
+
             // Redirigir con mensaje de éxito
             return redirect()->route('usuarios.index')->with('success', 'Usuario actualizado correctamente.');
         }
@@ -93,7 +103,7 @@ class UsuarioController extends Controller
             $usuario = User::findOrFail($id); // Busca al usuario por ID
 
             // Cambiar el estado de 'activo' a false
-            $usuario->activo = false;
+            $usuario->estado = 2;
             $usuario->save();
 
             return response()->json(['success' => 'Usuario desactivado correctamente']);
@@ -119,11 +129,37 @@ class UsuarioController extends Controller
             'id_rol' => $request->input('id_rol'),
         ]);
 
-        auth()->attempt([
-            'email' => $request->email,
-            'password' => $request->password,
-        ]);
+             // Bitacora
+             $usuario = User::find($request->idUsuario);
+             Bitacora::create([
+                 'id_usuario' => $request->idUsuario,
+                 'name_usuario' => $usuario->name,
+                 'accion' => 'Creación',
+                 'tabla_afectada' => 'Usuario',
+                 'detalles' => "Se creo el usuario {$request->nombre}", // Se usa el nombre de la sucursal
+                 'fecha_hora' => now(),
+             ]);
+
+        // auth()->attempt([
+        //     'email' => $request->email,
+        //     'password' => $request->password,
+        // ]);
 
         return redirect()->route('usuarios.index')->with('success', '¡Usuario registrado exitosamente!');
     }
+
+    public function cambiarEstado($id)
+    {
+        $user = User::find($id);
+
+        if ($user) {
+            $user->estado = $user->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $user->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
 }
