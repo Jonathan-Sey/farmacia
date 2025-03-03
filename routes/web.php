@@ -69,6 +69,7 @@ Route::post('/medico/{id}/cambiar-estado', [MedicoController::class, 'cambiarEst
 Route::post('/consulta/{id}/cambiar-estado', [consultaController::class, 'cambiarEstado']);
 Route::post('/traslado/{id}/cambiar-estado', [trasladoController::class, 'cambiarEstado']);
 
+
 //Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->name('dashboard.filtrarVentas');
@@ -90,6 +91,8 @@ Route::resource('proveedores', ProveedorController::class)->parameters(['proveed
 Route::resource('compras', CompraController::class)->parameters(['compras' => 'compra']);
 Route::resource('ventas', VentaController::class)->parameters(['ventas' => 'venta']);
 Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' => 'almacen']);
+Route::get('/almacenes/{id}/cambiar-alerta', [AlmacenController::class, 'alertStock'])->name('almacenes.alertStock');
+Route::patch('/almacen/{id}/alerta-stock', [AlmacenController::class, 'updateAlertStock'])->name('almacenes.updateAlertStock');
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);

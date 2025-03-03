@@ -217,4 +217,34 @@ class AlmacenController extends Controller
 
         return response()->json(['success' => false]);
     }
+
+    //Para mostrar lo que hay en la vista de modificar el alerta
+    public function alertStock($id)
+    {
+        $almacen = Almacen::findOrFail($id);
+        $productos = Producto::activos()->where('tipo', 2)->get();
+        $sucursales = Sucursal::activos()->get();  
+    
+        return view('almacen.alertStock', compact('almacen', 'productos', 'sucursales'));
+    }
+
+    //Actualiza la cantidad en el campo alerta_stock que se usa para mostrar la alerta de poco stock
+    public function updateAlertStock(Request $request, $id)
+    {
+        $request->validate([
+            'alerta_stock' => ['required', 'numeric', 'min:1'],
+        ]);
+        $almacen = Almacen::findOrFail($id);
+        
+        // Actualizar el campo alerta_stock
+        $almacen->alerta_stock = $request->input('alerta_stock');
+        $almacen->save();
+
+        return redirect()->route('almacenes.index')->with('success', '¡Alerta de stock actualizada!');
+    }
+
+    
+    
+
+
 }

@@ -49,8 +49,6 @@
                     @enderror
                 </div>
            
-            
-            
                 <div class="mt-2 mb-5">
                     <label for="telefono" class="uppercase block text-sm font-medium text-gray-900">Numero de telefono</label>
                     <input
@@ -69,7 +67,6 @@
                     @enderror
                 </div>
 
-                
                     <div class="mt-2 mb-5">
                         <label for="email" class="uppercase block text-sm font-medium text-gray-900">Correo electronico</label>
                         <input
@@ -81,7 +78,7 @@
                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             value="{{ old('email') }}">
     
-                        @error('emal')
+                        @error('email')
                         <div role="alert" class="alert alert-error mt-4 p-2">
                             <span class="text-white font-bold">{{ $message }}</span>
                         </div>
