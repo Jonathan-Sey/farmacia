@@ -46,7 +46,7 @@ function tienePermiso(ruta) {
 function verificarPermiso(ruta) {
     if (!tienePermiso(ruta)) {
         alert('No tienes permiso para acceder a esta vista.');
-        window.location.href = '/';
+        window.location.href = '/dashboard';
     }
 }
 

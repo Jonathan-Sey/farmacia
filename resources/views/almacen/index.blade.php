@@ -49,13 +49,14 @@
                         </a>
                     </td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->sucursal->nombre}}</td>
+                    {{-- muestra la cantidad que hay y usa la cantidad minima que se tiene en el campo alerta_stock en la base de datos para mostrar el alerta de poco stock --}}
                     <td class="text-left px-6 py-4 whitespace-nowrap">
                             @if ($almacen->producto->tipo == 2)
                             <span class="text-green-500 font-bold">{{$almacen->cantidad}}</span>
                             @else
-                                <span class="{{ $almacen->cantidad <= 10 ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
+                                <span class="{{ $almacen->cantidad <= $almacen->alerta_stock ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
                                     {{$almacen->cantidad}}
-                                    @if ($almacen->cantidad <= 10)
+                                    @if ($almacen->cantidad <= $almacen->alerta_stock)
                                         <span class="text-red-400">(Poco stock)</span>
                                     @endif
                                 </span>
@@ -79,6 +80,13 @@
                                     <i class="fas fa-edit"></i>
                                 </button>
                             </form>
+                        @endif
+
+                       {{--  boton para modificar en que cantidad debe lanzar la alerta --}}
+                        @if ($almacen->producto->tipo == 1)
+                        <a href="{{ route('almacenes.alertStock', $almacen->id) }}" class="btn bg-red-500 font-bold uppercase btn-sm">
+                            <i class='bx bx-bell'></i>
+                        </a>
                         @endif
 
                         <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $almacen->id }}" data-estado="{{ $almacen->estado }}" data-info="{{ $almacen->nombre }}">
