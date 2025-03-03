@@ -15,8 +15,8 @@ class socursalesSeeder extends Seeder
     public function run()
     {
         $data = [
-            ['nombre' => "Antigua", 'ubicacion' => "Antigua guatemala", 'estado' => 1],
-            ['nombre' => "Huehuetenango", 'ubicacion' => "Huenuetenango", 'estado' => 1],
+            ['nombre' => "Antigua", 'ubicacion' => "Antigua guatemala", 'telefono'=>"48759654", 'email'=>"antigua@gmail.com", 'estado' => 1],
+            ['nombre' => "Huehuetenango", 'ubicacion' => "Huehuetenango", 'telefono'=>"59238745", 'email'=>"huehuetenango@gmail.com", 'estado' => 1],
             
         ];
 

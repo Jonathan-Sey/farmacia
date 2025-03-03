@@ -12,7 +12,10 @@ class Sucursal extends Model
     protected $fillable = [
         'nombre',
         'ubicacion',
+        'telefono',
+        'email',
         'estado',
+        
     ];
 
     public function scopeActivos($query)
