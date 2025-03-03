@@ -18,7 +18,7 @@ class SucursalController extends Controller
     public function index()
     {
 
-        $sucursales = Sucursal::select('id','nombre','ubicacion','estado','updated_at')
+        $sucursales = Sucursal::select('id','nombre','ubicacion','telefono','email','estado','updated_at')
         ->where('estado', '!=', 0)
         ->get();
         return view('sucursal.index',['sucursales'=>$sucursales]);
@@ -45,12 +45,16 @@ class SucursalController extends Controller
         $this->validate($request,[
             'nombre'=>['required','string','max:35','unique:sucursal,nombre'],
             'ubicacion'=>'required|max:50',
+            'telefono'=>'required|max:10',
+            'email'=>'required|max:50',
             'estado'=>'integer',
         ]);
 
         Sucursal::create([
             'nombre'=>$request->nombre,
             'ubicacion'=>$request->ubicacion,
+            'telefono'=>$request->telefono,
+            'email'=>$request->email,
             'estado'=>1,
         ]);
 
@@ -101,12 +105,14 @@ class SucursalController extends Controller
         $this->validate($request,[
             'nombre'=>['required','string','max:35','unique:sucursal,nombre,'. $sucursal->id],
             'ubicacion'=>'required|max:50',
+            'telefono'=>'required|max:10',
+            'email'=>'required|max:50',
             'estado'=>'integer',
         ]);
 
          // Verificación de cambios
-         $datosActualizados = $request->only(['nombre', 'ubicacion']);
-         $datosSinCambios = $sucursal->only(['nombre', 'ubicacion']);
+         $datosActualizados = $request->only(['nombre', 'ubicacion','telefono','email']);
+         $datosSinCambios = $sucursal->only(['nombre', 'ubicacion','telefono','email']);
 
          if ($datosActualizados == $datosSinCambios) {
              return redirect()->route('sucursales.index');
