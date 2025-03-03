@@ -21,6 +21,8 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Id</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nombre</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Ubicación</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Telefono</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Correo electronico</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Actualizado</th>
                     <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Estado</th>
                     <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Acciones</th>
@@ -35,6 +37,8 @@
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->nombre }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->ubicacion }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->telefono }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->email }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->updated_at }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">
                         <a class="estado" data-id="{{ $sucursal->id }}" data-estado="{{ $sucursal->estado }}">
