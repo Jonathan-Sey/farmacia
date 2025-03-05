@@ -18,7 +18,7 @@ class SucursalController extends Controller
     public function index()
     {
 
-        $sucursales = Sucursal::select('id','nombre','ubicacion','telefono','email','estado','updated_at')
+        $sucursales = Sucursal::select('id','imagen','nombre','ubicacion','telefono','email','estado','updated_at')
         ->where('estado', '!=', 0)
         ->get();
         return view('sucursal.index',['sucursales'=>$sucursales]);
@@ -42,15 +42,18 @@ class SucursalController extends Controller
      */
     public function store(Request $request)
     {
+        $imagenNombre = $request->imagen;
+
         $this->validate($request,[
             'nombre'=>['required','string','max:35','unique:sucursal,nombre'],
+            'imagen'=> 'required',
             'ubicacion'=>'required|max:50',
             'telefono'=>'required|max:10',
             'email'=>'required|max:50',
             'estado'=>'integer',
         ]);
-
         Sucursal::create([
+            'imagen'=>$imagenNombre,
             'nombre'=>$request->nombre,
             'ubicacion'=>$request->ubicacion,
             'telefono'=>$request->telefono,
@@ -103,37 +106,46 @@ class SucursalController extends Controller
     public function update(Request $request, Sucursal $sucursal)
     {
         $this->validate($request,[
+            'imagen'=>'nullable',
             'nombre'=>['required','string','max:35','unique:sucursal,nombre,'. $sucursal->id],
             'ubicacion'=>'required|max:50',
             'telefono'=>'required|max:10',
             'email'=>'required|max:50',
             'estado'=>'integer',
         ]);
+        $datosActualizados = $request->only(['nombre', 'ubicacion','telefono','email']);
+
+             // Manejo de la imagen
+             if ($request->imagen && $request->imagen !== $sucursal->imagen) {
+                // Eliminar la imagen anterior si existe
+                if ($sucursal->imagen && file_exists(public_path('uploads/' . $sucursal->imagen))) {
+                    unlink(public_path('uploads/' . $sucursal->imagen));
+                }
+                $datosActualizados['imagen'] = $request->imagen; // Actualizar con la nueva imagen
+            } else {
+                $datosActualizados['imagen'] = $sucursal->imagen; // Mantener la imagen anterior
+            }
+
+            $datosSinCambios = $sucursal->only(['imagen','nombre', 'ubicacion','telefono','email']);
 
          // Verificación de cambios
-         $datosActualizados = $request->only(['nombre', 'ubicacion','telefono','email']);
-         $datosSinCambios = $sucursal->only(['nombre', 'ubicacion','telefono','email']);
+         if ($datosActualizados != $datosSinCambios) {
+             // Actualizar datos
+             $sucursal->update($datosActualizados);
 
-         if ($datosActualizados == $datosSinCambios) {
-             return redirect()->route('sucursales.index');
-         }
-
-         // Actualizar datos
-         $sucursal->update($datosActualizados);
-
-          //Bitacora
-        $usuario=User::find($request->idUsuario);
-        Bitacora::create([
-                'id_usuario' => $request->idUsuario,
-                'name_usuario' =>$usuario->name,
-                'accion' => 'Actualización',
-                'tabla_afectada' => 'Sucursal',
-                'detalles' => "Se actualizo la sucursal: {$request->nombre}", //detalles especificos
-                'fecha_hora' => now(),
-        ]);
-
-         return redirect()->route('sucursales.index')->with('success', '¡Sucursal actualizado!');
-
+                //Bitacora
+                $usuario=User::find($request->idUsuario);
+                Bitacora::create([
+                        'id_usuario' => $request->idUsuario,
+                        'name_usuario' =>$usuario->name,
+                        'accion' => 'Actualización',
+                        'tabla_afectada' => 'Sucursal',
+                        'detalles' => "Se actualizo la sucursal: {$request->nombre}", //detalles especificos
+                        'fecha_hora' => now(),
+                ]);
+            return redirect()->route('sucursales.index')->with('success', '¡Sucursal actualizado!');
+            }
+            return redirect()->route('sucursales.index');
     }
 
     /**

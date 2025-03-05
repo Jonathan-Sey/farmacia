@@ -14,17 +14,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-       
+
         $this->call([
             RolesSeeder::class,
             RolPestanaSeeder::class,
             UnionRolPestanaSeeder::class,
             UserSeeder::class,
             categoriaSeeder::class,
-            productos::class,
+           // productos::class,
             productoSeeder::class,
             socursalesSeeder::class,
-            ProductosProam::class,
+           // ProductosProam::class,
             // FarmaciaSeeder::class,
         ]);
     }
