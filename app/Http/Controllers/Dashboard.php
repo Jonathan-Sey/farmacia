@@ -113,4 +113,50 @@ class Dashboard extends Controller
         ]);
     }
 
+    public function productosMasVendidos (Request $request){
+         // filtro en base al mes
+         $año = $request->input('año');
+         $mes = $request->input('mes');
+         // filtrado por mes
+         $sucusalId = $request->input('sucursal');
+
+          // fitrar fecjas por el campo fecha_venta
+          $ventasFiltro = Venta::with([
+            'productos:id,nombre',
+        ])->whereYear('fecha_venta', $año) //filtro por año
+        ->whereMonth('fecha_venta', $mes)// filto pod mes
+        ->when($sucusalId, function($query) use ($sucusalId){
+            return $query->where('id_sucursal', $sucusalId);
+        })
+        ->get();
+
+        $productosVendidos = [];
+        foreach ($ventasFiltro as $venta) {
+            foreach ($venta->productos as $producto) {
+                if (!isset($productosVendidos[$producto->id])) {
+                    $productosVendidos[$producto->id] = [
+                        'nombre' => $producto->nombre,
+                        'cantidad' => 0
+                    ];
+                }
+                $productosVendidos[$producto->id]['cantidad'] += $producto->pivot->cantidad;
+            }
+        }
+
+        // Ordenar por cantidad vendida
+        usort($productosVendidos, function($a, $b) {
+            return $b['cantidad'] - $a['cantidad'];
+        });
+
+
+
+        return response()->json([
+            'productosVendidos' => array_slice($productosVendidos, 0, 10) // Limitar a los 10 más vendidos
+        ]);
+
+
+
+
+    }
+
 }

@@ -34,6 +34,12 @@
                             @enderror
                         </div>
                         <div class="mt-2 mb-5">
+                                     <!-- Contenedor para mostrar la imagen -->
+                                     <div id="imagen-producto" class="mt-4 hidden">
+                                        <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded">
+                                    </div>
+                                </div>
+                        <div class="mt-2 mb-5">
                             <label for="stock" class="uppercase block text-sm font-medium text-gray-900">Stock disponible</label>
                             <input
                                 type="number"
@@ -333,6 +339,7 @@
             });
         });
     </script>
+
     <script>
         $(document).ready(function(){
             // Escuchar el cambio en el select de sucursal
@@ -356,7 +363,8 @@
                                         data-precio="${producto.precio_venta}"
                                         data-nombre="${producto.nombre}"
                                         data-tipo="${producto.tipo}"
-                                        data-stock="${producto.stock}">
+                                        data-stock="${producto.stock}"
+                                        data-imagen="${producto.imagen}">
                                         ${producto.nombre} - Precio: ${producto.precio_venta}
                                     </option>
                                 `);
@@ -373,9 +381,23 @@
                 }
             });
         });
-    </script>
+        </script>
 
+<script>
+        $(document).ready(function() {
+        $('#id_producto').change(function() {
+                const selectedOption = $(this).find('option:selected');
+                const imagenUrl = selectedOption.data('imagen'); // Obtener la URL de la imagen
 
+                if (imagenUrl) {
+                    $('#imagen-producto').removeClass('hidden'); // Mostrar el contenedor de la imagen
+                    $('#imagen').attr('src', imagenUrl); // Actualizar la imagen
+                } else {
+                    $('#imagen-producto').addClass('hidden'); // Ocultar el contenedor de la imagen
+                }
+            });
+        });
+</script>
 
 <script>
         $(document).ready(function(){

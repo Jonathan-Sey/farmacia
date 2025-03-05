@@ -22,7 +22,7 @@ class AlmacenController extends Controller
     public function index()
     {
         //$traslados = Traslado::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
-        $almacenes = Almacen::with('producto:id,codigo,nombre,tipo')
+        $almacenes = Almacen::with('producto:id,codigo,nombre,tipo,imagen')
         ->where('estado', '!=', 0)
         ->get();
         //return($almacenes);

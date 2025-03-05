@@ -19,9 +19,9 @@
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >ID</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Tipo</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
@@ -36,9 +36,15 @@
             <tbody>
                 @foreach ($almacenes as $almacen)
                 <tr>
-                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->id}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->codigo}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if ($almacen->producto->imagen)
+                            <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                        @else
+                            <span class="text-gray-500">Sin imagen</span>
+                        @endif
+                    </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a href="#" class="estado">
                             @if ($almacen->producto->tipo == 1)
@@ -130,7 +136,7 @@
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 2 },
-                { responsivePriority: 2, targets: 7 },
+                { responsivePriority: 2, targets: 6 },
             ],
 
 

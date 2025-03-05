@@ -20,9 +20,10 @@ class ProductoController extends Controller
     {
 
         $productos = Producto::with('categoria:id,nombre')
-        ->select('id','codigo','nombre','tipo','precio_venta','estado','id_categoria','fecha_caducidad','updated_at')
+        ->select('id','codigo','nombre','tipo','precio_venta','imagen','estado','id_categoria','fecha_caducidad','updated_at')
         ->where('estado', '!=', 0)
         ->get();
+        //return $productos;
         return view('producto.index',['productos'=>$productos]);
     }
 
@@ -49,9 +50,14 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
+
+              // Guardar el nombre de la imagen temporalmente
+            $imagenNombre = $request->imagen;
+
         $this->validate($request,[
             // 'codigo'=>['nullable'],
             'id_categoria'=>'required',
+            'imagen'=>'required',
             'nombre'=>['required','string','max:50'],
             'descripcion'=>['max:100','required','string'],
             'precio_venta'=>'numeric|required|min:0',
@@ -66,6 +72,7 @@ class ProductoController extends Controller
 
         Producto::create([
             'nombre' => $request->nombre,
+            'imagen' => $imagenNombre,
             'descripcion' => $request->descripcion,
             'precio_venta' => $request->precio_venta,
             'fecha_caducidad' => $request->fecha_caducidad,
@@ -74,6 +81,8 @@ class ProductoController extends Controller
             'tipo' => $tipo,
             'codigo' => $codigo, // asignamos el codigo generado
         ]);
+            // Limpiar la imagen temporal de la sesión
+            session()->forget('imagen_temp');
 
         $usuario=User::find($request->idUsuario);
         Bitacora::create([
@@ -84,6 +93,7 @@ class ProductoController extends Controller
                 'detalles' => "Se creo el producto: {$request->nombre}", //detalles especificos
                 'fecha_hora' => now(),
         ]);
+
         return redirect()->route('productos.index')->with('success','¡Registro exitoso!');
 
     }
@@ -125,6 +135,7 @@ class ProductoController extends Controller
             // 'codigo'=>['nullable'],
             'id_categoria'=>'required|exists:categoria,id',
             'nombre'=>['required','string','max:50'],
+            'imagen' => 'nullable',
             'descripcion'=>['required','string','max:100'],
             'precio_venta'=>'numeric|required|min:0',
             //'fecha_caducidad'=>'required|date',
@@ -132,7 +143,7 @@ class ProductoController extends Controller
         ]);
 
         $datosActualizados = $request->only(['id_categoria','nombre','descripcion','precio_venta','tipo','fecha_caducidad']);
-        $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_venta','tipo','fecha_caducidad']);
+
 
         //validando el tipo de producto
         $nuevotipo = $request->has('tipo') ? 2 : 1;
@@ -142,26 +153,36 @@ class ProductoController extends Controller
                 $datosActualizados['tipo'] = 2;
             }
         }
+            // Manejo de la imagen
+        if ($request->imagen && $request->imagen !== $producto->imagen) {
+            // Eliminar la imagen anterior si existe
+            if ($producto->imagen && file_exists(public_path('uploads/' . $producto->imagen))) {
+                unlink(public_path('uploads/' . $producto->imagen));
+            }
+            $datosActualizados['imagen'] = $request->imagen; // Actualizar con la nueva imagen
+        } else {
+            $datosActualizados['imagen'] = $producto->imagen; // Mantener la imagen anterior
+        }
 
          // Actualizar el rol
          $datosActualizados['tipo'] = $nuevotipo;
 
+         $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_venta','tipo','fecha_caducidad', 'imagen']);
 
          if ($datosActualizados != $datosSinCambios){
             $producto->update($datosActualizados);
+
+            $usuario=User::find($request->idUsuario);
+            Bitacora::create([
+                    'id_usuario' => $request->idUsuario,
+                    'name_usuario' =>$usuario->name,
+                    'accion' => 'Actualización',
+                    'tabla_afectada' => 'Productos',
+                    'detalles' => "Se actualizo el producto: {$request->nombre}", //detalles especificos
+                    'fecha_hora' => now(),
+            ]);
             return redirect()->route('productos.index')->with('success','¡Producto actualizado!');
         }
-
-        $usuario=User::find($request->idUsuario);
-         Bitacora::create([
-                 'id_usuario' => $request->idUsuario,
-                 'name_usuario' =>$usuario->name,
-                 'accion' => 'Actualización',
-                 'tabla_afectada' => 'Productos',
-                 'detalles' => "Se actualizo el producto: {$request->nombre}", //detalles especificos
-                 'fecha_hora' => now(),
-         ]);
-
         return redirect()->route('productos.index');
 
     }

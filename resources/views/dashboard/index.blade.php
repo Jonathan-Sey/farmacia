@@ -129,18 +129,31 @@
             </table>
         </div>
 
-        <div class="max-h-[800px] overflow-x-auto bg-[#045951] p-2 rounded-lg shadow-lg text-center">
-            <h2 class="text-2xl m-2 text-white">Productos más vendidos</h2>
-            <div id="productosVendidos">
-
+        <div class="max-h-[800px] overflow-x-auto bg-white p-2 rounded-lg shadow-lg text-center">
+            <h2 class="text-2xl m-2 text-black">Productos más vendidos</h2>
+            <div class="md:flex md:flex-row md:gap-3 lg:justify-between p-3 pb-8 sm:flex sm:flex-col sm:gap-5 sm:justify-center">
+                <div>
+                    <label for="sucursalSelectorProductos" class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
+                    <select
+                        class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                        id="sucursalSelectorProductos"
+                    >
+                        <option value="">Todo</option>
+                        @foreach ($nombreSucursales as $sucursal)
+                            <option value="{{ $sucursal->id }}">{{$sucursal->nombre}} - {{$sucursal->ubicacion}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <input type="month" id="mesAñoSelectorProductos" value="{{date('Y-m')}}">
             </div>
+            <div id="productosVendidos"></div>
         </div>
     </div>
 
     <div class="grid gap-5 grid-cols-1 items-start mb-8">
         <div class="max-h-[800px] overflow-x-auto bg-white p-2 rounded-lg shadow-lg text-center">
             <div class="md:flex md:flex-row md:gap-3 lg:justify-between p-3 pb-8 sm:flex sm:flex-col sm:gap-5 sm:justify-center">
-                <h2 class="text-2xl m-2 font-bold sm:grid sm:grid-cols-1 ">Ventas por mes</h2>
+                <h2 class=" text-black text-2xl m-2 font-bold sm:grid sm:grid-cols-1 ">Ventas por mes</h2>
                     <div>
                             <label for="sucursalSelector" class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
                             <select
@@ -310,7 +323,96 @@
         </script>
 
         <script>
+function fetchProductosMasVendidos() {
+    var mesAño = document.getElementById('mesAñoSelectorProductos').value.split('-');
+    var año = mesAño[0];
+    var mes = mesAño[1];
+    var sucursal = document.getElementById('sucursalSelectorProductos').value;
 
+    $.ajax({
+        url: '{{ route("dashboard.productosMasVendidos")}}',
+        method: 'GET',
+        data: {
+            año: año,
+            mes: mes,
+            sucursal: sucursal,
+        },
+        success: function(response) {
+            actualizarGraficaProductosVendidos(response.productosVendidos, mes, año);
+        }
+    });
+}
+
+function actualizarGraficaProductosVendidos(productosVendidos, mes, año) {
+    Highcharts.chart('productosVendidos', {
+        chart: {
+            type: 'pie'
+        },
+        title: {
+            text: 'Productos más vendidos en ' + Meses[mes - 1] + ' del ' + año
+        },
+        tooltip: {
+            valueSuffix: '%',
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        },
+        plotOptions: {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: [{
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.y} Und',
+                    style: {
+                        color: '#000000', // Color del texto en negro
+                        fontSize: '12px'
+                    }
+                    //format: '{point.name}: {point.percentage:.1f}%',
+                }, {
+                    enabled: true,
+                    distance: -40,
+                    format: '{point.percentage:.1f}%',
+                    style: {
+                        fontSize: '1.2em',
+                        color: '#FFF',
+                        fontSize: '15px',
+                        textOutline: 'none',
+                        opacity: 1
+                    },
+                    filter: {
+                        operator: '>',
+                        property: 'percentage',
+                        value: 10
+                    }
+
+                }]
+            }
+        },
+        series: [{
+            name: 'Productos',
+            colorByPoint: true,
+            data: productosVendidos.map(producto => ({
+                name: producto.nombre,
+                y: producto.cantidad
+            }))
+        }]
+    });
+}
+
+// Agregar evento a los selectores
+document.getElementById('mesAñoSelectorProductos').addEventListener('change', function() {
+    fetchData();
+    fetchProductosMasVendidos();
+});
+
+document.getElementById('sucursalSelectorProductos').addEventListener('change', function() {
+    fetchData();
+    fetchProductosMasVendidos();
+});
+
+// Iniciar la gráfica con los valores por defecto
+document.addEventListener('DOMContentLoaded', function() {
+    fetchProductosMasVendidos();
+});
         </script>
 
 
