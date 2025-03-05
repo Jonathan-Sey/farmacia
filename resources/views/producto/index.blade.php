@@ -22,6 +22,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
                     {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Caducidad</th> --}}
@@ -44,6 +45,13 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if ($producto->imagen)
+                            <img src="{{ asset('uploads/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                        @else
+                            <span class="text-gray-500">Sin imagen</span>
+                        @endif
+                    </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
                             @if ($producto->estado == 1)
@@ -132,7 +140,7 @@
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 6 },
+                { responsivePriority: 2, targets: 7 },
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado

@@ -21,6 +21,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Id</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nombre</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Ubicación</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Imagen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Actualizado</th>
                     <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Estado</th>
                     <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Acciones</th>
@@ -35,6 +36,13 @@
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->nombre }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->ubicacion }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if ($sucursal->imagen)
+                            <img src="{{ asset('uploads/' . $sucursal->imagen) }}" alt="{{ $sucursal->nombre }}" class="w-16 h-16 object-cover rounded">
+                        @else
+                            <span class="text-gray-500">Sin imagen</span>
+                        @endif
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->updated_at }}</td>
                     <td class="px-6 py-4 whitespace-nowrap text-center">
                         <a class="estado" data-id="{{ $sucursal->id }}" data-estado="{{ $sucursal->estado }}">
@@ -68,7 +76,6 @@
     </x-data-table>
 @endsection
 
-@push('js')
 @push('js')
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -106,7 +113,7 @@ $(document).ready(function() {
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 5 },
+                { responsivePriority: 2, targets: 6 },
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado

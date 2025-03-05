@@ -12,6 +12,7 @@ use App\Http\Controllers\bitacora\bitacoraController;
 use App\Http\Controllers\Usuario\UsuarioController;
 use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\Inventario\InventarioController;
 use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
@@ -72,6 +73,8 @@ Route::post('/traslado/{id}/cambiar-estado', [trasladoController::class, 'cambia
 //Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->name('dashboard.filtrarVentas');
+Route::get('/dashboard/productos-mas-vendidos', [Dashboard::class, 'productosMasVendidos'])->name('dashboard.productosMasVendidos');
+
 //Route::post('/auth/login', [AuthController::class, 'login']);
 Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
 Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
@@ -115,7 +118,7 @@ Route::resource('solicitud', solicitudController::class)->parameters(['solicitud
 Route::get('/productos-por-sucursal/{id_sucursal}', [trasladoController::class, 'obtenerProductos']);
 Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' => 'bitacora']);
 
-
+Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.image');
 
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);

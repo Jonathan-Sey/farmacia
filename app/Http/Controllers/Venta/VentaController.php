@@ -84,6 +84,7 @@ class VentaController extends Controller
             ->map(function($almacen) {
                 return [
                     'id' => $almacen->producto->id,
+                    'imagen' => asset('uploads/' . $almacen->producto->imagen),
                     'nombre' => $almacen->producto->nombre,
                     'precio_venta' => $almacen->producto->precio_venta,
                     'tipo' => $almacen->producto->tipo,
@@ -137,7 +138,7 @@ class VentaController extends Controller
             'fecha_venta' => $request->fecha_venta,
             'impuesto' => $impuesto,
             'total' => $request->total,
-            'id_usuario' => 1, // Usar el usuario actual o el correcto
+            'id_usuario' => $request->idUsuario, // Usar el usuario actual o el correcto
             'id_persona' => $request->id_persona,
             'estado' => 1,
         ]);
