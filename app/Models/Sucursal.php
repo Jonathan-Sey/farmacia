@@ -10,6 +10,7 @@ class Sucursal extends Model
     use HasFactory;
     protected $table = 'sucursal';
     protected $fillable = [
+        'imagen',
         'nombre',
         'ubicacion',
         'telefono',

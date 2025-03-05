@@ -18,9 +18,9 @@
         <x-slot name="thead">
             <thead class="text-white font-bold">
                 <tr class="bg-slate-600">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Id</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nombre</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Ubicación</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Imagen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Telefono</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Correo electronico</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Actualizado</th>
@@ -34,9 +34,15 @@
             <tbody>
                 @foreach ($sucursales as $sucursal)
                 <tr>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->nombre }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->ubicacion }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if ($sucursal->imagen)
+                            <img src="{{ asset('uploads/' . $sucursal->imagen) }}" alt="{{ $sucursal->nombre }}" class="w-16 h-16 object-cover rounded">
+                        @else
+                            <span class="text-gray-500">Sin imagen</span>
+                        @endif
+                    </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->telefono }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->email }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $sucursal->updated_at }}</td>
@@ -72,7 +78,6 @@
     </x-data-table>
 @endsection
 
-@push('js')
 @push('js')
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

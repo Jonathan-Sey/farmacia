@@ -22,7 +22,7 @@ class AlmacenController extends Controller
     public function index()
     {
         //$traslados = Traslado::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
-        $almacenes = Almacen::with('producto:id,codigo,nombre,tipo')
+        $almacenes = Almacen::with('producto:id,codigo,nombre,tipo,imagen')
         ->where('estado', '!=', 0)
         ->get();
         //return($almacenes);
@@ -223,8 +223,8 @@ class AlmacenController extends Controller
     {
         $almacen = Almacen::findOrFail($id);
         $productos = Producto::activos()->where('tipo', 2)->get();
-        $sucursales = Sucursal::activos()->get();  
-    
+        $sucursales = Sucursal::activos()->get();
+
         return view('almacen.alertStock', compact('almacen', 'productos', 'sucursales'));
     }
 
@@ -235,7 +235,7 @@ class AlmacenController extends Controller
             'alerta_stock' => ['required', 'numeric', 'min:1'],
         ]);
         $almacen = Almacen::findOrFail($id);
-        
+
         // Actualizar el campo alerta_stock
         $almacen->alerta_stock = $request->input('alerta_stock');
         $almacen->save();
@@ -243,8 +243,8 @@ class AlmacenController extends Controller
         return redirect()->route('almacenes.index')->with('success', '¡Alerta de stock actualizada!');
     }
 
-    
-    
+
+
 
 
 }

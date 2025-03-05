@@ -3,6 +3,91 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+@endpush
+@push('js')
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script>
+    Dropzone.autoDiscover = false;
+
+    const dropzone = new Dropzone("#dropzone", {
+        url: "{{ route('upload.image') }}",
+        dictDefaultMessage: "Arrastra y suelta una imagen o haz clic aquí para subirla",
+        acceptedFiles: ".png,.jpg,.jpeg",
+        addRemoveLinks: true,
+        dictRemoveFile: "Borrar imagen",
+        maxFiles: 1,
+        uploadMultiple: false,
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        }
+    });
+
+    //validamos nuevamente que no se exeda de una imagen
+    dropzone.on("addedfile", function(file) {
+        if (this.files.length > 1) {
+            this.removeFile(this.files[0]); // Elimina el primer archivo
+                Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir una imagen.',
+                confirmButtonText: 'Aceptar',
+            });
+        }
+    });
+
+    dropzone.on("sending", function(file, xhr, formData) {
+        if (this.files.length > 1) { // Si hay más de un archivo
+            this.removeFile(file); // Elimina el archivo adicional
+            Swal.fire({
+                icon: 'error', // Tipo de ícono (error, success, warning, info, etc.)
+                title: 'Error', // Título de la alerta
+                text: 'Solo se permite subir una imagen.', // Mensaje de la alerta
+                confirmButtonText: 'Aceptar', // Texto del botón
+            });
+            return false; // Detiene la subida del archivo
+        }
+    });
+
+    dropzone.on("success", function(file, response) {
+        console.log("Archivo subido correctamente:", response.imagen);
+        document.querySelector('[name="imagen"]').value = response.imagen;
+    });
+
+    // Limpiar el campo oculto si se elimina la imagen
+    dropzone.on("removedfile", function(file) {
+        document.querySelector('[name="imagen"]').value = "";
+    });
+
+       // precargar la imagen subida nuevamente
+       document.addEventListener("DOMContentLoaded", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+
+        if (imagenNombre) {
+            const mockFile = { name: imagenNombre, size: 12345 }; // Simula un archivo
+            dropzone.emit("addedfile", mockFile);
+            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre); // cargar imagen
+            dropzone.emit("complete", mockFile);
+            }
+        });
+
+           //eliminar la imagen del server
+           window.addEventListener("beforeunload", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+
+        if (imagenNombre) {
+            fetch("/eliminar-imagen-temp", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                        body: JSON.stringify({ imagen: imagenNombre }),
+                    });
+                }
+            });
+</script>
+
 
 @endpush
 
@@ -46,6 +131,19 @@
                             />
                         </div>
                     </div>
+                </div>
+
+                <div class="mt-2 mb-5">
+                    <label class="uppercase block text-sm font-medium text-gray-900">Imagen del producto</label>
+                    <div id="dropzone" class="dropzone border-2 border-dashed rounded w-full h-60">
+                        <input type="hidden" name="imagen" value="{{ old('imagen', $producto->imagen)}}" >
+
+                    </div>
+                    @error('imagen')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message }}</span>
+                            </div>
+                    @enderror
                 </div>
                 {{-- <div class="mt-2 mb-5">
                     <label for="codigo" class="uppercase block text-sm font-medium text-gray-900">Codigo</label>
