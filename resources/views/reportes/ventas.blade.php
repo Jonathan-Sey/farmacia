@@ -17,7 +17,7 @@
                     </div>
             </div>
         </a>
-        <a href="{{ route('sucursales.index') }}">
+        <a href="{{ route('Reporte_ventas.filtrarPorSucursal') }}">
             <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2  sm:p-3 ">
                     <div class="flex flex-col items-center">
                         <i class='bx bxs-building text-7xl lg:text-6xl  sm:text-6xl' ></i>
@@ -28,10 +28,10 @@
                     </div>
             </div>
         </a>
-        <a href="{{ route('compras.index') }}">
+        <a href="{{ route('Reporte_ventas.filtrarPorUsuario') }}">
             <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2  sm:p-3 ">
                     <div class="flex flex-col items-center">
-                        <i class='fa-solid fa-cart-shopping text-7xl lg:text-6xl sm:text-6xl' ></i>
+                        <i class='fa-solid bx bxs-user text-7xl lg:text-6xl sm:text-6xl' ></i>
                         <p class="uppercase text-lg font-bold">reporte por usuario </p>
                     </div>
                     <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
