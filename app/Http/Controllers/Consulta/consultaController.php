@@ -10,7 +10,7 @@ use App\Models\Persona;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class consultaController extends Controller
+class ConsultaController extends Controller
 {
 
 
@@ -57,12 +57,12 @@ class consultaController extends Controller
      */
     public function create()
     {
-        $personas = Persona::all();
-        $medicos = DetalleMedico::with('usuario')->get();
-        //return $medicos;
-        return view('consulta.create',compact('personas','medicos'));
-
+        $personas = Persona::all(); // Cargar los pacientes
+        $medicos = DetalleMedico::with('usuario')->get(); // Cargar los médicos
+        return view('consulta.create', compact('personas', 'medicos'));
     }
+
+
 
     /**
      * Store a newly created resource in storage.

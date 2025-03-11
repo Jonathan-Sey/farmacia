@@ -10,7 +10,7 @@ use App\Http\Controllers\Sucursal\SucursalController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\bitacora\bitacoraController;
 use App\Http\Controllers\Usuario\UsuarioController;
-use App\Http\Controllers\Consulta\consultaController;
+use App\Http\Controllers\Consulta\ConsultaController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\Inventario\InventarioController;
@@ -21,6 +21,7 @@ use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
 //use App\Http\Controllers\Traslado\TrasladoController;
 use App\Http\Controllers\solicitud\solicitudController;
+use App\Http\Controllers\FichaMedicaController;
 
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
@@ -67,8 +68,8 @@ Route::post('/producto/{id}/cambiar-estado', [ProductoController::class, 'cambia
 Route::post('/almacen/{id}/cambiar-estado', [AlmacenController::class, 'cambiarEstado']);
 Route::post('/persona/{id}/cambiar-estado', [PersonaController::class, 'cambiarEstado']);
 Route::post('/medico/{id}/cambiar-estado', [MedicoController::class, 'cambiarEstado']);
-Route::post('/consulta/{id}/cambiar-estado', [consultaController::class, 'cambiarEstado']);
-Route::post('/traslado/{id}/cambiar-estado', [trasladoController::class, 'cambiarEstado']);
+Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
+Route::post('/consultas/{consulta}/cambiar-estado', [ConsultaController::class, 'cambiarEstado'])->name('consultas.cambiarEstado');
 
 
 //Route::post('/login', [AuthController::class, 'login'])->name('auth.login');

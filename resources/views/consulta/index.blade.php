@@ -38,7 +38,7 @@
                 @foreach ($consultas as $consulta)
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$consulta->id}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$consulta->persona->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$consulta->paciente->nombre}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$consulta->asunto}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$consulta->medico->usuario->name}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$consulta->fecha_consulta}}</td>
