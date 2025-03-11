@@ -3,13 +3,23 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
 
+    .error-message {
+        color: red;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+</style>
 @endpush
 
 @section('contenido')
 <div class="flex justify-center items-center mx-3 ">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-7xl mb-10 ">
-        <form action="{{ route('ventas.store') }}" method="POST" >
+        <!-- Open the modal using ID.showModal() method -->
+
+        <form id="formVenta" action="{{ route('ventas.store') }}" method="POST" >
             @csrf
 
             <div id="usuario"></div>
@@ -134,9 +144,6 @@
                         </div>
 
                         <div class="mt-2 mb-5">
-
-
-                            <!-- Open the modal using ID.showModal() method -->
                             <button type="button" class="btn" onclick="my_modal_1.showModal()">+</button>
 
                             <label for="id_persona" class="uppercase block text-sm font-medium text-gray-900">Persona</label>
@@ -145,10 +152,10 @@
                                 name="id_persona"
                                 id="id_persona"
                                 required>
-                                <option value="">Seleccionar una sucursal</option>
+                                <option value="">Seleccionar persona </option>
                                 @foreach ($personas as $persona)
                                     <option value="{{ $persona->id }}" {{ old('id_persona') == $persona->id ? 'selected' : '' }}>
-                                        {{ $persona->nombre }}
+                                        {{$persona->nit}}
                                     </option>
                                 @endforeach
                             </select>
@@ -251,7 +258,6 @@
                 <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
             </div>
         </form>
-
            <!-- Modal para registrar una nueva persona -->
             <dialog id="my_modal_1" class="modal">
                 <div class="modal-box">
@@ -263,29 +269,39 @@
                                 <span class="label-text">Nombre</span>
                             </label>
                             <input type="text" name="nombre" id="nombre" class="input input-bordered" required>
+                            @error('nombre')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message}}</span>
+                            </div>
+                            @enderror
                         </div>
                         <div class="form-control">
                             <label class="label" for="nit">
                                 <span class="label-text">NIT</span>
                             </label>
                             <input type="text" name="nit" id="nit" class="input input-bordered" required>
+                            @error('nit')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message}}</span>
+                            </div>
+
+                            @enderror
                             <label class="label" for="rol">
                                 <span class="label-text">Rol</span>
                             </label>
                             <select name="rol" id="rol" class="input input-bordered" required>
-                                <option value="1">Cliente</option>
-                                <option value="2">Paciente</option>
+                                <option value="1" {{ old('rol') == 1 ? 'selected' : '' }}>Cliente</option>
+                                <option value="2" {{ old('rol') == 2 ? 'selected' : '' }}>Paciente</option>
                             </select>
+
                         </div>
-                        <input type="hidden" name="rol" value="1"> <!-- Rol 1 para cliente -->
                         <div class="modal-action">
                             <button type="button" onclick="my_modal_1.close()" class="btn">Cancelar</button>
-                            <button type="submit" class="btn btn-primary">Guardar</button>
+                            <button type="submit" onclick="guardarPersona()" class="btn btn-primary">Guardar</button>
                         </div>
                     </form>
                 </div>
             </dialog>
-
     </div>
 </div>
 
@@ -309,12 +325,10 @@
         document.querySelector('.select2-search__field').focus();
         });
     });
-
-
     </script>
 
 
-    <script>
+    {{-- <script>
         $('form').on('submit', function(event) {
             event.preventDefault(); // Evitar que el formulario se envíe automáticamente
 
@@ -338,7 +352,7 @@
                 }
             });
         });
-    </script>
+    </script> --}}
 
     <script>
         $(document).ready(function(){
@@ -785,63 +799,111 @@ function editarProducto(index) {
         </script>
 
 <script>
-  document.getElementById('formPersona').addEventListener('submit', function (e) {
-    e.preventDefault(); // Evitar el envío tradicional del formulario
+document.addEventListener('DOMContentLoaded', function () {
 
-    const formData = new FormData(this);
+       // Manejar el envío del formulario de venta
+       document.getElementById('formVenta').addEventListener('submit', function (e) {
+        e.preventDefault(); // Evitar que el formulario se envíe automáticamente
 
-    fetch(this.action, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-            'Accept': 'application/json',
-        },
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { throw err; });
-        }
-        return response.json();
-    })
-    .then(data => {
-        if (data.success) {
-            // Cerrar el modal
-            my_modal_1.close();
+        // Generar el resumen de la venta
+        let resumen = generarResumenVenta();
 
-            // Actualizar el select de personas
-            const selectPersona = document.getElementById('id_persona');
-            const newOption = new Option(data.persona.nombre, data.persona.id, true, true);
-            selectPersona.appendChild(newOption);
-
-            // Mostrar mensaje de éxito
-            Swal.fire({
-                icon: 'success',
-                title: 'Persona registrada',
-                text: 'La persona se ha registrado correctamente.',
-            });
-        }
-    })
-    .catch(error => {
-        if (error.errors) {
-            // Mostrar errores de validación
-            let errorMessages = '';
-            for (let field in error.errors) {
-                errorMessages += error.errors[field].join('<br>') + '<br>';
+        // Mostrar el resumen y pedir confirmación
+        Swal.fire({
+            title: 'Confirmar Venta',
+            html: resumen,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonText: 'Guardar Venta',
+            cancelButtonText: 'Cancelar',
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Si el usuario confirma, enviar el formulario
+                this.submit();
             }
-            Swal.fire({
-                icon: 'error',
-                title: 'Error de validación',
-                html: errorMessages,
-            });
-        } else {
-            // Mostrar mensaje de error genérico
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Ocurrió un error al registrar la persona.',
-            });
-        }
+        });
+    });
+
+
+    document.getElementById('formPersona').addEventListener('submit', function (e) {
+        e.preventDefault(); // Evitar el envío tradicional del formulario
+        e.stopPropagation();
+
+        const formData = new FormData(this);
+        // Depuración: Verifica el valor de "rol"
+        console.log('Valor de rol:', formData.get('rol'));
+
+
+        fetch(this.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                'Accept': 'application/json',
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // Cerrar el modal
+                my_modal_1.close();
+
+                 // Limpiar los campos del formulario
+                document.getElementById('nombre').value = '';
+                document.getElementById('nit').value = '';
+                document.getElementById('rol').value = '1';
+
+       // Actualizar el select de personas
+       const selectPersona = document.getElementById('id_persona');
+        selectPersona.innerHTML = '<option value="">Seleccionar una persona</option>';
+
+        data.personas.forEach(persona => {
+            const newOption = new Option(persona.nit, persona.id, false, false);
+            selectPersona.appendChild(newOption);
+        });
+
+             // Seleccionar automáticamente la persona recién creada
+             selectPersona.value = data.persona.id;
+
+        $(selectPersona).trigger('change');
+                // Mostrar mensaje de éxito
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Persona registrada',
+                    text: 'La persona se ha registrado correctamente.',
+                });
+            }
+        })
+        .catch(error => {
+            if (error.errors) {
+                // Limpiar errores anteriores
+                document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+                for (let field in error.errors) {
+                    const inputField = document.querySelector(`[name="${field}"]`);
+                    if (inputField) {
+                        const errorMessage = document.createElement('div');
+                        errorMessage.className = 'error-message text-red-500 text-sm mt-1';
+                        errorMessage.innerHTML = error.errors[field].join('<br>');
+                        inputField.parentNode.insertBefore(errorMessage, inputField.nextSibling);
+                    }
+                }
+            } else {
+                // Mostrar mensaje de error genérico
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Ocurrió un error al registrar la persona.',
+                });
+            }
+        });
     });
 });
      </script>
