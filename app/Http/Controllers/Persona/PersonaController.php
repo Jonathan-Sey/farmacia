@@ -37,12 +37,11 @@ class PersonaController extends Controller
     protected function crearPersona(Request $request)
     {
         $this->validate($request, [
-            'nombre' => 'required|string|max:45',
-            'nit' => 'max:10',
+            'nombre' => 'required|string|max:45|unique:persona,nombre',
+            'nit' => 'max:10|unique:persona,nit',
             'telefono' => 'max:20',
         ]);
-
-        $rol = $request->has('rol') ? 2 : 1; // Rol 1 para cliente, 2 para paciente
+        $rol = $request->input('rol') == 2 ? 2 : 1;  // Rol 1 para cliente, 2 para paciente
 
         return Persona::create([
             'nombre' => $request->nombre,
@@ -103,14 +102,19 @@ class PersonaController extends Controller
     }
     public function storeFromVentas(Request $request)
     {
+
         $persona = $this->crearPersona($request);
+            // Obtener la lista actualizada de personas
+         $personas = Persona::where('estado', '!=', '0')->get();
 
         return response()->json([
             'success' => true,
             'persona' => [
                 'id' => $persona->id,
                 'nombre' => $persona->nombre,
+                'rol' => $persona->rol,
             ],
+            'personas' => $personas,
         ]);
     }
 
