@@ -194,20 +194,7 @@
                     </div>
                     @enderror
                 </div>
-
-                <div class="mt-2 mb-5">
-                    <label for="porcentaje" class="uppercase block text-sm font-medium text-gray-900">Porcentaje de aumento (%)</label>
-                    <input
-                        type="number"
-                        id="porcentaje"
-                        placeholder="Ejemplo: 10 para 10%"
-                        min="0"
-                        step="any"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
-                </div>
-{{--
-
-                <div class="mt-2">
+            {{--<div class="mt-2">
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
                     <textarea name="descripcion"
                     require
@@ -220,12 +207,6 @@
                     </div>
                     @enderror
                 </div>
-
-
-
-
-
-
                 <div class="mt-2 mb-5">
                     <label for="fecha_caducidad" class="uppercase block text-sm font-medium text-gray-900">Fecha de Vencimiento</label>
                     <input
@@ -235,7 +216,6 @@
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('fecha_caducidad') }}">
                 </div> --}}
-
                 <div class="mt-2">
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
                     <textarea name="descripcion"
@@ -260,54 +240,5 @@
 </div>
 
 <script src="/js/obtenerUsuario.js"></script>
-<script>
-
-let precioBase = 0; // almacena el precio original
-
-// Función para desformatear el valor ingresado (para cálculos)
-function desformatearMoneda(valor) {
-  return parseFloat(valor.replace(/[^\d.-]/g, '')) || 0;
- }
-
-// Función para formatear el número como moneda
- function formatearMoneda(valor) {
-     return valor.toFixed(2); // Deja solo dos decimales
- }
-
-// Evento para actualizar el precio mientras se escribe el valor en "precio_venta"
-document.getElementById('precio_venta').addEventListener('input', function() {
-    let precioIngresado = desformatearMoneda(document.getElementById('precio_venta').value);
-    precioBase = precioIngresado;
-    document.getElementById('precio_venta').value = precioIngresado; // Mantenemos el valor tal cual lo escribe el usuario
-    calcularPrecioFinal(); // Llamamos la función de cálculo después de cambiar el precio
-});
-
-// Evento para actualizar el precio cuando se pierda el foco del campo
-document.getElementById('precio_venta').addEventListener('blur', function() {
-    let precioIngresado = desformatearMoneda(document.getElementById('precio_venta').value);
-    document.getElementById('precio_venta').value = formatearMoneda(precioIngresado); // Formateamos el valor a dos decimales
-    calcularPrecioFinal(); // Llamamos la función de cálculo después de que el campo pierde el foco
-});
-
-// Evento para actualizar el precio al modificar el porcentaje
-document.getElementById('porcentaje').addEventListener('input', function() {
-    calcularPrecioFinal(); // Llamamos a la función de cálculo al cambiar el porcentaje
-});
-
-function calcularPrecioFinal() {
-    let precioBaseActual = precioBase;
-    let porcentaje = parseFloat(document.getElementById('porcentaje').value) || 0;
-
-    // Si el porcentaje es 0, mostramos solo el precio base
-    if (porcentaje === 0) {
-        document.getElementById('precio_venta').value = formatearMoneda(precioBaseActual);
-    } else {
-        // Calculamos el precio con el porcentaje y lo mostramos
-        let precioFinal = precioBaseActual + (precioBaseActual * (porcentaje / 100));
-        document.getElementById('precio_venta').value = formatearMoneda(precioFinal);
-    }
-}
-
-</script>
 
 @endsection

@@ -95,6 +95,7 @@ Route::resource('compras', CompraController::class)->parameters(['compras' => 'c
 Route::resource('ventas', VentaController::class)->parameters(['ventas' => 'venta']);
 Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' => 'almacen']);
 Route::get('/almacenes/{id}/cambiar-alerta', [AlmacenController::class, 'alertStock'])->name('almacenes.alertStock');
+Route::get('/productos/{id}/precio-porcentaje', [ProductoController::class, 'precioPorcentaje'])->name('productos.precio');
 Route::patch('/almacen/{id}/alerta-stock', [AlmacenController::class, 'updateAlertStock'])->name('almacenes.updateAlertStock');
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);

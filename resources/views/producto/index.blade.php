@@ -89,6 +89,11 @@
                                 <i class="fas fa-edit"></i>
                             </button>
                         </form>
+                       {{-- Formulario para ir a la página de edición de porcentaje --}}
+                        <form action="{{ route('productos.precio', $producto->id) }}" method="GET">
+                            @csrf
+                            <button type="submit" class="bg-indigo-600 text-white">Modificar Precio</button>
+                        </form>
 
                           {{-- Botón Cambiar estado --}}
                           <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $producto->id }}" data-estado="{{ $producto->estado }}" data-info="{{ $producto->nombre }}">
