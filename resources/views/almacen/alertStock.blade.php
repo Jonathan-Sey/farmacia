@@ -54,29 +54,5 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="js/obtenerUsuario.js"></script>
-
-    <script>
-        // limitar la fecha a datos actuales
-        document.addEventListener('DOMContentLoaded', function(){
-            var DatoActual = new Date().toISOString().split('T')[0];
-            document.getElementById('fecha_caducidad').setAttribute('min', DatoActual);
-
-        });
-        // fin fecha
-
-        //uso del select2
-        $(document).ready(function(){
-            $('.select2').select2({
-                width: '100%',
-                placeholder: "Buscar",
-                allowClear: true
-            });
-        });
-        // pocicionar el cursor en el input para buscar producto
-        $('.select2').on('select2:open', function() {
-        document.querySelector('.select2-search__field').focus();
-        });
-    </script>
-
 @endpush
 
