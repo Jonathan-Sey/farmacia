@@ -219,4 +219,16 @@ class ProductoController extends Controller
 
         return response()->json(['success' => false]);
     }
+
+    public function precioPorcentaje($id)
+    {
+        $producto = Producto::find($id);
+    
+        if (!$producto) {
+            abort(404, 'Producto no encontrado');
+        }
+    
+        return view('producto.precio', compact('producto'));
+    }
+    
 }
