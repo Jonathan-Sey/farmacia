@@ -111,6 +111,26 @@
                                 </div>
                                 @enderror
                             </div>
+                            {{-- porcentaje --}}
+                            <div class="mt-2 mb-5">
+                                <label for="porcentaje" class="uppercase block text-sm font-medium text-gray-900">Porcentaje</label>
+                                <input
+                                    type="number"
+                                    name="porcentaje"
+                                    id="porcentaje"
+                                    min="1"
+                                    disabled
+                                    autocomplete="given-name"
+                                    placeholder="Precio del producto con porcentaje"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    value="{{ old('precio') }}">
+
+                                @error('precio')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
                         </div>
 
 
@@ -326,34 +346,6 @@
         });
     });
     </script>
-
-
-    {{-- <script>
-        $('form').on('submit', function(event) {
-            event.preventDefault(); // Evitar que el formulario se envíe automáticamente
-
-            // Generar el resumen de la venta
-            let resumen = generarResumenVenta();
-
-            // Mostrar el resumen y pedir confirmación
-            Swal.fire({
-                title: 'Confirmar Venta',
-                html: resumen,
-                icon: 'info',
-                showCancelButton: true,
-                confirmButtonText: 'Guardar Venta',
-                cancelButtonText: 'Cancelar',
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Si el usuario confirma, enviar el formulario
-                    this.submit();
-                }
-            });
-        });
-    </script> --}}
-
     <script>
         $(document).ready(function(){
             // Escuchar el cambio en el select de sucursal
