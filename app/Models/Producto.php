@@ -15,6 +15,7 @@ class Producto extends Model
         'imagen',
         'descripcion',
         'precio_venta',
+        'precio_porcentaje',
         'fecha_caducidad',
         'id_categoria',
         'tipo',
