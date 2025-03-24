@@ -9,13 +9,13 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
-        <form action="{{ route('productos.precio', $producto->id) }}" method="POST">
+        <form action="{{ route('productos.actualizarprecio', $producto->id) }}" method="POST">
             @csrf
             @method('PATCH')
             <div class="border-b border-gray-900/10 pb-12">
                 <div id="producto">
                     <p>Producto: {{ $producto->nombre }}</p>
-                    <p>Precio Actual: <span id="precio_actual">{{ $producto->precio_venta }}</span></p>
+                    <p>Precio Actual: <span id="precio_actual">{{ $producto->precio_porcentaje }}</span></p>
                 </div>
                 <!-- Nuevos campos para el precio -->
                 <div class="mt-2 mb-5">
@@ -28,6 +28,7 @@
                         placeholder="Ingrese el porcentaje"
                         value="{{ old('porcentaje') }}"
                         min="0"
+                        step="0.01"
                     />
                 </div>
 
@@ -39,7 +40,7 @@
                         id="nuevo_precio"
                         readonly
                         class="block w-full rounded-md bg-gray-100 px-3 py-1.5 text-base text-gray-900 outline-none"
-                        value="{{ old('nuevo_precio', $producto->precio_venta) }}"
+                        value="{{ old('nuevo_precio', $producto->precio_porcentaje) }}"
                     />
                 </div>
             </div>
@@ -60,12 +61,12 @@
 <script>
     // Script para calcular el nuevo precio en base al porcentaje
     document.getElementById('porcentaje').addEventListener('input', function() {
-        var precioActual = parseFloat(document.getElementById('precio_actual').textContent);
-        var porcentaje = parseFloat(this.value);
+        let precioActual = parseFloat(document.getElementById('precio_actual').textContent);
+        let porcentaje = parseFloat(this.value);
 
         // Verificamos si el porcentaje es válido y calculamos el nuevo precio
         if (!isNaN(porcentaje)) {
-            var nuevoPrecio = precioActual + (precioActual * porcentaje / 100);
+            let nuevoPrecio = precioActual + (precioActual * porcentaje / 100);
             document.getElementById('nuevo_precio').value = nuevoPrecio.toFixed(2); // Mostrar con 2 decimales
         } else {
             document.getElementById('nuevo_precio').value = precioActual.toFixed(2); // En caso de que no haya porcentaje

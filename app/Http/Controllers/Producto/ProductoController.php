@@ -20,7 +20,7 @@ class ProductoController extends Controller
     {
 
         $productos = Producto::with('categoria:id,nombre')
-        ->select('id','codigo','nombre','tipo','precio_venta','imagen','estado','id_categoria','fecha_caducidad','updated_at')
+        ->select('id','codigo','nombre','tipo','precio_venta','precio_porcentaje','imagen','estado','id_categoria','fecha_caducidad','updated_at')
         ->where('estado', '!=', 0)
         ->get();
         //return $productos;
@@ -75,6 +75,7 @@ class ProductoController extends Controller
             'imagen' => $imagenNombre,
             'descripcion' => $request->descripcion,
             'precio_venta' => $request->precio_venta,
+            'precio_porcentaje' => $request->precio_venta,
             'fecha_caducidad' => $request->fecha_caducidad,
             'id_categoria' => $request->id_categoria,
             'estado' => 1,
@@ -137,12 +138,12 @@ class ProductoController extends Controller
             'nombre'=>['required','string','max:50'],
             'imagen' => 'nullable',
             'descripcion'=>['required','string','max:100'],
-            'precio_venta'=>'numeric|required|min:0',
+            'precio_porcentaje'=>'numeric|required|min:0',
             //'fecha_caducidad'=>'required|date',
             'estado'=>'integer',
         ]);
 
-        $datosActualizados = $request->only(['id_categoria','nombre','descripcion','precio_venta','tipo','fecha_caducidad']);
+        $datosActualizados = $request->only(['id_categoria','nombre','descripcion','precio_porcentaje','tipo','fecha_caducidad']);
 
 
         //validando el tipo de producto
@@ -167,7 +168,7 @@ class ProductoController extends Controller
          // Actualizar el rol
          $datosActualizados['tipo'] = $nuevotipo;
 
-         $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_venta','tipo','fecha_caducidad', 'imagen']);
+         $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_porcentaje','tipo','fecha_caducidad', 'imagen']);
 
          if ($datosActualizados != $datosSinCambios){
             $producto->update($datosActualizados);
@@ -230,5 +231,33 @@ class ProductoController extends Controller
     
         return view('producto.precio', compact('producto'));
     }
+
+    public function actualizarPrecioPorcentaje(Request $request, $id)
+    {
+        $this->validate($request, [
+            'nuevo_precio' => 'required|numeric|min:0'
+        ]);
+
+        $producto = Producto::find($id);
+
+        if (!$producto) {
+            return redirect()->route('productos.index')->with('error', 'Producto no encontrado');
+        }
+
+        $producto->update(['precio_porcentaje' => $request->nuevo_precio]);
+        /*
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+            'id_usuario' => $request->idUsuario,
+            'name_usuario' =>$usuario->name,
+            'accion' => 'Actualización',
+            'tabla_afectada' => 'Productos',
+            'detalles' => "Se actualizó el campo precio_porcentaje del producto: {$producto->nombre}",
+            'fecha_hora' => now(),
+        ]);*/
+
+        return redirect()->route('productos.index')->with('success', '¡Precio porcentaje actualizado exitosamente!');
+    }
+
     
 }
