@@ -20,6 +20,7 @@ class CreateProductosTable extends Migration
             $table->string('imagen');
             $table->text('descripcion')->nullable();
             $table->decimal('precio_venta',10,2);
+            $table->decimal('precio_porcentaje',10,2);
             $table->tinyInteger('tipo')->default(1);
             $table->date('fecha_caducidad')->nullable();
             $table->foreignId('id_categoria')->constrained('categoria');
