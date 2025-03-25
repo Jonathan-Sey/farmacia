@@ -81,6 +81,7 @@ Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
 Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 //Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+Route::get('/productos/historico', [ProductoController::class, 'verHistorico'])->name('historico.precios');
 Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuario']);
 Route::post('/usuarios/register', [UsuarioController::class, 'register'])->name('usuarios.register');
 Route::patch('/usuarios/{usuario}/actualizar-estado',[UsuarioController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');

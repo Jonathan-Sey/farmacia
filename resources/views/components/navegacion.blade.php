@@ -95,6 +95,13 @@
                         <span class="text-sm font-medium">Bitácora</span>
                     </a>
                 </li>
+                <li data-pestana="Historico" style="display:none;">
+                    <a href="{{ route('historico.precios') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book"></i>
+                        </span>
+                        <span class="text-sm font-medium">HistoricoPrecios</span>
+                    </a>
+                </li
                 <li data-pestana="Categorias" style="display:none;">
                     <a href="{{ route('categorias.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-category"></i></span>
@@ -184,6 +191,9 @@
             </li>
             <li data-pestanal="bitacora" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book-medical"></i> Bitacora</a>
+            </li>
+            <li data-pestanal="Historico" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
+                <a href="{{ route('historico.precios') }}"><i class="fa-solid fa-book-medical"></i> HistoricoPrecios</a>
             </li>
             <li data-pestanal="Categorias" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('categorias.index') }}"><i class="bx bx-category"></i> Categorias</a>
