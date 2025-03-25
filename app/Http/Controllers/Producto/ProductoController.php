@@ -243,7 +243,7 @@ class ProductoController extends Controller
         if (!$producto) {
             return redirect()->route('productos.index')->with('error', 'Producto no encontrado');
         }
-
+        $producto->update(['precio_venta' => $producto->precio_porcentaje]);
         $producto->update(['precio_porcentaje' => $request->nuevo_precio]);
         /*
         $usuario=User::find($request->idUsuario);
