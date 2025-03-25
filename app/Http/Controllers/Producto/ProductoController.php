@@ -7,6 +7,7 @@ use App\Models\Bitacora;
 use App\Models\Categoria;
 use App\Models\Producto;
 use App\Models\User;
+use App\Models\HistoricoPrecio;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -234,6 +235,7 @@ class ProductoController extends Controller
 
     public function actualizarPrecioPorcentaje(Request $request, $id)
     {
+        //verifica que venga el nuevo dato cambiado
         $this->validate($request, [
             'nuevo_precio' => 'required|numeric|min:0'
         ]);
@@ -243,7 +245,16 @@ class ProductoController extends Controller
         if (!$producto) {
             return redirect()->route('productos.index')->with('error', 'Producto no encontrado');
         }
+         // Guardar en historial antes de cambiar el precio en la tabla de historico_precio.
+        HistoricoPrecio::create([
+            'id_producto' => $producto->id,
+            'precio_anterior' => $producto->precio_porcentaje,
+            'precio_nuevo' => $request->nuevo_precio,
+            'fecha_cambio' => now(),
+        ]);
+        //actualiza el campo de precio anterior en el index de producto con lo que tenia el campo de nuevo_precio.
         $producto->update(['precio_venta' => $producto->precio_porcentaje]);
+        //actualiza el campo de nuevo_precio con el nuevo precio generado.
         $producto->update(['precio_porcentaje' => $request->nuevo_precio]);
         /*
         $usuario=User::find($request->idUsuario);
@@ -258,6 +269,11 @@ class ProductoController extends Controller
 
         return redirect()->route('productos.index')->with('success', '¡Precio porcentaje actualizado exitosamente!');
     }
+    //Manda a la vista de historico para mostrar los datos y envia datos.
+    public function verHistorico()
+    {
+        $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')->get();
 
-    
+        return view('producto.historico', compact('historico'));
+    }
 }
