@@ -26,7 +26,11 @@ class Producto extends Model
     {
        return $query->whereNotIn('estado', [0, 2]);
     }
-
+    //relacion a la tabla del historico de precios.
+    public function historicoPrecios()
+    {
+        return $this->hasMany(HistoricoPrecio::class, 'id_producto');
+    }
     public function categoria()
     {
         return $this->belongsTo(Categoria::class,'id_categoria');
