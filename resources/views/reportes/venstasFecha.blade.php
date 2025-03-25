@@ -107,12 +107,15 @@
                 <thead class="text-white font-bold">
                     <tr class="bg-slate-600">
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Código</th>
-                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">Sucursal</th>
-                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">fecha</th>
+                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">producto</th>
+                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">cantidad</th>
+                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">precio</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">impuesto</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">total</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">usuario</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">persona</th>
+                        <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">fecha</th>
+                        
 
                     </tr>
                 </thead>
@@ -158,12 +161,14 @@
         const rows = data.map(venta => `
             <tr>
                 <td class="px-6 py-3">${venta.venta_id}</td>
-                <td class="px-6 py-3">${venta.nombre_sucursal || 'N/A'}</td>
-                <td class="px-6 py-3">${venta.fecha_venta}</td>
+                <td class="px-6 py-3">${venta.nombre_producto || 'N/A'}</td>
+                <td class="px-6 py-3">${venta.cantidad}</td>
+                <td class="px-6 py-3">${venta.precio}</td>
                 <td class="px-6 py-3">${venta.impuesto}</td>
-                <td class="px-6 py-3">${venta.total}</td>
+                <td class="px-6 py-3">${venta.subtotal}</td>
                 <td class="px-6 py-3">${venta.nombre_usuario}</td>
                 <td class="px-6 py-3">${venta.nombre_persona}</td>
+                <td class="px-6 py-3">${venta.fecha_venta}</td>
             </tr>
         `).join('');
 
