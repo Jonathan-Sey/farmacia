@@ -29,7 +29,7 @@
         
         <!-- Sección de la imagen -->
         <div class="w-full md:w-1/2  p-6 hidden md:block">
-            <img src="/Logos/Fuente.jpg" alt="Imagen de inicio de sesión" class="w-full h-[500px] max-w-sm rounded-lg shadow-md">
+            <img src="/Logos/Fuente.webp" alt="Imagen de inicio de sesión" class="w-full h-[500px] max-w-sm rounded-lg shadow-md">
         </div>
     </div>
 </div>
