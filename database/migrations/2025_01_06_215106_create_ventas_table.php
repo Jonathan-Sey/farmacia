@@ -23,6 +23,10 @@ class CreateVentasTable extends Migration
             $table->foreignId('id_consulta')->nullable()->constrained('consulta');
             $table->foreignId('id_persona')->constrained('persona');
             $table->tinyInteger('estado')->default(1);
+            $table->boolean('es_prescrito')->default(false);
+            $table->string('imagen_receta')->nullable();
+            $table->string('numero_reserva')->nullable();
+
             $table->timestamps();
         });
     }

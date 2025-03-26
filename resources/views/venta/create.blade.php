@@ -3,6 +3,7 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 <style>
 
     .error-message {
@@ -11,8 +12,108 @@
         margin-top: 0.25rem;
     }
 
+    /* .select2-container--default .select2-selection--single .select2-selection__rendered {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%; */
+/* } */
+
 </style>
 @endpush
+
+@push('js')
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script>
+    Dropzone.autoDiscover = false;
+    const dropzone = new Dropzone("#dropzone", {
+        url: "{{ route('upload.image') }}",
+        dictDefaultMessage: "Arrastra y suelta una imagen o haz clic aquí para subirla",
+        acceptedFiles: ".png,.jpg,.jpeg",
+        addRemoveLinks: true,
+        dictRemoveFile: "Borrar imagen",
+        maxFiles: 1,
+        uploadMultiple: false,
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        }
+
+    });
+
+    dropzone.on("addedfile", function(file) {
+        if (this.files.length > 1) { // Si hay más de un archivo
+            this.removeFile(this.files[0]); // Elimina el primer archivo
+                Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir una imagen.',
+                confirmButtonText: 'Aceptar',
+            });
+        }
+    });
+
+    dropzone.on("sending", function(file, xhr, formData) {
+        if (this.files.length > 1) { // Si hay más de un archivo
+            this.removeFile(file); // Elimina el archivo adicional
+            Swal.fire({
+                icon: 'error', // Tipo de ícono (error, success, warning, info, etc.)
+                title: 'Error', // Título de la alerta
+                text: 'Solo se permite subir una imagen.', // Mensaje de la alerta
+                confirmButtonText: 'Aceptar', // Texto del botón
+            });
+            return false; // Detiene la subida del archivo
+        }
+    });
+
+    dropzone.on("success", function(file, response) {
+        console.log("Archivo subido correctamente:", response.imagen);
+        document.querySelector('[name="imagen"]').value = response.imagen;
+    });
+
+    dropzone.on("error", function(file, message) {
+        console.error("Error al subir el archivo:", message);
+        alert("Error al subir la imagen: " + message);
+    });
+    // remover la imagen
+     dropzone.on("removedfile", function(file) {
+        document.querySelector('[name="imagen"]').value = ""; // Limpiar el campo oculto
+    });
+
+
+
+
+    // precargar la imagen subida nuevamente
+        document.addEventListener("DOMContentLoaded", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+
+        if (imagenNombre) {
+            const mockFile = { name: imagenNombre, size: 12345 }; // Simula un archivo
+            dropzone.emit("addedfile", mockFile);
+            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre); // cargar imagen
+            dropzone.emit("complete", mockFile);
+        }
+    });
+
+
+        //eliminar la imagen del server
+        window.addEventListener("beforeunload", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+
+        if (imagenNombre) {
+            fetch("/eliminar-imagen-temp", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+    });
+
+</script>
+@endpush
+
 
 @section('contenido')
 <div class="flex justify-center items-center mx-3 ">
@@ -48,7 +149,7 @@
                                      <div id="imagen-producto" class="mt-4 hidden">
                                         <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded">
                                     </div>
-                                </div>
+
                         <div class="mt-2 mb-5">
                             <label for="stock" class="uppercase block text-sm font-medium text-gray-900">Stock disponible</label>
                             <input
@@ -133,7 +234,9 @@
                                 required>
                                 <option value="">Seleccionar una sucursal</option>
                                 @foreach ($sucursales as $sucursal)
-                                    <option value="{{ $sucursal->id }}" {{old('id_sucursal') == $sucursal->id ? 'selected' : ''}}>{{$sucursal->nombre}} - {{$sucursal->ubicacion}}</option>
+                                    <option value="{{ $sucursal->id }}" data-nombre-completo="{{ $sucursal->nombre }}" data-ubicacion-completa="{{ $sucursal->ubicacion }}">
+                                        {{ $sucursal->nombre }} - {{ $sucursal->ubicacion }}
+                                    </option>
                                 @endforeach
                             </select>
                             @error('id_sucursal')
@@ -144,26 +247,50 @@
                         </div>
 
                         <div class="mt-2 mb-5">
-                            <button type="button" class="btn" onclick="my_modal_1.showModal()">+</button>
+                                    <button type="button" class="btn" onclick="my_modal_1.showModal()"><i class="fa-solid fa-user-plus"></i></button>
+                                    <label for="id_persona" class="uppercase block text-sm font-medium text-gray-900">Persona</label>
+                                <select
+                                    class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    name="id_persona"
+                                    id="id_persona"
+                                    required>
+                                    <option value="">Seleccionar persona</option>
+                                    @foreach ($personas as $persona)
+                                        <option value="{{ $persona->id }}" data-nombre-completo="{{ $persona->nit }}">
+                                            {{ $persona->nit }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                    @error('id_persona')
+                                        <div role="alert" class="alert alert-error mt-4 p-2">
+                                            <span class="text-white font-bold">{{ $message }}</span>
+                                        </div>
+                                    @enderror
+                        </div>
 
-                            <label for="id_persona" class="uppercase block text-sm font-medium text-gray-900">Persona</label>
-                            <select
-                                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                name="id_persona"
-                                id="id_persona"
-                                required>
-                                <option value="">Seleccionar persona </option>
-                                @foreach ($personas as $persona)
-                                    <option value="{{ $persona->id }}" {{ old('id_persona') == $persona->id ? 'selected' : '' }}>
-                                        {{$persona->nit}}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('id_persona')
-                                <div role="alert" class="alert alert-error mt-4 p-2">
-                                    <span class="text-white font-bold">{{ $message }}</span>
-                                </div>
-                            @enderror
+                        <!-- formulario para prescripciones -->
+                        <div class="mt-2 mb-5">
+                            <div class="md:flex md:flex-row md:items-center md:gap-3 flex flex-col gap-3 ">
+                                <label class="cursor-pointer label md:flex md:flex-row  flex flex-col gap-2">
+                                    <span class="label-text mr-2">¿Es prescrito?</span>
+                                    <input type="checkbox" name="es_prescrito" id="es_prescrito" class="toggle toggle-primary">
+                                </label>
+
+                                <button type="button" class="btn btn-sm" onclick="my_modal_2.showModal()" id="btn-subir-receta">
+                                    <i class="fa-solid fa-upload"></i> Subir Receta
+                                </button>
+
+                                <!-- id de la imagen-->
+                                <input type="hidden" name="imagen_receta" id="imagen_receta" value="">
+                            </div>
+
+                            <!-- numero de reserva -->
+                            <div id="campo-reserva" class="mt-2 hidden">
+                                <label for="numero_reserva" class="uppercase block text-sm font-medium text-gray-900">Número de Reserva</label>
+                                <input type="text" name="numero_reserva" id="numero_reserva"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    placeholder="Ingrese número de reserva">
+                            </div>
                         </div>
 
                         <div class="lg:grid grid-cols-2 gap-8">
@@ -197,7 +324,7 @@
 
 
                             <div class="mt-2 mb-5">
-                                <label for="fecha_venta" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
+                                <label for="fecha_venta" class="uppercase block text-sm font-medium text-gray-900">Fecha de venta</label>
                                 <input
                                     readonly
                                     type="date"
@@ -217,7 +344,7 @@
 
             {{-- tabla --}}
             <div class="mt-5">
-                <h2 class="text-center m-5 font-bold text-lg">Detalle compra</h2>
+                <h2 class="text-center m-5 font-bold text-lg">Detalle Venta</h2>
                 <div class="overflow-x-auto">
                     <table id="tabla-productos" class="table  table-md table-pin-rows table-pin-cols">
                       <thead>
@@ -302,6 +429,41 @@
                     </form>
                 </div>
             </dialog>
+
+
+              <!-- Modal para prescrito -->
+            <!-- Modal para subir receta médica -->
+            <dialog id="my_modal_2" class="modal">
+                <div class="modal-box w-11/12 max-w-5xl">
+                    <h3 class="font-bold text-lg">Subir Receta Médica</h3>
+                    <form id="formReceta">
+                        @csrf
+                        <div class="form-control">
+                            <label class="label" for="observaciones_receta">
+                                <span class="label-text">Observaciones (Opcional)</span>
+                            </label>
+                            <textarea name="observaciones_receta" id="observaciones_receta" class="textarea textarea-bordered" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-control mt-4">
+                            <label class="uppercase block text-sm font-medium text-gray-900">Imagen de la Receta</label>
+                            <div id="dropzone" class="dropzone border-2 border-dashed rounded w-full h-60 p-4">
+                                <input type="hidden" name="imagen" value="">
+                            </div>
+                            @error('imagen')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                            @enderror
+                        </div>
+
+                        <div class="modal-action">
+                            <button type="button" onclick="my_modal_2.close()" class="btn">Cancelar</button>
+                            <button type="button" onclick="guardarReceta()" class="btn btn-primary">Guardar Receta</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
     </div>
 </div>
 
@@ -318,7 +480,7 @@
             $('.select2-sucursal').select2({
                 width: '100%',
                 placeholder: "Buscar",
-                allowClear: true
+                allowClear: true,
             });
         // pocicionar el cursor en el input para buscar producto
         $('.select2-sucursal').on('select2-sucursal:open', function() {
@@ -353,48 +515,137 @@
             });
         });
     </script> --}}
+    <script>
+            $(document).ready(function() {
+                // Configuración para el select de sucursales
+                $('#id_sucursal').select2({
+                    width: '100%',
+                    placeholder: "Buscar sucursal",
+                    allowClear: true,
+                    templateResult: formatOption,  // Mostrar nombre completo en el dropdown
+                    templateSelection: formatSelection  // Truncar nombre y ubicación en la selección
+                });
+
+                // Configuración para el select de personas
+                $('#id_persona').select2({
+                    width: '100%',
+                    placeholder: "Buscar persona",
+                    allowClear: true,
+                    templateResult: formatOption,  // Mostrar nombre completo en el dropdown
+                    templateSelection: formatSelection  // Truncar nombre en la selección
+                });
+
+                // Función para formatear cómo se muestran los resultados en el dropdown
+                function formatOption(option) {
+                    if (!option.id) {
+                        return option.text;
+                    }
+                    // Mostrar el nombre completo en el dropdown
+                    var nombreCompleto = $(option.element).data('nombre-completo');
+                    var ubicacionCompleta = $(option.element).data('ubicacion-completa') || ''; // Opcional para sucursales
+                    return $('<div>' + nombreCompleto + (ubicacionCompleta ? ' - ' + ubicacionCompleta : '') + '</div>');
+                }
+
+                // Función para formatear cómo se muestra la selección en el select
+                function formatSelection(option) {
+                    if (!option.id) {
+                        return option.text;
+                    }
+                    // Obtener el nombre y la ubicación completos
+                    var nombreCompleto = $(option.element).data('nombre-completo');
+                    var ubicacionCompleta = $(option.element).data('ubicacion-completa') || '';
+
+                    // Truncar el nombre y la ubicación si es necesario
+                    var nombreTruncado = nombreCompleto.length > 20
+                        ? nombreCompleto.substring(0, 20) + '...'
+                        : nombreCompleto;
+
+                    var ubicacionTruncada = ubicacionCompleta.length > 20
+                        ? ubicacionCompleta.substring(0, 20) + '...'
+                        : ubicacionCompleta;
+
+                    // Devolver el nombre y la ubicación truncados
+                    return nombreTruncado + (ubicacionTruncada ? ' - ' + ubicacionTruncada : '');
+                }
+        });
+    </script>
+
+
 
     <script>
-        $(document).ready(function(){
-            // Escuchar el cambio en el select de sucursal
-            $('#id_sucursal').change(function() {
-                var sucursalId = $(this).val();  // Obtener el id de la sucursal seleccionada
+$(document).ready(function() {
+    // Escuchar el cambio en el select de sucursal
+    $('#id_sucursal').change(function() {
+        var sucursalId = $(this).val();  // Obtener el id de la sucursal seleccionada
 
-                if(sucursalId) {
-                    // Hacer una petición AJAX para obtener los productos de la sucursal seleccionada
-                    $.ajax({
-                        url: '/productos/sucursal/' + sucursalId,  // Ruta que proporcionaremos en el controlador
-                        method: 'GET',
-                        success: function(response) {
-                            // Limpiar el select de productos
-                            $('#id_producto').empty();
-                            $('#id_producto').append('<option value="">Buscar un producto</option>');
-
-                            // Llenar el select de productos con los productos obtenidos
-                            response.forEach(function(producto) {
-                                $('#id_producto').append(`
-                                    <option value="${producto.id}"
-                                        data-precio="${producto.precio_venta}"
-                                        data-nombre="${producto.nombre}"
-                                        data-tipo="${producto.tipo}"
-                                        data-stock="${producto.stock}"
-                                        data-imagen="${producto.imagen}">
-                                        ${producto.nombre} - Precio: ${producto.precio_venta}
-                                    </option>
-                                `);
-                            });
-                        },
-                        error: function() {
-                            alert('Error al cargar los productos');
-                        }
-                    });
-                } else {
-                    // Si no se selecciona una sucursal, limpiar el select de productos
+        if (sucursalId) {
+            // Hacer una petición AJAX para obtener los productos de la sucursal seleccionada
+            $.ajax({
+                url: '/productos/sucursal/' + sucursalId,  // Ruta que proporcionaremos en el controlador
+                method: 'GET',
+                success: function(response) {
+                    // Limpiar el select de productos
                     $('#id_producto').empty();
                     $('#id_producto').append('<option value="">Buscar un producto</option>');
+
+                    // Llenar el select de productos con los productos obtenidos
+                    response.forEach(function(producto) {
+                        $('#id_producto').append(`
+                            <option value="${producto.id}"
+                                data-precio="${producto.precio_venta}"
+                                data-nombre-completo="${producto.nombre}"
+                                data-tipo="${producto.tipo}"
+                                data-stock="${producto.stock}"
+                                data-imagen="${producto.imagen}">
+                                ${producto.nombre} - Precio: ${producto.precio_venta}
+                            </option>
+                        `);
+                    });
+
+                    // Re-inicializar Select2 para aplicar la configuración específica
+                    $('#id_producto').select2({
+                        width: '100%',
+                        placeholder: "Buscar un producto",
+                        allowClear: true,
+                        templateResult: formatOption,  // Función para formatear cómo se muestran los resultados
+                        templateSelection: formatSelection  // Función para formatear cómo se muestra la selección
+                    });
+                },
+                error: function() {
+                    alert('Error al cargar los productos');
                 }
             });
-        });
+        } else {
+            // Si no se selecciona una sucursal, limpiar el select de productos
+            $('#id_producto').empty();
+            $('#id_producto').append('<option value="">Buscar un producto</option>');
+        }
+    });
+
+    // Función para formatear cómo se muestran los resultados en el dropdown
+    function formatOption(option) {
+        if (!option.id) {
+            return option.text;
+        }
+        // Usar el nombre completo para la búsqueda
+        var $option = $(
+            '<div>' + $(option.element).data('nombre-completo') + ' - Precio: ' + $(option.element).data('precio') + '</div>'
+        );
+        return $option;
+    }
+
+    // Función para formatear cómo se muestra la selección en el select
+    function formatSelection(option) {
+        if (!option.id) {
+            return option.text;
+        }
+        // Truncar el nombre del producto a 30 caracteres
+        const nombreTruncado = $(option.element).data('nombre-completo').length > 30
+            ? $(option.element).data('nombre-completo').substring(0, 30) + '...'
+            : $(option.element).data('nombre-completo');
+        return nombreTruncado + ' - Precio: ' + $(option.element).data('precio');
+    }
+});
         </script>
 
 <script>
@@ -464,7 +715,7 @@
             let precioConAumento = round(precioBase + (precioBase * (porcentaje / 100)));
 
             precioProducto = precioConAumento;
-            nombreProducto = selectProducto.options[selectProducto.selectedIndex].getAttribute('data-nombre');
+            nombreProducto = selectProducto.options[selectProducto.selectedIndex].getAttribute('data-nombre-completo');
 
             $('#precio').val(precioProducto);
         }
@@ -826,7 +1077,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-
+    // manejo del modal de crear cliente
     document.getElementById('formPersona').addEventListener('submit', function (e) {
         e.preventDefault(); // Evitar el envío tradicional del formulario
         e.stopPropagation();
@@ -906,6 +1157,69 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 });
+     </script>
+
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const esPrescritoCheckbox = document.getElementById('es_prescrito');
+            const campoReserva = document.getElementById('campo-reserva');
+
+            esPrescritoCheckbox.addEventListener('change', function() {
+                campoReserva.classList.toggle('hidden', !this.checked);
+            });
+
+            // Configurar Dropzone para subir imágenes
+            Dropzone.autoDiscover = false;
+            const dropzone = new Dropzone("#dropzone", {
+                url: "{{ route('upload.image') }}",
+                dictDefaultMessage: "Arrastra y suelta la receta médica o haz clic aquí para subirla",
+                acceptedFiles: ".png,.jpg,.jpeg,.pdf",
+                addRemoveLinks: true,
+                dictRemoveFile: "Borrar archivo",
+                maxFiles: 1,
+                uploadMultiple: false,
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                }
+            });
+
+            dropzone.on("success", function(file, response) {
+                console.log("Archivo subido correctamente:", response.imagen);
+                document.querySelector('#formReceta input[name="imagen"]').value = response.imagen;
+            });
+        });
+
+        // Función para guardar la receta
+        function guardarReceta() {
+            const imagen = document.querySelector('#formReceta input[name="imagen"]').value;
+            const observaciones = document.getElementById('observaciones_receta').value;
+
+            if (!imagen) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Debes subir una imagen de la receta médica',
+                });
+                return;
+            }
+
+            // Guardar la imagen en el campo oculto del formulario principal
+            document.getElementById('imagen_receta').value = imagen;
+
+            // Marcar como prescrito
+            document.getElementById('es_prescrito').checked = true;
+            document.getElementById('campo-reserva').classList.remove('hidden');
+
+            // Cerrar el modal
+            my_modal_2.close();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Receta guardada',
+                text: 'La receta médica se ha asociado correctamente a la venta',
+            });
+        }
+
      </script>
 @endpush
 

@@ -24,7 +24,7 @@ class UsuarioController extends Controller
         // Filtrar solo usuarios activos y cargar el rol relacionado con las columnas específicas
         $usuarios = User::whereIn('estado', [1, 2])->with('rol:id,nombre')->get();
         // Pasar los usuarios y roles a la vista
-        return view('usuarios.index', compact('roles', 'usuarios'));
+        return view('Usuarios.index', compact('roles', 'usuarios'));
         }
 
 
