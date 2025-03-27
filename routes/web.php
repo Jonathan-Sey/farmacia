@@ -21,13 +21,14 @@ use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
 //use App\Http\Controllers\Traslado\TrasladoController;
 use App\Http\Controllers\solicitud\solicitudController;
-
+use App\Http\Controllers\FichaMedicaController;
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
 
-
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
+
+
 
 
 /*
@@ -124,6 +125,9 @@ Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' =
 
 Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.image');
 
+Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
+Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
+Route::get('personas/{id}', [PersonaController::class, 'show'])->name('personas.show');
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 // Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');

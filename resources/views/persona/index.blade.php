@@ -58,7 +58,6 @@
                         </a>
                     </td>
                     <td class="flex gap-2 justify-center">
-                        {{-- editar  --}}
                         <form action="{{route('personas.edit',['persona'=>$persona->id])}}" method="GET">
                             @csrf
                             <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
@@ -66,7 +65,11 @@
                             </button>
                         </form>
 
-                             {{-- Botón Cambiar estado --}}
+                        <form action="{{ route('personas.show', $persona->id) }}" method="GET">
+                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                                <i class="fas fa-eye"></i> 
+                            </button>
+                        </form>
                         <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $persona->id }}" data-estado="{{ $persona->estado }}" data-info="{{ $persona->nombre }}">
                             <i class="fas fa-sync-alt"></i>
                         </button>
