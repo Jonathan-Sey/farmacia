@@ -29,7 +29,7 @@ class CreateFichasMedicasTable extends Migration
             $table->string('foto')->nullable();
             
             // Relación con la tabla 'personas'
-            $table->foreign('persona_id')->references('id')->on('personas')->onDelete('cascade');
+            $table->foreign('persona_id')->references('id')->on('persona')->onDelete('cascade');
             
             // Nuevos campos
             $table->text('diagnostico')->nullable(); // Diagnóstico

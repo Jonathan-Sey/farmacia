@@ -52,36 +52,69 @@ class PersonaController extends Controller
 
     // Método para almacenar una nueva persona y su ficha médica si es paciente
     public function store(Request $request)
-    {
-        // Crear persona
-        $persona = $this->crearPersona($request);
-        if ($persona->rol == 2) {
-            $receta_foto = null;
-            if ($request->hasFile('receta_foto')) {
-                $receta_foto = $request->file('receta_foto')->store('recetas', 'public');
-            }
+{
+    // Validar los datos de entrada
+    $request->validate([
+        'nombre' => 'required|string|max:255',
+        'apellido_paterno' => 'nullable|string|max:255',
+        'apellido_materno' => 'nullable|string|max:255',
+        'sexo' => 'nullable|in:Hombre,Mujer',
+        'fecha_nacimiento' => 'nullable|date',
+        'DPI' => 'nullable|string|max:255',
+        'habla_lengua' => 'nullable|in:Sí,No',
+        'tipo_sangre' => 'nullable|in:O+,O-,A+,A-,B+,B-,AB+,AB-',
+        'direccion' => 'nullable|string|max:255',
+        'telefono' => 'nullable|string|max:255',
+        'foto' => 'nullable|string|max:255',
+        'diagnostico' => 'nullable|string',
+        'consulta_programada' => 'nullable|date',
+        'receta_foto' => 'nullable|image',
+    ]);
 
-            FichaMedica::create([
-                'persona_id' => $persona->id,
-                'nombre' => $persona->nombre,
-                'diagnostico' => $request->diagnostico,
-                'consulta_programada' => $request->consulta_programada,
-                'receta_foto' => $receta_foto,
-            ]);
+    // Crear la persona
+    $persona = $this->crearPersona($request);
+
+    if ($persona->rol == 2) { // Si la persona es un paciente
+        // Subir la receta foto si existe
+        $receta_foto = null;
+        if ($request->hasFile('receta_foto')) {
+            $receta_foto = $request->file('receta_foto')->store('recetas', 'public');
         }
 
-        $usuario = User::find($request->idUsuario);
-        Bitacora::create([
-            'id_usuario' => $request->idUsuario,
-            'name_usuario' => $usuario->name,
-            'accion' => 'Creación',
-            'tabla_afectada' => 'Personas',
-            'detalles' => "Se creó la persona: {$request->nombre}",
-            'fecha_hora' => now(),
+        // Crear la ficha médica
+        FichaMedica::create([
+            'persona_id' => $persona->id,
+            'nombre' => $request->nombre,
+            'apellido_paterno' => $request->apellido_paterno,
+            'apellido_materno' => $request->apellido_materno,
+            'sexo' => $request->sexo,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'DPI' => $request->DPI,
+            'habla_lengua' => $request->habla_lengua,
+            'tipo_sangre' => $request->tipo_sangre,
+            'direccion' => $request->direccion,
+            'telefono' => $request->telefono,
+            'foto' => $request->foto,
+            'diagnostico' => $request->diagnostico,
+            'consulta_programada' => $request->consulta_programada,
+            'receta_foto' => $receta_foto,
         ]);
-
-        return redirect()->route('personas.index')->with('success', 'Registro creado correctamente.');
     }
+
+    // Registrar en la bitácora
+    $usuario = User::find($request->idUsuario);
+    Bitacora::create([
+        'id_usuario' => $request->idUsuario,
+        'name_usuario' => $usuario->name,
+        'accion' => 'Creación',
+        'tabla_afectada' => 'Personas',
+        'detalles' => "Se creó la persona: {$request->nombre}",
+        'fecha_hora' => now(),
+    ]);
+
+    return redirect()->route('personas.index')->with('success', 'Registro creado correctamente.');
+}
+
 
     // Método para almacenar una persona desde ventas (JSON)
     public function storeFromVentas(Request $request)
