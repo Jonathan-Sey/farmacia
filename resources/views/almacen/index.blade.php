@@ -14,7 +14,13 @@
         <button class="btn btn-success text-white font-bold uppercase">
             Asignar servicio
         </button>
+        </a>
+        <a href="{{route('productos.vencidos')}}">
+        <button class="btn btn-primary text-white font-bold uppercase">
+            producto vencidos
+        </button>
     </a>
+
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">

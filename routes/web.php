@@ -132,6 +132,10 @@ Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' =
 
 Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.image');
 
+//productos vencidos 
+
+Route::get('/productos-vencidos', [AlmacenController::class, 'productosVencidos'])->name('productos.vencidos');
+
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 // Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');

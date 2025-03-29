@@ -19,6 +19,7 @@ class CreateAlmacensTable extends Migration
             $table->foreignId('id_producto')->constrained('producto');
             $table->foreignId('id_user')->constrained('users');
             $table->integer('cantidad');
+            $table->date('fecha_vencimiento')->nullable();
             $table->integer('alerta_stock')->default(10);
             $table->tinyInteger('estado')->default(1);
             $table->timestamps();
