@@ -21,7 +21,7 @@ class ProductoController extends Controller
     {
 
         $productos = Producto::with('categoria:id,nombre')
-        ->select('id','codigo','nombre','tipo','precio_venta','precio_porcentaje','imagen','estado','id_categoria','fecha_caducidad','updated_at')
+        ->select('id','codigo','nombre','tipo','precio_venta','precio_porcentaje','imagen','estado','id_categoria','updated_at')
         ->where('estado', '!=', 0)
         ->get();
         //return $productos;
@@ -62,7 +62,7 @@ class ProductoController extends Controller
             'nombre'=>['required','string','max:50'],
             'descripcion'=>['max:100','required','string'],
             'precio_venta'=>'numeric|required|min:0',
-            //'fecha_caducidad'=>'required|date',
+         
             'estado'=>'integer',
 
         ]);
@@ -77,7 +77,6 @@ class ProductoController extends Controller
             'descripcion' => $request->descripcion,
             'precio_venta' => $request->precio_venta,
             'precio_porcentaje' => $request->precio_venta,
-            'fecha_caducidad' => $request->fecha_caducidad,
             'id_categoria' => $request->id_categoria,
             'estado' => 1,
             'tipo' => $tipo,
@@ -140,7 +139,7 @@ class ProductoController extends Controller
             'imagen' => 'nullable',
             'descripcion'=>['required','string','max:100'],
             'precio_porcentaje'=>'numeric|required|min:0',
-            //'fecha_caducidad'=>'required|date',
+
             'estado'=>'integer',
         ]);
 
@@ -169,7 +168,7 @@ class ProductoController extends Controller
          // Actualizar el rol
          $datosActualizados['tipo'] = $nuevotipo;
 
-         $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_porcentaje','tipo','fecha_caducidad', 'imagen']);
+         $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_porcentaje','tipo', 'imagen']);
 
          if ($datosActualizados != $datosSinCambios){
             $producto->update($datosActualizados);
@@ -275,5 +274,7 @@ class ProductoController extends Controller
         $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')->get();
 
         return view('producto.historico', compact('historico'));
-    }
+    }  
+
+   
 }

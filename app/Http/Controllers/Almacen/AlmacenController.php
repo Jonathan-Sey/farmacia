@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\Sucursal;
 use App\Models\Traslado;
 use App\Models\User;
+use App\Models\Vencidos;
 
 class AlmacenController extends Controller
 {
@@ -242,6 +243,18 @@ class AlmacenController extends Controller
 
         return redirect()->route('almacenes.index')->with('success', '¡Alerta de stock actualizada!');
     }
+
+     //aqui se manda a la vista de productosa vencidos
+     public function productosVencidos()
+     {
+
+         $sucursales = Sucursal::activos()->get();
+         $almacenes = Almacen::with('producto:id,codigo,nombre');
+ 
+         return view('producto.vencidos', compact('sucursales', 'almacenes'));
+     }	
+
+   
 
 
 
