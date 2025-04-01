@@ -63,13 +63,18 @@ class Producto extends Model
                 ->withTimestamps();
 }
 
-
-//Funcion que se ejecutara cada vez para hacer el redondeo en el precio
+/*
+ //Funcion que se ejecutara cada vez para hacer el redondeo en el precio
 public function setPrecioVentaAttribute($value)
 {
         $this->attributes['precio_venta'] = round($value * 10) / 10;
 }
 
+//Funcion que se ejecutara cada vez para hacer el redondeo en el precio
+ public function setPrecioPorcentajeAttribute($value)
+{
+        $this->attributes['precio_porcentaje'] = round($value * 10) / 10;
+} */
   // Relación con la tabla lote
   public function lotes()
   {
