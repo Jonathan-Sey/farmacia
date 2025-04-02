@@ -16,6 +16,7 @@ use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\Inventario\InventarioController;
 use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
+use App\Http\Controllers\notificaciones\notificacionesController;
 use App\Http\Controllers\Persona\PersonaController;
 use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
@@ -118,7 +119,7 @@ Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerPro
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 Route::get('/get-lotes/{idProducto}/{idSucursal}', [RequisicionController::class, 'getLotes'])->name('get.lotes');
 Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
-Route::get("solicitudes/cantidad", [solicitudController::class, 'cantidadDeSolicitudes'])->name('solicitudes.cantidad');
+Route::get("notificaciones/cantidad", [notificacionesController::class, 'cantidadDeNotificaciones'])->name('notificaciones.cantidad');
 Route::get('/productos/stock/{id}/{sucursal}', [VentaController::class, 'obtenerStock']);
 Route::post('/personas/from-ventas', [PersonaController::class, 'storeFromVentas'])->name('personas.storeFromVentas');
 
@@ -136,6 +137,10 @@ Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.
 
 Route::get('/productos-vencidos', [AlmacenController::class, 'productosVencidos'])->name('productos.vencidos');
 
+
+//NOTIFICACIONES 
+Route::get('/notificaciones', [notificacionesController::class, 'index'])->name('notificaciones.index');
+Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])->name('notificaciones.destroy');
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 // Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
