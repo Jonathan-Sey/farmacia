@@ -183,19 +183,19 @@
                     @enderror
                 </div>
                 <div class="mt-2 mb-5">
-                    <label for="precio_venta" class="uppercase block text-sm font-medium text-gray-900">Precio</label>
+                    <label for="precio_porcentaje" class="uppercase block text-sm font-medium text-gray-900">Precio</label>
                     <input
                         type="number"
-                        name="precio_venta"
-                        id="precio_venta"
+                        name="precio_porcentaje"
+                        id="precio_porcentaje"
                         autocomplete="given-name"
                         placeholder="Precio"
                         min="1"
                         step="any"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        value="{{ old('precio_venta', $producto->precio_venta) }}">
+                        value="{{ old('precio_porcentaje', $producto->precio_porcentaje) }}">
 
-                    @error('precio_venta')
+                    @error('precio_porcentaje')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>

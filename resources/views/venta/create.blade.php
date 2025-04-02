@@ -212,6 +212,26 @@
                                 </div>
                                 @enderror
                             </div>
+                            {{-- porcentaje --}}
+                            <div class="mt-2 mb-5">
+                                <label for="porcentaje" class="uppercase block text-sm font-medium text-gray-900">Porcentaje</label>
+                                <input
+                                    type="number"
+                                    name="porcentaje"
+                                    id="porcentaje"
+                                    min="1"
+                                    disabled
+                                    autocomplete="given-name"
+                                    placeholder="Precio del producto con porcentaje"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    value="{{ old('precio') }}">
+
+                                @error('precio')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
                         </div>
 
 
@@ -1103,35 +1123,36 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             if (data.success) {
-                // Cerrar el modal
-                my_modal_1.close();
+                  my_modal_1.close();
 
-                 // Limpiar los campos del formulario
-                document.getElementById('nombre').value = '';
-                document.getElementById('nit').value = '';
-                document.getElementById('rol').value = '1';
+                    // Limpiar formulario
+                    this.reset();
 
-       // Actualizar el select de personas
-       const selectPersona = document.getElementById('id_persona');
-        selectPersona.innerHTML = '<option value="">Seleccionar una persona</option>';
+                    // Actualizar select2
+                    const selectPersona = $('#id_persona');
 
-        data.personas.forEach(persona => {
-            const newOption = new Option(persona.nit, persona.id, false, false);
-            selectPersona.appendChild(newOption);
-        });
+                    // Crear nueva opción con todos los atributos necesarios
+                    const newOption = new Option(
+                        `${data.persona.nit} - ${data.persona.nombre}`, // Texto visible
+                        data.persona.id, // Valor
+                        false, // selected por defecto?
+                        true // selected ahora?
+                    );
 
-             // Seleccionar automáticamente la persona recién creada
-             selectPersona.value = data.persona.id;
+                    // Añadir atributos de datos
+                    $(newOption).attr('data-nombre-completo', data.persona.nit);
+                    selectPersona.append(newOption);
 
-        $(selectPersona).trigger('change');
-                // Mostrar mensaje de éxito
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Persona registrada',
-                    text: 'La persona se ha registrado correctamente.',
-                });
-            }
-        })
+                    // Seleccionar la nueva persona
+                    selectPersona.val(data.persona.id).trigger('change');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Éxito',
+                        text: 'Persona registrada correctamente',
+                    });
+                }
+            })
         .catch(error => {
             if (error.errors) {
                 // Limpiar errores anteriores

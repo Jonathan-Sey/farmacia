@@ -105,16 +105,17 @@ class PersonaController extends Controller
 
         $persona = $this->crearPersona($request);
             // Obtener la lista actualizada de personas
-         $personas = Persona::where('estado', '!=', '0')->get();
+         //$personas = Persona::where('estado', '!=', '0')->get();
 
         return response()->json([
             'success' => true,
             'persona' => [
                 'id' => $persona->id,
                 'nombre' => $persona->nombre,
+                'nit' => $persona->nit,
                 'rol' => $persona->rol,
             ],
-            'personas' => $personas,
+            'personas' => Persona::where('estado', '!=', '0')->get(['id', 'nombre', 'nit', 'rol']),
         ]);
     }
 

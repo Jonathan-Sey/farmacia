@@ -14,7 +14,7 @@
             @csrf
             <div id="usuario">
 
-
+            </div>
             <div class="mt-2 mb-5">
                 <label for="asunto" class="uppercase block text-sm font-medium text-gray-900">Asunto</label>
                 <input

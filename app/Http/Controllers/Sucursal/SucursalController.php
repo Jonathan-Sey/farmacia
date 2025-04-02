@@ -18,7 +18,7 @@ class SucursalController extends Controller
     public function index()
     {
 
-        $sucursales = Sucursal::select('id','imagen','nombre','ubicacion','telefono','email','estado','updated_at')
+        $sucursales = Sucursal::select('id','imagen','nombre','ubicacion','telefono','email','encargado','estado','updated_at')
         ->where('estado', '!=', 0)
         ->paginate(4);
         return view('sucursal.index',['sucursales'=>$sucursales]);
@@ -50,6 +50,7 @@ class SucursalController extends Controller
             'ubicacion'=>'required|max:50',
             'telefono'=>'required|max:10',
             'email'=>'required|max:50',
+            'encargado' => 'required|max:100',
             'estado'=>'integer',
         ]);
         Sucursal::create([
@@ -58,6 +59,7 @@ class SucursalController extends Controller
             'ubicacion'=>$request->ubicacion,
             'telefono'=>$request->telefono,
             'email'=>$request->email,
+            'encargado' =>$request->encargado,
             'estado'=>1,
         ]);
 
@@ -111,9 +113,10 @@ class SucursalController extends Controller
             'ubicacion'=>'required|max:50',
             'telefono'=>'required|max:10',
             'email'=>'required|max:50',
+            'encargado'=>'required|max:100',
             'estado'=>'integer',
         ]);
-        $datosActualizados = $request->only(['nombre', 'ubicacion','telefono','email']);
+        $datosActualizados = $request->only(['nombre', 'ubicacion','telefono','email','encargado']);
 
              // Manejo de la imagen
              if ($request->imagen && $request->imagen !== $sucursal->imagen) {
@@ -126,7 +129,7 @@ class SucursalController extends Controller
                 $datosActualizados['imagen'] = $sucursal->imagen; // Mantener la imagen anterior
             }
 
-            $datosSinCambios = $sucursal->only(['imagen','nombre', 'ubicacion','telefono','email']);
+            $datosSinCambios = $sucursal->only(['imagen','nombre', 'ubicacion','telefono','email','encargado']);
 
          // Verificación de cambios
          if ($datosActualizados != $datosSinCambios) {
