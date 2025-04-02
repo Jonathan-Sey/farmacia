@@ -21,7 +21,8 @@
                 <tr class="bg-slate-600  ">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio_anterior</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio_nuevo</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
@@ -45,6 +46,7 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_porcentaje}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         <a href="{{ $producto->imagen ? asset('uploads/' . $producto->imagen) : '#' }}">
                             @if ($producto->imagen)
@@ -90,6 +92,13 @@
                             @csrf
                             <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
                                 <i class="fas fa-edit"></i>
+                            </button>
+                        </form>
+                       {{-- Formulario para ir a la página de edición de porcentaje --}}
+                        <form action="{{ route('productos.precio', $producto->id) }}" method="GET">
+                            @csrf
+                            <button type="submit" class="btn btn-success font-bold uppercase btn-sm">
+                                <i class='bx bx-dollar'></i>
                             </button>
                         </form>
 

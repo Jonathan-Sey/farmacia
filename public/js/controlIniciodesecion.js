@@ -26,6 +26,8 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
             icon: 'success',
             title: '¡Éxito!',
             text: 'Inicio de sesión exitoso. Redirigiendo...',
+            showConfirmButton: false,
+            timer:2000,
             position: 'center',
             customClass: {
                 popup: 'z-50',
@@ -48,6 +50,8 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
             icon: 'error',
             title: '¡Error!',
             text: 'Credenciales incorrectas o hubo un error al intentar iniciar sesión.',
+            showConfirmButton: false,
+            timer:2000,
             customClass: {
                 popup: 'z-50',
             },
