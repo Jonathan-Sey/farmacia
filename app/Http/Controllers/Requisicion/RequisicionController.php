@@ -78,6 +78,7 @@ class RequisicionController extends Controller
             'id_sucursal_destino' => 'required',
             'id_producto' => 'required',
             'cantidad' => 'required|integer|min:1',
+            
         ]);
 
         DB::beginTransaction();
@@ -155,6 +156,8 @@ class RequisicionController extends Controller
                 ->where('id_producto', $producto)
                 ->first();
 
+                $fechaVencimiento = optional($lotesDisponibles->first())->lote->fecha_vencimiento ?? now();
+
             if ($almacenDestino) {
                 $almacenDestino->cantidad += $cantidad;
                 $almacenDestino->save();
@@ -164,6 +167,7 @@ class RequisicionController extends Controller
                     'id_sucursal' => $sucursal_destino,
                     'id_producto' => $producto,
                     'cantidad' => $cantidad,
+                    'fecha_vencimiento' => $fechaVencimiento, // Fecha de vencimiento por defecto
                     'id_user' => 1,
                     'estado' => 1, // Estado activo
                 ]);

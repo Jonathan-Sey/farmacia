@@ -15,9 +15,9 @@
             Asignar servicio
         </button>
         </a>
-        <a href="{{route('productos.vencidos')}}">
+        <a href="{{route('solicitud.index')}}">
         <button class="btn btn-primary text-white font-bold uppercase">
-            producto vencidos
+            Solicitar productos
         </button>
     </a>
 

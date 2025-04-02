@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function obtenerUsuario() {
         const cantidad = document.getElementById('notificacion');
 
-        axios.get('/solicitudes/cantidad', {
+        axios.get('/notificaciones/cantidad', {
             headers: {
                 'Authorization': `Bearer ${localStorage.getItem('token')}`
             }

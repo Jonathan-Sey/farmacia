@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\Almacen;
 use App\Models\Lote;
 use App\Models\Requisicion;
 use Database\Seeders\productos;
@@ -66,6 +67,39 @@ class RevisarProductosVencidos extends Command
             // Eliminar el producto de la tabla original
             $producto->delete();
         }
+
+        // borrar productos vencidos de la tabla almacen
+
+        $almacenVencido =  Almacen::where('fecha_vencimiento', '<', Carbon::now())->get();
+
+        foreach($almacenVencido as $almacen){
+           
+            // Insertar en la tabla correcta (revisa que el nombre esté bien escrito)
+            DB::table('almacen_vencidos')->insert([
+                'id_sucursal' => $almacen->id_sucursal,
+                "id_producto" => $almacen->id_producto,
+                'cantidad' => $almacen->cantidad,
+                'fecha_vencimiento' => $almacen->fecha_vencimiento,
+                'id_user' => $almacen->id_user,
+                'estado' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+    
+            // Eliminar el producto de la tabla original
+            $almacen->delete();
+        }
+
+        // notificar al usuario
+        DB::table('notificaciones')->insert([
+            'tipo' => 'producto vencidos',
+            'mensaje' => 'Se han encontrado productos vencidos y se han movido a la tabla correspondiente.',
+            'leido' => false,
+            'accion' => 'ver productos vencidos',
+            'url' => '/productos-vencidos',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
     
         $this->info('Productos vencidos procesados correctamente.');
     }

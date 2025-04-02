@@ -93,6 +93,7 @@ class AlmacenController extends Controller
         Almacen::create([
             'id_producto' => $request->id_producto,
             'id_sucursal' => $request->id_sucursal,
+            'fecha_vencimiento' => $request->fecha_vencimiento,
             'cantidad'=> 1,
             'id_user' => 1,
         ]);
