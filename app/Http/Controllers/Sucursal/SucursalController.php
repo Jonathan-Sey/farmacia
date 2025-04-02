@@ -20,7 +20,7 @@ class SucursalController extends Controller
 
         $sucursales = Sucursal::select('id','imagen','nombre','ubicacion','telefono','email','estado','updated_at')
         ->where('estado', '!=', 0)
-        ->get();
+        ->paginate(4);
         return view('sucursal.index',['sucursales'=>$sucursales]);
     }
 
