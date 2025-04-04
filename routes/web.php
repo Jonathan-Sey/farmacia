@@ -12,6 +12,7 @@ use App\Http\Controllers\bitacora\bitacoraController;
 use App\Http\Controllers\Usuario\UsuarioController;
 use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\devoluciones\devolucionesController;
 use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\Inventario\InventarioController;
 use App\Http\Controllers\Lote\LoteController;
@@ -25,8 +26,7 @@ use App\Http\Controllers\solicitud\solicitudController;
 
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
-
-
+use App\Models\Devoluciones;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -134,8 +134,10 @@ Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' =
 Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.image');
 
 //productos vencidos 
-
 Route::get('/productos-vencidos', [AlmacenController::class, 'productosVencidos'])->name('productos.vencidos');
+
+//devoluciones
+Route::resource('devoluciones', devolucionesController::class)->parameters(['devoluciones' => 'devoluciones']);
 
 
 //NOTIFICACIONES 
