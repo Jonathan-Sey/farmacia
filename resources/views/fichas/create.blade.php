@@ -7,7 +7,7 @@
             @csrf
 
             <h3 class="text-xl font-semibold mb-4">Crear Ficha Médica para {{ $persona->nombre }}</h3>
-
+            
             <div class="mt-2 mb-5">
                 <label for="diagnostico" class="uppercase block text-sm font-medium text-gray-900">Diagnóstico</label>
                 <textarea

@@ -8,6 +8,7 @@ use App\Models\Persona;
 use App\Models\User;
 use App\Models\FichaMedica;  // Asegúrate de incluir el modelo de FichaMedica
 use Illuminate\Http\Request;
+use App\Models\DetalleMedico;
 
 class PersonaController extends Controller
 {
@@ -23,8 +24,13 @@ class PersonaController extends Controller
     // Método para mostrar el formulario de crear persona
     public function create()
     {
-        return view('persona.create');
+        // Obtener todos los médicos de la tabla 'detalle_medico'
+        $medicos = DetalleMedico::all();
+    
+        // Pasar la variable $medicos a la vista
+        return view('persona.create', compact('medicos'));
     }
+
 
     // Método para crear una persona
     protected function crearPersona(Request $request)

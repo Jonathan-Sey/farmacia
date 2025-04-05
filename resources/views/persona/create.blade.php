@@ -165,7 +165,18 @@
                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             value="{{ old('direccion') }}">
                     </div>
-
+                    <div class="mt-2 mb-5">
+                        <label for="detalle_medico_id" class="block text-sm font-medium text-gray-700">Médico:</label>
+                                <select name="detalle_medico_id" id="detalle_medico_id" required class="block w-2/5 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                                    <option value="" disabled selected>Selecciona un médico</option>
+                                    @foreach ($medicos as $medico)
+                                        <option value="{{ $medico->id }}" title="Especialidad: {{ $medico->especialidad }}">
+                                            {{ $medico->nombre }} - {{ $medico->especialidad }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            <p id="especialidad" class="mt-2 text-gray-600">Selecciona un médico para ver su especialidad.</p>   
+                    </div>
                     <div class="mt-2 mb-5">
                         <label for="diagnostico" class="uppercase block text-sm font-medium text-gray-900">Diagnóstico</label>
                         <textarea
@@ -228,5 +239,17 @@
     } else {
         $('#ficha_medica').hide();
     }
+</script>
+<script>
+    // Obtener el select y el párrafo donde se mostrará la especialidad
+    const select = document.getElementById('detalle_medico_id');
+    const especialidadDisplay = document.getElementById('especialidad');
+
+    // Agregar un evento para cuando cambie la selección
+    select.addEventListener('change', function () {
+        const selectedOption = select.options[select.selectedIndex];
+        const especialidad = selectedOption.getAttribute('title'); // Obtener la especialidad desde el atributo title
+        especialidadDisplay.textContent = ` ${especialidad}`;
+    });
 </script>
 @endpush
