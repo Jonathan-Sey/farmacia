@@ -44,6 +44,12 @@ class CompraController extends Controller
         // $proveedores = Proveedor::whereNotIn('estado',[0,2])->get();
         $proveedores = Proveedor::activos()->get();
         $productos = Producto::activos()->where('tipo',1)->get();
+
+        // nuevo valo, esto para mandar la url de la img
+        $productos->each(function ($producto){
+            $producto->imagen_url = asset('uploads/' . $producto->imagen);
+        });
+
         return view('compra.create',compact('proveedores','productos'));
     }
 
@@ -150,7 +156,7 @@ class CompraController extends Controller
                 'name_usuario' => $usuario->name,
                 'accion' => 'Creación',
                 'tabla_afectada' => 'Compras',
-                'detalles' => "Se creó la compra: {$compra->numero_compra}", 
+                'detalles' => "Se creó la compra: {$compra->numero_compra}",
                 'fecha_hora' => now(),
             ]);
 

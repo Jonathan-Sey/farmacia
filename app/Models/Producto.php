@@ -15,6 +15,7 @@ class Producto extends Model
         'imagen',
         'descripcion',
         'precio_venta',
+        'precio_porcentaje',
         'fecha_caducidad',
         'id_categoria',
         'tipo',
@@ -25,7 +26,11 @@ class Producto extends Model
     {
        return $query->whereNotIn('estado', [0, 2]);
     }
-
+    //relacion a la tabla del historico de precios.
+    public function historicoPrecios()
+    {
+        return $this->hasMany(HistoricoPrecio::class, 'id_producto');
+    }
     public function categoria()
     {
         return $this->belongsTo(Categoria::class,'id_categoria');
@@ -58,13 +63,18 @@ class Producto extends Model
                 ->withTimestamps();
 }
 
-
-//Funcion que se ejecutara cada vez para hacer el redondeo en el precio
+/*
+ //Funcion que se ejecutara cada vez para hacer el redondeo en el precio
 public function setPrecioVentaAttribute($value)
 {
         $this->attributes['precio_venta'] = round($value * 10) / 10;
 }
 
+//Funcion que se ejecutara cada vez para hacer el redondeo en el precio
+ public function setPrecioPorcentajeAttribute($value)
+{
+        $this->attributes['precio_porcentaje'] = round($value * 10) / 10;
+} */
   // Relación con la tabla lote
   public function lotes()
   {

@@ -82,6 +82,7 @@ Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
 Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 //Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+Route::get('/productos/historico', [ProductoController::class, 'verHistorico'])->name('historico.precios');
 Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuario']);
 Route::post('/usuarios/register', [UsuarioController::class, 'register'])->name('usuarios.register');
 Route::patch('/usuarios/{usuario}/actualizar-estado',[UsuarioController::class, 'actualizarEstado'])->name('usuarios.actualizarEstado');
@@ -97,6 +98,7 @@ Route::resource('ventas', VentaController::class)->parameters(['ventas' => 'vent
 Route::resource('almacenes', AlmacenController::class)->parameters(['almacenes' => 'almacen']);
 Route::get('/almacenes/{id}/cambiar-alerta', [AlmacenController::class, 'alertStock'])->name('almacenes.alertStock');
 Route::get('/productos/{id}/precio-porcentaje', [ProductoController::class, 'precioPorcentaje'])->name('productos.precio');
+Route::patch('/productos/{id}/actualizar-precio', [ProductoController::class, 'actualizarPrecioPorcentaje'])->name('productos.actualizarprecio');
 Route::patch('/almacen/{id}/alerta-stock', [AlmacenController::class, 'updateAlertStock'])->name('almacenes.updateAlertStock');
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
 Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
