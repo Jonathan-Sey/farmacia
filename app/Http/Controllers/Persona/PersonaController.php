@@ -126,18 +126,24 @@ class PersonaController extends Controller
     public function storeFromVentas(Request $request)
     {
         $persona = $this->crearPersona($request);
+<<<<<<< HEAD
         
         // Obtener la lista actualizada de personas
         $personas = Persona::where('estado', '!=', '0')->get();
+=======
+            // Obtener la lista actualizada de personas
+         //$personas = Persona::where('estado', '!=', '0')->get();
+>>>>>>> 0e34a008a4a08b2105991fa271c50539fd1f6f8c
 
         return response()->json([
             'success' => true,
             'persona' => [
                 'id' => $persona->id,
                 'nombre' => $persona->nombre,
+                'nit' => $persona->nit,
                 'rol' => $persona->rol,
             ],
-            'personas' => $personas,
+            'personas' => Persona::where('estado', '!=', '0')->get(['id', 'nombre', 'nit', 'rol']),
         ]);
     }
 

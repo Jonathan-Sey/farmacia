@@ -3,7 +3,16 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
     const crearUsuario = document.getElementById('usuario');
 
     if (!token) {
-        alert("No se encontró un token activo");
+        Swal.fire({
+            icon: 'error',
+            title: '¡Error!',
+            text: 'No se encontro un token activo.',
+            showConfirmButton: false,
+            timer:2000,
+            customClass: {
+                popup: 'z-50',
+            },
+        })
         return;
     }
 

@@ -128,6 +128,24 @@
                     </div>
                     @enderror
                 </div>
+                {{-- Input para editar al encargado --}}
+                <div class="mt-2 mb-5">
+                    <label for="encargado" class="uppercase block text-sm font-medium text-gray-900">Nombre Encargado</label>
+                    <input
+                        type="text"
+                        name="encargado"
+                        id="encargado"
+                        autocomplete="given-name"
+                        placeholder="Nombre del encargado"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                        value="{{ old('encargado',$sucursal->encargado) }}">
+
+                    @error('nombre')
+                    <div role="alert" class="alert alert-error mt-4 p-2">
+                        <span class="text-white font-bold">{{ $message }}</span>
+                    </div>
+                    @enderror
+                </div>
 
                 <div class="mt-2 mb-5">
                     <label for="ubicacion" class="uppercase block text-sm font-medium text-gray-900">Ubicación</label>

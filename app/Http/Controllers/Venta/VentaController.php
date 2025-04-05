@@ -112,6 +112,8 @@ class VentaController extends Controller
             'estado'=>'integer',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
+            'imagen_receta' => 'nullable|string',
+            'numero_reserva' => 'nullable|string|max:50'
 
         ]);
 
@@ -141,6 +143,9 @@ class VentaController extends Controller
             'id_usuario' => $request->idUsuario, // Usar el usuario actual o el correcto
             'id_persona' => $request->id_persona,
             'estado' => 1,
+            'es_prescrito' => $request->has('es_prescrito'),
+            'imagen_receta' => $request->imagen_receta,
+            'numero_reserva' => $request->numero_reserva
         ]);
 
         // Obtener los arrays de detalles
@@ -208,6 +213,9 @@ class VentaController extends Controller
     {
 
          //$venta->load('productos');
+         if($venta->imagen_receta){
+            $venta->imagen_receta_url = asset('uploads/' . $venta->imagen_receta);
+         }
         return view('venta.show',compact('venta'));
 
     }
