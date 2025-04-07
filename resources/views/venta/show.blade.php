@@ -140,8 +140,8 @@
                 <th></th>
                 <td class="bg-white">{{$producto->nombre}} </td>
                 <td class="bg-white">{{$producto->pivot->cantidad}} </td>
-                <td class="bg-white">{{$producto->precio_venta}} </td>
-                <td class="subTotal bg-white">{{ $producto->pivot->cantidad * $producto->precio_venta }}</td>
+                <td class="bg-white">{{$producto->precio_porcentaje}} </td>
+                <td class="subTotal bg-white">{{ $producto->pivot->cantidad * $producto->precio_porcentaje }}</td>
                 <th></th>
             </tr>
             @endforeach
@@ -150,8 +150,8 @@
             <tr>
                 <th></th>
                 <td class="text-sm font-black">SUMA:  <span id="suma" class="font-black">0</span></td>
-                <td class="text-sm font-black">IVA: <span id="iva" class="font-black">0</span></td>
-                <td class="text-sm font-black"><input type="hidden" name="total" value="0" id="inputTotal"> TOTAL:  <span id="total" class="font-black">0</span></td>
+                <td class="text-sm font-black">IVA: <span id="iva" class="font-black">{{ $venta->impuesto}}</span></td>
+                <td class="text-sm font-black"><input type="hidden" name="total" value="{{ $venta->total}}" id="inputTotal"> TOTAL:  <span id="total" class="font-black">{{ $venta->total}}</span></td>
                 <td class="text-sm font-black"></td>
                 <th></th>
             </tr>
@@ -172,19 +172,20 @@
     function calcularValores() {
     let suma = 0;
     let subTotal = document.getElementsByClassName('subTotal');
-    let impuesto = parseFloat(document.getElementById('impuesto').innerHTML) || 0;
+    //let impuesto = parseFloat(document.getElementById('impuesto').innerHTML) || 0;
+    //let impuesto = parseFloat($('#impuesto').text().trim()) || 0;
 
     for(let i = 0; i < subTotal.length; i++) {
-        suma += parseFloat(subTotal[i].innerHTML);
+        suma += parseFloat(subTotal[i].innerHTML) || 0;
     }
 
-    let ivaCalculado = Math.round((suma * impuesto) / 100);
-    let totalCalculado = Math.round(suma + ivaCalculado);
+    //let ivaCalculado = Math.round((suma * impuesto) / 100);
+    //let totalCalculado = Math.round(suma + ivaCalculado);
 
     $('#suma').html(Math.round(suma));
-    $('#iva').html(ivaCalculado);
-    $('#total').html(totalCalculado);
-    $('#inputTotal').val(totalCalculado);
+    //$('#iva').html(ivaCalculado);
+    //$('#total').html(totalCalculado);
+    //$('#inputTotal').val(totalCalculado);
 }
 
 </script>

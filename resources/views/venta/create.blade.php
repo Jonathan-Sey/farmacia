@@ -296,9 +296,12 @@
                                     <input type="checkbox" name="es_prescrito" id="es_prescrito" class="toggle toggle-primary">
                                 </label>
 
-                                <button type="button" class="btn btn-sm" onclick="my_modal_2.showModal()" id="btn-subir-receta">
-                                    <i class="fa-solid fa-upload"></i> Subir Receta
-                                </button>
+
+                                    <button type="button" class="btn btn-sm hidden" onclick="my_modal_2.showModal()" id="btn-subir-receta">
+                                        <i class="fa-solid fa-upload"></i> Subir Receta
+                                    </button>
+
+
 
                                 <!-- id de la imagen-->
                                 <input type="hidden" name="imagen_receta" id="imagen_receta" value="">
@@ -1184,9 +1187,11 @@ document.addEventListener('DOMContentLoaded', function () {
         document.addEventListener('DOMContentLoaded', function() {
             const esPrescritoCheckbox = document.getElementById('es_prescrito');
             const campoReserva = document.getElementById('campo-reserva');
+            const campoImagen = document.getElementById('btn-subir-receta');
 
             esPrescritoCheckbox.addEventListener('change', function() {
                 campoReserva.classList.toggle('hidden', !this.checked);
+                campoImagen.classList.toggle('hidden', !this.checked);
             });
 
             // Configurar Dropzone para subir imágenes
@@ -1230,6 +1235,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // Marcar como prescrito
             document.getElementById('es_prescrito').checked = true;
             document.getElementById('campo-reserva').classList.remove('hidden');
+            document.getElementById('btn-subir-receta').classList.remove('hidden');
 
             // Cerrar el modal
             my_modal_2.close();
