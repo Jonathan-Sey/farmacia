@@ -86,7 +86,7 @@ class VentaController extends Controller
                     'id' => $almacen->producto->id,
                     'imagen' => asset('uploads/' . $almacen->producto->imagen),
                     'nombre' => $almacen->producto->nombre,
-                    'precio_venta' => $almacen->producto->precio_venta,
+                    'precio_venta' => $almacen->producto->precio_porcentaje,
                     'tipo' => $almacen->producto->tipo,
                     'stock' => $almacen->cantidad,
                 ];
