@@ -16,6 +16,11 @@ class Persona extends Model
         'telefono',
         'fecha_nacimiento',
         'estado',
+        'limite_compras', // Número máximo de compras permitidas en periodo
+        'periodo_control', // Días del periodo de control (ej. 30 días)
+        'restriccion_activa', // Si está bajo restricción
+        'fecha_ultima_alerta' // Para no saturar con alertas
+
 
     ];
 
