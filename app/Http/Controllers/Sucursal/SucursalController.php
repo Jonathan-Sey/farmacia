@@ -31,7 +31,8 @@ class SucursalController extends Controller
      */
     public function create()
     {
-        return view('sucursal.create');
+        $usuarios = User::select('id', 'name')->get();
+        return view('sucursal.create',compact('usuarios'));
     }
 
     /**
@@ -95,7 +96,8 @@ class SucursalController extends Controller
      */
     public function edit(Sucursal $sucursal)
     {
-        return view('sucursal.edit', ['sucursal'=>$sucursal]);
+        $usuarios = User::select('id', 'name')->get();
+        return view('sucursal.edit', ['sucursal'=>$sucursal], compact('usuarios'));
     }
 
     /**
