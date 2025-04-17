@@ -22,13 +22,14 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Numero de venta</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >producto</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >usuario</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >monto</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >motivo</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >estado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >observaciones</th>
-                   
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >usuario</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >estado</th>
                 </tr>
             </thead>
         </x-slot>
@@ -38,11 +39,15 @@
                 @foreach ($devoluciones as $proveedor)
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->id}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->telefono}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->empresa}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->correo}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->updated_at}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->venta_id}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->productos->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->cantidad}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->monto}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->motivo}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->observaciones}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->usuario->name}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->sucursal->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->fecha_devolucion}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a class="estado" data-id="{{ $proveedor->id}}" data-estado="{{$proveedor->estado}}">
                             @if ($proveedor->estado == 1)
@@ -52,21 +57,7 @@
                             @endif
                         </a>
                     </td>
-                    <td class="flex gap-2 justify-center">
-                        {{-- editar  --}}
-                        <form action="{{route('proveedores.edit',['proveedor'=>$proveedor->id])}}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </form>
-
-                                {{-- Botón Cambiar estado --}}
-                        <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $proveedor->id }}" data-estado="{{ $proveedor->estado }}" data-info="{{ $proveedor->nombre }}">
-                            <i class="fas fa-sync-alt"></i> 
-                        </button>
-                        
-                    </td>
+                
 
                 </tr>
 

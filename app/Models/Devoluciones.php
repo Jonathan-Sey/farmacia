@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Database\Seeders\productos;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,6 +18,23 @@ class Devoluciones extends Model
         'motivo',
         'estado',
         'observaciones',
-        'usuario_id'
+        'usuario_id',
+        'sucursal_id',
+        'fecha_devolucion',
     ];
+
+
+    public function productos(){
+        return $this->belongsTo(Producto::class,  'producto_id');
+    }
+
+    public function usuario()
+    {
+        return $this->belongsTo(User::class, 'usuario_id');
+    }
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+    }
 }
