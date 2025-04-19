@@ -26,10 +26,11 @@ use App\Http\Controllers\solicitud\solicitudController;
 
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
+use App\Mail\validacion;
 use App\Models\Devoluciones;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -139,6 +140,8 @@ Route::get('/productos-vencidos', [AlmacenController::class, 'productosVencidos'
 //devoluciones
 Route::resource('devoluciones', devolucionesController::class)->parameters(['devoluciones' => 'devoluciones']);
 
+Route::get('/devoluciones/aceptar', [devolucionesController::class, 'aceptar'])->name('devoluciones.aceptar');
+
 
 //NOTIFICACIONES 
 Route::get('/notificaciones', [notificacionesController::class, 'index'])->name('notificaciones.index');
@@ -149,4 +152,10 @@ Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])
 // Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 // Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
 // Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
+
+//correos 
+Route::get('/correo', function () {
+   Mail::to("antonio@gmail.com")->send(new validacion);
+   return "Correo enviado";
+})->name('correo.index');
 

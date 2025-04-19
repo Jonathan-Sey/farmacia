@@ -57,4 +57,9 @@ class devolucionesController extends Controller
         ]);
         return redirect()->route('devoluciones.index')->with('success', 'Devolución registrada correctamente.');
     }
+
+    public function show( ){
+            return "exito";
+    }
+
 }
