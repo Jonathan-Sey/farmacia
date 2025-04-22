@@ -16,13 +16,63 @@ class Persona extends Model
         'telefono',
         'fecha_nacimiento',
         'estado',
-        'limite_compras', // Número máximo de compras permitidas en periodo
-        'periodo_control', // Días del periodo de control (ej. 30 días)
-        'restriccion_activa', // Si está bajo restricción
-        'fecha_ultima_alerta' // Para no saturar con alertas
+        'limite_compras',    // Nuevo campo
+        'periodo_control',   // Nuevo campo
+        'restriccion_activa' // Nuevo campo
 
 
     ];
+
+    protected $casts = [
+        'restriccion_activa' => 'boolean',
+    ];
+
+    // Métodos adicionales
+    public function comprasRecientes()
+    {
+        if (!$this->periodo_control) {
+            return 0; // Si no hay período definido, no hay compras recientes
+        }
+
+        return $this->ventas()
+            ->where('fecha_venta', '>=', now()->subDays($this->periodo_control))
+            ->count();
+    }
+
+    public function excedeLimiteCompras()
+    {
+        // Si no hay límite definido, nunca excede
+        if (!$this->limite_compras) {
+            return false;
+        }
+
+        return $this->comprasRecientes() >= $this->limite_compras;
+    }
+    public function tieneRestriccion()
+    {
+        // Solo tiene restricción si está activa manualmente o excede el límite
+        return $this->restriccion_activa || $this->excedeLimiteCompras();
+    }
+
+    public static function boot()
+{
+    parent::boot();
+
+    static::saving(function ($persona) {
+        // Asegurar que los valores numéricos sean positivos o null
+        if ($persona->limite_compras !== null && $persona->limite_compras < 0) {
+            $persona->limite_compras = null;
+        }
+
+        if ($persona->periodo_control !== null && $persona->periodo_control < 1) {
+            $persona->periodo_control = null;
+        }
+    });
+}
+
+
+
+
 
     public function scopeActivos($query)
     {

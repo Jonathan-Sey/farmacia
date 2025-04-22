@@ -21,6 +21,10 @@ class CreatePersonasTable extends Migration
             $table->string('telefono',20)->nullable();
             $table->date('fecha_nacimiento')->nullable();
             $table->tinyInteger('estado')->default(1);
+            // vampos para validar el limite de ventas
+            $table->integer('limite_compras')->nullable();
+            $table->integer('periodo_control')->nullable();
+            $table->boolean('restriccion_activa')->default(false);
             $table->timestamps();
         });
     }

@@ -66,6 +66,11 @@
                             </button>
                         </form>
 
+                        <button onclick="mostrarRestricciones({{ $persona->id }})"
+                            class="btn btn-info font-bold uppercase btn-sm text-white">
+                            <i class="fas fa-shield-alt"></i>
+                        </button>
+
                              {{-- Botón Cambiar estado --}}
                         <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $persona->id }}" data-estado="{{ $persona->estado }}" data-info="{{ $persona->nombre }}">
                             <i class="fas fa-sync-alt"></i>
@@ -214,5 +219,135 @@
             });
         });
     });
+</script>
+
+<script>
+function mostrarRestricciones(idPersona) {
+    fetch(`/personas/${idPersona}/restricciones`)
+        .then(response => response.json())
+        .then(data => {
+            const modal = `
+                <dialog id="modalRestricciones" class="modal">
+                    <div class="modal-box w-11/12 max-w-5xl">
+                        <h3 class="font-bold text-lg">Control de Compras</h3>
+                        <div class="py-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="label">
+                                        <span class="label-text">Límite de compras</span>
+                                        <button onclick="document.getElementById('limiteCompras').value = ''"
+                                                class="btn btn-xs btn-ghost">Limpiar</button>
+                                    </label>
+                                    <input type="number" id="limiteCompras" value="${data.limite_compras || ''}"
+                                           class="input input-bordered w-full" min="0" placeholder="Sin límite">
+                                </div>
+                                <div>
+                                    <label class="label">
+                                        <span class="label-text">Período (días)</span>
+                                        <button onclick="document.getElementById('periodoControl').value = ''"
+                                                class="btn btn-xs btn-ghost">Limpiar</button>
+                                    </label>
+                                    <input type="number" id="periodoControl" value="${data.periodo_control || ''}"
+                                           class="input input-bordered w-full" min="1" placeholder="Sin período">
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <label class="cursor-pointer label flex justify-start gap-4">
+                                    <input type="checkbox" id="restriccionActiva"
+                                           ${data.restriccion_activa ? 'checked' : ''}
+                                           class="checkbox checkbox-primary">
+                                    <span class="label-text">Restricción activa</span>
+                                </label>
+                            </div>
+                            <div class="mt-4 bg-gray-100 p-4 rounded">
+                                <p>Compras recientes: <strong>${data.compras_recientes}</strong></p>
+                                <p>Período evaluado: últimos <strong>${data.periodo_control || '30'} días</strong></p>
+                            </div>
+                        </div>
+                        <div class="modal-action flex flex-wrap gap-2 justify-center sm:flex-nowrap">
+                            <button onclick="cerrarModal()" class="btn w-full sm:w-auto px-4 py-2 rounded">Cancelar</button>
+                            <button onclick="guardarRestricciones(${data.id})" class="btn btn-primary w-full sm:w-auto  px-4 py-2 rounded">Guardar</button>
+                            <button onclick="eliminarRestricciones(${data.id})" class="btn btn-error w-full sm:w-auto px-4 py-2 rounded">Quitar todas las restricciones</button>
+                        </div>
+                    </div>
+                </dialog>
+            `;
+
+            document.body.insertAdjacentHTML('beforeend', modal);
+            document.getElementById('modalRestricciones').showModal();
+        });
+}
+
+// Función para eliminar todas las restricciones
+function eliminarRestricciones(idPersona) {
+    fetch('/personas/actualizar-restricciones', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({
+            id_persona: idPersona,
+            limite_compras: null,
+            periodo_control: null,
+            restriccion_activa: false
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            cerrarModal();
+            Swal.fire('Éxito', 'Todas las restricciones fueron eliminadas', 'success');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        Swal.fire('Error', 'No se pudieron eliminar las restricciones', 'error');
+    });
+}
+    // Función para guardar las restricciones
+    function guardarRestricciones(idPersona) {
+        const data = {
+            id_persona: idPersona,
+            limite_compras: document.getElementById('limiteCompras').value || null,
+            periodo_control: document.getElementById('periodoControl').value || null,
+            restriccion_activa: document.getElementById('restriccionActiva').checked
+        };
+
+        fetch('/personas/actualizar-restricciones', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                cerrarModal();
+                Swal.fire('Éxito', 'Restricciones actualizadas', 'success');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            Swal.fire('Error', error.message || 'Error al guardar las restricciones', 'error');
+        });
+    }
+
+    function cerrarModal() {
+        const modal = document.getElementById('modalRestricciones');
+        if (modal) {
+            modal.close();
+            modal.remove();
+        }
+    }
 </script>
 @endpush
