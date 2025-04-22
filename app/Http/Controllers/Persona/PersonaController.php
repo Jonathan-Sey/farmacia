@@ -62,6 +62,13 @@ class PersonaController extends Controller
     {
         $persona = $this->crearPersona($request);
 
+          // Establecer valores por defecto
+            $persona->update([
+                'limite_compras' => 5,       // Valor por defecto
+                'periodo_control' => 30,      // Valor por defecto
+                'restriccion_activa' => false // Valor por defecto
+            ]);
+
         $usuario=User::find($request->idUsuario);
         Bitacora::create([
                 'id_usuario' => $request->idUsuario,
@@ -100,6 +107,41 @@ class PersonaController extends Controller
         //     ],
         // ]);
     }
+    // Nuevos métodos para restricciones
+    public function obtenerRestricciones(Persona $persona)
+    {
+        return response()->json([
+            'id' => $persona->id,
+            'limite_compras' => $persona->limite_compras,
+            'periodo_control' => $persona->periodo_control,
+            'restriccion_activa' => $persona->restriccion_activa,
+            'compras_recientes' => $persona->comprasRecientes(),
+            'tiene_restriccion' => $persona->tieneRestriccion()
+        ]);
+    }
+
+    public function actualizarRestricciones(Request $request)
+    {
+        $request->validate([
+            'id_persona' => 'required|exists:persona,id',
+            'limite_compras' => 'nullable|integer|min:0',
+            'periodo_control' => 'nullable|integer|min:1',
+            'restriccion_activa' => 'boolean'
+        ]);
+
+        $persona = Persona::findOrFail($request->id_persona);
+        $persona->limite_compras = $request->limite_compras;
+        $persona->periodo_control = $request->periodo_control;
+        $persona->restriccion_activa = $request->restriccion_activa;
+
+        $persona->save();
+
+        return response()->json(['success' => true, 'message' => 'Restricciones actualizadas']);
+    }
+
+
+
+
     public function storeFromVentas(Request $request)
     {
 

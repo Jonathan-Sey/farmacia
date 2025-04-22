@@ -57,6 +57,8 @@ class VentaController extends Controller
      */
     public function create()
     {
+        $persona = request()->has('id_persona') ? Persona::find(request('id_persona')) : null;
+
      //   $productos = collect();
         $productos = Producto::activos()->get();
         $almacenesActivos = Almacen::activos()->get();
@@ -68,9 +70,9 @@ class VentaController extends Controller
 
 //        $productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
 
-        $personas = Persona::activos()->get();
+        $personas = Persona::activos()->orderBy('nombre')->get();
 
-        return view('venta.create',compact('productos','sucursales','personas','almacenesActivos'));
+        return view('venta.create',compact('sucursales','personas','almacenesActivos','persona'));
     }
 
     public function productosPorSucursal($id)
@@ -116,6 +118,24 @@ class VentaController extends Controller
             'numero_reserva' => 'nullable|string|max:50'
 
         ]);
+
+        // validamos el control de compora por cliente
+        $persona = Persona::find($request->id_persona);
+
+        // Verificar restricciones
+        if ($persona->tieneRestriccion()) {
+            $mensaje = 'Esta persona tiene restricciones de compra: ';
+
+            if ($persona->restriccion_activa) {
+                $mensaje .= 'Restricción manual activada';
+            } else {
+                $mensaje .= "Excedió el límite de compras ({$persona->comprasRecientes()}/{$persona->limite_compras})";
+            }
+
+            return back()
+            ->with('error', $mensaje)
+            ->withInput();;
+        }
 
         //         // Verificar que el total enviado coincida con el recalculado
         // $subtotal = array_sum($request->get('arrayprecio'));

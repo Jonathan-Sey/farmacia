@@ -126,6 +126,15 @@ Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' =
 
 Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.image');
 
+
+// para la restriccion en ventas
+Route::get('/personas/{persona}/restricciones', [PersonaController::class, 'obtenerRestricciones'])
+     ->name('personas.restricciones');
+
+Route::post('/personas/actualizar-restricciones', [PersonaController::class, 'actualizarRestricciones'])
+     ->name('personas.actualizar-restricciones');
+
+
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 // Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
