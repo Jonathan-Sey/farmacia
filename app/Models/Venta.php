@@ -20,7 +20,9 @@ class Venta extends Model
         'estado',
         'es_prescrito',
         'imagen_receta',
-        'numero_reserva'
+        'numero_reserva',
+        'observaciones_receta'
+
     ];
 
     public function sucursal()

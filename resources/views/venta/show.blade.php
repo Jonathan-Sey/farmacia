@@ -37,7 +37,7 @@
     <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
       <p class="card-title font">Sucursal</p>
     </div>
-    <div class="md:col-span-2">
+    <div class="md:col-span-2 break-words">
       <p class="p-2 text-center font-semibold " >{{$venta->sucursal->nombre}} - {{$venta->sucursal->ubicacion}}</p>
     </div>
 </div>
@@ -68,6 +68,16 @@
       <p class="p-2 text-center font-semibold " >{{$venta->total}}</p>
     </div>
 </div>
+
+<div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
+    <div class="card-body items-center p-2  bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
+      <p class="card-title font">Observacioens</p>
+    </div>
+    <div class="md:col-span-2 break-words p-2">
+      <p class="p-2 text-center font-semibold " >{{$venta->observaciones_receta}}</p>
+    </div>
+</div>
+
 {{-- campos para la receta --}}
 <!-- Sección de Prescripción -->
 <div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
@@ -183,9 +193,9 @@
     //let totalCalculado = Math.round(suma + ivaCalculado);
 
     $('#suma').html(Math.round(suma));
-    //$('#iva').html(ivaCalculado);
-    //$('#total').html(totalCalculado);
-    //$('#inputTotal').val(totalCalculado);
+    // $('#iva').html(ivaCalculado);
+    // $('#total').html(totalCalculado);
+    // $('#inputTotal').val(totalCalculado);
 }
 
 </script>

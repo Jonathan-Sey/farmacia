@@ -66,8 +66,10 @@ class CompraController extends Controller
             'arrayprecio' => 'required|array',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
-            'arrayvencimiento.*' => 'required|date', // nuevo campo
+            'arrayvencimiento.*' => 'required|date',
             'estado'=>'integer',
+            'imagen_comprobante' => 'nullable|string',
+            'observaciones_comprobante' => 'nullable|string'
         ]);
 
 
@@ -87,6 +89,8 @@ class CompraController extends Controller
                 'fecha_compra' => Carbon::now()->format('Y-m-d'),
                 'total'=>$request->input('total'),
                 'estado' => 1,
+                'imagen_comprobante' => $request->imagen_comprobante,
+                'observaciones_comprobante' => $request->observaciones_comprobante
             ]);
 
             // obtener los arrays de detalles
@@ -113,6 +117,7 @@ class CompraController extends Controller
                     'numero_lote' => $numeroLote,
                     'fecha_vencimiento' => $fechaVencimiento,
                     'cantidad' => $arrayCantidad[$index],
+                    'precio_compra' => $arrayprecio[$index],
                     'id_compra' => $compra->id,
                     //'estado' => 1,
                 ]);
@@ -179,6 +184,9 @@ class CompraController extends Controller
     public function show(Compra $compra)
     {
         // $productos = $compra->productos();
+        if($compra->imagen_comprobante){
+            $compra->imagen_comprobante_url = asset('uploads/' . $compra->imagen_comprobante);
+         }
         return view('compra.show',compact('compra'));
 
     }

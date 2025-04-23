@@ -115,7 +115,8 @@ class VentaController extends Controller
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
             'imagen_receta' => 'nullable|string',
-            'numero_reserva' => 'nullable|string|max:50'
+            'numero_reserva' => 'nullable|string|max:50',
+            'observaciones_receta' => 'nullable|string|max:500'
 
         ]);
 
@@ -150,22 +151,23 @@ class VentaController extends Controller
         DB::beginTransaction();
 
         // Redondear el impuesto y total
-        $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
-        $impuesto = round(($subtotal * $request->impuesto) / 100, 2); // Redondear impuesto
-        $total = round($subtotal + $impuesto, 2); // Redondear total
+        // $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
+        // $impuesto = round(($subtotal * $request->impuesto) / 100, 2);  // Redondear impuesto
+        // $total = round($subtotal + $impuesto, 2); // Redondear total
 
         // Crear el registro de venta
         $venta = Venta::create([
             'id_sucursal' => $request->id_sucursal,
             'fecha_venta' => $request->fecha_venta,
-            'impuesto' => $impuesto,
-            'total' => $request->total,
+            'impuesto' => $request-> impuesto,
+            'total' => $request-> total,
             'id_usuario' => $request->idUsuario, // Usar el usuario actual o el correcto
             'id_persona' => $request->id_persona,
             'estado' => 1,
             'es_prescrito' => $request->has('es_prescrito'),
             'imagen_receta' => $request->imagen_receta,
-            'numero_reserva' => $request->numero_reserva
+            'numero_reserva' => $request->numero_reserva,
+            'observaciones_receta' => $request->observaciones_receta
         ]);
 
         // Obtener los arrays de detalles
