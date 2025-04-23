@@ -19,6 +19,10 @@ class Compra extends Model
         'impuesto',
         'total',
         'estado',
+        //nuevos campos
+        'imagen_comprobante',
+        'observaciones_comprobante'
+
 
     ];
 

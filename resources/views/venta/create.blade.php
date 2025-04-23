@@ -19,6 +19,37 @@
     max-width: 100%; */
 /* } */
 
+/* Agrega esto a tu sección de estilos */
+    @media (max-width: 768px) {
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            white-space: normal;
+            overflow: visible ;
+            text-overflow: clip ;
+            max-width: 100% ;
+            word-wrap: break-word;
+        }
+
+        .select2-container {
+            width: 100%;
+        }
+
+        .select2-dropdown {
+            width: auto;
+        }
+    }
+
+    @media (max-width: 768px) {
+    .bg-white.p-5.rounded-xl.shadow-lg {
+        padding: 1rem;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .lg\:grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+}
+
 </style>
 @endpush
 
@@ -303,12 +334,17 @@
 
                                     <button type="button" class="btn btn-sm hidden" onclick="my_modal_2.showModal()" id="btn-subir-receta">
                                         <i class="fa-solid fa-upload"></i> Subir Receta
+                                        <span id="receta-subida-indicator" class="hidden ml-2 text-green-500">
+                                            <i class="fa-solid fa-check-circle"></i>
+                                        </span>
                                     </button>
 
 
 
-                                <!-- id de la imagen-->
+                                <!-- id de la imagen y campo observacion-->
                                 <input type="hidden" name="imagen_receta" id="imagen_receta" value="">
+                                <input type="hidden" name="observaciones_receta" id="observaciones_receta_value" value="">
+
                             </div>
 
                             <!-- numero de reserva -->
@@ -508,6 +544,8 @@
                 width: '100%',
                 placeholder: "Buscar",
                 allowClear: true,
+                dropdownAutoWidth: true,  // Nueva opción
+                adaptDropdownCssClass: true  // Nueva opción
             });
         // pocicionar el cursor en el input para buscar producto
         $('.select2-sucursal').on('select2-sucursal:open', function() {
@@ -1217,6 +1255,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log("Archivo subido correctamente:", response.imagen);
                 document.querySelector('#formReceta input[name="imagen"]').value = response.imagen;
             });
+
+             // Manejar eliminación de imagen
+            dropzone.on("removedfile", function() {
+                document.querySelector('#formReceta input[name="imagen"]').value = "";
+                document.getElementById('receta-subida-indicator').classList.add('hidden');
+            });
         });
 
         // Función para guardar la receta
@@ -1235,8 +1279,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Guardar la imagen en el campo oculto del formulario principal
             document.getElementById('imagen_receta').value = imagen;
+            document.getElementById('observaciones_receta_value').value = observaciones;
 
             // Marcar como prescrito
+            document.getElementById('receta-subida-indicator').classList.remove('hidden');
             document.getElementById('es_prescrito').checked = true;
             document.getElementById('campo-reserva').classList.remove('hidden');
             document.getElementById('btn-subir-receta').classList.remove('hidden');
@@ -1250,6 +1296,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 text: 'La receta médica se ha asociado correctamente a la venta',
             });
         }
+
+        // Mostrar observaciones existentes al abrir el modal
+        document.getElementById('btn-subir-receta').addEventListener('click', function() {
+            const observacionesGuardadas = document.getElementById('observaciones_receta_value').value;
+            if (observacionesGuardadas) {
+                document.getElementById('observaciones_receta').value = observacionesGuardadas;
+            }
+        });
 
      </script>
 

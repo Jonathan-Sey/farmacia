@@ -23,6 +23,9 @@ class CreateComprasTable extends Migration
             $table->decimal('impuesto',8,2);
             $table->decimal('total',10,2);
             $table->tinyInteger('estado')->default(1);
+            // nuevos campos
+            $table->string('imagen_comprobante')->nullable();
+            $table->text('observaciones_comprobante')->nullable();
             $table->timestamps();
         });
     }

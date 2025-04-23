@@ -3,8 +3,137 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+
+
+<style>
+        @media (max-width: 768px) {
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            white-space: normal;
+            overflow: visible ;
+            text-overflow: clip ;
+            max-width: 100% ;
+            word-wrap: break-word;
+        }
+
+        .select2-container {
+            width: 100%;
+        }
+
+        .select2-dropdown {
+            width: auto;
+        }
+    }
+
+    @media (max-width: 768px) {
+    .bg-white.p-5.rounded-xl.shadow-lg {
+        padding: 1rem;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+    }
+
+    .lg\:grid-cols-2 {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
 
 @endpush
+
+
+
+@push('js')
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script>
+    Dropzone.autoDiscover = false;
+    const dropzone = new Dropzone("#dropzone", {
+        url: "{{ route('upload.image') }}",
+        dictDefaultMessage: "Arrastra y suelta una imagen o haz clic aquí para subirla",
+        acceptedFiles: ".png,.jpg,.jpeg",
+        addRemoveLinks: true,
+        dictRemoveFile: "Borrar imagen",
+        maxFiles: 1,
+        uploadMultiple: false,
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        }
+    });
+
+    dropzone.on("addedfile", function(file) {
+        if (this.files.length > 1) { // Si hay más de un archivo
+            this.removeFile(this.files[0]); // Elimina el primer archivo
+                Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir una imagen.',
+                confirmButtonText: 'Aceptar',
+            });
+        }
+    });
+
+    dropzone.on("sending", function(file, xhr, formData) {
+        if (this.files.length > 1) { // Si hay más de un archivo
+            this.removeFile(file); // Elimina el archivo adicional
+            Swal.fire({
+                icon: 'error', // Tipo de ícono (error, success, warning, info, etc.)
+                title: 'Error', // Título de la alerta
+                text: 'Solo se permite subir una imagen.', // Mensaje de la alerta
+                confirmButtonText: 'Aceptar', // Texto del botón
+            });
+            return false; // Detiene la subida del archivo
+        }
+    });
+
+    dropzone.on("success", function(file, response) {
+        console.log("Archivo subido correctamente:", response.imagen);
+        document.querySelector('[name="imagen"]').value = response.imagen;
+    });
+
+    dropzone.on("error", function(file, message) {
+        console.error("Error al subir el archivo:", message);
+        alert("Error al subir la imagen: " + message);
+    });
+    // remover la imagen
+     dropzone.on("removedfile", function(file) {
+        document.querySelector('[name="imagen"]').value = ""; // Limpiar el campo oculto
+    });
+
+
+
+
+    // precargar la imagen subida nuevamente
+        document.addEventListener("DOMContentLoaded", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+
+        if (imagenNombre) {
+            const mockFile = { name: imagenNombre, size: 12345 }; // Simula un archivo
+            dropzone.emit("addedfile", mockFile);
+            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre); // cargar imagen
+            dropzone.emit("complete", mockFile);
+        }
+    });
+
+
+        //eliminar la imagen del server
+        window.addEventListener("beforeunload", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+
+        if (imagenNombre) {
+            fetch("/eliminar-imagen-temp", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+    });
+
+</script>
+
+@endpush
+
 
 @section('contenido')
 <div class="flex justify-center items-center mx-3 ">
@@ -29,7 +158,7 @@
                                     id="id_producto">
                                     <option value="">Buscar un producto</option>
                                     @foreach ($productos as $producto)
-                                        <option value="{{ $producto->id }}"  data-imagen="{{$producto->imagen_url}}" data-nombre="{{$producto->nombre}}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
+                                        <option value="{{ $producto->id }}"  data-imagen="{{$producto->imagen_url}}" data-nombre-completo="{{$producto->nombre}}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
                                     @endforeach
                                 </select>
                                 @error('id_producto')
@@ -103,7 +232,7 @@
                                 required>
                                 <option value="">Seleccionar una categoría</option>
                                 @foreach ($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->id }}" {{old('id_proveedor') == $proveedor->id ? 'selected' : ''}}>{{$proveedor->empresa}}</option>
+                                    <option value="{{ $proveedor->id }}"  data-nombre-completo="{{$proveedor->empresa}}" {{old('id_proveedor') == $proveedor->id ? 'selected' : ''}}>{{$proveedor->empresa}}</option>
                                 @endforeach
                             </select>
                             @error('id_proveedor')
@@ -131,6 +260,37 @@
                             </div>
                             @enderror
                         </div>
+
+                        <!-- formulario para prescripciones -->
+                        <div class="mt-2 mb-5">
+                            <div class="md:flex md:flex-row md:items-center md:gap-3 flex flex-col gap-3 ">
+                                {{-- <label class="cursor-pointer label md:flex md:flex-row  flex flex-col gap-2">
+                                    <span class="label-text mr-2">¿Es prescrito?</span>
+                                    <input type="checkbox" name="es_prescrito" id="es_prescrito" class="toggle toggle-primary">
+                                </label> --}}
+                                    <button type="button" class="btn btn-sm" onclick="my_modal_2.showModal()" id="btn-subir-comprobante">
+                                        <i class="fa-solid fa-upload"></i> Subir Comprobante
+                                        <span id="comprobante-subido" class="hidden ml-2 text-green-500">
+                                            <i class="fa-solid fa-check-circle"></i>
+                                        </span>
+                                    </button>
+
+                                <!-- id de la imagen-->
+                                <input type="hidden" name="imagen_comprobante" id="imagen_comprobante" value="">
+                                <input type="hidden" name="observaciones_comprobante" id="observaciones_comprobante_value" value="">
+
+
+                            </div>
+
+                            <!-- numero de reserva -->
+                            <div id="campo-reserva" class="mt-2 hidden">
+                                <label for="numero_reserva" class="uppercase block text-sm font-medium text-gray-900">Número de Reserva</label>
+                                <input type="text" name="numero_reserva" id="numero_reserva"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    placeholder="Ingrese número de reserva">
+                            </div>
+                        </div>
+
 
                         <div class="lg:grid grid-cols-2 gap-8">
                             <div   class="md:flex md:flex-row gap-5 flex flex-col">
@@ -240,6 +400,40 @@
                 <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
             </div>
         </form>
+
+
+              <!-- Modal para prescrito -->
+            <!-- Modal para subir receta médica -->
+            <dialog id="my_modal_2" class="modal">
+                <div class="modal-box w-11/12 max-w-5xl">
+                    <h3 class="font-bold text-lg">Subir Comprobante de Compra</h3>
+                    <form id="formComprobante">
+                        @csrf
+                        <div class="form-control">
+                            <label class="label" for="observaciones_comprobante">
+                                <span class="label-text">Observaciones (Opcional)</span>
+                            </label>
+                            <textarea name="observaciones_comprobante" id="observaciones_comprobante" class="textarea textarea-bordered" rows="3"></textarea>
+                        </div>
+
+                        <div class="form-control mt-4">
+                            <label class="uppercase block text-sm font-medium text-gray-900">Imagen del comprobante</label>
+                            <div id="dropzone" class="dropzone border-2 border-dashed rounded w-full h-60 p-4">
+                                <input type="hidden" name="imagen" value="">
+                            </div>
+                            @error('imagen')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                            @enderror
+                        </div>
+                        <div class="modal-action">
+                            <button type="button" onclick="my_modal_2.close()" class="btn">Cancelar</button>
+                            <button type="button" onclick="guardarComprobante()" class="btn btn-primary">Guardar Comprobante</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
     </div>
 </div>
 
@@ -250,32 +444,59 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/obtenerUsuario.js"></script>
-    <script>
-        //uso del select2 para proveedores
-        $(document).ready(function(){
-            $('.select2-proveedor').select2({
-                width: '100%',
-                placeholder: "Buscar proveedor",
-                allowClear: true
-            });
-        // pocicionar el cursor en el input para buscar producto
-        $('.select2-proveedor').on('select2-proveedor:open', function() {
-        document.querySelector('.select2-search__field').focus();
+<script>
+    // Configuración para Select2 con truncado de texto
+    $(document).ready(function(){
+        // Configuración para el select de proveedores
+        $('#id_proveedor').select2({
+            width: '100%',
+            placeholder: "Buscar proveedor",
+            allowClear: true,
+            templateResult: formatOption,  // Mostrar nombre completo en el dropdown
+            templateSelection: formatSelection  // Truncar nombre en la selección
         });
 
-        //uso del select2 para proveedores
-            $('.select2-producto').select2({
-                width: '100%',
-                placeholder: "Buscar producto",
-                allowClear: true
-            });
-        // pocicionar el cursor en el input para buscar producto
-        $('.select2-producto').on('select2-producto:open', function() {
-        document.querySelector('.select2-search__field').focus();
+        // Configuración para el select de productos
+        $('#id_producto').select2({
+            width: '100%',
+            placeholder: "Buscar producto",
+            allowClear: true,
+            templateResult: formatOption,  // Mostrar nombre completo en el dropdown
+            templateSelection: formatSelection  // Truncar nombre en la selección
+        });
+
+        // Función para formatear cómo se muestran los resultados en el dropdown
+        function formatOption(option) {
+            if (!option.id) {
+                return option.text;
+            }
+            // Mostrar el nombre completo en el dropdown
+            var nombreCompleto = $(option.element).data('nombre-completo') || option.text;
+            return $('<div>' + nombreCompleto + '</div>');
+        }
+
+        // Función para formatear cómo se muestra la selección en el select
+        function formatSelection(option) {
+            if (!option.id) {
+                return option.text;
+            }
+            // Obtener el nombre completo
+            var nombreCompleto = $(option.element).data('nombre-completo') || option.text;
+
+            // Truncar el nombre si es necesario
+            var nombreTruncado = nombreCompleto.length > 30
+                ? nombreCompleto.substring(0, 30) + '...'
+                : nombreCompleto;
+
+            return nombreTruncado;
+        }
+
+        // Posicionar el cursor en el input para buscar
+        $('.select2-proveedor, .select2-producto').on('select2:open', function() {
+            document.querySelector('.select2-search__field').focus();
         });
     });
-
-    </script>
+</script>
 
 <script>
     $(document).ready(function() {
@@ -314,7 +535,7 @@
         function agregarProducto(){
             let id_producto = $('#id_producto').val();
             //let producto = ($('#id_producto option:selected').text()).split(' ')[1];
-            let producto = $('#id_producto option:selected').data('nombre');
+            let producto = $('#id_producto option:selected').data('nombre-completo');
             let cantidad = $('#cantidad').val();
             let precio = $('#precio').val();
             let fecha_vencimiento = $('#fecha_vencimiento').val();
@@ -460,6 +681,74 @@
 
 
     </script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const campoImagen = document.getElementById('btn-subir-comprobante');
+
+            // Configurar Dropzone para subir imágenes
+            Dropzone.autoDiscover = false;
+            const dropzone = new Dropzone("#dropzone", {
+                url: "{{ route('upload.image') }}",
+                dictDefaultMessage: "Arrastra y suelta la receta médica o haz clic aquí para subirla",
+                acceptedFiles: ".png,.jpg,.jpeg,.pdf",
+                addRemoveLinks: true,
+                dictRemoveFile: "Borrar archivo",
+                maxFiles: 1,
+                uploadMultiple: false,
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                }
+            });
+
+            dropzone.on("success", function(file, response) {
+                console.log("Archivo subido correctamente:", response.imagen);
+                document.querySelector('#formComprobante input[name="imagen"]').value = response.imagen;
+                document.getElementById('comprobante-subido').classList.add('hidden');
+            });
+        });
+
+        // Función para guardar la receta
+        function guardarComprobante() {
+            const imagen = document.querySelector('#formComprobante input[name="imagen"]').value;
+            const observaciones = document.getElementById('observaciones_comprobante').value;
+
+            if (!imagen) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Debes subir una imagen del comprobante',
+                });
+                return;
+            }
+
+            // Guardar la imagen en el campo oculto del formulario principal
+            document.getElementById('imagen_comprobante').value = imagen;
+            document.getElementById('observaciones_comprobante_value').value = observaciones;
+
+            //marcar como subido
+            document.getElementById('comprobante-subido').classList.remove('hidden');
+
+            // Cerrar el modal
+            my_modal_2.close();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Comprobante guardado',
+                text: 'El comprobante se ha asociado correctamente a la compra',
+            });
+        }
+
+             // Mostrar observaciones existentes al abrir el modal
+             document.getElementById('btn-subir-comprobante').addEventListener('click', function() {
+            const observacionesGuardadas = document.getElementById('observaciones_comprobante_value').value;
+            if (observacionesGuardadas) {
+                document.getElementById('observaciones_receta').value = observacionesGuardadas;
+            }
+        });
+
+
+     </script>
 
 
 @endpush
