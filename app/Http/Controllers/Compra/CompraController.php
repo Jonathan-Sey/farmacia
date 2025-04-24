@@ -117,10 +117,15 @@ class CompraController extends Controller
                     'numero_lote' => $numeroLote,
                     'fecha_vencimiento' => $fechaVencimiento,
                     'cantidad' => $arrayCantidad[$index],
-                    'precio_compra' => $arrayprecio[$index],
+                    'precio_compra' => $arrayprecio[$index], // guardamos en lote tambien
                     'id_compra' => $compra->id,
                     //'estado' => 1,
                 ]);
+
+                $producto = Producto::find($idPoducto);
+                $producto->ultimo_precio_compra = $arrayprecio[$index];
+                $producto->save();
+
 
                     // Verificar si ya existe un registro en el inventario para este producto y lote
                 $inventarioExistente = Inventario::where('id_producto', $idPoducto)

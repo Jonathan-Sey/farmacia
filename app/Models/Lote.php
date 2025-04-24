@@ -16,6 +16,7 @@ class Lote extends Model
         'fecha_vencimiento',
         'cantidad',
         'id_compra',
+        'precio_compra'
       //  'estado'
     ];
 

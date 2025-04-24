@@ -21,7 +21,7 @@ class ProductoController extends Controller
     {
 
         $productos = Producto::with('categoria:id,nombre')
-        ->select('id','codigo','nombre','tipo','precio_venta','precio_porcentaje','imagen','estado','id_categoria','fecha_caducidad','updated_at')
+        ->select('id','codigo','nombre','tipo','ultimo_precio_compra','precio_venta','precio_porcentaje','imagen','estado','id_categoria','fecha_caducidad','updated_at')
         ->where('estado', '!=', 0)
         ->get();
         //return $productos;
@@ -163,7 +163,7 @@ class ProductoController extends Controller
             // Actualizar el campo precio_porcentaje con el nuevo valor redondeado
             $datosActualizados['precio_porcentaje'] = round($request->precio_porcentaje * 10) / 10;
         }
- 
+
         //validando el tipo de producto
         $nuevotipo = $request->has('tipo') ? 2 : 1;
         if ($producto->tipo != $nuevotipo) {
@@ -187,8 +187,8 @@ class ProductoController extends Controller
          $datosActualizados['tipo'] = $nuevotipo;
 
          $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_porcentaje','tipo','fecha_caducidad', 'imagen']);
-           
-        
+
+
 
          if ($datosActualizados != $datosSinCambios){
             $producto->update($datosActualizados);
@@ -244,11 +244,11 @@ class ProductoController extends Controller
     public function precioPorcentaje($id)
     {
         $producto = Producto::find($id);
-    
+
         if (!$producto) {
             abort(404, 'Producto no encontrado');
         }
-    
+
         return view('producto.precio', compact('producto'));
     }
 
