@@ -21,6 +21,7 @@
                 <tr class="bg-slate-600  ">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Ultimo Precio de compra</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio_anterior</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio_nuevo</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
@@ -45,6 +46,7 @@
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->ultimo_precio_compra}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_porcentaje}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
@@ -152,7 +154,7 @@
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 7 },
+                { responsivePriority: 2, targets: 9 },
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado

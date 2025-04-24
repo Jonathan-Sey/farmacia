@@ -13,6 +13,7 @@
                     <th>Número de Lote</th>
                     <th>Producto</th>
                     <th>Cantidad Original</th>
+                    <th>Precio de compra</th>
                     <th>Fecha de Vencimiento</th>
                 </tr>
             </thead>
@@ -25,6 +26,7 @@
                     <td>{{ $lote->numero_lote }}</td>
                     <td>{{ $lote->producto->nombre }}</td>
                     <td>{{ $lote->cantidad }}</td>
+                    <td>{{ $lote->precio_compra }}</td>
                     <td>{{ $lote->fecha_vencimiento }}</td>
                 </tr>
                 @endforeach
@@ -42,6 +44,7 @@
                     <th>Producto</th>
                     <th>Sucursal</th>
                     <th>Cantidad Disponible</th>
+                    <th>Precio de compra</th>
                     <th>Fecha de Vencimiento</th>
                 </tr>
             </thead>
@@ -55,6 +58,7 @@
                     <td>{{ $inventario->producto->nombre }}</td>
                     <td>{{ $inventario->sucursal->ubicacion }}</td>
                     <td>{{ $inventario->cantidad }}</td>
+                    <td>{{ $inventario->lote->precio_compra }}</td>
                     <td>{{ $inventario->lote->fecha_vencimiento }}</td>
                 </tr>
                 @endforeach

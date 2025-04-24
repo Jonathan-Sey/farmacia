@@ -14,6 +14,7 @@
                     <th>Producto</th>
                     <th>Sucursal</th>
                     <th>Cantidad</th>
+                    <th>Precio de compra</th>
                     <th>Fecha de Vencimiento</th>
                     <th></th>
                 </tr>
@@ -29,6 +30,7 @@
                     <td class="bg-white" >{{ $lote->producto->nombre }}</td>
                     <td class="bg-white" >{{ $inventario->sucursal->ubicacion }}</td>
                     <td class="bg-white" >{{ $lote->cantidad }}</td>
+                    <td class="bg-white" >{{ $lote->precio_compra }}</td>
                     <td class="bg-white" >{{ $lote->fecha_vencimiento }}</td>
                     <th>{{ $iteracion }}</th>
                 </tr>
