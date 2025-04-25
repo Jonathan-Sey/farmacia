@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\Devoluciones;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -10,6 +11,8 @@ use Illuminate\Queue\SerializesModels;
 
 class validacion extends Mailable
 {
+
+    public $devolucion;
     use Queueable, SerializesModels;
 
     /**
@@ -17,9 +20,9 @@ class validacion extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct( $devolucion)
     {
-        //
+        $this->devolucion = $devolucion;
     }
 
     /**
@@ -31,7 +34,20 @@ class validacion extends Mailable
    
     public function build()
     {
-        return $this->from('mymail@gmail.com', 'Veronica')->view('emails.verificacion');
+
+        $devoluciones = Devoluciones::with(['sucursal','productos','usuario'])->where('id',$this->devolucion->id)
+        ->latest()
+        ->get();
+
+        
+        return $this->subject('Autorización requerida para devolución')
+        ->view('emails.verificacion')
+        ->with([
+            'devolucion' => $this->devolucion,
+            'url' => route('devoluciones.autorizar', $this->devolucion->id),
+            'devoluciones' => $devoluciones,
+
+        ]);
        
     }
 }
