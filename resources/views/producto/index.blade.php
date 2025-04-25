@@ -15,6 +15,13 @@
             Crear
         </button>
     </a>
+
+    <a href="{{ route('productos.importar') }}">
+        <button class="btn  bg-red-500 hover:bg-red-600 text-white font-bold uppercase">
+            Importar desde Excel
+        </button>
+    </a>
+
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">

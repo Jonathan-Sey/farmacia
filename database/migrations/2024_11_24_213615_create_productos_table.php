@@ -17,7 +17,7 @@ class CreateProductosTable extends Migration
             $table->id();
             $table->string('codigo',12)->uniqued();
             $table->string('nombre',255)->nullable();
-            $table->string('imagen');
+            $table->string('imagen')->nullable();
             $table->text('descripcion')->nullable();
             $table->decimal('ultimo_precio_compra',10,2)->default(0);
             $table->decimal('precio_venta',10,2);

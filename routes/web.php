@@ -17,6 +17,7 @@ use App\Http\Controllers\Inventario\InventarioController;
 use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\ProductoImportController;
 use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
 //use App\Http\Controllers\Traslado\TrasladoController;
@@ -24,8 +25,7 @@ use App\Http\Controllers\solicitud\solicitudController;
 
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
-
-
+use App\Imports\ProductosImport;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 
@@ -81,6 +81,14 @@ Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
 Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 //Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+//rutas para las importaciones
+Route::get('/productos/importar', [ProductoImportController::class, 'mostrarImportacion'])
+    ->name('productos.importar');
+
+Route::post('/productos/importar', [ProductoImportController::class, 'procesarImportacion'])->name('productos.importar.procesar');
+Route::post('/productos/guardar-importacion', [ProductoImportController::class, 'guardarImportacion'])->name('productos.importar.guardar');
+
+
 Route::get('/productos/historico', [ProductoController::class, 'verHistorico'])->name('historico.precios');
 Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuario']);
 Route::post('/usuarios/register', [UsuarioController::class, 'register'])->name('usuarios.register');
@@ -133,6 +141,14 @@ Route::get('/personas/{persona}/restricciones', [PersonaController::class, 'obte
 
 Route::post('/personas/actualizar-restricciones', [PersonaController::class, 'actualizarRestricciones'])
      ->name('personas.actualizar-restricciones');
+
+// rutas para importar productos
+// Route::get('/productos/importar', [ProductoImportController::class, 'mostrarImportacion'])->name('productos.importar');
+// Route::post('/productos/importar', [ProductoImportController::class, 'procesarImportacion'])->name('productos.importar.procesar');
+// Route::post('/productos/guardar-importacion', [ProductoImportController::class, 'guardarImportacion'])->name('productos.importar.guardar');
+
+
+// Rutas para importación
 
 
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
