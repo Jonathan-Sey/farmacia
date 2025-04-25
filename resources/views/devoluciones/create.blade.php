@@ -13,66 +13,91 @@
 @endpush
 
 @section('contenido')
-<form action="{{ route('devoluciones.store') }}" method="POST">
-@csrf   
-<div id="usuario"></div>
-    <div>
-        <div>
-            <label for="">numero de la venta</label>
-            <input type="number" name="id_venta" id="id_venta">
-        </div>
 
-        <div>
-            <label for="">producto</label>
-            <select name="producto" id="producto">
-                <option value="1">as</option>
-            </select>
-        </div>
+<div class="flex justify-center items-center mx-3">
+    <div class="bg-white rounded-xl shadow-lg w-full max-w-3xl mb-10 p-5">
+        <form action="{{ route('devoluciones.store') }}" method="POST">
+            @csrf
+            <div class="border-b border-gray-900/10 pb-12">
+                <div id="usuario"></div>
 
-        <div>
-            <label for="">cantidad</label>
-             <input type="text" name="cantidad" id="cantidad">
-        </div>
+                <div class="mt-2 mb-5">
+                    <label for="id_venta" class="uppercase block text-sm font-medium text-gray-900">numero de la venta</label>
+                        <input type="number"
+                         name="id_venta" id="id_venta" placeholder="numero de la venta"
+                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">     
+                </div>
 
-        <div>
-            <label for="">monto</label>
-             <input type="number" name="monto" id="monto">
-        </div>
+                <div class="mt-2 mb-5">
+                    <label  for="producto" class="uppercase block text-sm font-medium text-gray-900">producto</label>
+                    <select name="producto" id="producto" 
+                    class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                    <option value="">seleccionar el producto</option>
+                    @foreach($productos as $producto)
+                    <option value="{{$producto->id}}">{{$producto->nombre}}</option>
+                    @endforeach
+                    </select>
+                </div>
 
-        <div>
-            <label for="">motivo</label>
-             <input type="text" name="motivo" id="motivo">
-        
-        </div>
+                <div class="mt-2 mb-5">
+                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">cantidad</label>
+                    <input type="number" name="cantidad" id="cantidad"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                </div>
 
-        <div>
-            <label for="">estado</label>
-             <input type="text" name="estado" id="estado">
+                <div    class="mt-2 mb-5">
+                    <label for="monto" class="uppercase block text-sm font-medium text-gray-900" >monto</label>
+                    <input type="number" name="monto" id="monto"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                </div>
 
-        </div>
+                <div class="mt-2 mb-5">
+                    <label for="motivo" class="uppercase block text-sm font-medium text-gray-900" >motivo</label>
+                    <textarea type="text" name="motivo" id="motivo"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                    </textarea>
+                </div>
 
-        <div>
-            <label for="">observaciones</label>
-      
-            <input type="text" name="observaciones" id="observaciones">
-        </div>
+          
 
-        <div>
-            <label for="">Usuario</label>
-             <select name="usuario" id="usuario">
-                <option value="1">as</option>
-             </select>
-        </div>
+                <div    class="mt-2 mb-5">
+                    <label for="observaciones" class="uppercase block text-sm font-medium text-gray-900">observaciones</label>
 
-        <div>
-            <label for="">sucursal</label>
-             <select name="sucursal" id="sucursal">
-                <option value="1">as</option>
-             </select>
-        </div>
-        <button type="submit">Guardar</button>
+                    <textarea  name="observaciones" id="observaciones"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                    </textarea>
+                </div>
+
+                <div class="mt-2 mb-5">
+                    <label for="usuario" class="uppercase block text-sm font-medium text-gray-900">Usuario</label>
+                    <select name="usuario" id="usuario" 
+                    class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">>
+                        <option value="">seleccionar un usuario</option>   
+                    @foreach($personas as $persona)
+                        <option value="{{$persona->id}}">{{$persona->nombre}}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="mt-2 mb-5">
+                    <label for="sucursal" class="uppercase block text-sm font-medium text-gray-900">sucursal</label>
+                    <select name="sucursal" id="sucursal"
+                    class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">>
+                        <option value="">seleccionar una sucursal</option>    
+                    @foreach($sucursales as $sucursal)
+                        <option value="{{$sucursal->id}}">{{$sucursal->nombre}}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+
+            </div>
+            <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 m-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
+
+        </form>
     </div>
-</form>
+</div>
+
 
 
 @endsection

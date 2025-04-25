@@ -3,10 +3,15 @@
 namespace App\Http\Controllers\devoluciones;
 
 use App\Http\Controllers\Controller;
+use App\Mail\validacion;
 use App\Models\Devoluciones;
 use App\Models\Persona;
 use App\Models\Sucursal;
+use App\Models\Venta;
+use App\Models\producto;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class devolucionesController extends Controller
 {
@@ -22,7 +27,9 @@ class devolucionesController extends Controller
     {
         $sucursales = Sucursal::all();
         $personas = Persona::all();
-        return view('devoluciones.create',compact('sucursales', 'personas'));
+        $productos = producto::all();
+        
+        return view('devoluciones.create',compact('sucursales', 'personas', 'productos'));
     }
 
     public function store(Request $request){
@@ -32,7 +39,6 @@ class devolucionesController extends Controller
             'cantidad' => 'required|integer|min:1',
             'monto' => 'required|numeric|min:0',
             'observaciones' => 'nullable|string|max:255',
-            'estado' => 'required',
             'usuario' => 'required',
             'sucursal' => 'required',
             'motivo' => 'required|string|max:255',
@@ -42,24 +48,33 @@ class devolucionesController extends Controller
         if(!$validate){
             return redirect()->back()->withErrors($validate)->withInput();
         }
+      
 
-        Devoluciones::create([
+        $devolucion = Devoluciones::create([
             'venta_id' => $request->id_venta,
             'producto_id' => $request->producto,
             'cantidad' => $request->cantidad,
             'monto' => $request->monto,
             'observaciones' => $request->observaciones,
-            'estado' => $request->estado,
             'usuario_id' => $request->usuario,
             'sucursal_id' => $request->sucursal,
             'motivo' => $request->motivo,
+            'estado' => false,
             'fecha_devolucion' => now()
         ]);
+
+        Mail::to('admin@tucorreo.com')->send(new validacion($devolucion));
+
         return redirect()->route('devoluciones.index')->with('success', 'Devolución registrada correctamente.');
     }
 
-    public function show( ){
-            return "exito";
+    public function autorizar($id)
+    {
+        $devolucion = Devoluciones::findOrFail($id);
+        $devolucion->estado = true;
+        $devolucion->save();
+    
+        return redirect()->route('devoluciones.index')->with('success', 'Devolución autorizada correctamente.');
     }
 
 }

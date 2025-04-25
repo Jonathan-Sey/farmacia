@@ -20,7 +20,7 @@ class CreateDevoluciones extends Migration
             $table->integer('cantidad');
             $table->decimal('monto', 10, 2);
             $table->string('motivo')->nullable();
-            $table->string('estado')->default('pendiente'); // pendiente, aprobado, rechazado
+            $table->boolean('estado')->default(false);
             $table->string('observaciones')->nullable();
             $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('sucursal_id')->constrained('sucursal')->onDelete('cascade');

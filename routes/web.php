@@ -153,9 +153,8 @@ Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])
 // Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
 // Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 
+Route::get('/devoluciones/autorizar/{id}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
+
 //correos 
-Route::get('/correo', function () {
-   Mail::to("antonio@gmail.com")->send(new validacion);
-   return "Correo enviado";
-})->name('correo.index');
+
 
