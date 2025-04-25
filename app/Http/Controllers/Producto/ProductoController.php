@@ -19,7 +19,6 @@ class ProductoController extends Controller
      */
     public function index()
     {
-
         $productos = Producto::with('categoria:id,nombre')
         ->select('id','codigo','nombre','tipo','ultimo_precio_compra','precio_venta','precio_porcentaje','imagen','estado','id_categoria','fecha_caducidad','updated_at')
         ->where('estado', '!=', 0)

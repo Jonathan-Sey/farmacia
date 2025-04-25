@@ -10,10 +10,12 @@
     "require": {
         "php": "^7.3|^8.0",
         "fideloper/proxy": "^4.2",
-        "fruitcake/laravel-cors": "^2.0",
+        "fruitcake/laravel-cors": "2.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "laravel/framework": "^8.3.0",
         "laravel/tinker": "^2.0",
+        "maatwebsite/excel": "3.1.34",
+        "symfony/mailer": "^5.4",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {

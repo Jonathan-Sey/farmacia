@@ -176,26 +176,7 @@
                     @enderror
                 </div>
 
-                <div class="mt-2 mb-5 grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label for="precio_compra" class="uppercase block text-sm font-medium text-gray-900">Precio de Compra</label>
-                        <input
-                            type="number"
-                            name="precio_compra"
-                            id="precio_compra"
-                            placeholder="Precio de compra"
-                            min="0"
-                            step="0.01"
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                            value="{{ old('precio_compra') }}">
-
-                        @error('precio_compra')
-                        <div role="alert" class="alert alert-error mt-4 p-2">
-                            <span class="text-white font-bold">{{ $message }}</span>
-                        </div>
-                        @enderror
-                    </div>
-
+                <div class="mt-2 mb-5">
                         <div >
                             <label for="precio_venta" class="uppercase block text-sm font-medium text-gray-900">Precio venta</label>
                             <input
