@@ -18,9 +18,10 @@ class CreateRolPestañaTable extends Migration
                   ->constrained('rol') // Asume que tu tabla de roles se llama 'rol'
                   ->onDelete('cascade');
             $table->foreignId('pestana_id') // Llave foránea a la tabla pestañas
-                  ->constrained('pestanas') 
+                  ->constrained('pestanas')
                   ->onDelete('cascade');
                   $table->unsignedInteger('orden')->default(0);
+                  $table->boolean('es_inicio')->default(false); // campo inicio
 
             // Clave primaria compuesta
             $table->primary(['rol_id', 'pestana_id']);

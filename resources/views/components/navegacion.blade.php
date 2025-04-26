@@ -1,5 +1,5 @@
 <header>
-   
+
     <div class="flex">
         <!-- Barra lateral fija -->
         <div class="hidden md:flex flex-col w-56 bg-[#073359] rounded-r-1xl overflow-hidden fixed top-0 left-0 h-full overflow-y-auto max-h-screen">
@@ -101,7 +101,8 @@
                         </span>
                         <span class="text-sm font-medium">HistoricoPrecios</span>
                     </a>
-                </li
+                </li>
+
                 <li data-pestana="Categorias" style="display:none;">
                     <a href="{{ route('categorias.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-category"></i></span>
