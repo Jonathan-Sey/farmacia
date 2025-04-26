@@ -21,6 +21,14 @@ class Rol extends Model
     }
     public function pestanas()
     {
-        return $this->belongsToMany(Pestana::class, 'rol_pestana', 'rol_id', 'pestana_id');
+        return $this->belongsToMany(Pestana::class, 'rol_pestana', 'rol_id', 'pestana_id')
+            ->withPivot('orden', 'es_inicio');
     }
+     // Metodo para obtener la pagina de inicio
+     public function paginaInicio()
+     {
+         return $this->pestanas()
+             ->wherePivot('es_inicio', 1)
+             ->first();
+     }
 }
