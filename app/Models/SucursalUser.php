@@ -1,0 +1,18 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class SucursalUser extends Model
+{
+    use HasFactory;
+    protected $table = 'sucursal_users';
+    protected $fillable = [
+        'sucursal_id',
+        'user_id',
+        
+        
+    ];
+}

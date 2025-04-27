@@ -10,6 +10,7 @@ use App\Models\Inventario;
 use App\Models\Lote;
 use App\Models\Producto;
 use App\Models\Proveedor;
+use App\Models\Sucursal;
 use App\Models\User;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
@@ -27,7 +28,7 @@ class CompraController extends Controller
      */
     public function index()
     {
-        $compras = Compra::with('proveedor','detalleCompras','usuario')
+        $compras = Compra::with('proveedor','detalleCompras','usuario','sucursal')
         ->latest()
         ->activos()
         ->get();
@@ -42,6 +43,7 @@ class CompraController extends Controller
     public function create()
     {
         // $proveedores = Proveedor::whereNotIn('estado',[0,2])->get();
+        $sucursales= Sucursal::activos()->get();
         $proveedores = Proveedor::activos()->get();
         $productos = Producto::activos()->where('tipo',1)->get();
 
@@ -50,7 +52,7 @@ class CompraController extends Controller
             $producto->imagen_url = asset('uploads/' . $producto->imagen);
         });
 
-        return view('compra.create',compact('proveedores','productos'));
+        return view('compra.create',compact('proveedores','productos','sucursales'));
     }
 
     /**
@@ -80,8 +82,8 @@ class CompraController extends Controller
             $compra = Compra::create([
                 'numero_compra'=> $codigo,
                 'id_proveedor'=> $request->id_proveedor,
+                'id_sucursal' => $request->id_sucursal,
                 'id_usuario' => 1,
-                'comprobante'=> $request->comprobante,
                 'impuesto'=>$request->impuesto,
                 //'fecha_compra'=>$request->fecha_compra,
                 'fecha_compra' => Carbon::now()->format('Y-m-d'),
@@ -203,7 +205,7 @@ class CompraController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
     }
 
     /**

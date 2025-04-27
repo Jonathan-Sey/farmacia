@@ -11,7 +11,9 @@
         font-size: 0.875rem;
         margin-top: 0.25rem;
     }
-
+    .input-especial {
+    border: 1px solid rgb(78, 17, 148) !important; 
+    }
     /* .select2-container--default .select2-selection--single .select2-selection__rendered {
     white-space: nowrap;
     overflow: hidden;
@@ -191,27 +193,34 @@
                                 </div>
                                 @enderror
                             </div>
+                             
 
-                            {{-- precio --}}
-                            <div class="mt-2 mb-5">
-                                <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Precio de venta</label>
-                                <input
-                                    type="number"
-                                    name="precio"
-                                    id="precio"
-                                    min="1"
-                                    disabled
-                                    autocomplete="given-name"
-                                    placeholder="Precio del producto"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                    value="{{ old('precio') }}">
 
-                                @error('precio')
-                                <div role="alert" class="alert alert-error mt-4 p-2">
-                                    <span class="text-white font-bold">{{ $message }}</span>
-                                </div>
-                                @enderror
+                    {{-- precio --}}
+                        <div class="mt-2 mb-5">
+                            <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Precio de venta</label>
+                            <input
+                                type="number"
+                                name="arrayprecio[]"
+                                id="precio"
+                                min="1"
+                                disabled
+                                autocomplete="given-name"
+                                placeholder="Precio del producto"
+                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                value="{{ old('arrayprecio.0') }}">
+                            
+                            @error('precio')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message }}</span>
                             </div>
+                            @enderror
+                        </div>
+
+
+                           
+                           
+
                             {{-- porcentaje --}}
                             <div class="mt-2 mb-5">
                                 <label for="porcentaje" class="uppercase block text-sm font-medium text-gray-900">Porcentaje</label>
@@ -233,6 +242,9 @@
                                 @enderror
                             </div>
                         </div>
+
+
+                        
 
 
                         {{-- end cantidad y precio --}}
@@ -274,7 +286,7 @@
                                     name="id_persona"
                                     id="id_persona"
                                     required>
-                                    <option value="">Seleccionar persona</option>
+                                    <!--<option value="">Seleccionar persona</option>-->
                                     @foreach ($personas as $persona)
                                         <option value="{{ $persona->id }}" data-nombre-completo="{{ $persona->nit }}">
                                             {{ $persona->nit }}
@@ -288,34 +300,70 @@
                                     @enderror
                         </div>
 
-                        <!-- formulario para prescripciones -->
+                                <!-- Grupo de checkboxes -->
                         <div class="mt-2 mb-5">
-                            <div class="md:flex md:flex-row md:items-center md:gap-3 flex flex-col gap-3 ">
-                                <label class="cursor-pointer label md:flex md:flex-row  flex flex-col gap-2">
-                                    <span class="label-text mr-2">¿Es prescrito?</span>
+                            <div class="flex flex-col md:flex-row md:items-center md:gap-6 gap-4">
+                                <!-- Checkbox prescripción -->
+                                <label class="cursor-pointer label flex flex-row items-center gap-2">
+                                    <span class="label-text">¿Es prescrito?</span>
                                     <input type="checkbox" name="es_prescrito" id="es_prescrito" class="toggle toggle-primary">
                                 </label>
 
-
-                                    <button type="button" class="btn btn-sm hidden" onclick="my_modal_2.showModal()" id="btn-subir-receta">
-                                        <i class="fa-solid fa-upload"></i> Subir Receta
-                                    </button>
-
-
-
-                                <!-- id de la imagen-->
-                                <input type="hidden" name="imagen_receta" id="imagen_receta" value="">
-                            </div>
-
-                            <!-- numero de reserva -->
-                            <div id="campo-reserva" class="mt-2 hidden">
-                                <label for="numero_reserva" class="uppercase block text-sm font-medium text-gray-900">Número de Reserva</label>
-                                <input type="text" name="numero_reserva" id="numero_reserva"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                    placeholder="Ingrese número de reserva">
+                                <!-- Checkbox vecino -->
+                                <label class="cursor-pointer label flex flex-row items-center gap-2">
+                                    <span class="label-text">Cliente especial</span>
+                                    <input type="checkbox" name="vecino" id="vecino" class="toggle toggle-primary">
+                                </label>
                             </div>
                         </div>
 
+                        <!-- Campo de receta -->
+                        <div id="btn-subir-receta" class="hidden mb-3">
+                            <button type="button" class="btn btn-sm" onclick="my_modal_2.showModal()">
+                                <i class="fa-solid fa-upload"></i> Subir Receta
+                            </button>
+                            <input type="hidden" name="imagen_receta" id="imagen_receta" value="">
+                        </div>
+
+                        <!-- Tipo de vecino  -->
+                        <div id="campo-reserva" class="mt-2 hidden mb-5">
+                            <label for="numero_reserva" class="uppercase block text-sm font-medium text-gray-900">Número de Reserva</label>
+                            <input type="text" name="numero_reserva" id="numero_reserva"
+                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                placeholder="Ingrese número de reserva">
+                        </div>
+
+                        
+                        {{-- precio especial --}}
+                            <!-- Campo Precio Cliente Especial (oculto por defecto) -->
+                            <div id="precio-especial-wrapper" class="mt-2 mb-5 hidden">
+                                <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Nuevo precio de venta</label>
+                                <input
+                                    type="number"
+                                    name="arrayprecio[]"
+                                    id="preciocliente"
+                                    min="1"
+                                    autocomplete="given-name"
+                                    placeholder="Precio del producto"
+                                     class="input-especial block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    value="{{ old('arrayprecio.0') }}">
+                                    
+                                @error('preciocliente')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                        <!-- Campo justificación -->
+                        <div id="campo_justificacion" class="mt-2 hidden mb-5">
+                            <label for="justificacion" class="uppercase block text-sm font-medium text-gray-900">Justificación de pago</label>
+                            <input type="text" name="justificacion" id="justificacion"
+                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                placeholder="Ingrese la justificación">
+                        </div>
+
+                        <!-- Campo de impuesto -->  
                         <div class="lg:grid grid-cols-2 gap-8">
 
                             <div   class="md:flex md:flex-row gap-5 flex flex-col">
@@ -381,7 +429,7 @@
                         </tr>
                       </thead>
                       <tbody>
-{{--
+                        {{--
                         <tr>
                             <th></th>
                         </tr> --}}
@@ -408,6 +456,7 @@
                 <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
             </div>
         </form>
+        
            <!-- Modal para registrar una nueva persona -->
             <dialog id="my_modal_1" class="modal">
                 <div class="modal-box">
@@ -512,6 +561,42 @@
     });
     </script>
 
+
+
+
+<!---Precio de venta de cliente aparezca-->
+            <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const checkboxVecino = document.getElementById('vecino');
+                const precioEspecialWrapper = document.getElementById('precio-especial-wrapper');
+                const inputPrecioCliente = document.getElementById('preciocliente');
+                const inputPrecio = document.getElementById('precio');
+
+                checkboxVecino.addEventListener('change', function () {
+                    if (this.checked) {
+                        // mostrar el campo de precio especial
+                        precioEspecialWrapper.classList.remove('hidden');
+                        // Cambiar el borde a morado
+                        inputPrecio.classList.add('input-especial');
+                    } else {
+                        // Ocultar el campo de precio especial
+                        precioEspecialWrapper.classList.add('hidden');
+                        // Remover el borde morado
+                        inputPrecio.classList.remove('input-especial');
+                    }
+                });
+
+                if (checkboxVecino.checked) {
+                    // Si el checkbox ya está marcado, aplicar los estilos correspondientes
+                    precioEspecialWrapper.classList.remove('hidden');
+                    inputPrecio.disabled = false;
+                    inputPrecio.classList.add('input-especial');
+                }
+            });
+                
+            </script>
+    
+        
 
     {{-- <script>
         $('form').on('submit', function(event) {
@@ -755,11 +840,18 @@ $(document).ready(function() {
         const impuesto = 12;
 
         function agregarProducto() {
+
+            let justificacion = $('input[name="justificacion"]').val().trim();//pedir la justificacion
             let idSucursal = $('#id_sucursal').val(); // nuevo dato a obtener
             let id_producto = $('#id_producto').val();
             let producto = nombreProducto;
             let cantidad = parseInt($('#cantidad').val());
-            let precio = parseFloat(precioProducto);  // Ya tiene el porcentaje aplicado
+            //Cambia el precio original a nuevo precio
+            let esVecino = document.getElementById('vecino').checked;
+            let precio = esVecino
+                ? parseFloat(document.getElementById('preciocliente').value)
+                : parseFloat(precioProducto);
+            //
             let stock = parseInt($('#stock').val()) || 0;
             let tipo = $('#id_producto').find('option:selected').data('tipo');
             let aplicarImpuesto = $('#impuesto-checkbox').is(':checked');
@@ -772,6 +864,12 @@ $(document).ready(function() {
                     editarProducto(index, idSucursal);
                     return;
                 }
+
+                if (esVecino && justificacion === '') {
+                    mensaje('Debe ingresar una justificación al seleccionar precio especial.');
+                    return;
+                }
+
 
             if (id_producto != '' && producto != '' && precio > 0) {
                 if (tipo === 1) { // validar si es producto
@@ -1184,15 +1282,29 @@ document.addEventListener('DOMContentLoaded', function () {
      </script>
 
      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const esPrescritoCheckbox = document.getElementById('es_prescrito');
-            const campoReserva = document.getElementById('campo-reserva');
-            const campoImagen = document.getElementById('btn-subir-receta');
+        document.addEventListener('DOMContentLoaded', function () {
+        const esPrescritoCheckbox = document.getElementById('es_prescrito');
+        const campoReserva = document.getElementById('campo-reserva');
+        const campoImagen = document.getElementById('btn-subir-receta');
 
-            esPrescritoCheckbox.addEventListener('change', function() {
-                campoReserva.classList.toggle('hidden', !this.checked);
-                campoImagen.classList.toggle('hidden', !this.checked);
-            });
+        esPrescritoCheckbox.addEventListener('change', function () {
+            campoReserva.classList.toggle('hidden', !this.checked);
+            campoImagen.classList.toggle('hidden', !this.checked);
+        });
+
+
+        //Ckeckbox para justificar el vecino y su justificación
+        const checkboxVecino = document.getElementById('vecino');
+        const campoReservaVecino = document.getElementById('campo_justificacion'); // aquí el cambio
+
+        checkboxVecino.addEventListener('change', function () {
+            if (this.checked) {
+                campoReservaVecino.classList.remove('hidden');
+            } else {
+                campoReservaVecino.classList.add('hidden');
+            }
+        });
+
 
             // Configurar Dropzone para subir imágenes
             Dropzone.autoDiscover = false;

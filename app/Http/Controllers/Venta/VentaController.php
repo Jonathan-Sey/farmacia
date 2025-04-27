@@ -113,8 +113,8 @@ class VentaController extends Controller
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
             'imagen_receta' => 'nullable|string',
-            'numero_reserva' => 'nullable|string|max:50'
-
+            'numero_reserva' => 'nullable|string|max:50',
+            'justificacion' => 'nullable|string|max:255',
         ]);
 
         //         // Verificar que el total enviado coincida con el recalculado
@@ -145,7 +145,8 @@ class VentaController extends Controller
             'estado' => 1,
             'es_prescrito' => $request->has('es_prescrito'),
             'imagen_receta' => $request->imagen_receta,
-            'numero_reserva' => $request->numero_reserva
+            'numero_reserva' => $request->numero_reserva,
+            'descripcion'=> $request->justificacion,
         ]);
 
         // Obtener los arrays de detalles
@@ -240,7 +241,7 @@ class VentaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        
     }
 
     /**
