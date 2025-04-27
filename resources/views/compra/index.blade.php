@@ -36,7 +36,9 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$compra->numero_compra}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$compra->proveedor->empresa}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$compra->created_at}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->comprobante}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">
+                        {{$compra->sucursal->nombre . ' - ' . $compra->sucursal->codigo_sucursal}}
+                    </td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$compra->total}}</td>
                     <td class="flex gap-2 justify-center">
 

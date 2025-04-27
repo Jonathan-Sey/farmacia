@@ -130,6 +130,8 @@
               <td>Producto</td>
               <td>Cantidad</td>
               <td>Precio</td>
+              <td>Precio</td>
+
               <td>SubTotal</td>
               <th></th>
             </tr>

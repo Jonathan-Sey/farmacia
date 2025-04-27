@@ -9,6 +9,7 @@ use App\Models\Lote;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Sucursal;
+use App\Models\SucursalUser;
 use App\Models\Traslado;
 use App\Models\User;
 
@@ -22,8 +23,10 @@ class AlmacenController extends Controller
     public function index()
     {
         //$traslados = Traslado::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
+       
         $almacenes = Almacen::with('producto:id,codigo,nombre,tipo,imagen')
         ->where('estado', '!=', 0)
+       
         ->get();
         //return($almacenes);
         return view('almacen.index',compact('almacenes'));

@@ -8,6 +8,8 @@ use App\Models\Categoria;
 use App\Models\Producto;
 use App\Models\User;
 use App\Models\HistoricoPrecio;
+use App\Models\Sucursal;
+use App\Models\SucursalUser;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -19,10 +21,13 @@ class ProductoController extends Controller
      */
     public function index()
     {
-
+        // Obtener el usuario logueado
+        $user = auth()->user();
+       // $sucusal = SucursalUser::where('user_id', $user->id)->first();
         $productos = Producto::with('categoria:id,nombre')
         ->select('id','codigo','nombre','tipo','precio_venta','precio_porcentaje','imagen','estado','id_categoria','fecha_caducidad','updated_at')
         ->where('estado', '!=', 0)
+        
         ->get();
         //return $productos;
         return view('producto.index',['productos'=>$productos]);

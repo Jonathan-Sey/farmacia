@@ -38,6 +38,8 @@
                             <p class="text-lg text-black"><i class="fa-solid fa-location-dot"></i> {{$sucursal->ubicacion}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-phone"></i> {{$sucursal->telefono}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-envelope"></i> {{$sucursal->email}}</p>
+                            
+                            
                         </div>
                         <div class="lg:grid lg:grid-cols-2 lg:mt-4 lg:gap-2 px-5 lg:justify-between ">
                             <div class="m-1">

@@ -116,6 +116,8 @@ Route::get("solicitudes/cantidad", [solicitudController::class, 'cantidadDeSolic
 Route::get('/productos/stock/{id}/{sucursal}', [VentaController::class, 'obtenerStock']);
 Route::post('/personas/from-ventas', [PersonaController::class, 'storeFromVentas'])->name('personas.storeFromVentas');
 
+
+
 Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
 Route::resource('solicitud', solicitudController::class)->parameters(['solicitud' => 'solicitud']);
 //Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
