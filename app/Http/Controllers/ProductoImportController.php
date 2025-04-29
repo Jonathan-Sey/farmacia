@@ -15,12 +15,6 @@ class ProductoImportController extends Controller
 {
     public function mostrarImportacion()
     {
-           // Debug 1: Verifica si llega al método
-
-    // Log::info('Llegó a mostrarImportacion'); // Revisa storage/logs/laravel.log
-    // // Debug 2: Retorna un texto plano
-     //return "Esto es una prueba";
-    //     //dd('llego al controlador');
         return view('producto.importar');
     }
 
@@ -48,12 +42,12 @@ class ProductoImportController extends Controller
     $errores = [];
     $successCount = 0;
 
-    // Debug: Verifica lo que hay en sesión
+    // Verifica la sesión
     Log::info('Datos a importar:', $productos);
 
     foreach ($productos as $index => $producto) {
         try {
-            // Validación mejorada
+            // Validación
             $validator = Validator::make($producto, [
                 'codigo' => 'required|unique:producto,codigo|max:12',
                 'nombre' => 'required|max:255',

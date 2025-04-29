@@ -39,7 +39,7 @@ class ProductosImport implements ToCollection, WithHeadingRow
             return 1; // ID por defecto
         }
 
-        // Busca coincidencia exacta primero
+        // Busca categoria
         $category = Categoria::where('nombre', 'like', $categoryName)->first();
 
         if (!$category) {
