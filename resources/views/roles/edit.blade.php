@@ -111,7 +111,7 @@
 
         // Función para actualizar las opciones del select
         function updatePaginaInicioOptions() {
-            // Obtener pestañas seleccionadas
+            // obtener pestañas
             const selectedTabs = Array.from(checkboxes)
                 .filter(checkbox => checkbox.checked)
                 .map(checkbox => {
@@ -123,17 +123,16 @@
 
             // Guardar selección actual
             const currentSelection = paginaInicioSelect.value;
-
             // Limpiar select
             paginaInicioSelect.innerHTML = '<option value="">-- Selecciona una Pestaña --</option>';
 
-            // Agregar opciones solo para pestañas seleccionadas
+            // Agregar opcion al seleccionar
             selectedTabs.forEach(tab => {
                 const option = document.createElement('option');
                 option.value = tab.id;
                 option.textContent = tab.name;
 
-                // Mantener la selección si ya estaba seleccionada
+                // Mantener la selección ya seleccionado
                 if (tab.id === currentSelection) {
                     option.selected = true;
                 }
@@ -147,7 +146,7 @@
             }
         }
 
-        // Actualizar al cargar la página (para edit)
+        // Actualizar al cargar la pagina
         updatePaginaInicioOptions();
 
         // Escuchar cambios en los checkboxes
