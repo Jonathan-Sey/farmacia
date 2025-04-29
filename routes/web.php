@@ -19,6 +19,7 @@ use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\notificaciones\notificacionesController;
 use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\Producto\productosVencidosController;
 use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
 //use App\Http\Controllers\Traslado\TrasladoController;
@@ -135,7 +136,7 @@ Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' =
 Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.image');
 
 //productos vencidos 
-Route::get('/productos-vencidos', [AlmacenController::class, 'productosVencidos'])->name('productos.vencidos');
+Route::get('/productos-vencidos', [productosVencidosController::class, 'index'])->name('productos.vencidos');
 
 //devoluciones
 Route::resource('devoluciones', devolucionesController::class)->parameters(['devoluciones' => 'devoluciones']);
@@ -154,6 +155,7 @@ Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])
 // Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 
 Route::get('/devoluciones/autorizar/{id}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
+Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVenta']);
 
 //correos 
 

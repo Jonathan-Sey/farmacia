@@ -27,7 +27,7 @@ class notificacionesController extends Controller
         DB::table('notificaciones')
             ->where('id', $id)
             ->update(['leido' => 1]);
-            return redirect()->route('consultas.index')->with('success','notificacion leida!');
+            return redirect()->route('notificaciones.index')->with('success','notificacion leida!');
 
     }
 

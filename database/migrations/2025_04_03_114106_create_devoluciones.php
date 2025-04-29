@@ -24,6 +24,7 @@ class CreateDevoluciones extends Migration
             $table->string('observaciones')->nullable();
             $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('sucursal_id')->constrained('sucursal')->onDelete('cascade');
+            $table->date('fecha_caducidad')->nullable();
             $table->date('fecha_devolucion');
             $table->timestamps();
         });
