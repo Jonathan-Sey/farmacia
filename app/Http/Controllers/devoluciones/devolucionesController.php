@@ -26,7 +26,7 @@ class devolucionesController extends Controller
 {
     public function index()
     {
-        $devoluciones = Devoluciones::with(['sucursal', 'productos', 'usuario'])->where('estado', 1)
+        $devoluciones = Devoluciones::with(['sucursal', 'productos', 'usuario', 'persona'])->where('estado', 1)
             ->latest()
             ->get();
         return view('devoluciones.index', compact('devoluciones'));
@@ -50,16 +50,17 @@ class devolucionesController extends Controller
             'cantidad' => 'required|integer|min:1',
             'monto' => 'required|numeric|min:0',
             'observaciones' => 'nullable|string|max:255',
-            'usuario' => 'required',
+            'idUsuario' => 'required',
+            'persona' => 'required',
             'sucursal' => 'required',
             'motivo' => 'required|string|max:255',
 
         ]);
 
-        $nombreUsuario = User::find($request->usuario)->name;
+        $nombreUsuario = User::find($request->idUsuario)->name;
 
         $bitacora = Bitacora::create([
-            'id_usuario' => $request->usuario,
+            'id_usuario' => $request->idUsuario,
             'name_usuario' =>  $nombreUsuario,
             'accion' => 'se registro una Devolución',
             'tabla_afectada' => 'devoluciones',
@@ -142,7 +143,8 @@ class devolucionesController extends Controller
             'cantidad' => $request->cantidad,
             'monto' => $request->monto,
             'observaciones' => $request->observaciones,
-            'usuario_id' => $request->usuario,
+            'usuario_id' => $request->idUsuario,
+            'persona_id' => $request->persona,
             'sucursal_id' => $request->sucursal,
             'motivo' => $request->motivo,
             'fecha_caducidad' => $request->fecha_caducidad,
@@ -150,16 +152,18 @@ class devolucionesController extends Controller
             'fecha_devolucion' => now()
         ]);
 
-        Mail::to('admin@tucorreo.com')->send(new validacion($devolucion));
-
-        //notificacion 
-        $notificacion = Notificaciones::create([
+         //notificacion 
+         $notificacion = Notificaciones::create([
             'tipo' => 'Devolución',
             'mensaje' => 'Se ha registrado una nueva devolución, si esta aprobada se mostrara en el inventario.',
             'accion' => 'ver detalles de la devolución',
-            'url' => route('devoluciones.autorizar', $devolucion->id),
-            'leido' => false,
+            'url' => route('devoluciones.index' ),
+            'leido' => true,
         ]);
+
+        Mail::to('admin@tucorreo.com')->send(new validacion($devolucion, $notificacion));
+
+       
 
 
 
@@ -168,18 +172,24 @@ class devolucionesController extends Controller
         return redirect()->route('devoluciones.index')->with('success', 'Devolución registrada correctamente.');
     }
 
-    public function autorizar($id)
+    public function autorizar($id,$idNot)
     {
         $devolucion = Devoluciones::findOrFail($id);
         $devolucion->estado = true;
         $devolucion->save();
+
+        // Cambiar el estado de la notificación a leída
+        $notificacion = Notificaciones::findOrFail($idNot);
+        $notificacion->leido = false;
+        $notificacion->save();
+
 
         return redirect()->route('devoluciones.index')->with('success', 'Devolución autorizada correctamente.');
     }
 
     public function getVenta($id)
     {
-        $venta = Venta::all()->where('id', $id)->first();
+        $venta = Venta::with(['sucursal', 'usuario', 'persona'])->where('id', $id)->first();
         $detalleVenta =DetalleVenta::with(['producto'])->where('id_venta', $id)->get();
         $venta->detalles = $detalleVenta;
         $venta->total = $detalleVenta->sum(function ($detalle) {

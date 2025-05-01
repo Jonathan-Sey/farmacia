@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\Models\Devoluciones;
+use App\Models\Notificaciones;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -13,6 +14,7 @@ class validacion extends Mailable
 {
 
     public $devolucion;
+    public $notificaciones;
     use Queueable, SerializesModels;
 
     /**
@@ -20,9 +22,11 @@ class validacion extends Mailable
      *
      * @return void
      */
-    public function __construct( $devolucion)
+    public function __construct( $devolucion, $notificaciones )
     {
         $this->devolucion = $devolucion;
+        $this->notificaciones = $notificaciones;
+        
     }
 
     /**
@@ -39,12 +43,13 @@ class validacion extends Mailable
         ->latest()
         ->get();
 
+        $notificaciones = Notificaciones::where('id', $this->notificaciones->id)->first();
         
         return $this->subject('Autorización requerida para devolución')
         ->view('emails.verificacion')
         ->with([
             'devolucion' => $this->devolucion,
-            'url' => route('devoluciones.autorizar', $this->devolucion->id),
+            'url' => route('devoluciones.autorizar',[ $this->devolucion->id, $this->notificaciones->id]),
             'devoluciones' => $devoluciones,
 
         ]);

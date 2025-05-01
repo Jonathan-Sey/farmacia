@@ -28,6 +28,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >observaciones</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >usuario</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >persona</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >estado</th>
                 </tr>
@@ -47,6 +48,7 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->observaciones}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->usuario->name}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->sucursal->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->persona->nombre}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->fecha_devolucion}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a class="estado" data-id="{{ $proveedor->id}}" data-estado="{{$proveedor->estado}}">

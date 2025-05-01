@@ -19,6 +19,7 @@ class Devoluciones extends Model
         'estado',
         'observaciones',
         'usuario_id',
+        'persona_id',
         'sucursal_id',
         'fecha_devolucion',
     ];
@@ -36,5 +37,9 @@ class Devoluciones extends Model
     public function sucursal()
     {
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
+    }
+    public function persona()
+    {
+        return $this->belongsTo(Persona::class, 'persona_id');
     }
 }
