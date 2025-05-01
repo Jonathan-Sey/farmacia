@@ -149,34 +149,7 @@
                 </div>
 
 
-                {{-- Input para agregar al encargado --}}
-                
-                <div class="mt-4">
-                        <label for="id_usuario" class="block text-sm font-medium text-gray-900">Nombre Encargado</label>
-                        <select name="id_usuario[]" id="id_usuario" multiple
-                            class="block w-full rounded-md bg-white px-3 py-3.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                            onchange="updateSelectedUsers()">
-
-                            @foreach ($usuarios as $usuario)
-                                <option value="{{ $usuario->id }}"
-                                    {{ in_array($usuario->id, old('id_usuario', $usuariosSeleccionados)) ? 'selected' : '' }}>
-                                    {{ $usuario->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('id_usuario')
-                        <div class="alert alert-error mt-4 p-2">
-                            <span class="text-white font-bold">{{ $message }}</span>
-                        </div>
-                        @enderror
-
-                        <div class="mt-4">
-                    <label class="block text-sm font-medium text-gray-900">Encargados seleccionados</label>
-                    <ul id="selected-users-list" class="list-disc pl-5 text-sm text-gray-700">
-                        
-                    </ul>
-                </div>
-                    </div>
+              
 
 
                     {{-- Input para agregar la ubicacion --}}

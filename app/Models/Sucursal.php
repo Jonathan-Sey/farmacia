@@ -42,15 +42,6 @@ class Sucursal extends Model
          return $this->hasMany(Inventario::class, 'id_sucursal');
      }
 
-     // Relación con Usuario
-    public function usuario()
-    {
-        return $this->belongsTo(User::class, 'id_usuario');
-    }
-
-    public function usuarios()
-    {
-        return $this->belongsToMany(User::class, 'sucursal_user', 'sucursal_id', 'user_id');
-    }
+     
      
 }
