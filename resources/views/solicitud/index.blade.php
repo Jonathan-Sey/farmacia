@@ -54,7 +54,7 @@
                         </a>
                     </td>
                     <td class="flex gap-2 justify-center">
-                 
+
 
                         {{-- Botón Eliminar --}}
                         <button type="button" class="btn btn-success font-bold uppercase eliminar-btn btn-sm" data-id="{{ $solicitud->id }}" data-info="{{ $solicitud->nombre }}">
@@ -106,8 +106,16 @@ $(document).ready(function() {
             url: '/js/i18n/Spanish.json',
         },
         layout: {
-            topStart: {
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                topStart: {
+
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [

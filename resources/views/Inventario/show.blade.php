@@ -5,7 +5,7 @@
 @section('contenido')
 <div class="card">
     <h2 class="text-xl font-bold mb-4">Lotes Originales</h2>
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto max-h-[500px]">
         <table class="table table-md table-pin-rows table-pin-cols">
             <thead>
                 <tr>
@@ -35,7 +35,7 @@
     </div>
 
     <h2 class="text-xl font-bold mt-8 mb-4">Lotes Disponibles en Inventario</h2>
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto max-h-[500px]">
         <table class="table table-md table-pin-rows table-pin-cols">
             <thead>
                 <tr>

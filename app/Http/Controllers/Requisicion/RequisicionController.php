@@ -58,7 +58,19 @@ class RequisicionController extends Controller
      */
     public function create()
     {
-        $productos = Producto::activos()->where('tipo',1)->get();
+        //$productos = Producto::activos()->where('tipo',1)->get();
+        $idSucursalOrigen = 1; // almacen principal
+
+        // Obtener solo los productos que tienen inventario en la sucursal de origen
+        $productos = Producto::whereHas('inventarios', function($query) use ($idSucursalOrigen) {
+            $query->where('id_sucursal', $idSucursalOrigen)
+                  ->where('cantidad', '>', 0);
+        })
+        ->where('tipo', 1)
+        ->where('estado', 1)
+        ->get();
+
+
         $sucursales = Sucursal::activos()->get();
         $inventario = Inventario::all();
         return view('requisicion.create',compact('productos','sucursales','inventario'));

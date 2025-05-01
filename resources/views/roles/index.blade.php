@@ -97,8 +97,16 @@ $(document).ready(function() {
             url: '/js/i18n/Spanish.json',
         },
         layout: {
-            topStart: {
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                topStart: {
+
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [
