@@ -154,7 +154,7 @@ Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])
 // Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
 // Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 
-Route::get('/devoluciones/autorizar/{id}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
+Route::get('/devoluciones/autorizar/{id}/{id2}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
 Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVenta']);
 
 //correos 
