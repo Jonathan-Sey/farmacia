@@ -98,11 +98,18 @@ $(document).ready(function() {
             url: '/js/i18n/Spanish.json',
         },
         layout: {
-            topStart: {
+                topStart: {
 
-                buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
-            }
-        },
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
+                }
+            },
         columnDefs: [
             { responsivePriority: 3, targets: 0 },
             { responsivePriority: 1, targets: 1 },

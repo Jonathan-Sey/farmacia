@@ -141,7 +141,14 @@ function renderConsultas(consultas) {
             layout: {
                 topStart: {
 
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [

@@ -11,7 +11,7 @@
     <a href="{{ route('medicos.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">Crear</button>
     </a>
-    
+
     <x-data-table>
         <x-slot name="thead">
             <thead class="text-white font-bold">
@@ -102,7 +102,7 @@
                         </div>
                     </td>
                 </tr>
-            @endforeach            
+            @endforeach
             </tbody>
         </x-slot>
     </x-data-table>
@@ -140,7 +140,14 @@
             layout: {
                 topStart: {
 
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [

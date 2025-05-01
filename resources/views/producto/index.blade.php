@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
 
 
+
 @endpush
 
 @section('contenido')
@@ -22,7 +23,8 @@
         </button>
     </a>
 
-    <x-data-table>
+    <x-data-table
+    >
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
@@ -142,35 +144,51 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//copiar</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">//excel</script>
 
-<script src=""></script>
+
 
 <script>
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
+            autoWidth: false,
             order: [0,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
+                 paginate: {
+                     first: `<i class="fa-solid fa-backward"></i>`,
+                     previous: `<i class="fa-solid fa-caret-left">`,
+                     next: `<i class="fa-solid fa-caret-right"></i>`,
+                     last: `<i class="fa-solid fa-forward"></i>`
+                 }
             },
-            layout: {
-                topStart: {
+             layout: {
+                 topStart: {
 
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
-                }
-            },
+                     buttons: [
+                         {
+                             extend: 'collection',
+                             text: 'Export',
+                            buttons: ['copy', 'pdf', 'excel', 'print'],
+                         },
+                         {
+                         extend: 'colvis',
+                     }
+                     ]
+                 }
+             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
                 { responsivePriority: 2, targets: 9 },
             ],
-            drawCallback: function() {
-                // Esperar un momento para asegurarse de que los botones se hayan cargado
-                setTimeout(function() {
-                    // Seleccionar los botones de paginación y agregar clases de DaisyUI
-                    $('a.paginate_button').addClass('btn btn-sm btn-primary mx-1'); // Todos los botones
-                    $('a.paginate_button.current').removeClass('btn-gray-800').addClass('btn btn-sm btn-primary'); // Resaltar la página actual
-                }, 100); // Espera 100 ms antes de aplicar las clases
-            },
+            // drawCallback: function() {
+            //     // Esperar un momento para asegurarse de que los botones se hayan cargado
+            //     setTimeout(function() {
+            //         // Seleccionar los botones de paginación y agregar clases de DaisyUI
+            //         $('a.paginate_button').addClass('btn btn-sm btn-primary mx-1'); // Todos los botones
+            //         $('a.paginate_button.current').removeClass('btn-gray-800').addClass('btn btn-sm btn-primary'); // Resaltar la página actual
+            //     }, 100); // Espera 100 ms antes de aplicar las clases
+            // },
         });
     });
 </script>
