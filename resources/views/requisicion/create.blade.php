@@ -29,7 +29,9 @@
                             name="id_sucursal_destino" id="id_sucursal_destino" required>
                         <option value="">Seleccionar sucursal</option>
                         @foreach ($sucursales as $sucursal)
-                            <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
+                            @if ($sucursal->id != 1 )
+                                <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
+                            @endif
                         @endforeach
                     </select>
                 </div>
