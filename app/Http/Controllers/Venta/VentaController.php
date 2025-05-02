@@ -106,16 +106,22 @@ class VentaController extends Controller
      */
     public function store(Request $request)
     {
+
+       dd($request->all());
         //dd($request);
         $this->validate($request,[
             'arrayprecio' => 'required|array',
             'estado'=>'integer',
             'arraycantidad.*' => 'integer|min:1',
-            'arrayprecio.*' => 'numeric|min:0',
             'imagen_receta' => 'nullable|string',
             'numero_reserva' => 'nullable|string|max:50',
             'justificacion' => 'nullable|string|max:255',
+            'id_sucursal' => 'nullable|integer|exists:sucursal,id',
+
         ]);
+
+
+
 
         //         // Verificar que el total enviado coincida con el recalculado
         // $subtotal = array_sum($request->get('arrayprecio'));
@@ -241,7 +247,7 @@ class VentaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
     }
 
     /**
