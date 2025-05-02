@@ -101,6 +101,9 @@ class SucursalController extends Controller
     public function edit(Sucursal $sucursal)
     {
         
+        
+            return view('sucursal.edit', ['sucursal'=>$sucursal]);
+        
     }
 
     /**
