@@ -110,13 +110,15 @@ class VentaController extends Controller
        // dd($request->all());
         //dd($request);
         $this->validate($request,[
-            'arrayprecio' => 'required|array',
+          
             'estado'=>'integer',
             'arraycantidad.*' => 'integer|min:1',
+           'arrayprecio.*' => ['nullable', 'numeric', 'min:0'],
             'imagen_receta' => 'nullable|string',
             'numero_reserva' => 'nullable|string|max:50',
             'justificacion' => 'nullable|string|max:255',
             'id_sucursal' => 'nullable|integer|exists:sucursal,id',
+            'cliente_especial' => 'nullable|in:on', // Precio de cliente especial
 
         ]);
 
@@ -136,7 +138,7 @@ class VentaController extends Controller
         DB::beginTransaction();
 
         // Redondear el impuesto y total
-        $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
+        $subtotal = array_sum($request->get('arrayprecio' ,'arrayprecioespecial')); // Calcular subtotal
         $impuesto = round(($subtotal * $request->impuesto) / 100, 2); // Redondear impuesto
         $total = round($subtotal + $impuesto, 2); // Redondear total
 
@@ -159,32 +161,35 @@ class VentaController extends Controller
         $arrayProducto_id = $request->get('arrayIdProducto');
         $arrayCantidad = $request->get('arraycantidad');
         $arrayprecio = $request->get('arrayprecio');
+        $arrayprecioespecial = $request->get('arrayprecioespecial');
 
-        // Insertar los detalles de venta
         foreach ($arrayProducto_id as $index => $idProducto) {
             $producto = Producto::findOrFail($idProducto);
-
-            // Validar productos físicos (tipo = 1)
+        
+            // Validar inventario si es producto físico
             if ($producto->tipo == 1) {
                 $almacen = Almacen::where('id_sucursal', $request->id_sucursal)
                     ->where('id_producto', $idProducto)
                     ->first();
-
+        
                 if (!$almacen || $almacen->cantidad < $arrayCantidad[$index]) {
                     throw new Exception("No hay suficiente inventario para el producto: {$producto->nombre}");
                 }
-
-                // Descontar inventario
+        
                 $almacen->cantidad -= $arrayCantidad[$index];
                 $almacen->save();
             }
-
-            // Crear el detalle de venta
+        
+            // Escoger precio especial si viene
+            $precioVenta = isset($arrayprecioespecial[$index]) && $request->cliente_especial
+                ? $arrayprecioespecial[$index]
+                : $arrayprecio[$index];
+        
             DetalleVenta::create([
                 'id_venta' => $venta->id,
                 'id_producto' => $idProducto,
                 'cantidad' => $arrayCantidad[$index],
-                'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+                'precio' => round($precioVenta, 2),
             ]);
         }
 
