@@ -14,6 +14,8 @@ class DetalleVenta extends Model
         'id_producto',
         'cantidad',
         'precio',
+        'precio_original',
+        'justificacion_descuento',
         'estado',
     ];
 

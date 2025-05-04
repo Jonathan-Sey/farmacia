@@ -114,6 +114,8 @@ class VentaController extends Controller
             'estado'=>'integer',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
+            'arrayPrecioOriginal.*' => 'numeric|min:0',
+            'arrayJustificacion.*' => 'nullable|string|max:255',
             'imagen_receta' => 'nullable|string',
             'numero_reserva' => 'nullable|string|max:50',
             'observaciones_receta' => 'nullable|string|max:500'
@@ -174,6 +176,8 @@ class VentaController extends Controller
         $arrayProducto_id = $request->get('arrayIdProducto');
         $arrayCantidad = $request->get('arraycantidad');
         $arrayprecio = $request->get('arrayprecio');
+        $arrayPrecioOriginal = $request->get('arrayPrecioOriginal');
+        $arrayJustificacion = $request->get('arrayJustificacion');
 
         // Insertar los detalles de venta
         foreach ($arrayProducto_id as $index => $idProducto) {
@@ -200,6 +204,8 @@ class VentaController extends Controller
                 'id_producto' => $idProducto,
                 'cantidad' => $arrayCantidad[$index],
                 'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+                'precio_original' => round($arrayPrecioOriginal[$index], 2),
+                'justificacion_descuento' => $arrayJustificacion[$index],
             ]);
         }
 
@@ -233,7 +239,7 @@ class VentaController extends Controller
      */
     public function show(Venta $venta)
     {
-
+        $venta->load('detalles.producto');
          //$venta->load('productos');
          if($venta->imagen_receta){
             $venta->imagen_receta_url = asset('uploads/' . $venta->imagen_receta);
