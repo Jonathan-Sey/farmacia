@@ -146,80 +146,6 @@
             </div>
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
-                    <legend class="text-blue-500 font-bold">Compras</legend>
-                    <div class="border-b border-gray-900/10  lg:pb-0 lg:mb-0">
-                        {{-- producto --}}
-
-                            <div class="mt-2 mb-5">
-                                <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto</label>
-                                <select
-                                    class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                    name="id_producto"
-                                    id="id_producto">
-                                    <option value="">Buscar un producto</option>
-                                    @foreach ($productos as $producto)
-                                        <option value="{{ $producto->id }}"  data-imagen="{{$producto->imagen_url}}" data-nombre-completo="{{$producto->nombre}}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
-                                    @endforeach
-                                </select>
-                                @error('id_producto')
-                                    <div role="alert" class="alert alert-error mt-4 p-2">
-                                        <span class="text-white font-bold">{{ $message }}</span>
-                                    </div>
-                                @enderror
-                            </div>
-                            <!-- Contenedor para mostrar la imagen -->
-                            <div id="imagen-producto" class="mt-4 hidden">
-                                <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded">
-                            </div>
-                        <div class="lg:grid lg:grid-cols-2 lg:gap-x-4">
-                                {{-- cantidad --}}
-                            <div class="mt-2 mb-5">
-                                <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
-                                <input
-                                    type="number"
-                                    name="cantidad"
-                                    id="cantidad"
-                                    min="1"
-                                    {{-- onblur="validarEntero(this)" --}}
-                                    autocomplete="given-name"
-                                    placeholder="Cantidad del producto"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                    value="{{ old('cantidad') }}">
-
-                                @error('cantidad')
-                                <div role="alert" class="alert alert-error mt-4 p-2">
-                                    <span class="text-white font-bold">{{ $message }}</span>
-                                </div>
-                                @enderror
-                            </div>
-
-                            {{-- precio --}}
-                            <div class="mt-2 mb-5">
-                                <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Precio Compra</label>
-                                <input
-                                    type="number"
-                                    name="precio"
-                                    id="precio"
-                                    min="1"
-                                    autocomplete="given-name"
-                                    placeholder="Precio del producto"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                    value="{{ old('precio') }}">
-
-                                @error('precio')
-                                <div role="alert" class="alert alert-error mt-4 p-2">
-                                    <span class="text-white font-bold">{{ $message }}</span>
-                                </div>
-                                @enderror
-                            </div>
-                        </div>
-                        {{-- end cantidad y precio --}}
-                        <button id="btn-agregar" type="button" class=" cursor-pointer mt-3 rounded-md bg-indigo-600 px-3 w-full py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Agregar</button>
-                    </div>
-
-                </fieldset>
-
-                <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
                     <legend class="text-blue-500 font-bold">Datos Generales</legend>
                     <div class="border-b border-gray-900/10 ">
 
@@ -354,6 +280,81 @@
 
                     </div>
                 </fieldset>
+                <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
+                    <legend class="text-blue-500 font-bold">Compras</legend>
+                    <div class="border-b border-gray-900/10  lg:pb-0 lg:mb-0">
+                        {{-- producto --}}
+
+                            <div class="mt-2 mb-5">
+                                <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto</label>
+                                <select
+                                    class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    name="id_producto"
+                                    id="id_producto">
+                                    <option value="">Buscar un producto</option>
+                                    @foreach ($productos as $producto)
+                                        <option value="{{ $producto->id }}"  data-imagen="{{$producto->imagen_url}}" data-nombre-completo="{{$producto->nombre}}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
+                                    @endforeach
+                                </select>
+                                @error('id_producto')
+                                    <div role="alert" class="alert alert-error mt-4 p-2">
+                                        <span class="text-white font-bold">{{ $message }}</span>
+                                    </div>
+                                @enderror
+                            </div>
+                            <!-- Contenedor para mostrar la imagen -->
+                            <div id="imagen-producto" class="mt-4 hidden">
+                                <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded">
+                            </div>
+                        <div class="lg:grid lg:grid-cols-2 lg:gap-x-4">
+                                {{-- cantidad --}}
+                            <div class="mt-2 mb-5">
+                                <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
+                                <input
+                                    type="number"
+                                    name="cantidad"
+                                    id="cantidad"
+                                    min="1"
+                                    {{-- onblur="validarEntero(this)" --}}
+                                    autocomplete="given-name"
+                                    placeholder="Cantidad del producto"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    value="{{ old('cantidad') }}">
+
+                                @error('cantidad')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+
+                            {{-- precio --}}
+                            <div class="mt-2 mb-5">
+                                <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Precio Compra</label>
+                                <input
+                                    type="number"
+                                    name="precio"
+                                    id="precio"
+                                    min="1"
+                                    autocomplete="given-name"
+                                    placeholder="Precio del producto"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    value="{{ old('precio') }}">
+
+                                @error('precio')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                                @enderror
+                            </div>
+                        </div>
+                        {{-- end cantidad y precio --}}
+                        <button id="btn-agregar" type="button" class=" cursor-pointer mt-3 rounded-md bg-indigo-600 px-3 w-full py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Agregar</button>
+                    </div>
+
+                </fieldset>
+
+
             </div>
 
             {{-- tabla --}}
