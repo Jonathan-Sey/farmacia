@@ -16,6 +16,11 @@
             Crear
         </button>
     </a>
+    <a href="{{ route('productos.vencidos') }}">
+        <button class="btn btn-primary  text-white font-bold uppercase">
+            Ver productos vencidos
+        </button>
+    </a>
 
     <a href="{{ route('productos.importar') }}">
         <button class="btn  bg-red-500 hover:bg-red-600 text-white font-bold uppercase">
