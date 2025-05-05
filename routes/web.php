@@ -12,12 +12,15 @@ use App\Http\Controllers\bitacora\bitacoraController;
 use App\Http\Controllers\Usuario\UsuarioController;
 use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
+use App\Http\Controllers\devoluciones\devolucionesController;
 use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\Inventario\InventarioController;
 use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
+use App\Http\Controllers\notificaciones\notificacionesController;
 use App\Http\Controllers\Persona\PersonaController;
 use App\Http\Controllers\ProductoImportController;
+use App\Http\Controllers\Producto\productosVencidosController;
 use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
 //use App\Http\Controllers\Traslado\TrasladoController;
@@ -26,9 +29,11 @@ use App\Http\Controllers\solicitud\solicitudController;
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
 use App\Imports\ProductosImport;
+use App\Mail\validacion;
+use App\Models\Devoluciones;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Mail;
 
 /*
 |--------------------------------------------------------------------------
@@ -112,15 +117,21 @@ Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'm
 Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
 Route::resource('lotes', LoteController::class)->parameters(['lote' => 'lote']);
 Route::resource('Reporte_ventas', ReporteVentasController::class)->parameters(['Reporte_ventas' => 'Reporte_ventas']);
-Route::get('/reporte/ventas/filtrar', [ReporteVentasController::class, 'filtrarPorFecha'])->name('Reporte_ventas.filtrarPorFecha');
+Route::get('/reporte/ventas/filtrar/fecha', [ReporteVentasController::class, 'filtrarPorFecha'])->name('Reporte_ventas.filtrarPorFecha');
+Route::get('/reporte/ventas/filtrar/sucursal', [ReporteVentasController::class, 'filtrarPorSucursal'])->name('Reporte_ventas.filtrarPorSucursal');
+Route::get("/reporte/ventas/filtrar/usuario",[ReporteVentasController::class, 'filtrarPorUsuario'])->name('Reporte_ventas.filtrarPorUsuario');
 Route::resource('requisiciones', RequisicionController::class)->parameters(['requisicion' => 'requisicion']);
+
 Route::get("/ventas-informe", [ReporteVentasController::class, 'generateReport'])->name('ventas.informe');
+Route::get("/ventas-informe/sucursal", [ReporteVentasController::class, 'generateReportSucursal'])->name('ventas.informe');
+Route::get("/ventas-informe/usuario", [ReporteVentasController::class, 'generateReportUsuario'])->name('ventas.usuario');
+
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 Route::get('/get-lotes/{idProducto}/{idSucursal}', [RequisicionController::class, 'getLotes'])->name('get.lotes');
 Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
-Route::get("solicitudes/cantidad", [solicitudController::class, 'cantidadDeSolicitudes'])->name('solicitudes.cantidad');
+Route::get("notificaciones/cantidad", [notificacionesController::class, 'cantidadDeNotificaciones'])->name('notificaciones.cantidad');
 Route::get('/productos/stock/{id}/{sucursal}', [VentaController::class, 'obtenerStock']);
 Route::post('/personas/from-ventas', [PersonaController::class, 'storeFromVentas'])->name('personas.storeFromVentas');
 
@@ -142,19 +153,29 @@ Route::get('/personas/{persona}/restricciones', [PersonaController::class, 'obte
 Route::post('/personas/actualizar-restricciones', [PersonaController::class, 'actualizarRestricciones'])
      ->name('personas.actualizar-restricciones');
 
-// rutas para importar productos
-// Route::get('/productos/importar', [ProductoImportController::class, 'mostrarImportacion'])->name('productos.importar');
-// Route::post('/productos/importar', [ProductoImportController::class, 'procesarImportacion'])->name('productos.importar.procesar');
-// Route::post('/productos/guardar-importacion', [ProductoImportController::class, 'guardarImportacion'])->name('productos.importar.guardar');
+
+//productos vencidos
+Route::get('/productos-vencidos', [productosVencidosController::class, 'index'])->name('productos.vencidos');
+
+//devoluciones
+Route::resource('devoluciones', devolucionesController::class)->parameters(['devoluciones' => 'devoluciones']);
+
+Route::get('/devoluciones/aceptar', [devolucionesController::class, 'aceptar'])->name('devoluciones.aceptar');
 
 
-// Rutas para importación
-
-
+//NOTIFICACIONES
+Route::get('/notificaciones', [notificacionesController::class, 'index'])->name('notificaciones.index');
+Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])->name('notificaciones.destroy');
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 // Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 // Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
 // Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
 // Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
+
+Route::get('/devoluciones/autorizar/{id}/{id2}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
+Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVenta']);
+
+//correos
+
 

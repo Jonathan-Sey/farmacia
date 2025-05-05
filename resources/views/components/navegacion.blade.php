@@ -127,6 +127,12 @@
                         <span class="text-sm font-medium">Roles</span>
                     </a>
                 </li>
+                <li data-pestana="Devoluciones" style="display:none;">
+                    <a href="{{ route('devoluciones.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-rotate-left"></i>  </span>
+                        <span class="text-sm font-medium">Devoluciones</span>
+                    </a>
+                </li>
                 <!-- Botón Logout -->
                 <li>
                     <a href="javascript:void(0);" id="logout-btn" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
@@ -207,6 +213,9 @@
             </li>
             <li data-pestanal="Rol" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('roles.index') }}"><i class="bx bx-briefcase-alt"></i> Roles</a>
+            </li>
+            <li data-pestanal="Devoluciones" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('devoluciones.index') }}"><i class="fa-solid fa-rotate-left"></i> Devoluciones</a>
             </li>
             <li>
                 <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">

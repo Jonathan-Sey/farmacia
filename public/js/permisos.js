@@ -20,6 +20,9 @@ const rutasMapeadas = {
     'Solicitud': '/solicitud',
     'Reporte_ventas': '/Reporte_ventas',
     'Reporte_ventas_filtro': '/reporte/ventas/filtrar',
+    'notificaciones': '/notificaciones',
+    'Devoluciones': '/devoluciones',
+
 };
 
 function tienePermiso(ruta) {
