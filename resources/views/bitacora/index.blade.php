@@ -20,7 +20,6 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">idUsuario</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nombre Usuario</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Acción</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Tabla Afectada</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Detalles</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Fecha-Hora</th>
 
@@ -41,7 +40,6 @@
                         <td class="px-6 py-4 whitespace-nowrap">{{ $bitacora->id_usuario }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $bitacora->name_usuario }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $bitacora->accion }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ $bitacora->tabla_afectada}}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $bitacora->detalles}}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $bitacora->fecha_hora}}</td>
 

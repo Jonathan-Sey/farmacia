@@ -35,4 +35,5 @@ class Inventario extends Model
      {
          return $this->belongsTo(Lote::class, 'id_lote');
      }
+
 }

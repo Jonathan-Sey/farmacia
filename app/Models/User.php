@@ -111,8 +111,16 @@ class User extends Authenticatable implements JWTSubject
         return $query->where('estado', [1,2]);
     }
 
-    
+    public function sucursal()
+    {
+        return $this->hasOne(Sucursal::class, 'id_usuario', 'id');
+    }
 
+    public function sucursales()
+    {
+        return $this->belongsToMany(Sucursal::class, 'sucursal_user', 'user_id', 'sucursal_id');
+    }
+    
 
 
 }

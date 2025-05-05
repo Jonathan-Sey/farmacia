@@ -158,7 +158,7 @@
                                 required>
                                 <option value="">Seleccionar una categoría</option>
                                 @foreach ($proveedores as $proveedor)
-                                    <option value="{{ $proveedor->id }}"  data-nombre-completo="{{$proveedor->empresa}}" {{old('id_proveedor') == $proveedor->id ? 'selected' : ''}}>{{$proveedor->empresa}}</option>
+                                    <option value="{{ $proveedor->id }}" {{old('id_proveedor') == $proveedor->id ? 'selected' : ''}}>{{$proveedor->empresa}}</option>
                                 @endforeach
                             </select>
                             @error('id_proveedor')
@@ -169,21 +169,24 @@
                         </div>
 
                         <div class="mt-2 mb-5">
-                            <label for="comprobante" class="uppercase block text-sm font-medium text-gray-900">Comprobante</label>
-                            <input
-                                type="text"
-                                name="comprobante"
-                                id="comprobante"
-                                autocomplete="given-name"
-                                placeholder="Numero del comprobante"
-                                required
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                value="{{ old('comprobante') }}">
+                            <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Código de sucursal</label>
+                            <select
+                                class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                name="id_sucursal"
+                                id="id_sucursal"
+                                required>
+                                <option value="">Selecciona una sucursal</option>
+                                @foreach ($sucursales as $sucursal)
+                                    <option value="{{ $sucursal->id }}" {{ old('id_sucursal') == $sucursal->id ? 'selected' : '' }}>
+                                        {{ $sucursal->nombre . ' - ' . $sucursal->codigo_sucursal}}
+                                    </option>
+                                @endforeach
+                            </select>
 
-                            @error('comprobante')
-                            <div role="alert" class="alert alert-error mt-4 p-2">
-                                <span class="text-white font-bold">{{ $message }}</span>
-                            </div>
+                            @error('id_sucursal')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
                             @enderror
                         </div>
 
@@ -357,8 +360,6 @@
                     </div>
 
                 </fieldset>
-
-
             </div>
 
             {{-- tabla --}}

@@ -28,7 +28,6 @@ class CreateVentasTable extends Migration
             $table->string('numero_reserva')->nullable();
             // nuevo campo
             $table->text('observaciones_receta')->nullable();
-
             $table->timestamps();
         });
     }

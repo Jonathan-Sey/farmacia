@@ -18,7 +18,7 @@ class SucursalController extends Controller
     public function index()
     {
 
-        $sucursales = Sucursal::select('id','imagen','nombre','ubicacion','telefono','email','encargado','estado','updated_at')
+        $sucursales = Sucursal::select('id','imagen','nombre','codigo_sucursal','ubicacion','telefono','email','estado','updated_at')
         ->where('estado', '!=', 0)
         ->paginate(4);
         return view('sucursal.index',['sucursales'=>$sucursales]);
@@ -31,7 +31,8 @@ class SucursalController extends Controller
      */
     public function create()
     {
-        return view('sucursal.create');
+       $usuarios=User::Where('estado',1)->get();
+       return view('sucursal.create', compact('usuarios'));
     }
 
     /**
@@ -46,22 +47,26 @@ class SucursalController extends Controller
 
         $this->validate($request,[
             'nombre'=>['required','string','max:35','unique:sucursal,nombre'],
+            'codigo_sucursal'=> ['required','string','max:50','unique:sucursal,codigo_sucursal'],
             'imagen'=> 'required',
             'ubicacion'=>'required|max:50',
             'telefono'=>'required|max:10',
             'email'=>'required|max:50',
-            'encargado' => 'required|max:100',
             'estado'=>'integer',
         ]);
-        Sucursal::create([
+        $sucursal =Sucursal::create([
             'imagen'=>$imagenNombre,
             'nombre'=>$request->nombre,
+            'codigo_sucursal'=>$request->codigo_sucursal,
             'ubicacion'=>$request->ubicacion,
             'telefono'=>$request->telefono,
             'email'=>$request->email,
-            'encargado' =>$request->encargado,
             'estado'=>1,
         ]);
+
+        if ($request->has('id_usuario')) {
+            $sucursal->usuarios()->attach($request->id_usuario);
+        }
 
          //Bitacora
          $usuario=User::find($request->idUsuario);
@@ -95,7 +100,10 @@ class SucursalController extends Controller
      */
     public function edit(Sucursal $sucursal)
     {
-        return view('sucursal.edit', ['sucursal'=>$sucursal]);
+        
+        
+            return view('sucursal.edit', ['sucursal'=>$sucursal]);
+        
     }
 
     /**
@@ -110,13 +118,13 @@ class SucursalController extends Controller
         $this->validate($request,[
             'imagen'=>'nullable',
             'nombre'=>['required','string','max:35','unique:sucursal,nombre,'. $sucursal->id],
+           'codigo_sucursal'=> ['required','string','max:50','unique:sucursal,codigo_sucursal,' . $sucursal->id],
             'ubicacion'=>'required|max:50',
             'telefono'=>'required|max:10',
             'email'=>'required|max:50',
-            'encargado'=>'required|max:100',
             'estado'=>'integer',
         ]);
-        $datosActualizados = $request->only(['nombre', 'ubicacion','telefono','email','encargado']);
+        $datosActualizados = $request->only(['nombre', 'ubicacion','codigo_sucursal','telefono','email']);
 
              // Manejo de la imagen
              if ($request->imagen && $request->imagen !== $sucursal->imagen) {
@@ -129,13 +137,14 @@ class SucursalController extends Controller
                 $datosActualizados['imagen'] = $sucursal->imagen; // Mantener la imagen anterior
             }
 
-            $datosSinCambios = $sucursal->only(['imagen','nombre', 'ubicacion','telefono','email','encargado']);
+            $datosSinCambios = $sucursal->only(['imagen','nombre', 'ubicacion','codigo_sucursal','telefono','email']);
 
          // Verificación de cambios
          if ($datosActualizados != $datosSinCambios) {
              // Actualizar datos
              $sucursal->update($datosActualizados);
 
+             
                 //Bitacora
                 $usuario=User::find($request->idUsuario);
                 Bitacora::create([
