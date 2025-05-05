@@ -15,6 +15,11 @@
             Crear
         </button>
     </a>
+    <a href="{{ route('productos.vencidos') }}">
+        <button class="btn btn-primary  text-white font-bold uppercase">
+            Ver productos vencidos
+        </button>
+    </a>
 
    
     <x-data-table>
