@@ -312,7 +312,7 @@
                                 <!-- Checkbox vecino -->
                                 <label class="cursor-pointer label flex flex-row items-center gap-2">
                                     <span class="label-text">Cliente especial</span>
-                                    <input type="checkbox" name="vecino" id="vecino" class="toggle toggle-primary">
+                                    <input type="checkbox" name="cliente_especial" id="vecino" class="toggle toggle-primary">
                                 </label>
                             </div>
                         </div>
@@ -340,13 +340,13 @@
                                 <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Nuevo precio de venta</label>
                                 <input
                                     type="number"
-                                    name="arrayprecio[]"
+                                    name="arrayprecioespecial[]"
                                     id="preciocliente"
                                     min="1"
                                     autocomplete="given-name"
                                     placeholder="Precio del producto"
                                      class="input-especial block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                    value="{{ old('arrayprecio.0') }}">
+                                     value="{{ old('arrayprecioespecial.0') }}">
                                     
                                 @error('preciocliente')
                                 <div role="alert" class="alert alert-error mt-4 p-2">
@@ -564,37 +564,43 @@
 
 
 
-<!---Precio de venta de cliente aparezca-->
-            <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                const checkboxVecino = document.getElementById('vecino');
-                const precioEspecialWrapper = document.getElementById('precio-especial-wrapper');
-                const inputPrecioCliente = document.getElementById('preciocliente');
-                const inputPrecio = document.getElementById('precio');
+<script>
+    // Script para mostrar el campo de precio especial
+document.addEventListener('DOMContentLoaded', function () {
+    const checkboxVecino = document.getElementById('vecino');
+    const precioEspecialWrapper = document.getElementById('precio-especial-wrapper');
 
-                checkboxVecino.addEventListener('change', function () {
-                    if (this.checked) {
-                        // mostrar el campo de precio especial
-                        precioEspecialWrapper.classList.remove('hidden');
-                        // Cambiar el borde a morado
-                        inputPrecio.classList.add('input-especial');
-                    } else {
-                        // Ocultar el campo de precio especial
-                        precioEspecialWrapper.classList.add('hidden');
-                        // Remover el borde morado
-                        inputPrecio.classList.remove('input-especial');
-                    }
-                });
+    checkboxVecino.addEventListener('change', function () {
+        if (this.checked) {
+            precioEspecialWrapper.classList.remove('hidden');
+        } else {
+            precioEspecialWrapper.classList.add('hidden');
+        }
+    });
 
-                if (checkboxVecino.checked) {
-                    // Si el checkbox ya está marcado, aplicar los estilos correspondientes
-                    precioEspecialWrapper.classList.remove('hidden');
-                    inputPrecio.disabled = false;
-                    inputPrecio.classList.add('input-especial');
-                }
-            });
-                
-            </script>
+    // Mostrar precio especial si ya estaba marcado
+    if (checkboxVecino.checked) {
+        precioEspecialWrapper.classList.remove('hidden');
+    }
+});
+</script>
+
+
+
+<script>
+    function actualizarPrecio(index) {
+        const checkbox = document.getElementById(`vecino-${index}`);
+        const inputNormal = document.getElementById(`precio-normal-${index}`);
+        const inputEspecial = document.getElementById(`precio-especial-${index}`);
+        const inputHiddenPrecio = document.getElementById(`precio-hidden-${index}`);
+
+        if (checkbox.checked) {
+            inputHiddenPrecio.value = inputEspecial.value;
+        } else {
+            inputHiddenPrecio.value = inputNormal.value;
+        }
+    }
+</script>
     
         
 
