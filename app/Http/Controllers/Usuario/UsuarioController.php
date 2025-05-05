@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Rol;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UsuarioController extends Controller
 {
@@ -160,6 +160,12 @@ class UsuarioController extends Controller
         }
 
         return response()->json(['success' => false]);
+    }
+
+    public function usuarioActual(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        return response()->json($user);
     }
 
 }

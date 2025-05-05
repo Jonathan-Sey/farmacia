@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             UnionRolPestanaSeeder::class,
             UserSeeder::class,
             categoriaSeeder::class,
-           // productos::class,
+            //productos::class,
             productoSeeder::class,
             socursalesSeeder::class,
             ProductosProam::class,

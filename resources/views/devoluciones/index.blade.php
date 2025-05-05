@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Inventario Farmacias ')
+@section('titulo','Devoluciones')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -10,102 +10,59 @@
 @endpush
 
 @section('contenido')
-    <a href="{{ route('almacenes.create') }}">
+    <a href="{{ route('devoluciones.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
-            Asignar servicio
-        </button>
-        </a>
-        <a href="{{route('solicitud.index')}}">
-        <button class="btn btn-primary text-white font-bold uppercase">
-            Solicitar productos
+            Crear
         </button>
     </a>
-
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Tipo</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Numero de venta</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >producto</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
-
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >monto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >motivo</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >observaciones</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >usuario</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >persona</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >estado</th>
                 </tr>
             </thead>
         </x-slot>
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($almacenes as $almacen)
+                @foreach ($devoluciones as $proveedor)
                 <tr>
-                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->codigo}}</td>
-                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        @if ($almacen->producto->imagen)
-                            <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
-                        @else
-                            <span class="text-gray-500">Sin imagen</span>
-                        @endif
-                    </td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->id}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->venta_id}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->productos->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->cantidad}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->monto}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->motivo}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->observaciones}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->usuario->name}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->sucursal->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->persona->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$proveedor->fecha_devolucion}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a href="#" class="estado">
-                            @if ($almacen->producto->tipo == 1)
-                                <span class="text-green-500 font-bold">Producto</span>
-                            @else
-                                <span class="text-red-500 font-bold">Servicio</span>
-                            @endif
-                        </a>
-                    </td>
-                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->sucursal->nombre}}</td>
-                    {{-- muestra la cantidad que hay y usa la cantidad minima que se tiene en el campo alerta_stock en la base de datos para mostrar el alerta de poco stock --}}
-                    <td class="text-left px-6 py-4 whitespace-nowrap">
-                            @if ($almacen->producto->tipo == 2)
-                            <span class="text-green-500 font-bold">{{$almacen->cantidad}}</span>
-                            @else
-                                <span class="{{ $almacen->cantidad <= $almacen->alerta_stock ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
-                                    {{$almacen->cantidad}}
-                                    @if ($almacen->cantidad <= $almacen->alerta_stock)
-                                        <span class="text-red-400">(Poco stock)</span>
-                                    @endif
-                                </span>
-                            @endif
-                    </td>
-                    <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a class="estado" data-id="{{ $almacen->id}}" data-estado="{{$almacen->estado}}">
-                            @if ($almacen->estado == 1)
+                        <a class="estado" data-id="{{ $proveedor->id}}" data-estado="{{$proveedor->estado}}">
+                            @if ($proveedor->estado == 1)
                                 <span class="text-green-500 font-bold">Activo</span>
                             @else
                                 <span class="text-red-500 font-bold">Inactivo</span>
                             @endif
                         </a>
                     </td>
+                
 
-                    <td class="flex gap-2 justify-center">
-                        @if ($almacen->producto->tipo == 2)
-                            <form action="{{route('almacenes.edit',['almacen'=>$almacen->id])}}" method="GET">
-                                @csrf
-                                <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </form>
-                        @endif
-
-                       {{--  boton para modificar en que cantidad debe lanzar la alerta --}}
-                        @if ($almacen->producto->tipo == 1)
-                        <a href="{{ route('almacenes.alertStock', $almacen->id) }}" class="btn bg-red-500 font-bold uppercase btn-sm">
-                            <i class='bx bx-bell'></i>
-                        </a>
-                        @endif
-
-                        <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $almacen->id }}" data-estado="{{ $almacen->estado }}" data-info="{{ $almacen->nombre }}">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </td>
                 </tr>
+
                 @endforeach
             </tbody>
         </x-slot>
@@ -137,30 +94,21 @@
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
-            order: [0,'desc'],
+            order: [5,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
             },
             layout: {
                 topStart: {
 
-                    buttons: [
-                        {
-                            extend: 'collection',
-                        text: 'Export',
-                        buttons: ['copy', 'pdf', 'excel', 'print']
-                        },
-                        'colvis'
-                    ]
+                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
                 }
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
-                { responsivePriority: 1, targets: 2 },
-                { responsivePriority: 2, targets: 6 },
+                { responsivePriority: 1, targets: 1 },
+                { responsivePriority: 2, targets: 7 },
             ],
-
-
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
                 setTimeout(function() {
@@ -197,6 +145,7 @@
         });
 </script>
 @endif
+
 {{-- cambio de estado --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -221,7 +170,7 @@
                     if (result.isConfirmed) {
                         // Realizar la solicitud Ajax para cambiar el estado
                         $.ajax({
-                            url: '/almacen/' + Id + '/cambiar-estado',
+                            url: '/proveedor/' + Id + '/cambiar-estado',
                             method: 'POST',
                             data: {
                                 _token: '{{ csrf_token() }}',
@@ -237,12 +186,12 @@
                                     // Actualizamos la columna de estado en el frontend
                                     const estadoElement = $('a[data-id="' + Id + '"]');
                                     estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
-
+                                    
                                     // Actualizamos el valor del estado en el data-estado para el siguiente clic
-                                    estadoElement.data('estado', estado);
+                                    estadoElement.data('estado', estado); 
 
                                     // Recargamos la página después de actualizar el estado
-                                    location.reload();
+                                    location.reload(); 
                                 } else {
                                     alert('Error al cambiar el estado');
                                 }
@@ -257,4 +206,5 @@
         });
     });
 </script>
+
 @endpush

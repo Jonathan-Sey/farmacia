@@ -23,8 +23,7 @@
         </button>
     </a>
 
-    <x-data-table
-    >
+    <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
@@ -36,7 +35,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
-                    {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Caducidad</th> --}}
+
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Actualizado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
@@ -46,12 +45,12 @@
         <x-slot name="tbody">
             <tbody>
                 @foreach ($productos as $producto)
-                    @php
+                    {{-- @php
                         $fechaActual = \Carbon\Carbon::now(); // Fecha actual
                         $fechaCaducidad = \Carbon\Carbon::parse($producto->fecha_caducidad); // Convierte la fecha de caducidad a Carbon
                         $diferenciaDias = $fechaActual->diffInDays($fechaCaducidad, false); // Diferencia en días (negativo si ya caducó)
 
-                    @endphp
+                    @endphp --}}
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
@@ -78,24 +77,7 @@
                         </a>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->categoria->nombre}}</td>
-                    {{-- <td class="px-6 py-4 whitespace-nowrap">
-                        @if($diferenciaDias < 0)
-                            <span class="text-red-500 font-bold">
-                                {{ $fechaCaducidad->format('d/m/Y') }}
-                                     (Caducado)
-                            </span>
-                        @elseif($diferenciaDias <= 5)
-                            <span class= "text-yellow-500 font-bold">
-                                {{ $fechaCaducidad->format('d/m/Y') }}
-                                    (Próximo a caducar)
-                            </span>
-                        @else
-                            <span class="text-green-500 font-bold">
-                                {{ $fechaCaducidad->format('d/m/Y') }}
-                                    (Vigente)
-                            </span>
-                        @endif
-                    </td> --}}
+
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->updated_at}}</td>
                     <td class="flex gap-2 justify-center">
 
