@@ -49,7 +49,7 @@ class trasladoController extends Controller
         $producto_id = $request->id_producto;
         $sucursal_origen_id = $request->id_sucursal_1;
         $sucursal_destino_id = $request->id_sucursal_2;
-     
+
         $cantidad = $request->cantidad;
 
         $almacen_origen = Almacen::where('id_producto', $producto_id)
@@ -65,7 +65,7 @@ class trasladoController extends Controller
 
         $almacen_destino = Almacen::firstOrCreate(
             ['id_producto' => $producto_id, 'id_sucursal' => $sucursal_destino_id],
-            ['cantidad' => 0, 'id_user' => 1]
+            ['cantidad' => 0, 'id_user' => 1, 'fecha_vencimiento' =>$almacen_origen->fecha_vencimiento ]
         );
 
         $almacen_destino->cantidad += $cantidad;
