@@ -3,6 +3,8 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+
+
 @endpush
 @push('js')
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
@@ -133,24 +135,27 @@
                     </div>
                     @enderror
                 </div>
-                {{-- Input para agregar al encargado --}}
+
+                {{-- Input para agregar el codigo de sucursal --}}
                 <div class="mt-2 mb-5">
-                    <label for="encargado" class="uppercase block text-sm font-medium text-gray-900">Nombre Encargado</label>
+                    <label for="codigo_sucursal" class="uppercase block text-sm font-medium text-gray-900">Codigo Sucursal</label>
                     <input
                         type="text"
-                        name="encargado"
-                        id="encargado"
+                        name="codigo_sucursal"
+                        id="codigo_sucursal"
                         autocomplete="given-name"
-                        placeholder="Nombre del encargado"
+                        placeholder="Codigo Sucursal"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        value="{{ old('encargado') }}">
+                        value="{{ old('codigo_sucursal') }}">
 
-                    @error('encargado')
+                    @error('codigo_sucursal')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
                 </div>
+                
+
 
                 <div class="mt-2 mb-5">
                     <label for="ubicacion" class="uppercase block text-sm font-medium text-gray-900">Ubicación</label>
@@ -219,7 +224,41 @@
 </div>
 
 
-@endsection
-@push('js')
 
+@push('js')
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const selectUsuarios = document.getElementById("id_usuario");
+    const selectedUsersList = document.getElementById("selected-users-list");
+
+    selectUsuarios.addEventListener("mousedown", function (event) {
+        event.preventDefault(); // Evita la selección automática por el navegador
+
+        let clickedOption = event.target;
+
+        // Si el elemento clickeado es una opción dentro del select
+        if (clickedOption.tagName === "OPTION") {
+            clickedOption.selected = !clickedOption.selected; // Alterna selección
+        }
+
+        updateSelectedUsers(); // Actualizar la lista mostrada
+    });
+
+    function updateSelectedUsers() {
+        selectedUsersList.innerHTML = ""; // Limpiar antes de actualizar
+        const selectedOptions = Array.from(selectUsuarios.selectedOptions);
+
+        selectedOptions.forEach(option => {
+            let li = document.createElement("li");
+            li.textContent = option.textContent;
+            selectedUsersList.appendChild(li);
+        });
+    }
+
+    // Inicializar lista si ya hay seleccionados por old()
+    updateSelectedUsers();
+});
+</script>
 @endpush
+
+@endsection

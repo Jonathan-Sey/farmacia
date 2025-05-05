@@ -13,13 +13,12 @@ class Compra extends Model
     protected $fillable = [
         'numero_compra',
         'id_proveedor',
+        'id_sucursal',
         'fecha_compra',
         'id_usuario',
-        'comprobante',
         'impuesto',
         'total',
         'estado',
-        //nuevos campos
         'imagen_comprobante',
         'observaciones_comprobante'
 
@@ -44,6 +43,10 @@ class Compra extends Model
     public function detalleCompras()
     {
         return $this->hasMany(DetalleCompra::class, 'id_compra');
+    }
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'id_sucursal');
     }
 
         // App\Models\Compra.php

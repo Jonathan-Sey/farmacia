@@ -108,6 +108,8 @@ class VentaController extends Controller
      */
     public function store(Request $request)
     {
+
+       //dd($request->all());
         //dd($request);
         $this->validate($request,[
             'arrayprecio' => 'required|array',
@@ -179,7 +181,6 @@ class VentaController extends Controller
         $arrayPrecioOriginal = $request->get('arrayPrecioOriginal');
         $arrayJustificacion = $request->get('arrayJustificacion');
 
-        // Insertar los detalles de venta
         foreach ($arrayProducto_id as $index => $idProducto) {
             $producto = Producto::findOrFail($idProducto);
 
@@ -268,7 +269,7 @@ class VentaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**

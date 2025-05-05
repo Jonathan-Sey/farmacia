@@ -246,6 +246,15 @@
                         </div>
 
 
+                        <!-- Campo justificación -->
+                        <div id="campo_justificacion" class="mt-2 hidden mb-5">
+                            <label for="justificacion" class="uppercase block text-sm font-medium text-gray-900">Justificación de pago</label>
+                            <input type="text" name="justificacion" id="justificacion"
+                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                placeholder="Ingrese la justificación">
+                        </div>
+
+                        <!-- Campo de impuesto -->
                         <div class="lg:grid grid-cols-2 gap-8">
 
                             <div   class="md:flex md:flex-row gap-5 flex flex-col">
@@ -469,6 +478,7 @@
                 <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
             </div>
         </form>
+
            <!-- Modal para registrar una nueva persona -->
             <dialog id="my_modal_1" class="modal">
                 <div class="modal-box">
@@ -1374,15 +1384,29 @@ document.addEventListener('DOMContentLoaded', function () {
      </script>
 
      <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const esPrescritoCheckbox = document.getElementById('es_prescrito');
-            const campoReserva = document.getElementById('campo-reserva');
-            const campoImagen = document.getElementById('btn-subir-receta');
+        document.addEventListener('DOMContentLoaded', function () {
+        const esPrescritoCheckbox = document.getElementById('es_prescrito');
+        const campoReserva = document.getElementById('campo-reserva');
+        const campoImagen = document.getElementById('btn-subir-receta');
 
-            esPrescritoCheckbox.addEventListener('change', function() {
-                campoReserva.classList.toggle('hidden', !this.checked);
-                campoImagen.classList.toggle('hidden', !this.checked);
-            });
+        esPrescritoCheckbox.addEventListener('change', function () {
+            campoReserva.classList.toggle('hidden', !this.checked);
+            campoImagen.classList.toggle('hidden', !this.checked);
+        });
+
+
+        //Ckeckbox para justificar el vecino y su justificación
+        const checkboxVecino = document.getElementById('vecino');
+        const campoReservaVecino = document.getElementById('campo_justificacion'); // aquí el cambio
+
+        checkboxVecino.addEventListener('change', function () {
+            if (this.checked) {
+                campoReservaVecino.classList.remove('hidden');
+            } else {
+                campoReservaVecino.classList.add('hidden');
+            }
+        });
+
 
             // Configurar Dropzone para subir imágenes
             Dropzone.autoDiscover = false;
