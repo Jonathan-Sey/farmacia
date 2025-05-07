@@ -148,13 +148,33 @@
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('codigo_sucursal') }}">
 
-                    @error('codigo_sucursal')
+                        @error('codigo_sucursal')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message }}</span>
+                        </div>
+                        @enderror
+                {{-- Select para elegir al encargado --}}
+                <div class="mt-2 mb-5">
+                    <label for="encargado" class="uppercase block text-sm font-medium text-gray-900">Nombre Encargado</label>
+                    <select
+                        name="encargado"
+                        id="encargado"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                        <option value="">Selecciona un encargado</option>
+                        @foreach($usuarios as $usuario)
+                            <option value="{{ $usuario->name }}" {{ old('encargado') == $usuario->name ? 'selected' : '' }}>
+                                {{ $usuario->name }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    @error('encargado')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
                 </div>
-                
+
 
 
                 <div class="mt-2 mb-5">
@@ -174,7 +194,7 @@
                     </div>
                     @enderror
                 </div>
-           
+
                 <div class="mt-2 mb-5">
                     <label for="telefono" class="uppercase block text-sm font-medium text-gray-900">Numero de telefono</label>
                     <input
@@ -203,7 +223,7 @@
                             placeholder="Correo electronico"
                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             value="{{ old('email') }}">
-    
+
                         @error('email')
                         <div role="alert" class="alert alert-error mt-4 p-2">
                             <span class="text-white font-bold">{{ $message }}</span>
@@ -211,8 +231,8 @@
                         @enderror
                     </div>
                 </div>
-                
-         
+
+
             <div class="mt-6 flex items-center justify-end gap-x-6">
                 <a href="{{route('sucursales.index')}}">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>

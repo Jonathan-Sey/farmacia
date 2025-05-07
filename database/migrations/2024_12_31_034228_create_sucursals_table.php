@@ -21,6 +21,7 @@ class CreateSucursalsTable extends Migration
             $table->string('ubicacion', 50);
             $table->string('telefono',10);
             $table->string('email',50);
+            $table->string('encargado',100);
             $table->tinyInteger('estado')->default(1);
             $table->timestamps();
         });
