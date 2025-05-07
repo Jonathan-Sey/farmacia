@@ -128,7 +128,7 @@
                     </div>
                     @enderror
                 </div>
-               
+
                 {{-- Input para agregar el código de sucursal --}}
                 <div class="mt-2 mb-5">
                     <label for="codigo_sucursal" class="uppercase block text-sm font-medium text-gray-900">Codigo Sucursal</label>
@@ -141,7 +141,27 @@
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('codigo_sucursal', $sucursal->codigo_sucursal) }}">
 
-                    @error('codigo_sucursal')
+                        @error('nombre')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message }}</span>
+                        </div>
+                        @enderror
+                {{-- Select para elegir al encargado --}}
+                <div class="mt-2 mb-5">
+                    <label for="encargado" class="uppercase block text-sm font-medium text-gray-900">Nombre Encargado</label>
+                    <select
+                        name="encargado"
+                        id="encargado"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                        <option value="">Selecciona un encargado</option>
+                        @foreach($usuarios as $usuario)
+                            <option value="{{ $usuario->name }}"
+                                {{ old('encargado', $sucursal->encargado) == $usuario->name ? 'selected' : '' }}>
+                                {{ $usuario->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('encargado')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
@@ -149,7 +169,7 @@
                 </div>
 
 
-              
+
 
 
                     {{-- Input para agregar la ubicacion --}}

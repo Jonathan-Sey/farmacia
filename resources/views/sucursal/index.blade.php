@@ -35,11 +35,12 @@
                     <div class="flex flex-col text-left justify-start">
                         <div class="px-6 w-auto break-words md:text-lg lg:text-xl">
                             <p class="uppercase text-lg font-bold text-black">{{$sucursal->nombre}}</p>
+                            <p class="text-lg text-black"><i class="fa-solid fa-circle-user"></i> {{$sucursal->encargado}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-location-dot"></i> {{$sucursal->ubicacion}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-phone"></i> {{$sucursal->telefono}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-envelope"></i> {{$sucursal->email}}</p>
-                            
-                            
+
+
                         </div>
                         <div class="lg:grid lg:grid-cols-2 lg:mt-4 lg:gap-2 px-5 lg:justify-between ">
                             <div class="m-1">
