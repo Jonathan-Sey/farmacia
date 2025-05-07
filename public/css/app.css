@@ -2984,6 +2984,9 @@ html {
 .w-16 {
   width: 4rem;
 }
+.w-2\/5 {
+  width: 40%;
+}
 .w-24 {
   width: 6rem;
 }
@@ -3362,15 +3365,13 @@ html {
   padding-top: 1rem;
   padding-bottom: 1rem;
 }
-<<<<<<< HEAD
 .py-6 {
   padding-top: 1.5rem;
   padding-bottom: 1.5rem;
-=======
+}
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
->>>>>>> 0e34a008a4a08b2105991fa271c50539fd1f6f8c
 }
 .pb-12 {
   padding-bottom: 3rem;
