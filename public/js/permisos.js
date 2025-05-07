@@ -64,7 +64,14 @@ function verificarPermiso(ruta) {
             willClose: () => {
                 document.body.style.overflow = ''; // Restaura el scroll
                 document.body.style.marginRight = ''; // Elimina el margen adicional
-                window.location.href = '/dashboard';
+
+                const ultimaRuta = localStorage.getItem('ultimaRutaValida');//Obtiene la ultima ruta que se setio y que tiene permiso para acceder
+                if (ultimaRuta) {
+                    window.location.href = ultimaRuta;//Regresa a la ruta anterior que si tenia permiso
+                } else {
+                    window.history.back(); //Regresa si no hay ultima ruta
+                }
+
             }
         });
     }
@@ -73,5 +80,11 @@ function verificarPermiso(ruta) {
 // verificacion de permisos
 window.addEventListener('load', function () {
     const rutaActual = window.location.pathname; // Obtener la ruta actual
+
+    // Guardar la ruta actual solo si tiene permiso
+    if (tienePermiso(rutaActual)) {
+        localStorage.setItem('ultimaRutaValida', rutaActual);
+    }
+
     verificarPermiso(rutaActual); // Verificar permisos
 });
