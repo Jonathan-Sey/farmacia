@@ -11,7 +11,7 @@
 <script>
     Dropzone.autoDiscover = false;
     const dropzone = new Dropzone("#dropzone", {
-        url: "{{ route('upload.image') }}",
+        url: "{{ route('upload.image.temp') }}",
         dictDefaultMessage: "Arrastra y suelta una imagen o haz clic aquí para subirla",
         acceptedFiles: ".png,.jpg,.jpeg",
         addRemoveLinks: true,
@@ -21,13 +21,12 @@
         headers: {
             'X-CSRF-TOKEN': "{{ csrf_token() }}"
         }
-
     });
 
     dropzone.on("addedfile", function(file) {
-        if (this.files.length > 1) { // Si hay más de un archivo
-            this.removeFile(this.files[0]); // Elimina el primer archivo
-                Swal.fire({
+        if (this.files.length > 1) {
+            this.removeFile(this.files[0]);
+            Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: 'Solo se permite subir una imagen.',
@@ -36,55 +35,31 @@
         }
     });
 
-    dropzone.on("sending", function(file, xhr, formData) {
-        if (this.files.length > 1) { // Si hay más de un archivo
-            this.removeFile(file); // Elimina el archivo adicional
-            Swal.fire({
-                icon: 'error', // Tipo de ícono (error, success, warning, info, etc.)
-                title: 'Error', // Título de la alerta
-                text: 'Solo se permite subir una imagen.', // Mensaje de la alerta
-                confirmButtonText: 'Aceptar', // Texto del botón
-            });
-            return false; // Detiene la subida del archivo
-        }
-    });
-
     dropzone.on("success", function(file, response) {
-        console.log("Archivo subido correctamente:", response.imagen);
+        console.log("Archivo subido temporalmente:", response.imagen);
         document.querySelector('[name="imagen"]').value = response.imagen;
     });
 
-    dropzone.on("error", function(file, message) {
-        console.error("Error al subir el archivo:", message);
-        alert("Error al subir la imagen: " + message);
-    });
-    // remover la imagen
-     dropzone.on("removedfile", function(file) {
-        document.querySelector('[name="imagen"]').value = ""; // Limpiar el campo oculto
-    });
-
-
-
-
-    // precargar la imagen subida nuevamente
-        document.addEventListener("DOMContentLoaded", function() {
+    dropzone.on("removedfile", function(file) {
         const imagenNombre = document.querySelector('[name="imagen"]').value;
-
         if (imagenNombre) {
-            const mockFile = { name: imagenNombre, size: 12345 }; // Simula un archivo
-            dropzone.emit("addedfile", mockFile);
-            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre); // cargar imagen
-            dropzone.emit("complete", mockFile);
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
         }
+        document.querySelector('[name="imagen"]').value = "";
     });
 
-
-        //eliminar la imagen del server
-        window.addEventListener("beforeunload", function() {
+    // Eliminar imagen temporal al cerrar la página
+    window.addEventListener("beforeunload", function() {
         const imagenNombre = document.querySelector('[name="imagen"]').value;
-
-        if (imagenNombre) {
-            fetch("/eliminar-imagen-temp", {
+        if (imagenNombre && !document.querySelector('form').submitted) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
                 method: "POST",
                 headers: {
                     "X-CSRF-TOKEN": "{{ csrf_token() }}",
@@ -95,9 +70,22 @@
         }
     });
 
+    // Marcar el formulario como enviado al hacer submit
+    document.querySelector('form').addEventListener('submit', function() {
+        this.submitted = true;
+    });
+
+    // Precargar imagen en edición
+    document.addEventListener("DOMContentLoaded", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+        if (imagenNombre) {
+            const mockFile = { name: imagenNombre, size: 12345 };
+            dropzone.emit("addedfile", mockFile);
+            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre);
+            dropzone.emit("complete", mockFile);
+        }
+    });
 </script>
-
-
 
 
 @endpush

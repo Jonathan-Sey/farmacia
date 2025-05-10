@@ -48,12 +48,12 @@ class RevisarProductosVencidos extends Command
         foreach ($productosVencidos as $producto) {
             // Obtener todas las requisiciones relacionadas con este lote
             $requisiciones = Requisicion::where('id_lote', $producto->id)->get();
-    
+
             // Eliminar todas las requisiciones asociadas
             foreach ($requisiciones as $requisicion) {
                 $requisicion->delete();
             }
-    
+
             // Insertar en la tabla correcta (revisa que el nombre esté bien escrito)
             DB::table('producto__vecidos')->insert([
                 "id_producto" => $producto->id_producto,
@@ -63,7 +63,7 @@ class RevisarProductosVencidos extends Command
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-    
+
             // Eliminar el producto de la tabla original
             $producto->delete();
         }
@@ -73,7 +73,7 @@ class RevisarProductosVencidos extends Command
         $almacenVencido =  Almacen::where('fecha_vencimiento', '<', Carbon::now())->get();
 
         foreach($almacenVencido as $almacen){
-           
+
             // Insertar en la tabla correcta (revisa que el nombre esté bien escrito)
             DB::table('almacen_vencidos')->insert([
                 'id_sucursal' => $almacen->id_sucursal,
@@ -85,7 +85,7 @@ class RevisarProductosVencidos extends Command
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-    
+
             // Eliminar el producto de la tabla original
             $almacen->delete();
         }
@@ -100,8 +100,8 @@ class RevisarProductosVencidos extends Command
             'created_at' => now(),
             'updated_at' => now(),
         ]);
-    
+
         $this->info('Productos vencidos procesados correctamente.');
     }
-    
+
 }

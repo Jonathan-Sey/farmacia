@@ -3796,10 +3796,6 @@ details.collapse summary::-webkit-details-marker {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-.py-3\.5 {
-  padding-top: 0.875rem;
-  padding-bottom: 0.875rem;
-}
 .pb-12 {
   padding-bottom: 3rem;
 }
@@ -3979,10 +3975,6 @@ details.collapse summary::-webkit-details-marker {
 .text-yellow-600 {
   --tw-text-opacity: 1;
   color: rgb(202 138 4 / var(--tw-text-opacity, 1));
-}
-.text-yellow-500 {
-  --tw-text-opacity: 1;
-  color: rgb(234 179 8 / var(--tw-text-opacity, 1));
 }
 .underline {
   text-decoration-line: underline;
