@@ -7,6 +7,17 @@
 
 
 <style>
+
+
+    #btn-guardar:disabled {
+        background-color: #9ca3af;
+        cursor: not-allowed;
+    }
+    #btn-guardar:disabled:hover {
+        background-color: #9ca3af;
+    }
+
+
         @media (max-width: 768px) {
         .select2-container--default .select2-selection--single .select2-selection__rendered {
             white-space: normal;
@@ -45,9 +56,9 @@
 @push('js')
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 <script>
-    Dropzone.autoDiscover = false;
+       Dropzone.autoDiscover = false;
     const dropzone = new Dropzone("#dropzone", {
-        url: "{{ route('upload.image') }}",
+        url: "{{ route('upload.image.temp') }}",
         dictDefaultMessage: "Arrastra y suelta una imagen o haz clic aquí para subirla",
         acceptedFiles: ".png,.jpg,.jpeg",
         addRemoveLinks: true,
@@ -60,9 +71,9 @@
     });
 
     dropzone.on("addedfile", function(file) {
-        if (this.files.length > 1) { // Si hay más de un archivo
-            this.removeFile(this.files[0]); // Elimina el primer archivo
-                Swal.fire({
+        if (this.files.length > 1) {
+            this.removeFile(this.files[0]);
+            Swal.fire({
                 icon: 'error',
                 title: 'Error',
                 text: 'Solo se permite subir una imagen.',
@@ -71,55 +82,15 @@
         }
     });
 
-    dropzone.on("sending", function(file, xhr, formData) {
-        if (this.files.length > 1) { // Si hay más de un archivo
-            this.removeFile(file); // Elimina el archivo adicional
-            Swal.fire({
-                icon: 'error', // Tipo de ícono (error, success, warning, info, etc.)
-                title: 'Error', // Título de la alerta
-                text: 'Solo se permite subir una imagen.', // Mensaje de la alerta
-                confirmButtonText: 'Aceptar', // Texto del botón
-            });
-            return false; // Detiene la subida del archivo
-        }
-    });
-
     dropzone.on("success", function(file, response) {
-        console.log("Archivo subido correctamente:", response.imagen);
+        console.log("Archivo subido temporalmente:", response.imagen);
         document.querySelector('[name="imagen"]').value = response.imagen;
     });
 
-    dropzone.on("error", function(file, message) {
-        console.error("Error al subir el archivo:", message);
-        alert("Error al subir la imagen: " + message);
-    });
-    // remover la imagen
-     dropzone.on("removedfile", function(file) {
-        document.querySelector('[name="imagen"]').value = ""; // Limpiar el campo oculto
-    });
-
-
-
-
-    // precargar la imagen subida nuevamente
-        document.addEventListener("DOMContentLoaded", function() {
+    dropzone.on("removedfile", function(file) {
         const imagenNombre = document.querySelector('[name="imagen"]').value;
-
         if (imagenNombre) {
-            const mockFile = { name: imagenNombre, size: 12345 }; // Simula un archivo
-            dropzone.emit("addedfile", mockFile);
-            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre); // cargar imagen
-            dropzone.emit("complete", mockFile);
-        }
-    });
-
-
-        //eliminar la imagen del server
-        window.addEventListener("beforeunload", function() {
-        const imagenNombre = document.querySelector('[name="imagen"]').value;
-
-        if (imagenNombre) {
-            fetch("/eliminar-imagen-temp", {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
                 method: "POST",
                 headers: {
                     "X-CSRF-TOKEN": "{{ csrf_token() }}",
@@ -127,6 +98,38 @@
                 },
                 body: JSON.stringify({ imagen: imagenNombre }),
             });
+        }
+        document.querySelector('[name="imagen"]').value = "";
+    });
+
+    // Eliminar imagen temporal al cerrar la página
+    window.addEventListener("beforeunload", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+        if (imagenNombre && !document.querySelector('form').submitted) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+    });
+
+    // Marcar el formulario como enviado al hacer submit
+    document.querySelector('form').addEventListener('submit', function() {
+        this.submitted = true;
+    });
+
+    // Precargar imagen en edición
+    document.addEventListener("DOMContentLoaded", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+        if (imagenNombre) {
+            const mockFile = { name: imagenNombre, size: 12345 };
+            dropzone.emit("addedfile", mockFile);
+            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre);
+            dropzone.emit("complete", mockFile);
         }
     });
 
@@ -403,7 +406,7 @@
                 <a href="{{route('compras.index')}} " id="btn-cancelar">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
                 </a>
-                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
+                <button type="submit" id="btn-guardar" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
             </div>
         </form>
 
@@ -419,23 +422,19 @@
                             <label class="label" for="observaciones_comprobante">
                                 <span class="label-text">Observaciones (Opcional)</span>
                             </label>
-                            <textarea name="observaciones_comprobante" id="observaciones_comprobante" class="textarea textarea-bordered" rows="3"></textarea>
+                            <textarea name="observaciones_comprobante" id="observaciones_comprobante"
+                                class="textarea textarea-bordered" rows="3" placeholder="Ingrese observaciones si es necesario"></textarea>
                         </div>
 
                         <div class="form-control mt-4">
-                            <label class="uppercase block text-sm font-medium text-gray-900">Imagen del comprobante</label>
+                            <label class="uppercase block text-sm font-medium text-gray-900">Imagen del comprobante (Opcional)</label>
                             <div id="dropzone" class="dropzone border-2 border-dashed rounded w-full h-60 p-4">
                                 <input type="hidden" name="imagen" value="">
                             </div>
-                            @error('imagen')
-                                <div role="alert" class="alert alert-error mt-4 p-2">
-                                    <span class="text-white font-bold">{{ $message }}</span>
-                                </div>
-                            @enderror
                         </div>
                         <div class="modal-action">
                             <button type="button" onclick="my_modal_2.close()" class="btn">Cancelar</button>
-                            <button type="button" onclick="guardarComprobante()" class="btn btn-primary">Guardar Comprobante</button>
+                            <button type="button" onclick="guardarComprobante()" class="btn btn-primary">Guardar</button>
                         </div>
                     </form>
                 </div>
@@ -451,6 +450,27 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/obtenerUsuario.js"></script>
 <script>
+
+    function verificarEstadoFormulario() {
+        const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
+        const proveedor = document.getElementById('id_proveedor').value;
+        const sucursal = document.getElementById('id_sucursal').value;
+        const btnGuardar = document.getElementById('btn-guardar');
+
+        // Habilitar/deshabilitar botón según condiciones
+        if (filasProductos.length > 0 && proveedor && sucursal) {
+            btnGuardar.disabled = false;
+        } else {
+            btnGuardar.disabled = true;
+        }
+    }
+
+    // Llamar a la función cuando cambie algo importante
+    document.getElementById('id_proveedor').addEventListener('change', verificarEstadoFormulario);
+    document.getElementById('id_sucursal').addEventListener('change', verificarEstadoFormulario);
+
+
+
     // Configuración para Select2 con truncado de texto
     $(document).ready(function(){
         // Configuración para el select de proveedores
@@ -594,6 +614,8 @@
                 mensaje('Los campos estan vacios');
             }
 
+            verificarEstadoFormulario();
+
         }
 
         function eliminarProducto(index){
@@ -611,6 +633,8 @@
 
             //eliminamos la fila
             $('#fila'+index).remove();
+
+            verificarEstadoFormulario();
         }
 
 
@@ -689,69 +713,207 @@
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const campoImagen = document.getElementById('btn-subir-comprobante');
+// Configuración unificada de Dropzone para comprobantes
+document.addEventListener('DOMContentLoaded', function() {
+    // Eliminar cualquier instancia previa de Dropzone
+    if (typeof Dropzone !== 'undefined') {
+        Dropzone.autoDiscover = false;
+    }
 
-            // Configurar Dropzone para subir imágenes
-            Dropzone.autoDiscover = false;
-            const dropzone = new Dropzone("#dropzone", {
-                url: "{{ route('upload.image') }}",
-                dictDefaultMessage: "Arrastra y suelta la receta médica o haz clic aquí para subirla",
-                acceptedFiles: ".png,.jpg,.jpeg,.pdf",
-                addRemoveLinks: true,
-                dictRemoveFile: "Borrar archivo",
-                maxFiles: 1,
-                uploadMultiple: false,
-                headers: {
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                }
-            });
-
-            dropzone.on("success", function(file, response) {
-                console.log("Archivo subido correctamente:", response.imagen);
-                document.querySelector('#formComprobante input[name="imagen"]').value = response.imagen;
-                document.getElementById('comprobante-subido').classList.add('hidden');
-            });
-        });
-
-        // Función para guardar la receta
-        function guardarComprobante() {
-            const imagen = document.querySelector('#formComprobante input[name="imagen"]').value;
-            const observaciones = document.getElementById('observaciones_comprobante').value;
-
-            if (!imagen) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'Debes subir una imagen del comprobante',
-                });
-                return;
+    // Configurar Dropzone
+    const dropzone = new Dropzone("#dropzone", {
+        url: "{{ route('upload.image.temp') }}",
+        dictDefaultMessage: "Arrastra y suelta el comprobante o haz clic aquí para subirla",
+        acceptedFiles: ".png,.jpg,.jpeg,.pdf",
+        addRemoveLinks: true,
+        dictRemoveFile: "Borrar comprobante",
+        maxFiles: 1,
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        },
+        init: function() {
+            // Precargar imagen si existe
+            const imagenExistente = document.getElementById('imagen_comprobante').value;
+            if (imagenExistente) {
+                const mockFile = {
+                    name: imagenExistente,
+                    size: 12345,
+                    accepted: true
+                };
+                this.emit("addedfile", mockFile);
+                this.emit("thumbnail", mockFile, "{{ asset('uploads/temp') }}/" + imagenExistente);
+                this.emit("complete", mockFile);
             }
+        }
+    });
 
-            // Guardar la imagen en el campo oculto del formulario principal
-            document.getElementById('imagen_comprobante').value = imagen;
-            document.getElementById('observaciones_comprobante_value').value = observaciones;
-
-            //marcar como subido
-            document.getElementById('comprobante-subido').classList.remove('hidden');
-
-            // Cerrar el modal
-            my_modal_2.close();
-
+    // Eventos de Dropzone
+    dropzone.on("addedfile", function(file) {
+        if (this.files.length > 1) {
+            this.removeFile(this.files[0]);
             Swal.fire({
-                icon: 'success',
-                title: 'Comprobante guardado',
-                text: 'El comprobante se ha asociado correctamente a la compra',
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir un comprobante.',
+                confirmButtonText: 'Aceptar'
             });
         }
+    });
 
-             // Mostrar observaciones existentes al abrir el modal
-             document.getElementById('btn-subir-comprobante').addEventListener('click', function() {
-            const observacionesGuardadas = document.getElementById('observaciones_comprobante_value').value;
-            if (observacionesGuardadas) {
-                document.getElementById('observaciones_receta').value = observacionesGuardadas;
+    dropzone.on("success", function(file, response) {
+        document.querySelector('#formComprobante input[name="imagen"]').value = response.imagen;
+    });
+
+    dropzone.on("error", function(file, message) {
+        console.error("Error al subir el comprobante:", message);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al subir el comprobante: ' + message,
+        });
+    });
+
+    dropzone.on("removedfile", function() {
+        const imagenNombre = document.querySelector('#formComprobante input[name="imagen"]').value;
+        if (imagenNombre) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+        document.querySelector('#formComprobante input[name="imagen"]').value = "";
+    });
+
+    // Manejar el botón de guardar
+    document.querySelector('#formComprobante button[type="button"][onclick="guardarComprobante()"]')
+        .addEventListener('click', guardarComprobante);
+
+    // Manejar el botón de cancelar
+    document.querySelector('#my_modal_2 .btn[onclick="my_modal_2.close()"]')
+        .addEventListener('click', function() {
+            // Si hay archivos en dropzone y no se ha guardado, eliminarlos
+            if (dropzone.files.length > 0 && !document.getElementById('imagen_comprobante').value) {
+                const file = dropzone.files[0];
+                dropzone.removeFile(file);
+
+                // Eliminar del servidor si existe
+                if (file.name) {
+                    fetch("{{ route('eliminar.imagen.temp') }}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ imagen: file.name }),
+                    });
+                }
+            }
+
+            // Limpiar observaciones si no se ha guardado
+            if (!document.getElementById('imagen_comprobante').value) {
+                document.getElementById('observaciones_comprobante').value = '';
             }
         });
+
+        verificarEstadoFormulario();
+});
+
+// Función para guardar el comprobante (debe estar en el ámbito global)
+function guardarComprobante() {
+    const imagen = document.querySelector('#formComprobante input[name="imagen"]').value;
+    const observaciones = document.getElementById('observaciones_comprobante').value;
+
+    // Asignar valores al formulario principal
+    document.getElementById('imagen_comprobante').value = imagen;
+    document.getElementById('observaciones_comprobante_value').value = observaciones;
+
+    // Mostrar indicador de comprobante subido si hay imagen u observaciones
+    if (imagen || observaciones) {
+        document.getElementById('comprobante-subido').classList.remove('hidden');
+    } else {
+        document.getElementById('comprobante-subido').classList.add('hidden');
+    }
+
+    // Cerrar el modal
+    my_modal_2.close();
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Datos guardados',
+        text: 'La información del comprobante se ha guardado correctamente',
+    });
+}
+
+// Al abrir el modal, cargar datos existentes
+document.getElementById('btn-subir-comprobante').addEventListener('click', function() {
+    const observacionesGuardadas = document.getElementById('observaciones_comprobante_value').value;
+    if (observacionesGuardadas) {
+        document.getElementById('observaciones_comprobante').value = observacionesGuardadas;
+    }
+});
+
+
+    // validar ante de enviar la info del formulario
+
+    document.querySelector('form').addEventListener('submit', function(e) {
+        // Verificar si hay productos en el detalle
+        const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
+
+        if (filasProductos.length === 0) {
+            e.preventDefault(); // Detener el envío del formulario
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debes agregar al menos un producto al detalle de compra',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        // Verificar campos obligatorios
+        const proveedor = document.getElementById('id_proveedor').value;
+        const sucursal = document.getElementById('id_sucursal').value;
+
+        if (!proveedor || !sucursal) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debes completar todos los campos obligatorios',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        // Verificar fechas de vencimiento
+        const hoy = new Date().toISOString().split('T')[0];
+        const fechasVencimiento = document.querySelectorAll('input[name="arrayvencimiento[]"]');
+        let fechaInvalida = false;
+
+        fechasVencimiento.forEach(input => {
+            if (input.value < hoy) {
+                fechaInvalida = true;
+            }
+        });
+
+        if (fechaInvalida) {
+            e.preventDefault();
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Las fechas de vencimiento no pueden ser anteriores a hoy',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        // Marcar el formulario como enviado para evitar pérdida de datos
+        this.submitted = true;
+    });
 
 
      </script>

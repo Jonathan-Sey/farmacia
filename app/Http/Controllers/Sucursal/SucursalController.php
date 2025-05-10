@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Sucursal;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ImagenController;
 use App\Models\Bitacora;
 use App\Models\Sucursal;
 use App\Models\User;
@@ -43,7 +44,7 @@ class SucursalController extends Controller
      */
     public function store(Request $request)
     {
-        $imagenNombre = $request->imagen;
+        //$imagenNombre = $request->imagen;
 
         $this->validate($request,[
             'nombre'=>['required','string','max:35','unique:sucursal,nombre'],
@@ -55,8 +56,17 @@ class SucursalController extends Controller
             'encargado' => 'required|max:100',
             'estado'=>'integer',
         ]);
+
+          // Mover la imagen de temp a definitivo
+        $imagenController = new ImagenController();
+        $imagenMovida = $imagenController->moverDefinitiva($request->imagen);
+
+        if (!$imagenMovida) {
+            return back()->with('error', 'No se pudo guardar la imagen');
+        }
+
         $sucursal =Sucursal::create([
-            'imagen'=>$imagenNombre,
+            'imagen'=>$request->imagen,
             'nombre'=>$request->nombre,
             'codigo_sucursal'=>$request->codigo_sucursal,
             'ubicacion'=>$request->ubicacion,
@@ -125,39 +135,72 @@ class SucursalController extends Controller
             'encargado'=>'required|max:100',
             'estado'=>'integer',
         ]);
-        $datosActualizados = $request->only(['nombre', 'ubicacion','codigo_sucursal','telefono','email','encargado']);
+        $datosActualizados = $request->only([
+            'nombre',
+            'ubicacion',
+            'codigo_sucursal',
+            'telefono',
+            'email',
+            'encargado']);
 
-             // Manejo de la imagen
-             if ($request->imagen && $request->imagen !== $sucursal->imagen) {
+            $imagenOriginal = $sucursal->imagen;
+
+            // Manejo de eliminación de imagen
+            if ($request->has('eliminar_imagen') && $request->eliminar_imagen == '1') {
                 // Eliminar la imagen anterior si existe
-                if ($sucursal->imagen && file_exists(public_path('uploads/' . $sucursal->imagen))) {
-                    unlink(public_path('uploads/' . $sucursal->imagen));
+                if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                    unlink(public_path('uploads/' . $imagenOriginal));
                 }
-                $datosActualizados['imagen'] = $request->imagen; // Actualizar con la nueva imagen
-            } else {
-                $datosActualizados['imagen'] = $sucursal->imagen; // Mantener la imagen anterior
+
+                $datosActualizados['imagen'] = null;
+            }
+            // Manejo de nueva imagen
+            elseif ($request->imagen && $request->imagen !== $imagenOriginal) {
+                $imagenController = new ImagenController();
+                $imagenMovida = $imagenController->moverDefinitiva($request->imagen);
+
+                if (!$imagenMovida) {
+                    return back()->with('error', 'No se pudo guardar la nueva imagen');
+                }
+
+                // Eliminar la imagen anterior si existe
+                if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                    unlink(public_path('uploads/' . $imagenOriginal));
+                }
+
+                $datosActualizados['imagen'] = $request->imagen;
+            }
+            else {
+                $datosActualizados['imagen'] = $imagenOriginal;
             }
 
-            $datosSinCambios = $sucursal->only(['imagen','nombre', 'ubicacion','codigo_sucursal','telefono','email','encargado']);
+            $datosSinCambios = $sucursal->only([
+                'imagen',
+                'nombre',
+                'ubicacion',
+                'codigo_sucursal',
+                'telefono',
+                'email',
+                'encargado'
+            ]);
 
-         // Verificación de cambios
-         if ($datosActualizados != $datosSinCambios) {
-             // Actualizar datos
-             $sucursal->update($datosActualizados);
-
+            if ($datosActualizados != $datosSinCambios) {
+                $sucursal->update($datosActualizados);
 
                 //Bitacora
-                $usuario=User::find($request->idUsuario);
+                $usuario = User::find($request->idUsuario);
                 Bitacora::create([
-                        'id_usuario' => $request->idUsuario,
-                        'name_usuario' =>$usuario->name,
-                        'accion' => 'Actualización',
-                        'tabla_afectada' => 'Sucursal',
-                        'detalles' => "Se actualizo la sucursal: {$request->nombre}", //detalles especificos
-                        'fecha_hora' => now(),
+                    'id_usuario' => $request->idUsuario,
+                    'name_usuario' => $usuario->name,
+                    'accion' => 'Actualización',
+                    'tabla_afectada' => 'Sucursal',
+                    'detalles' => "Se actualizó la sucursal: {$request->nombre}",
+                    'fecha_hora' => now(),
                 ]);
-            return redirect()->route('sucursales.index')->with('success', '¡Sucursal actualizado!');
+
+                return redirect()->route('sucursales.index')->with('success', '¡Sucursal actualizada!');
             }
+
             return redirect()->route('sucursales.index');
     }
 

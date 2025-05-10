@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Compra;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ImagenController;
 use App\Models\Bitacora;
 use App\Models\Compra;
 use App\Models\DetalleCompra;
@@ -77,6 +78,16 @@ class CompraController extends Controller
 
         try{
             DB::beginTransaction();
+
+
+     // Mover imagen temporal a definitiva si existe
+     $imagenComprobante = null;
+     if (!empty($request->imagen_comprobante)) {
+         $imagenController = new ImagenController();
+         $imagenComprobante = $imagenController->moverDefinitiva($request->imagen_comprobante)
+             ? $request->imagen_comprobante
+             : null;
+     }
             // generacion de codigo
             $ultimoId = Compra::max('id') ?? 0;
             $codigo = 'CR-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
@@ -91,7 +102,7 @@ class CompraController extends Controller
                 'fecha_compra' => Carbon::now()->format('Y-m-d'),
                 'total'=>$request->input('total'),
                 'estado' => 1,
-                'imagen_comprobante' => $request->imagen_comprobante,
+                'imagen_comprobante' => $imagenComprobante,
                 'observaciones_comprobante' => $request->observaciones_comprobante
             ]);
 
@@ -218,7 +229,7 @@ class CompraController extends Controller
      */
     public function update(Request $request, $id)
     {
-        
+
     }
 
     /**

@@ -76,6 +76,12 @@ Route::post('/consulta/{id}/cambiar-estado', [consultaController::class, 'cambia
 Route::post('/traslado/{id}/cambiar-estado', [trasladoController::class, 'cambiarEstado']);
 
 
+// rutas para el manejo de imagenes
+Route::post('/upload-image-temp', [ImagenController::class, 'upload'])->name('upload.image.temp');
+Route::post('/eliminar-imagen-temp', [ImagenController::class, 'eliminarTemp'])->name('eliminar.imagen.temp');
+//Route::post('/productos/{producto}', [ProductoController::class, 'update'])->name('productos.update');
+
+
 //Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->name('dashboard.filtrarVentas');
