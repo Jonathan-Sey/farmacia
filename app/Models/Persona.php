@@ -16,7 +16,6 @@ class Persona extends Model
         'telefono',
         'fecha_nacimiento',
         'estado',
-
     ];
 
     public function scopeActivos($query)
