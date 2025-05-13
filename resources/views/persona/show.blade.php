@@ -65,7 +65,8 @@
                 @foreach ($persona->fichasMedicas as $ficha)
                     <li class="border-b pb-4">
                         <p><strong class="text-gray-600">Diagnóstico:</strong> {{ $ficha->diagnostico }}</p>
-                        <p><strong class="text-gray-600">Fecha de Consulta:</strong> {{ $ficha->consulta_programada }}</p>
+                        <p><strong class="text-gray-600">Médico:</strong> {{ $ficha->detalleMedico->usuario->name ?? 'No asignado' }}</p>
+                        <p><strong class="text-gray-600">Consulta Programada:</strong> {{ $ficha->consulta_programada }}</p>
 
                         @if ($ficha->receta_foto)
                             <div class="mt-4">
