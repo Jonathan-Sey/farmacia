@@ -17,7 +17,10 @@ class Venta extends Model
         'id_usuario',
         'id_consulta',
         'id_persona',
-        'estado'
+        'estado',
+        'es_prescrito',
+        'imagen_receta',
+        'numero_reserva'
     ];
 
     public function sucursal()

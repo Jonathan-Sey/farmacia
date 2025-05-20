@@ -68,6 +68,57 @@
       <p class="p-2 text-center font-semibold " >{{$venta->total}}</p>
     </div>
 </div>
+{{-- campos para la receta --}}
+<!-- Sección de Prescripción -->
+<div class="card bg-base-100 w-full shadow-lg md:grid md:grid-cols-3 mb-5">
+    <div class="card-body items-center p-2 bg-slate-200 rounded-t-xl md:rounded-xl md:col-span-1">
+        <p class="card-title font">Prescripción Médica</p>
+    </div>
+    <div class="md:col-span-2">
+        @if($venta->es_prescrito)
+            <div class="p-2 text-center">
+                <p class="font-semibold mb-2">Venta con receta médica</p>
+
+                @if($venta->numero_reserva)
+                    <p class="text-sm">Número de reserva: <span class="font-bold">{{ $venta->numero_reserva }}</span></p>
+                @endif
+
+                @if($venta->imagen_receta_url)
+                    <div class="mt-3">
+                        <p class="text-sm mb-2">Receta médica:</p>
+                        <button onclick="document.getElementById('modal-receta').showModal()" class="btn btn-sm btn-primary">
+                            <i class="fas fa-eye mr-1"></i> Ver receta
+                        </button>
+
+                        <button onclick="descargarReceta('{{ $venta->imagen_receta_url }}')" class="btn btn-sm text-white bg-red-800  ml-2">
+                            <i class="fas fa-download mr-1"></i> Descargar
+                        </button>
+                    </div>
+
+                    <!-- Modal para ver la receta -->
+                    <dialog id="modal-receta" class="modal">
+                        <div class="modal-box max-w-5xl">
+                            <h3 class="font-bold text-lg">Receta Médica</h3>
+                            <img src="{{ $venta->imagen_receta_url }}" alt="Receta médica" class="w-full h-auto mt-4">
+                            <div class="modal-action">
+                                <button onclick="document.getElementById('modal-receta').close()" class="btn">Cerrar</button>
+                            </div>
+                        </div>
+                        <form method="dialog" class="modal-backdrop">
+                            <button>close</button>
+                        </form>
+                    </dialog>
+                @else
+                    <p class="text-sm text-yellow-600">No se adjuntó imagen de receta</p>
+                @endif
+            </div>
+        @else
+            <p class="p-2 text-center font-semibold">Venta sin receta médica</p>
+        @endif
+    </div>
+</div>
+
+
 
 <div class="mt-5">
     <h2 class="text-center m-5 font-bold text-lg">Detalle Venta</h2>
@@ -89,8 +140,8 @@
                 <th></th>
                 <td class="bg-white">{{$producto->nombre}} </td>
                 <td class="bg-white">{{$producto->pivot->cantidad}} </td>
-                <td class="bg-white">{{$producto->precio_venta}} </td>
-                <td class="subTotal bg-white">{{ $producto->pivot->cantidad * $producto->precio_venta }}</td>
+                <td class="bg-white">{{$producto->precio_porcentaje}} </td>
+                <td class="subTotal bg-white">{{ $producto->pivot->cantidad * $producto->precio_porcentaje }}</td>
                 <th></th>
             </tr>
             @endforeach
@@ -99,8 +150,8 @@
             <tr>
                 <th></th>
                 <td class="text-sm font-black">SUMA:  <span id="suma" class="font-black">0</span></td>
-                <td class="text-sm font-black">IVA: <span id="iva" class="font-black">0</span></td>
-                <td class="text-sm font-black"><input type="hidden" name="total" value="0" id="inputTotal"> TOTAL:  <span id="total" class="font-black">0</span></td>
+                <td class="text-sm font-black">IVA: <span id="iva" class="font-black">{{ $venta->impuesto}}</span></td>
+                <td class="text-sm font-black"><input type="hidden" name="total" value="{{ $venta->total}}" id="inputTotal"> TOTAL:  <span id="total" class="font-black">{{ $venta->total}}</span></td>
                 <td class="text-sm font-black"></td>
                 <th></th>
             </tr>
@@ -121,20 +172,32 @@
     function calcularValores() {
     let suma = 0;
     let subTotal = document.getElementsByClassName('subTotal');
-    let impuesto = parseFloat(document.getElementById('impuesto').innerHTML) || 0;
+    //let impuesto = parseFloat(document.getElementById('impuesto').innerHTML) || 0;
+    //let impuesto = parseFloat($('#impuesto').text().trim()) || 0;
 
     for(let i = 0; i < subTotal.length; i++) {
-        suma += parseFloat(subTotal[i].innerHTML);
+        suma += parseFloat(subTotal[i].innerHTML) || 0;
     }
 
-    let ivaCalculado = Math.round((suma * impuesto) / 100);
-    let totalCalculado = Math.round(suma + ivaCalculado);
+    //let ivaCalculado = Math.round((suma * impuesto) / 100);
+    //let totalCalculado = Math.round(suma + ivaCalculado);
 
     $('#suma').html(Math.round(suma));
-    $('#iva').html(ivaCalculado);
-    $('#total').html(totalCalculado);
-    $('#inputTotal').val(totalCalculado);
+    //$('#iva').html(ivaCalculado);
+    //$('#total').html(totalCalculado);
+    //$('#inputTotal').val(totalCalculado);
 }
 
+</script>
+
+<script>
+    function descargarReceta(url, nombreArchivo) {
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = nombreArchivo || 'receta-medica-' + new Date().toISOString().split('T')[0];
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 </script>
 @endpush

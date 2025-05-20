@@ -143,9 +143,26 @@ class ProductoController extends Controller
             'estado'=>'integer',
         ]);
 
+        //Actualiza los productos
         $datosActualizados = $request->only(['id_categoria','nombre','descripcion','precio_porcentaje','tipo','fecha_caducidad']);
 
+        // Verificar si el precio ha cambiado antes de actualizar
+        if ($producto->precio_porcentaje != $request->precio_porcentaje) {
+            // Crear historial de precio
+            HistoricoPrecio::create([
+                'id_producto' => $producto->id,
+                'precio_anterior' => $producto->precio_porcentaje,
+                'precio_nuevo' => round($request->precio_porcentaje * 10) / 10,
+                'fecha_cambio' => now(),
+            ]);
 
+            // Actualizar precio_venta solo si precio_porcentaje cambia
+            $producto->update(['precio_venta' => $producto->precio_porcentaje]);
+
+            // Actualizar el campo precio_porcentaje con el nuevo valor redondeado
+            $datosActualizados['precio_porcentaje'] = round($request->precio_porcentaje * 10) / 10;
+        }
+ 
         //validando el tipo de producto
         $nuevotipo = $request->has('tipo') ? 2 : 1;
         if ($producto->tipo != $nuevotipo) {
@@ -168,7 +185,9 @@ class ProductoController extends Controller
          // Actualizar el rol
          $datosActualizados['tipo'] = $nuevotipo;
 
-         $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_porcentaje','tipo', 'imagen']);
+         $datosSinCambios = $producto->only(['id_categoria','nombre','descripcion','precio_porcentaje','tipo','fecha_caducidad', 'imagen']);
+           
+        
 
          if ($datosActualizados != $datosSinCambios){
             $producto->update($datosActualizados);
@@ -248,13 +267,13 @@ class ProductoController extends Controller
         HistoricoPrecio::create([
             'id_producto' => $producto->id,
             'precio_anterior' => $producto->precio_porcentaje,
-            'precio_nuevo' => $request->nuevo_precio,
+            'precio_nuevo' => round($request->nuevo_precio * 10) / 10,
             'fecha_cambio' => now(),
         ]);
         //actualiza el campo de precio anterior en el index de producto con lo que tenia el campo de nuevo_precio.
         $producto->update(['precio_venta' => $producto->precio_porcentaje]);
-        //actualiza el campo de nuevo_precio con el nuevo precio generado.
-        $producto->update(['precio_porcentaje' => $request->nuevo_precio]);
+        //actualiza el campo de nuevo_precio con el nuevo precio generado y lo redondea.
+        $producto->update(['precio_porcentaje' => round($request->nuevo_precio * 10) / 10]);
         /*
         $usuario=User::find($request->idUsuario);
         Bitacora::create([

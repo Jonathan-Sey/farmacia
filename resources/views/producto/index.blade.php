@@ -55,12 +55,15 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_porcentaje}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        @if ($producto->imagen)
-                            <img src="{{ asset('uploads/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded">
-                        @else
-                            <span class="text-gray-500">Sin imagen</span>
-                        @endif
-                    </td>
+                        <a href="{{ $producto->imagen ? asset('uploads/' . $producto->imagen) : '#' }}">
+                            @if ($producto->imagen)
+                                <img src="{{ asset('uploads/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                            @else
+                                <span class="text-gray-500">Sin imagen</span>
+                            @endif
+                        </a>
+                        </td>
+
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
                             @if ($producto->estado == 1)
