@@ -33,7 +33,6 @@
                             <span class="text-white font-bold">{{ $message }}</span>
                         </div>
                         @enderror
-
                     </div>
                     <div class="flex flex-row gap-5">
                         <div class="flex flex-col gap-1">
@@ -43,6 +42,7 @@
                             />
                         </div>
                     </div>
+                    
                 </div>
 
 

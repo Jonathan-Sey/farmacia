@@ -34,4 +34,10 @@ class Persona extends Model
     {
         return $this->hasMany(Venta::class, 'id_persona');
     }
+
+    public function fichasMedicas()
+{
+    return $this->hasMany(FichaMedica::class, 'persona_id');
+}
+
 }

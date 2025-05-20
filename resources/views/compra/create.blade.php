@@ -29,7 +29,7 @@
                                     id="id_producto">
                                     <option value="">Buscar un producto</option>
                                     @foreach ($productos as $producto)
-                                        <option value="{{ $producto->id }}" data-nombre="{{$producto->nombre}}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
+                                        <option value="{{ $producto->id }}"  data-imagen="{{$producto->imagen_url}}" data-nombre="{{$producto->nombre}}" {{old('id_producto') == $producto->id ? 'selected' : ''}}>{{$producto->codigo.' '.$producto->nombre}}</option>
                                     @endforeach
                                 </select>
                                 @error('id_producto')
@@ -38,9 +38,10 @@
                                     </div>
                                 @enderror
                             </div>
-
-
-
+                            <!-- Contenedor para mostrar la imagen -->
+                            <div id="imagen-producto" class="mt-4 hidden">
+                                <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded">
+                            </div>
                         <div class="lg:grid lg:grid-cols-2 lg:gap-x-4">
                                 {{-- cantidad --}}
                             <div class="mt-2 mb-5">
@@ -65,7 +66,7 @@
 
                             {{-- precio --}}
                             <div class="mt-2 mb-5">
-                                <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Precio</label>
+                                <label for="precio" class="uppercase block text-sm font-medium text-gray-900">Precio Compra</label>
                                 <input
                                     type="number"
                                     name="precio"
@@ -173,7 +174,7 @@
 
                             </div> --}}
                             <div class="mt-2 mb-5">
-                                <label for="fecha_vencimiento" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
+                                <label for="fecha_vencimiento" class="uppercase block text-sm font-medium text-gray-900">Fecha de Vencimiento</label>
                                 <input
                                     type="date"
                                     name="fecha_vencimiento"
@@ -279,6 +280,23 @@
     });
 
     </script>
+
+<script>
+    $(document).ready(function() {
+    $('#id_producto').change(function() {
+            const selectedOption = $(this).find('option:selected');
+            const imagenUrl = selectedOption.data('imagen'); // Obtener la URL de la imagen
+
+            if (imagenUrl) {
+                $('#imagen-producto').removeClass('hidden'); // Mostrar el contenedor de la imagen
+                $('#imagen').attr('src', imagenUrl); // Actualizar la imagen
+            } else {
+                $('#imagen-producto').addClass('hidden'); // Ocultar el contenedor de la imagen
+            }
+        });
+    });
+</script>
+
     <script>
         $(document).ready(function(){
             $('#btn-agregar').click(function(){

@@ -128,7 +128,28 @@
                     </div>
                     @enderror
                 </div>
-
+                {{-- Select para elegir al encargado --}}
+                <div class="mt-2 mb-5">
+                    <label for="encargado" class="uppercase block text-sm font-medium text-gray-900">Nombre Encargado</label>
+                    <select
+                        name="encargado"
+                        id="encargado"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                        <option value="">Selecciona un encargado</option>
+                        @foreach($usuarios as $usuario)
+                            <option value="{{ $usuario->name }}"
+                                {{ old('encargado', $sucursal->encargado) == $usuario->name ? 'selected' : '' }}>
+                                {{ $usuario->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('encargado')
+                    <div role="alert" class="alert alert-error mt-4 p-2">
+                        <span class="text-white font-bold">{{ $message }}</span>
+                    </div>
+                    @enderror
+                </div>
+                
                 <div class="mt-2 mb-5">
                     <label for="ubicacion" class="uppercase block text-sm font-medium text-gray-900">Ubicación</label>
                     <input

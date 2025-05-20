@@ -64,7 +64,7 @@
     </main>
 
     <!-- Footer -->
-    <div class=" ml-4 md:ml-[200px]">
+    <div class=" ml-4 md:ml-[200px]" id="piepagina">
         <x-footer class="bg-gray-800 text-white p-4 text-center w-full" />
     </div>
     <script src="{{ asset('js/axios.min.js') }}"></script>
