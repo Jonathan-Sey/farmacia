@@ -12,20 +12,19 @@ class Devoluciones extends Model
     protected $table = 'devoluciones';
     protected $fillable = [
         'venta_id',
-        'producto_id',
-        'cantidad',
-        'monto',
-        'motivo',
-        'estado',
-        'observaciones',
         'usuario_id',
         'persona_id',
         'sucursal_id',
+        'total',
+        'motivo',
+        'estado',
+        'observaciones',
         'fecha_devolucion',
     ];
 
 
-    public function productos(){
+    public function productos()
+    {
         return $this->belongsTo(Producto::class,  'producto_id');
     }
 
@@ -42,4 +41,15 @@ class Devoluciones extends Model
     {
         return $this->belongsTo(Persona::class, 'persona_id');
     }
+
+        public function venta()
+    {
+        return $this->belongsTo(venta::class, 'venta_id');
+    }
+
+
+  public function detalles()
+{
+    return $this->hasMany(DetalleDevolucion::class, 'devolucion_id');
+}
 }

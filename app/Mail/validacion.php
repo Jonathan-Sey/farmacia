@@ -2,6 +2,7 @@
 
 namespace App\Mail;
 
+use App\Models\DetalleDevolucion;
 use App\Models\Devoluciones;
 use App\Models\Notificaciones;
 use Illuminate\Bus\Queueable;
@@ -22,11 +23,10 @@ class validacion extends Mailable
      *
      * @return void
      */
-    public function __construct( $devolucion, $notificaciones )
+    public function __construct($devolucion, $notificaciones)
     {
         $this->devolucion = $devolucion;
         $this->notificaciones = $notificaciones;
-        
     }
 
     /**
@@ -35,24 +35,28 @@ class validacion extends Mailable
      * @return $this
      */
 
-   
+
     public function build()
     {
 
-        $devoluciones = Devoluciones::with(['sucursal','productos','usuario'])->where('id',$this->devolucion->id)
-        ->latest()
-        ->get();
+        $devoluciones = Devoluciones::with(['sucursal', 'usuario'])->where('id', $this->devolucion->id)
+            ->latest()
+            ->get();
+
+        $devolucionesDetalles = DetalleDevolucion::with(['producto'])->where('devolucion_id', $this->devolucion->id)
+            ->latest()
+            ->get();
 
         $notificaciones = Notificaciones::where('id', $this->notificaciones->id)->first();
-        
-        return $this->subject('Autorización requerida para devolución')
-        ->view('emails.verificacion')
-        ->with([
-            'devolucion' => $this->devolucion,
-            'url' => route('devoluciones.autorizar',[ $this->devolucion->id, $this->notificaciones->id]),
-            'devoluciones' => $devoluciones,
 
-        ]);
-       
+        return $this->subject('Autorización requerida para devolución')
+            ->view('emails.verificacion')
+            ->with([
+                'devolucion' => $this->devolucion,
+                'url' => route('devoluciones.autorizar', [$this->devolucion->id, $this->notificaciones->id]),
+                'devoluciones' => $devoluciones,
+                'devolucionesDetalles' => $devolucionesDetalles,
+
+            ]);
     }
 }
