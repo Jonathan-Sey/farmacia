@@ -8,7 +8,7 @@
 
 @section('contenido')
 
-     
+
 
     <x-data-table>
         <x-slot name="thead">
@@ -31,8 +31,8 @@
                   <td class="px-6 py-4 whitespace-nowrap">{{ $notificacion->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $notificacion->tipo}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $notificacion->mensaje}}</td>
-                   
-                   
+
+
                         {{-- Botón accion --}}
                      <td>
                         <a href="{{ $notificacion->url }}">
@@ -49,10 +49,10 @@
                                 <i class="fas fa-sync-alt"></i>
                             </button>
                         </form>
-                     
+
                      </td>
-                           
- 
+
+
                 </tr>
                 @endforeach
             </tbody>
@@ -89,8 +89,14 @@ $(document).ready(function() {
         responsive: true,
         order: [5,'desc'],
         language: {
-            url: '/js/i18n/Spanish.json',
-        },
+                url: '/js/i18n/Spanish.json',
+                 paginate: {
+                     first: `<i class="fa-solid fa-backward"></i>`,
+                     previous: `<i class="fa-solid fa-caret-left">`,
+                     next: `<i class="fa-solid fa-caret-right"></i>`,
+                     last: `<i class="fa-solid fa-forward"></i>`
+                 }
+            },
         layout: {
             topStart: {
                     buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']

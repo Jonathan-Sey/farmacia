@@ -11,6 +11,8 @@
 @endpush
 
 @section('contenido')
+
+
     <a href="{{ route('productos.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
@@ -185,6 +187,9 @@
 {{-- Alerta de registro exitoso --}}
 @if (session('success'))
 <script>
+    const successMessages = {!! json_encode(session('success')) !!};
+    const messageText = Array.isArray(successMessages) ? successMessages.join('\n') : successMessages;
+
     const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -196,12 +201,10 @@
             toast.onmouseleave = Swal.resumeTimer;
             }
         });
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log("Evento DOMContentLoaded disparado");
-                Toast.fire({ icon: "success",
-                title: "{{ session('success')}}"
-                });
-        });
+        Toast.fire({
+                icon: "success",
+                title: messageText
+            });
 </script>
 @endif
 {{-- cambio de estado --}}

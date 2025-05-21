@@ -115,7 +115,7 @@
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">usuario</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">persona</th>
                         <th class="px-6 py-3 text-left font-medium uppercase tracking-wider">fecha</th>
-                        
+
 
                     </tr>
                 </thead>
@@ -226,6 +226,12 @@
             order: [0,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
+                 paginate: {
+                     first: `<i class="fa-solid fa-backward"></i>`,
+                     previous: `<i class="fa-solid fa-caret-left">`,
+                     next: `<i class="fa-solid fa-caret-right"></i>`,
+                     last: `<i class="fa-solid fa-forward"></i>`
+                 }
             },
             layout: {
                 topStart: {
