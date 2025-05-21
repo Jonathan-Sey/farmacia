@@ -80,7 +80,7 @@ class CompraController extends Controller
             DB::beginTransaction();
 
 
-     // Mover imagen temporal a definitiva si existe
+     // Mover imagen temporal si existe
      $imagenComprobante = null;
      if (!empty($request->imagen_comprobante)) {
          $imagenController = new ImagenController();

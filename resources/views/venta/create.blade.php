@@ -15,12 +15,21 @@
     display: none;
     }
 
-    /* .select2-container--default .select2-selection--single .select2-selection__rendered {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%; */
-/* } */
+
+    #btn-guardar:disabled {
+        background-color: #9ca3af;
+        cursor: not-allowed;
+    }
+    #btn-guardar:disabled:hover {
+        background-color: #9ca3af;
+    }
+    #requerido-receta {
+        display: none;
+    }
+    .es-prescrito #requerido-receta {
+        display: inline;
+    }
+
 
 
     @media (max-width: 768px) {
@@ -117,30 +126,52 @@
 
 
     // precargar la imagen subida nuevamente
-        document.addEventListener("DOMContentLoaded", function() {
-        const imagenNombre = document.querySelector('[name="imagen"]').value;
+        document.getElementById('btn-cancelar').addEventListener('click', function(e) {
+        // Verificar si hay cambios no guardados
+        const hayCambios = document.querySelectorAll('#tabla-productos tbody tr').length > 0 ||
+                        document.querySelector('[name="imagen"]').value ||
+                        document.getElementById('imagen_receta').value;
 
-        if (imagenNombre) {
-            const mockFile = { name: imagenNombre, size: 12345 }; // Simula un archivo
-            dropzone.emit("addedfile", mockFile);
-            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre); // cargar imagen
-            dropzone.emit("complete", mockFile);
-        }
-    });
+        if (hayCambios) {
+            e.preventDefault();
+            Swal.fire({
+                title: '¿Cancelar venta?',
+                text: 'Tienes cambios no guardados. ¿Estás seguro de cancelar?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Sí, cancelar',
+                cancelButtonText: 'Continuar editando'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Limpiar datos temporales
+                    const imagenNombre = document.querySelector('[name="imagen"]').value;
+                    const imagenReceta = document.getElementById('imagen_receta').value;
 
+                    if (imagenNombre) {
+                        fetch("/eliminar-imagen-temp", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ imagen: imagenNombre }),
+                        });
+                    }
 
-        //eliminar la imagen del server
-        window.addEventListener("beforeunload", function() {
-        const imagenNombre = document.querySelector('[name="imagen"]').value;
+                    if (imagenReceta) {
+                        fetch("/eliminar-imagen-temp", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ imagen: imagenReceta }),
+                        });
+                    }
 
-        if (imagenNombre) {
-            fetch("/eliminar-imagen-temp", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ imagen: imagenNombre }),
+                    // Redirigir
+                    window.location.href = "{{ route('ventas.index') }}";
+                }
             });
         }
     });
@@ -475,7 +506,7 @@
                 <a href="{{route('ventas.index')}} " id="btn-cancelar">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
                 </a>
-                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
+                <button id="btn-guardar" type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600" disabled>Guardar</button>
             </div>
         </form>
 
@@ -530,30 +561,30 @@
             <dialog id="my_modal_2" class="modal">
                 <div class="modal-box w-11/12 max-w-5xl">
                     <h3 class="font-bold text-lg">Subir Receta Médica</h3>
+
+                    <div id="error-imagen" class="text-red-500 hidden mb-4 p-2 bg-red-50 rounded"></div>
+
+
                     <form id="formReceta">
                         @csrf
                         <div class="form-control">
                             <label class="label" for="observaciones_receta">
                                 <span class="label-text">Observaciones (Opcional)</span>
                             </label>
-                            <textarea name="observaciones_receta" id="observaciones_receta" class="textarea textarea-bordered" rows="3"></textarea>
+                            <textarea name="observaciones_receta" id="observaciones_receta"
+                                class="textarea textarea-bordered" rows="3" placeholder="Ingrese observaciones si es necesario"></textarea>
                         </div>
 
                         <div class="form-control mt-4">
-                            <label class="uppercase block text-sm font-medium text-gray-900">Imagen de la Receta</label>
+                            <label class="uppercase block text-sm font-medium text-gray-900">Imagen de la receta <span id="requerido-receta" class="text-red-500 hidden">*</span></label>
                             <div id="dropzone" class="dropzone border-2 border-dashed rounded w-full h-60 p-4">
                                 <input type="hidden" name="imagen" value="">
                             </div>
-                            @error('imagen')
-                                <div role="alert" class="alert alert-error mt-4 p-2">
-                                    <span class="text-white font-bold">{{ $message }}</span>
-                                </div>
-                            @enderror
+                            <div id="error-imagen" class="text-red-500 hidden mt-2">Debes subir una imagen de la receta</div>
                         </div>
-
                         <div class="modal-action">
                             <button type="button" onclick="my_modal_2.close()" class="btn">Cancelar</button>
-                            <button type="button" onclick="guardarReceta()" class="btn btn-primary">Guardar Receta</button>
+                            <button type="button" onclick="guardarReceta()" class="btn btn-primary">Guardar</button>
                         </div>
                     </form>
                 </div>
@@ -570,6 +601,32 @@
 
     {{-- select2 de productos y sucursales --}}
     <script>
+        // validar el estado del formulario
+        function verificarEstadoFormularioVenta() {
+            const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
+            const sucursal = document.getElementById('id_sucursal').value;
+            const persona = document.getElementById('id_persona').value;
+            const esPrescrito = document.getElementById('es_prescrito').checked;
+            const imagenReceta = document.getElementById('imagen_receta').value;
+            const btnGuardar = document.getElementById('btn-guardar');
+
+            // Validar condiciones
+            const condicionesBasicas = filasProductos.length > 0 && sucursal && persona;
+
+            // Validar condición especial para prescripciones
+            const condicionPrescripcion = !esPrescrito || (esPrescrito && imagenReceta);
+
+            btnGuardar.disabled = !(condicionesBasicas && condicionPrescripcion);
+        }
+
+        // llamado de la función cuando presentemos algun cambio
+        document.getElementById('id_sucursal').addEventListener('change', verificarEstadoFormulario);
+        document.getElementById('id_persona').addEventListener('change', verificarEstadoFormulario);
+        document.getElementById('es_prescrito').addEventListener('change', verificarEstadoFormulario);
+
+
+
+
        // ocuptamos los campos de descuento
         document.addEventListener('DOMContentLoaded', function() {
             const campoDescuento = document.getElementById('campo-nuevo-precio');
@@ -743,6 +800,13 @@
 <script>
         $(document).ready(function(){
 
+
+             // Evento para el toggle de IVA (debe estar aquí, no dentro de otro evento)
+             $('#impuesto-checkbox').change(function() {
+                recalcularTotales();
+            });
+
+
             $('.select2-producto').select2();
 
             // Actualizar stock al seleccionar producto
@@ -750,6 +814,8 @@
                 const selectedOption = $(this).find('option:selected');
                 const tipo = selectedOption.data('tipo');
                 const stock = selectedOption.data('stock');
+
+
 
                 if (tipo === 1) { // si es Producto
                     $('#stock').val(stock).prop('readonly', true);
@@ -763,6 +829,8 @@
 
                 }
             });
+
+
 
             //obtener datos de producto
             $('#id_producto').change(mostrarValores);
@@ -842,6 +910,9 @@
         const impuesto = 12;
 
 function agregarProducto() {
+
+
+
     // nuevos campos para el descuento
     let aplicarDescuento = $('#aplicar_descuento').is(':checked');
     let justificacionDescuento = $('#justificacion_descuento').val();
@@ -916,6 +987,8 @@ function agregarProducto() {
         $('#tabla-productos tbody').append(`
             <tr id="fila${contador}">
                 <th>${contador}</th>
+
+                <input type="hidden" name="arraytipo[]" value="${tipo}">
                 <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
                 <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
                 <td>
@@ -954,6 +1027,8 @@ function agregarProducto() {
     } else {
         mensaje('Los campos están vacíos o son inválidos.');
     }
+
+    verificarEstadoFormularioVenta();
 }
 
 
@@ -968,6 +1043,7 @@ function agregarProducto() {
     let idProducto = fila.find('input[name="arrayIdProducto[]"]').val();
     let justificacionActual = fila.find('input[name="arrayJustificacion[]"]').val() || '';
     let tieneDescuento = precioActual < precioOriginal;
+    let tipo = fila.find('input[name="arraytipo[]"]').val() || '1';
 
     // Obtener stock disponible
     $.ajax({
@@ -975,6 +1051,7 @@ function agregarProducto() {
         method: 'GET',
         success: function(response) {
             let stockDisponible = response.stock;
+            let aplicarImpuestoGlobal = $('#impuesto-checkbox').is(':checked');
 
             // Configurar el contenido del modal
             let modalContent = `
@@ -1005,7 +1082,6 @@ function agregarProducto() {
                 cancelButtonText: 'Cancelar',
                 focusConfirm: false,
                 didOpen: () => {
-                    // Mostrar/ocultar justificación según el precio
                     $('#edit-precio').on('input', function() {
                         let nuevoPrecio = parseFloat($(this).val()) || precioOriginal;
                         let mostrarJustificacion = nuevoPrecio < precioOriginal;
@@ -1026,7 +1102,6 @@ function agregarProducto() {
                         Swal.showValidationMessage('Precio debe ser > 0 y ≤ precio original');
                         return false;
                     }
-                    // Solo validar justificación si hay descuento
                     if (nuevoPrecio < precioOriginal && !justificacion) {
                         Swal.showValidationMessage('Debe ingresar una justificación para el descuento');
                         return false;
@@ -1068,7 +1143,7 @@ function agregarProducto() {
                     subtotal[index] = nuevoSubtotal;
                     fila.find('td:eq(3)').text(nuevoSubtotal.toFixed(2));
 
-                    // Recalcular totales
+                    // Recalcular totales (el IVA se manejará globalmente aquí)
                     recalcularTotales();
                 }
             });
@@ -1084,17 +1159,18 @@ function recalcularTotales() {
     iva = 0;
     let aplicarImpuesto = $('#impuesto-checkbox').is(':checked');
 
-    $('#tabla-productos tbody tr').each(function(index) {
+    $('#tabla-productos tbody tr').each(function() {
+        let index = $(this).find('th').text();
         let cantidad = parseFloat($(this).find('input[name="arraycantidad[]"]').val());
         let precio = parseFloat($(this).find('input[name="arrayprecio[]"]').val());
-        let tipo = $(this).find('input[name="arraytipo[]"]').val();
-        let subtotalRow = cantidad * precio;
+        let tipo = $(this).find('input[name="arraytipo[]"]').val() || '1';
 
-        subtotal[index + 1] = subtotalRow; // Actualizar el array de subtotales
+        let subtotalRow = round(cantidad * precio);
+        subtotal[index] = subtotalRow; // Actualizar el array de subtotales
         suma += subtotalRow;
 
         if (tipo === '1' && aplicarImpuesto) {
-            iva += (subtotalRow / 100) * impuesto;
+            iva += round((subtotalRow * impuesto) / 100);
         }
     });
 
@@ -1109,46 +1185,43 @@ function recalcularTotales() {
 }
 
         function eliminarProducto(index){
-            // recalculamos el detalle de venta
-            // suma -= round(subtotal[index]);
-            // iva = round(suma / 100 * impuesto);
-            // total = round(suma + iva);
 
-            // segunda foram, recalcular los precios
-            suma -= subtotal[index];
-            let producto = $(`#fila${index} input[name="arrayIdProducto[]"]`).closest('tr');
-            let tipo = producto.find('input[name="arraytipo[]"]').val();
+            let fila = $(`#fila${index}`);
+            let tipo = fila.find('input[name="arraytipo[]"]').val() || '1';
+            let subtotalProducto = subtotal[index];
 
-            // Si el producto tenía IVA aplicado, restar el IVA correspondiente
-            if (tipo === 1 && $('#impuesto-checkbox').is(':checked')) {
-                    iva -= round((subtotal[index] / 100) * impuesto);
-                }
-            // Recalcular el total
-            total = round(suma + iva);
+            // Restar del total
+            suma -= subtotalProducto;
 
-             // Si no hay productos, restablecer los valores a 0
-            if ($('#tabla-productos tbody tr').length === 1) { // Solo queda la fila de encabezado
-                suma = 0;
-                iva = 0;
-                total = 0;
+            // Restar IVA si aplica
+            if (tipo === '1' && $('#impuesto-checkbox').is(':checked')) {
+                iva -= round((subtotalProducto / 100) * impuesto);
             }
 
-            // mostramos los nuevos datos
-            // $('#suma').html(suma);
-            // $('#iva').html(iva);
-            // $('#total').html(total);
-            // $('#impuesto').val(iva);
-            // $('#inputTotal').val(total);
+            total = round(suma + iva);
+
+            // Actualizar la interfaz
             $('#suma').html(suma.toFixed(2));
             $('#iva').html(iva.toFixed(2));
             $('#total').html(total.toFixed(2));
             $('#impuesto').val(iva.toFixed(2));
             $('#inputTotal').val(total.toFixed(2));
 
-            //eliminamos la fila
-            $('#fila'+index).remove();
-                // Eliminar el subtotal del array
-                delete subtotal[index];
+            // Eliminar la fila
+            $(`#fila${index}`).remove();
+            delete subtotal[index];
+
+            recalcularTotales();
+
+            // Si no hay productos, resetear todo
+            if ($('#tabla-productos tbody tr').length === 0) {
+                suma = 0;
+                iva = 0;
+                total = 0;
+                $('#suma, #iva, #total, #impuesto, #inputTotal').text('0.00');
+            }
+
+            verificarEstadoFormularioVenta();
         }
 
 
@@ -1168,7 +1241,7 @@ function recalcularTotales() {
             text: texto,
         });
     }
-generarResumenVenta
+
     function generarResumenVenta() {
         let mensaje = `<h4 class="text-lg font-bold">Resumen de la Venta</h4>`;
         mensaje += `<table class="table-auto w-full my-4">`;
@@ -1193,32 +1266,45 @@ generarResumenVenta
     }
 
     // Modificar el evento submit del formulario
-    $('#formVenta').on('submit', function(e) {
-        if ($('#tabla-productos tbody tr').length === 0) {
-            e.preventDefault();
-            mensaje('Debe agregar al menos un producto a la venta');
-            return;
-        }
+    document.getElementById('formVenta').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-        e.preventDefault();
+    // Validaciones básicas
+    if ($('#tabla-productos tbody tr').length === 0) {
+        mensaje('Debe agregar al menos un producto a la venta');
+        return;
+    }
 
+    // Validar receta médica si es prescrito
+    const esPrescrito = document.getElementById('es_prescrito').checked;
+    const imagenReceta = document.getElementById('imagen_receta').value;
+
+    if (esPrescrito && !imagenReceta) {
         Swal.fire({
-            title: 'Confirmar Venta',
-            html: generarResumenVenta(),
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar Venta',
-            cancelButtonText: 'Revisar',
-            focusConfirm: false,
-            customClass: {
-                popup: 'text-left'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                this.submit();
-            }
+            icon: 'error',
+            title: 'Error',
+            text: 'Para ventas prescritas es obligatorio subir la receta médica',
+            confirmButtonText: 'Entendido'
+        }).then(() => {
+            my_modal_2.showModal(); // Solo abrir modal de receta si falta
         });
+        return;
+    }
+
+    // Mostrar confirmación de venta
+    Swal.fire({
+        title: 'Confirmar Venta',
+        html: generarResumenVenta(),
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonText: 'Confirmar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            this.submit(); // Enviar formulario solo si se confirma
+        }
     });
+});
 
         function mensaje (message, icon = "error"){
             const Toast = Swal.mixin({
@@ -1278,6 +1364,18 @@ document.addEventListener('DOMContentLoaded', function () {
        // Manejar el envío del formulario de venta
        document.getElementById('formVenta').addEventListener('submit', function (e) {
         e.preventDefault(); // Evitar que el formulario se envíe automáticamente
+        const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
+
+        if (filasProductos.length === 0) {
+        e.preventDefault();
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Debes agregar al menos un producto al detalle de venta',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
 
         // Generar el resumen de la venta
         let resumen = generarResumenVenta();
@@ -1380,101 +1478,274 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     });
+
+    verificarEstadoFormulario();
 });
      </script>
 
      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-        const esPrescritoCheckbox = document.getElementById('es_prescrito');
-        const campoReserva = document.getElementById('campo-reserva');
-        const campoImagen = document.getElementById('btn-subir-receta');
+  document.addEventListener('DOMContentLoaded', function() {
+    // Eliminar cualquier instancia previa de Dropzone
+    if (typeof Dropzone !== 'undefined') {
+        Dropzone.autoDiscover = false;
+    }
 
-        esPrescritoCheckbox.addEventListener('change', function () {
-            campoReserva.classList.toggle('hidden', !this.checked);
-            campoImagen.classList.toggle('hidden', !this.checked);
+    // mostrar y ocultar la receta medica
+    // Mostrar/ocultar botón de receta según checkbox
+    document.getElementById('es_prescrito').addEventListener('change', function() {
+        const btnReceta = document.getElementById('btn-subir-receta');
+        if (this.checked) {
+            btnReceta.classList.remove('hidden');
+            document.getElementById('requerido-receta').classList.remove('hidden');
+        } else {
+            btnReceta.classList.add('hidden');
+            document.getElementById('requerido-receta').classList.add('hidden');
+            // Limpiar datos si se desmarca
+            document.getElementById('imagen_receta').value = '';
+            document.getElementById('observaciones_receta_value').value = '';
+            document.getElementById('receta-subida-indicator').classList.add('hidden');
+        }
+    });
+
+
+
+
+    // Configurar Dropzone
+    if (typeof dropzoneInstance === 'undefined') {
+    var dropzoneInstance = new Dropzone("#dropzone", {
+        url: "{{ route('upload.image.temp') }}",
+        dictDefaultMessage: "Arrastra y suelta la receta médica o haz clic aquí para subirla",
+        acceptedFiles: ".png,.jpg,.jpeg,.pdf",
+        addRemoveLinks: true,
+        dictRemoveFile: "Borrar receta",
+        maxFiles: 1,
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        },
+        init: function() {
+
+            // Precargar imagen si existe
+            const imagenExistente = document.getElementById('imagen_receta').value;
+            if (imagenExistente) {
+                const mockFile = {
+                    name: imagenExistente,
+                    size: 12345,
+                    accepted: true
+                };
+                this.emit("addedfile", mockFile);
+                this.emit("thumbnail", mockFile, "{{ asset('uploads/temp') }}/" + imagenExistente);
+                this.emit("complete", mockFile);
+            }
+
+            this.on("addedfile", function(file) {
+            document.getElementById('error-imagen').classList.add('hidden');
+            });
+
+            // Manejar cierre del modal
+            document.querySelector('#my_modal_2 .btn[onclick="my_modal_2.close()"]').addEventListener('click', function() {
+                // Si hay archivos en dropzone y no se ha guardado, eliminarlos
+                if (dropzone.files.length > 0 && !document.getElementById('imagen_receta').value) {
+                    const file = dropzone.files[0];
+                    dropzone.removeFile(file);
+
+                    // Eliminar del servidor si existe
+                    if (file.name) {
+                        fetch("{{ route('eliminar.imagen.temp') }}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "Content-Type": "application/json",
+                            },
+                            body: JSON.stringify({ imagen: file.name }),
+                        });
+                    }
+                }
+            });
+        }
+    });
+}
+
+    // Eventos de Dropzone
+    dropzone.on("addedfile", function(file) {
+        if (this.files.length > 1) {
+            this.removeFile(this.files[0]);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir una receta.',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
+
+    dropzone.on("success", function(file, response) {
+        document.querySelector('#formReceta input[name="imagen"]').value = response.imagen;
+    });
+
+    dropzone.on("error", function(file, message) {
+        console.error("Error al subir la receta:", message);
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al subir la receta: ' + message,
         });
+    });
+
+    dropzone.on("removedfile", function() {
+        const imagenNombre = document.querySelector('#formReceta input[name="imagen"]').value;
+        if (imagenNombre) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+        document.querySelector('#formReceta input[name="imagen"]').value = "";
+    });
+});
+
+// Función para guardar la receta (debe estar en el ámbito global)
+function guardarReceta() {
+    const imagen = document.querySelector('#formReceta input[name="imagen"]').value;
+    const observaciones = document.getElementById('observaciones_receta').value;
+    const esPrescrito = document.getElementById('es_prescrito').checked;
+
+    // Validación especial para ventas prescritas
+    if (esPrescrito && !imagen) {
+        document.getElementById('error-imagen').classList.remove('hidden');
+        document.getElementById('error-imagen').textContent = 'Para ventas prescritas es obligatorio subir la receta médica';
+        return;
+    } else {
+        document.getElementById('error-imagen').classList.add('hidden');
+    }
 
 
-        //Ckeckbox para justificar el vecino y su justificación
-        const checkboxVecino = document.getElementById('vecino');
-        const campoReservaVecino = document.getElementById('campo_justificacion'); // aquí el cambio
+    // Asignar valores al formulario principal
+    document.getElementById('imagen_receta').value = imagen;
+    document.getElementById('observaciones_receta_value').value = observaciones;
 
-        checkboxVecino.addEventListener('change', function () {
-            if (this.checked) {
-                campoReservaVecino.classList.remove('hidden');
-            } else {
-                campoReservaVecino.classList.add('hidden');
+    // Mostrar indicador de receta subida si hay imagen u observaciones
+    if (imagen || observaciones) {
+        document.getElementById('receta-subida-indicator').classList.remove('hidden');
+    } else {
+        document.getElementById('receta-subida-indicator').classList.add('hidden');
+    }
+
+    // Cerrar el modal
+    my_modal_2.close();
+
+    Swal.fire({
+        icon: 'success',
+        title: 'Datos guardados',
+        text: 'La información de la receta se ha guardado correctamente',
+    });
+}
+
+// Al abrir el modal, cargar datos existentes
+document.getElementById('btn-subir-receta').addEventListener('click', function(e) {
+    e.preventDefault();
+    const observacionesGuardadas = document.getElementById('observaciones_receta_value').value;
+    if (observacionesGuardadas) {
+        document.getElementById('observaciones_receta').value = observacionesGuardadas;
+    }
+    my_modal_2.showModal();
+});
+
+     </script>
+     {{-- Fin del proceso de imagenes  --}}
+
+     {{-- Proceso apra validar su esta bien el detalle venta  --}}
+
+     <script>
+        // Validación del formulario antes de enviar
+        document.getElementById('formVenta').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Validar detalle de venta
+        const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
+        if (filasProductos.length === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debe agregar al menos un producto al detalle de venta',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        // Validar campos obligatorios
+        const sucursal = document.getElementById('id_sucursal').value;
+        const persona = document.getElementById('id_persona').value;
+
+        if (!sucursal || !persona) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debe seleccionar una sucursal y una persona',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
+        // Validar receta médica si es prescrito
+        const esPrescrito = document.getElementById('es_prescrito').checked;
+        const imagenReceta = document.getElementById('imagen_receta').value;
+
+        if (esPrescrito && !imagenReceta) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Para ventas prescritas es obligatorio subir la receta médica',
+                confirmButtonText: 'Entendido'
+            });
+            my_modal_2.showModal();
+            return;
+        }
+
+        // Si todo está bien, mostrar confirmación
+        Swal.fire({
+            title: 'Confirmar Venta',
+            html: generarResumenVenta(),
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit();
             }
         });
+    });
 
+            // Verificar stock para productos físicos
+            let stockValido = true;
+            filasProductos.forEach(fila => {
+                const idProducto = fila.querySelector('input[name="arrayIdProducto[]"]').value;
+                const cantidad = parseInt(fila.querySelector('input[name="arraycantidad[]"]').value);
+                const stock = parseInt(fila.querySelector('input[name="arraystock[]"]').value) || 0;
+                const tipo = fila.querySelector('input[name="arraytipo[]"]').value;
 
-            // Configurar Dropzone para subir imágenes
-            Dropzone.autoDiscover = false;
-            const dropzone = new Dropzone("#dropzone", {
-                url: "{{ route('upload.image') }}",
-                dictDefaultMessage: "Arrastra y suelta la receta médica o haz clic aquí para subirla",
-                acceptedFiles: ".png,.jpg,.jpeg",
-                addRemoveLinks: true,
-                dictRemoveFile: "Borrar archivo",
-                maxFiles: 1,
-                uploadMultiple: false,
-                headers: {
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                if (tipo === '1' && cantidad > stock) {
+                    stockValido = false;
                 }
             });
 
-            dropzone.on("success", function(file, response) {
-                console.log("Archivo subido correctamente:", response.imagen);
-                document.querySelector('#formReceta input[name="imagen"]').value = response.imagen;
-            });
-
-             // Manejar eliminación de imagen
-            dropzone.on("removedfile", function() {
-                document.querySelector('#formReceta input[name="imagen"]').value = "";
-                document.getElementById('receta-subida-indicator').classList.add('hidden');
-            });
-        });
-
-        // Función para guardar la receta
-        function guardarReceta() {
-            const imagen = document.querySelector('#formReceta input[name="imagen"]').value;
-            const observaciones = document.getElementById('observaciones_receta').value;
-
-            if (!imagen) {
+            if (!stockValido) {
+                e.preventDefault();
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'Debes subir una imagen de la receta médica',
+                    text: 'La cantidad de algunos productos supera el stock disponible',
+                    confirmButtonText: 'Entendido'
                 });
                 return;
             }
 
-            // Guardar la imagen en el campo oculto del formulario principal
-            document.getElementById('imagen_receta').value = imagen;
-            document.getElementById('observaciones_receta_value').value = observaciones;
-
-            // Marcar como prescrito
-            document.getElementById('receta-subida-indicator').classList.remove('hidden');
-            document.getElementById('es_prescrito').checked = true;
-            document.getElementById('campo-reserva').classList.remove('hidden');
-            document.getElementById('btn-subir-receta').classList.remove('hidden');
-
-            // Cerrar el modal
-            my_modal_2.close();
-
-            Swal.fire({
-                icon: 'success',
-                title: 'Receta guardada',
-                text: 'La receta médica se ha asociado correctamente a la venta',
-            });
-        }
-
-        // Mostrar observaciones existentes al abrir el modal
-        document.getElementById('btn-subir-receta').addEventListener('click', function() {
-            const observacionesGuardadas = document.getElementById('observaciones_receta_value').value;
-            if (observacionesGuardadas) {
-                document.getElementById('observaciones_receta').value = observacionesGuardadas;
-            }
+            // Marcar el formulario como enviado para evitar pérdida de datos
+            this.submitted = true;
         });
      </script>
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Venta;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ImagenController;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
 use App\Models\Persona;
@@ -154,6 +155,17 @@ class VentaController extends Controller
     try {
         DB::beginTransaction();
 
+         // Mover imagen temporal a definitiva si existe
+         $imagenReceta = null;
+         if (!empty($request->imagen_receta)) {
+             $imagenController = new ImagenController();
+             $imagenReceta = $imagenController->moverDefinitiva($request->imagen_receta)
+                 ? $request->imagen_receta
+                 : null;
+         }
+
+
+
         // Redondear el impuesto y total
         // $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
         // $impuesto = round(($subtotal * $request->impuesto) / 100, 2);  // Redondear impuesto
@@ -169,7 +181,7 @@ class VentaController extends Controller
             'id_persona' => $request->id_persona,
             'estado' => 1,
             'es_prescrito' => $request->has('es_prescrito'),
-            'imagen_receta' => $request->imagen_receta,
+            'imagen_receta' => $imagenReceta,
             'numero_reserva' => $request->numero_reserva,
             'observaciones_receta' => $request->observaciones_receta
         ]);

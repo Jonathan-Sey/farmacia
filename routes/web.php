@@ -92,11 +92,11 @@ Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
 Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 //Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
-//rutas para las importaciones
-Route::get('/productos/importar', [ProductoImportController::class, 'mostrarImportacion'])
-    ->name('productos.importar');
 
+//rutas para las importaciones
+Route::get('/productos/importar', [ProductoImportController::class, 'mostrarImportacion'])->name('productos.importar');
 Route::post('/productos/importar', [ProductoImportController::class, 'procesarImportacion'])->name('productos.importar.procesar');
+Route::delete('/productos/importar/eliminar/{index}', [ProductoImportController::class, 'eliminarDeImportacion'])->name('productos.importar.eliminar');
 Route::post('/productos/guardar-importacion', [ProductoImportController::class, 'guardarImportacion'])->name('productos.importar.guardar');
 
 

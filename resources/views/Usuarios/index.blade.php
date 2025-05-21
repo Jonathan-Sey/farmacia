@@ -95,8 +95,14 @@
         responsive: true,
         order: [5,'desc'],
         language: {
-            url: '/js/i18n/Spanish.json',
-        },
+                url: '/js/i18n/Spanish.json',
+                 paginate: {
+                     first: `<i class="fa-solid fa-backward"></i>`,
+                     previous: `<i class="fa-solid fa-caret-left">`,
+                     next: `<i class="fa-solid fa-caret-right"></i>`,
+                     last: `<i class="fa-solid fa-forward"></i>`
+                 }
+            },
         layout: {
                 topStart: {
 

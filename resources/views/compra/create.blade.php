@@ -473,6 +473,11 @@
 
     // Configuración para Select2 con truncado de texto
     $(document).ready(function(){
+        $('#impuesto-checkbox').change(function() {
+        recalcularTotales();
+        });
+
+
         // Configuración para el select de proveedores
         $('#id_proveedor').select2({
             width: '100%',
@@ -567,6 +572,27 @@
             let fecha_vencimiento = $('#fecha_vencimiento').val();
             let aplicarImpuesto = $('#impuesto-checkbox').is(':checked'); // aplicacion de impuesto
 
+            // Verificar si el producto ya existe en el detalle
+            let productoExistente = $(`#tabla-productos tbody tr input[name="arrayIdProducto[]"][value="${id_producto}"]`).closest('tr');
+
+            if (productoExistente.length > 0) {
+                // Si el producto ya existe, preguntar si desea editarlo
+                Swal.fire({
+                    title: 'Producto ya agregado',
+                    text: 'Este producto ya está en el detalle. ¿Desea editarlo?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, editar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        let index = productoExistente.find('th').text();
+                        editarProducto(index);
+                    }
+                });
+                return;
+            }
+
             if(id_producto != '' && producto != '' && cantidad != '' && precio != '' && fecha_vencimiento !='')
             {
                if( parseInt(cantidad) > 0 && (cantidad % 1 == 0) && parseFloat(precio) > 0)
@@ -593,6 +619,7 @@
                                 <td><input type="hidden" name="arrayprecio[]" value="${precio}">${precio}</td>
                                 <td><input type="hidden" name="arrayvencimiento[]" value="${fecha_vencimiento}">${fecha_vencimiento}</td>
                                 <td>${subtotal[contador]}</td>
+                                <td><button type="button" onclick="editarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button></td>
                                 <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
                             </tr> `);
 
@@ -614,9 +641,127 @@
                 mensaje('Los campos estan vacios');
             }
 
+
+
             verificarEstadoFormulario();
 
         }
+
+        function editarProducto(index) {
+            let fila = $(`#fila${index}`);
+            let id_producto = fila.find('input[name="arrayIdProducto[]"]').val();
+            let cantidad = fila.find('input[name="arraycantidad[]"]').val();
+            let precio = fila.find('input[name="arrayprecio[]"]').val();
+            let fecha_vencimiento = fila.find('input[name="arrayvencimiento[]"]').val();
+
+
+             // Obtener fecha actual en formato
+            let fechaActual = new Date().toISOString().split('T')[0];
+
+            Swal.fire({
+                title: 'Editar Producto',
+                html: `
+                    <div class="mb-4">
+                        <label class="block mb-2">Cantidad</label>
+                        <input id="edit-cantidad" type="number" value="${cantidad}" min="1" class="input input-bordered w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2">Precio</label>
+                        <input id="edit-precio" type="number" value="${precio}" min="0.01" step="0.01" class="input input-bordered w-full">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block mb-2">Fecha Vencimiento</label>
+                        <input id="edit-vencimiento" type="date" value="${fecha_vencimiento}" min="${fechaActual}" class="input input-bordered w-full">
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar',
+                preConfirm: () => {
+                    let nuevaCantidad = $('#edit-cantidad').val();
+                    let nuevoPrecio = $('#edit-precio').val();
+                    let nuevaFecha = $('#edit-vencimiento').val();
+
+                      // Validar que la fecha no sea anterior a hoy
+                    if (new Date(nuevaFecha) < new Date(fechaActual)) {
+                        Swal.showValidationMessage('La fecha de vencimiento no puede ser anterior a hoy');
+                        return false;
+                    }
+
+                    if (!nuevaCantidad || nuevaCantidad <= 0) {
+                        Swal.showValidationMessage('La cantidad debe ser mayor a 0');
+                        return false;
+                    }
+                    if (!nuevoPrecio || nuevoPrecio <= 0) {
+                        Swal.showValidationMessage('El precio debe ser mayor a 0');
+                        return false;
+                    }
+                    if (!nuevaFecha) {
+                        Swal.showValidationMessage('Debe seleccionar una fecha de vencimiento');
+                        return false;
+                    }
+
+                    return {
+                        cantidad: nuevaCantidad,
+                        precio: nuevoPrecio,
+                        vencimiento: nuevaFecha
+                    };
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Actualizar valores en la fila
+                    fila.find('input[name="arraycantidad[]"]').val(result.value.cantidad);
+                    fila.find('input[name="arrayprecio[]"]').val(result.value.precio);
+                    fila.find('input[name="arrayvencimiento[]"]').val(result.value.vencimiento);
+
+                    // Actualizar visualización
+                    fila.find('td:eq(1)').html(`<input type="hidden" name="arraycantidad[]" value="${result.value.cantidad}">${result.value.cantidad}`);
+                    fila.find('td:eq(2)').html(`<input type="hidden" name="arrayprecio[]" value="${result.value.precio}">${result.value.precio}`);
+                    fila.find('td:eq(3)').html(`<input type="hidden" name="arrayvencimiento[]" value="${result.value.vencimiento}">${result.value.vencimiento}`);
+
+                    // Recalcular todos los totales
+                    recalcularTotales();
+                }
+            });
+        }
+
+        function recalcularTotales() {
+            suma = 0;
+            iva = 0;
+            let aplicarImpuesto = $('#impuesto-checkbox').is(':checked');
+
+            // Reiniciar contador y reindexar filas
+            contador = 0;
+
+            $('#tabla-productos tbody tr').each(function() {
+                contador++;
+                $(this).find('th').text(contador); // Actualizar índice
+
+                let cantidad = parseFloat($(this).find('input[name="arraycantidad[]"]').val());
+                let precio = parseFloat($(this).find('input[name="arrayprecio[]"]').val());
+                let subtotalRow = round(cantidad * precio);
+
+                suma += subtotalRow;
+
+                // Aplicar IVA solo si está activado el checkbox y es producto (no servicio)
+                if (aplicarImpuesto) {
+                    iva += round((subtotalRow * impuesto) / 100);
+                }
+
+                // Actualizar subtotal en la tabla
+                $(this).find('td:eq(4)').text(subtotalRow.toFixed(2));
+            });
+
+            total = round(suma + iva);
+
+            // Actualizar la interfaz
+            $('#suma').html(suma.toFixed(2));
+            $('#iva').html(iva.toFixed(2));
+            $('#total').html(total.toFixed(2));
+            $('#impuesto').val(iva.toFixed(2));
+            $('#inputTotal').val(total.toFixed(2));
+        }
+
 
         function eliminarProducto(index){
             // recalculamos el detalle de venta
@@ -631,10 +776,11 @@
             $('#impuesto').val(iva);
             $('#inputTotal').val(total);
 
-            //eliminamos la fila
-            $('#fila'+index).remove();
-
-            verificarEstadoFormulario();
+            // Eliminar la fila primero
+            $(`#fila${index}`).remove();
+                recalcularTotales();
+                // Verificar estado del formulario
+                verificarEstadoFormulario();
         }
 
 
@@ -860,11 +1006,11 @@ document.getElementById('btn-subir-comprobante').addEventListener('click', funct
     // validar ante de enviar la info del formulario
 
     document.querySelector('form').addEventListener('submit', function(e) {
-        // Verificar si hay productos en el detalle
-        const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
+        e.preventDefault();
 
+        // Validar si hay productos en el detalle
+        const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
         if (filasProductos.length === 0) {
-            e.preventDefault(); // Detener el envío del formulario
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
@@ -874,46 +1020,69 @@ document.getElementById('btn-subir-comprobante').addEventListener('click', funct
             return;
         }
 
-        // Verificar campos obligatorios
-        const proveedor = document.getElementById('id_proveedor').value;
-        const sucursal = document.getElementById('id_sucursal').value;
-
-        if (!proveedor || !sucursal) {
-            e.preventDefault();
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Debes completar todos los campos obligatorios',
-                confirmButtonText: 'Entendido'
-            });
-            return;
-        }
-
-        // Verificar fechas de vencimiento
-        const hoy = new Date().toISOString().split('T')[0];
-        const fechasVencimiento = document.querySelectorAll('input[name="arrayvencimiento[]"]');
+        // Validar fechas de vencimiento
         let fechaInvalida = false;
-
-        fechasVencimiento.forEach(input => {
-            if (input.value < hoy) {
+        document.querySelectorAll('input[name="arrayvencimiento[]"]').forEach(input => {
+            if (new Date(input.value) < new Date()) {
                 fechaInvalida = true;
             }
         });
 
         if (fechaInvalida) {
-            e.preventDefault();
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Las fechas de vencimiento no pueden ser anteriores a hoy',
+                text: 'Una o más fechas de vencimiento son anteriores a hoy',
                 confirmButtonText: 'Entendido'
             });
             return;
         }
 
-        // Marcar el formulario como enviado para evitar pérdida de datos
-        this.submitted = true;
+        // Mostrar confirmación
+        Swal.fire({
+            title: 'Confirmar Compra',
+            html: generarResumenCompra(),
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar Compra',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                this.submit();
+            }
+        });
     });
+
+    // funcion para el detalle compra
+    function generarResumenCompra() {
+        let mensaje = `<h4 class="text-lg font-bold">Resumen de la Compra</h4>`;
+        mensaje += `<table class="table-auto w-full my-4">`;
+        mensaje += `<thead><tr class="bg-gray-100"><th class="px-4 py-2">Producto</th><th class="px-4 py-2">Cantidad</th><th class="px-4 py-2">Precio</th><th class="px-4 py-2">Vencimiento</th><th class="px-4 py-2">Subtotal</th></tr></thead>`;
+        mensaje += `<tbody>`;
+
+        $('#tabla-productos tbody tr').each(function() {
+            const producto = $(this).find('td:eq(0)').text();
+            const cantidad = $(this).find('td:eq(1)').text();
+            const precio = $(this).find('td:eq(2)').text();
+            const vencimiento = $(this).find('td:eq(3)').text();
+            const subtotal = $(this).find('td:eq(4)').text();
+
+            mensaje += `<tr>
+                <td class="border px-4 py-2">${producto}</td>
+                <td class="border px-4 py-2 text-center">${cantidad}</td>
+                <td class="border px-4 py-2 text-right">${precio}</td>
+                <td class="border px-4 py-2 text-center">${vencimiento}</td>
+                <td class="border px-4 py-2 text-right">${subtotal}</td>
+            </tr>`;
+        });
+
+        mensaje += `</tbody></table>`;
+        mensaje += `<div class="mt-4 text-right"><strong>Subtotal:</strong> ${$('#suma').text()}</div>`;
+        mensaje += `<div class="text-right"><strong>IVA:</strong> ${$('#iva').text()}</div>`;
+        mensaje += `<div class="text-right font-bold text-lg"><strong>TOTAL:</strong> ${$('#total').text()}</div>`;
+
+        return mensaje;
+    }
 
 
      </script>

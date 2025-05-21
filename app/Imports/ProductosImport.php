@@ -4,6 +4,7 @@ namespace App\Imports;
 
 use App\Models\Categoria;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
@@ -28,27 +29,33 @@ class ProductosImport implements ToCollection, WithHeadingRow
                 'imagen' => null,
                 'tipo' => 1,
                 'descripcion' => null,
-                'fecha_caducidad' => null
+//                'fecha_caducidad' => null
+                'existe' => false,
+                'cambios' => []
             ];
         }
     }
-
     private function getCategoryId($categoryName)
     {
-        if (empty($categoryName)) {
-            return 1; // ID por defecto
+        if (empty(trim($categoryName))) {
+            Log::warning('Nombre de categoría vacío');
+            return null; // Null indica que no se asignó categoría
         }
 
-        // Busca categoria
-        $category = Categoria::where('nombre', 'like', $categoryName)->first();
+        // Normalizar el nombre de la categoría
+        $normalized = strtolower(trim($categoryName));
+
+        // Buscar coincidencia exacta (case insensitive)
+        $category = Categoria::whereRaw('LOWER(nombre) = ?', [$normalized])->first();
 
         if (!$category) {
-            // Intenta buscar sin distinguir mayúsculas/minúsculas
-            $category = Categoria::whereRaw('LOWER(nombre) = ?', [strtolower($categoryName)])->first();
+            Log::warning("Categoría '$categoryName' no encontrada");
+            return null;
         }
 
-        return $category ? $category->id : 1; // Retorna 1 si no encuentra
+        return $category->id;
     }
+
     public function getData()
     {
         return $this->data;
