@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             productoSeeder::class,
             socursalesSeeder::class,
             ProductosProam::class,
+            BodegaSeeder::class
             // FarmaciaSeeder::class,
         ]);
     }

@@ -135,8 +135,8 @@ Route::get("/ventas-informe/usuario", [ReporteVentasController::class, 'generate
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
-Route::get('/get-lotes/{idProducto}/{idSucursal}', [RequisicionController::class, 'getLotes'])->name('get.lotes');
-Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
+Route::get('/get-lotes/{idProducto}/{idBodega}', [RequisicionController::class, 'getLotes'])->name('get.lotes');
+Route::get('/inventario/{idProducto}/{idBodega}', [InventarioController::class, 'show'])->name('inventario.show');
 Route::get("notificaciones/cantidad", [notificacionesController::class, 'cantidadDeNotificaciones'])->name('notificaciones.cantidad');
 Route::get('/productos/stock/{id}/{sucursal}', [VentaController::class, 'obtenerStock']);
 Route::post('/personas/from-ventas', [PersonaController::class, 'storeFromVentas'])->name('personas.storeFromVentas');

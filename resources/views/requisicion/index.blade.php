@@ -18,7 +18,7 @@
                 <tr class="bg-slate-600">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">ID</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Producto</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Sucursal Origen</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Bodega Origen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Sucursal Destino</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Cantidad</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Fecha</th>
@@ -32,7 +32,7 @@
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->id_traslado }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->producto->nombre }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->sucursalOrigen->nombre }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->bodegaOrigen->nombre }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->sucursalDestino->nombre }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->cantidad }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->fecha_traslado }}</td>

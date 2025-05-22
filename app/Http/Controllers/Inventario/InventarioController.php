@@ -19,7 +19,7 @@ class InventarioController extends Controller
     public function index()
     {
         //** Prumera fase de prueba */
-        // $inventario = Inventario::with('producto','sucursal','lote')
+        // $inventario = Inventario::with('producto','bodegas','lote')
         // ->latest()
         // ->get();
         //return $inventario;
@@ -27,61 +27,61 @@ class InventarioController extends Controller
         //* segunda fase de prueba agrupado por loes*/
         $inventario = Inventario::select(
             'inventario.id_producto',
-            'inventario.id_sucursal',
+            'inventario.id_bodega', // Cambiado de id_sucursal
             'producto.nombre as producto',
-            'sucursal.ubicacion as sucursal',
+            'bodegas.nombre as bodegas', // Cambiado de sucursal
             DB::raw('COUNT(lote.id) as cantidad_lotes'),
             DB::raw('SUM(inventario.cantidad) as cantidad_total')
         )
         ->join('producto', 'inventario.id_producto', '=', 'producto.id')
-        ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
+        ->join('bodegas', 'inventario.id_bodega', '=', 'bodegas.id') // Cambiado de sucursal
         ->join('lote', 'inventario.id_lote', '=', 'lote.id')
         ->where('inventario.cantidad', '>', 0)
-        ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion')
+        ->groupBy('inventario.id_producto', 'inventario.id_bodega', 'producto.nombre', 'bodegas.nombre')
         ->get();
 
-
-
-        // nuevo validacion, validacion por lote en 0
+        // Inventario agotado
         $inventarioAgotado = Inventario::select(
             'inventario.id_producto',
-            'inventario.id_sucursal',
+            'inventario.id_bodega', // Cambiado
             'producto.nombre as producto',
-            'sucursal.ubicacion as sucursal',
+            'bodegas.nombre as bodegas', // Cambiado
             DB::raw('COUNT(lote.id) as cantidad_lotes'),
             DB::raw('SUM(inventario.cantidad) as cantidad_total')
         )
         ->join('producto', 'inventario.id_producto', '=', 'producto.id')
-        ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
+        ->join('bodegas', 'inventario.id_bodega', '=', 'bodegas.id') // Cambiado
         ->join('lote', 'inventario.id_lote', '=', 'lote.id')
         ->where('inventario.cantidad', '=', 0)
-        ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion')
+        ->groupBy('inventario.id_producto', 'inventario.id_bodega', 'producto.nombre', 'bodegas.nombre')
         ->get();
 
-
-
+        // Productos próximos a vencer
         $productosProximosAVencer = Inventario::select(
             'inventario.id_producto',
-            'inventario.id_sucursal',
+            'inventario.id_bodega', // Cambiado
             'producto.nombre as producto',
-            'sucursal.ubicacion as sucursal',
+            'bodegas.nombre as bodegas', // Cambiado
             'lote.fecha_vencimiento',
             DB::raw('SUM(inventario.cantidad) as cantidad_total')
         )
         ->join('producto', 'inventario.id_producto', '=', 'producto.id')
-        ->join('sucursal', 'inventario.id_sucursal', '=', 'sucursal.id')
+        ->join('bodegas', 'inventario.id_bodega', '=', 'bodegas.id') // Cambiado
         ->join('lote', 'inventario.id_lote', '=', 'lote.id')
         ->where('inventario.cantidad', '>', 0)
         ->where('lote.fecha_vencimiento', '<=', now()->addDays(30))
-        ->groupBy('inventario.id_producto', 'inventario.id_sucursal', 'producto.nombre', 'sucursal.ubicacion', 'lote.fecha_vencimiento')
+        ->groupBy('inventario.id_producto', 'inventario.id_bodega', 'producto.nombre', 'bodegas.nombre', 'lote.fecha_vencimiento')
         ->orderBy('lote.fecha_vencimiento', 'asc')
         ->get();
+
+        return view('Inventario.index', compact('inventario', 'inventarioAgotado', 'productosProximosAVencer'));
+
 
 
 
 
         //return $inventario;
-        return view('Inventario.index',compact('inventario','inventarioAgotado','productosProximosAVencer'));
+        //return view('Inventario.index',compact('inventario','inventarioAgotado','productosProximosAVencer'));
     }
 
     /**
@@ -111,18 +111,18 @@ class InventarioController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($idProducto, $idSucursal)
+    public function show($idProducto, $idBodega)
 
     {
 
           // Obtener los lotes originales
         $lotesOriginales = Lote::where('id_producto', $idProducto)->get();
 
-        $lotesDisponibles  = Inventario::with(['lote', 'producto', 'sucursal'])
+        $lotesDisponibles  = Inventario::with(['lote', 'producto', 'bodega'])
         ->where('id_producto', $idProducto)
-        ->where('id_sucursal', $idSucursal)
+        ->where('id_bodega', $idBodega)
         ->get();
-        // $inventario = Inventario::with('lote', 'producto', 'sucursal')->findOrFail($inventario->id);
+        // $inventario = Inventario::with('lote', 'producto', 'bodegas')->findOrFail($inventario->id);
         // return view('Inventario.show',compact('inventario'));
          return view('Inventario.show',compact('lotesDisponibles', 'lotesOriginales'));
     }
