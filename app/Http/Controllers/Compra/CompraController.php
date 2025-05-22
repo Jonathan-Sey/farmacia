@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Compra;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\ImagenController;
 use App\Models\Bitacora;
+use App\Models\Bodega;
 use App\Models\Compra;
 use App\Models\DetalleCompra;
 use App\Models\Inventario;
@@ -79,6 +80,9 @@ class CompraController extends Controller
         try{
             DB::beginTransaction();
 
+             // Obtener la bodega principal
+            $bodegaPrincipal = Bodega::principal()->firstOrFail();
+
 
      // Mover imagen temporal si existe
      $imagenComprobante = null;
@@ -143,7 +147,7 @@ class CompraController extends Controller
                     // Verificar si ya existe un registro en el inventario para este producto y lote
                 $inventarioExistente = Inventario::where('id_producto', $idPoducto)
                 ->where('id_lote', $lote->id)
-                ->where('id_sucursal', 1) // Sucursal principal
+                ->where('id_bodega', $bodegaPrincipal->id) // Sucursal principal
                 ->first();
 
 
@@ -165,7 +169,7 @@ class CompraController extends Controller
                         //  proceso de inventario
                         Inventario::create([
                             'id_producto' => $idPoducto,
-                            'id_sucursal' => 1, // Sucursal principal
+                            'id_bodega' => $bodegaPrincipal->id,
                             'id_lote' => $lote->id,
                             'cantidad' => $arrayCantidad[$index],
                         ]);

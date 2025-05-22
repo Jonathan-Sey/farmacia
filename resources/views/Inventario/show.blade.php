@@ -42,7 +42,7 @@
                     <th>#</th>
                     <th>Número de Lote</th>
                     <th>Producto</th>
-                    <th>Sucursal</th>
+                    <th>Bodega</th>
                     <th>Cantidad Disponible</th>
                     <th>Precio de compra</th>
                     <th>Fecha de Vencimiento</th>
@@ -56,7 +56,7 @@
                     <th>{{ $iteracion }}</th>
                     <td>{{ $inventario->lote->numero_lote }}</td>
                     <td>{{ $inventario->producto->nombre }}</td>
-                    <td>{{ $inventario->sucursal->ubicacion }}</td>
+                    <td>{{ $inventario->bodega->nombre }}</td>
                     <td>{{ $inventario->cantidad }}</td>
                     <td>{{ $inventario->lote->precio_compra }}</td>
                     <td>{{ $inventario->lote->fecha_vencimiento }}</td>
