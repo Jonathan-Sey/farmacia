@@ -7,7 +7,8 @@
 
 @section('contenido')
 <div class="flex justify-center items-center mx-3">
-    <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
+    <div class="bg-white
+     p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{ route('personas.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
@@ -32,12 +33,13 @@
                         </div>
                         @enderror
                     </div>
-                    <div class="flex flex-row gap-5">
-                        <div class="flex flex-col gap-1">
-                            <label for="rol">Paciente</label>
-                            <input name="rol" id="rol" type="checkbox" class="toggle toggle-success"
-                            {{ old('rol') == 2 ? 'checked' : '' }}
-                            value="2" />
+                    <div class="flex flex-col gap-5">
+                        <div class="flex flex-col gap-4">
+                            <label for="rol" class="text-lg font-semibold text-gray-700">Tipo de Persona</label>
+                            <select name="rol" id="rol" class="form-select p-2 border border-gray-300 rounded-lg shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-200 ease-in-out">
+                                <option value="1" {{ old('rol') == 1 ? 'selected' : '' }} class="py-2">Cliente</option>
+                                <option value="2" {{ old('rol') == 2 ? 'selected' : '' }} class="py-2">Paciente</option>
+                            </select>
                         </div>
                     </div>
                 </div>
@@ -145,6 +147,7 @@
                     <div class="mt-2 mb-5">
                         <label for="tipo_sangre" class="uppercase block text-sm font-medium text-gray-900">Tipo de Sangre</label>
                         <select name="tipo_sangre" id="tipo_sangre" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                            <option value="" disabled selected>Selecciona un tipo de sangre</option>
                             <option value="O+" {{ old('tipo_sangre') == 'O+' ? 'selected' : '' }}>O+</option>
                             <option value="O-" {{ old('tipo_sangre') == 'O-' ? 'selected' : '' }}>O-</option>
                             <option value="A+" {{ old('tipo_sangre') == 'A+' ? 'selected' : '' }}>A+</option>
@@ -165,48 +168,8 @@
                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             value="{{ old('direccion') }}">
                     </div>
-                    <div class="mt-2 mb-5">
-                        <label for="detalle_medico_id" class="block text-sm font-medium text-gray-700">Médico:</label>
-                                <select name="detalle_medico_id" id="detalle_medico_id" required class="block w-2/5 rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
-                                    <option value="" disabled selected>Selecciona un médico</option>
-                                    @foreach ($medicos as $medico)
-                                        <option value="{{ $medico->id }}" title="Especialidad: {{ $medico->especialidad }}">
-                                            {{ $medico->nombre }} - {{ $medico->especialidad }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            <p id="especialidad" class="mt-2 text-gray-600">Selecciona un médico para ver su especialidad.</p>   
-                    </div>
-                    <div class="mt-2 mb-5">
-                        <label for="diagnostico" class="uppercase block text-sm font-medium text-gray-900">Diagnóstico</label>
-                        <textarea
-                            name="diagnostico"
-                            id="diagnostico"
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('diagnostico') }}</textarea>
-                    </div>
-
-                    <div class="mt-2 mb-5">
-                        <label for="consulta_programada" class="uppercase block text-sm font-medium text-gray-900">Consulta Programada</label>
-                        <input
-                            type="date"
-                            name="consulta_programada"
-                            id="consulta_programada"
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                            value="{{ old('consulta_programada') }}">
-                    </div>
-
-                    <div class="mt-2 mb-5">
-                        <label for="receta_foto" class="uppercase block text-sm font-medium text-gray-900">Foto de la Receta Médica</label>
-                        <input
-                            type="file"
-                            name="receta_foto"
-                            id="receta_foto"
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
-                    </div>
                 </div>
-
             </div>
-
             <div class="mt-6 flex items-center justify-end gap-x-6">
                 <a href="{{ route('personas.index') }}">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
@@ -224,21 +187,31 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/obtenerUsuario.js"></script>
 <script>
-    // Si el checkbox "Paciente" está marcado, mostrar los campos de la ficha médica
-    $('#rol').change(function() {
-        if ($(this).prop('checked')) {
-            $('#ficha_medica').show(); // Mostrar los campos de ficha médica
-        } else {
-            $('#ficha_medica').hide(); // Ocultar los campos de ficha médica
-        }
+    $(document).ready(function() {
+        // Manejar cambio de rol
+        $('#rol').change(function() {
+            if ($(this).val() == 2) {
+                $('#ficha_medica').show();
+                // Hacer requeridos los campos médicos solo para pacientes
+                $('#ficha_medica input, #ficha_medica select, #ficha_medica textarea').prop('required', true);
+            } else {
+                $('#ficha_medica').hide();
+                // Quitar el atributo required para clientes
+                $('#ficha_medica input, #ficha_medica select, #ficha_medica textarea').prop('required', false);
+            }
+        }).trigger('change');
+    
+        // Forzar el envío del formulario
+        $('form').off('submit').submit(function(e) {
+            // Si es cliente, deshabilitar validación HTML5
+            if ($('#rol').val() == 1) {
+                e.preventDefault();
+                $('#ficha_medica').find('input, select, textarea').prop('disabled', true);
+                $(this).unbind('submit').submit();
+            }
+            return true;
+        });
     });
-
-    // Inicializar el estado de la ficha médica al cargar la página
-    if ($('#rol').prop('checked')) {
-        $('#ficha_medica').show();
-    } else {
-        $('#ficha_medica').hide();
-    }
 </script>
 <script>
     // Obtener el select y el párrafo donde se mostrará la especialidad

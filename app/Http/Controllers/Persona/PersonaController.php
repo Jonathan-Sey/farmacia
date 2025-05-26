@@ -62,32 +62,22 @@ class PersonaController extends Controller
     // Validar los datos de entrada
     $request->validate([
         'nombre' => 'required|string|max:255',
-        'apellido_paterno' => 'nullable|string|max:255',
-        'apellido_materno' => 'nullable|string|max:255',
-        'sexo' => 'nullable|in:Hombre,Mujer',
+        'nit' => 'nullable|string|max:10|unique:persona,nit',
+        'telefono' => 'nullable|string|max:20',
         'fecha_nacimiento' => 'nullable|date',
-        'DPI' => 'nullable|string|max:255',
-        'habla_lengua' => 'nullable|in:Sí,No',
-        'tipo_sangre' => 'nullable|in:O+,O-,A+,A-,B+,B-,AB+,AB-',
-        'direccion' => 'nullable|string|max:255',
-        'telefono' => 'nullable|string|max:255',
-        'foto' => 'nullable|string|max:255',
-        'diagnostico' => 'nullable|string',
-        'consulta_programada' => 'nullable|date',
-        'receta_foto' => 'nullable|image',
+        'rol' => 'required|in:1,2',  // Asegurarse de que 'rol' esté en 1 o 2 (cliente o paciente)
     ]);
 
-    // Crear la persona
-    $persona = $this->crearPersona($request);
+    $persona = Persona::create([
+        'nombre' => $request->nombre,
+        'nit' => $request->nit,
+        'telefono' => $request->telefono,
+        'fecha_nacimiento' => $request->fecha_nacimiento,
+        'rol' => $request->rol,  // Asignar el rol correctamente
+    ]);
 
-    if ($persona->rol == 2) { // Si la persona es un paciente
-        // Subir la receta foto si existe
-        $receta_foto = null;
-        if ($request->hasFile('receta_foto')) {
-            $receta_foto = $request->file('receta_foto')->store('recetas', 'public');
-        }
-
-        // Crear la ficha médica
+    // Si es paciente, crear ficha médica
+    if ($persona->rol == 2) { // Si el rol es 'paciente'
         FichaMedica::create([
             'persona_id' => $persona->id,
             'nombre' => $request->nombre,
@@ -103,22 +93,13 @@ class PersonaController extends Controller
             'foto' => $request->foto,
             'diagnostico' => $request->diagnostico,
             'consulta_programada' => $request->consulta_programada,
-            'receta_foto' => $receta_foto,
+            'receta_foto' => $request->receta_foto,
+            'detalle_medico_id' => $request->detalle_medico_id,
         ]);
     }
 
-    // Registrar en la bitácora
-    $usuario = User::find($request->idUsuario);
-    Bitacora::create([
-        'id_usuario' => $request->idUsuario,
-        'name_usuario' => $usuario->name,
-        'accion' => 'Creación',
-        'tabla_afectada' => 'Personas',
-        'detalles' => "Se creó la persona: {$request->nombre}",
-        'fecha_hora' => now(),
-    ]);
-
-    return redirect()->route('personas.index')->with('success', 'Registro creado correctamente.');
+    // Redirigir a la lista de personas con un mensaje de éxito
+    return redirect()->route('personas.index')->with('success', 'Persona registrada correctamente');
 }
 
 
@@ -158,61 +139,69 @@ class PersonaController extends Controller
     // Método para actualizar los datos de una persona
     public function update(Request $request, Persona $persona)
     {
-        $this->validate($request, [
-            'nombre' => 'required|string|max:45',
-            'nit' => 'max:10',
-            'telefono' => 'max:20',
-        ]);
-
-        $datosActualizados = $request->only(['nombre', 'nit', 'telefono', 'rol', 'fecha_nacimiento']);
-        $datosSinCambio = $persona->only(['nombre', 'nit', 'telefono', 'rol', 'fecha_nacimiento']);
-
-        // Validar el cambio de rol
-        $nuevoRol = $request->has('rol') ? 2 : 1;
-        if ($persona->rol != $nuevoRol) {
-            // Permitir cambio de cliente a paciente (1 a 2)
-            if ($persona->rol == 1 && $nuevoRol == 2) {
-                $datosActualizados['rol'] = 2;
-            }
-            // No permitir cambio de paciente a cliente (2 a 1)
-            elseif ($persona->rol == 2 && $nuevoRol == 1) {
-                return redirect()->route('personas.edit', $persona->id)
-                    ->withErrors(['rol' => 'No se permite cambiar el rol de paciente a cliente.']);
-            }
+        // 1. Definir reglas de validación base
+        $rules = [
+            'nombre' => 'required|string|max:255|unique:persona,nombre,'.$persona->id,
+            'rol' => 'required|in:1,2',
+            'telefono' => 'nullable|string|max:20',
+            'fecha_nacimiento' => 'nullable|date',
+            'nit' => 'nullable|string|max:10|unique:persona,nit,'.$persona->id
+        ];
+    
+        // 2. Reglas específicas para pacientes
+        if ($request->rol == 2) {
+            $rules['nit'] = 'required|string|max:10|unique:persona,nit,'.$persona->id;
+            $rules += [
+                'apellido_paterno' => 'required|string|max:100',
+                'apellido_materno' => 'required|string|max:100',
+                'sexo' => 'required|in:Hombre,Mujer',
+                'dpi' => 'required|string|max:20',
+                'habla_lengua' => 'required|in:Sí,No',
+                'tipo_sangre' => 'nullable|string|max:5',
+                'direccion' => 'nullable|string|max:255',
+                'detalle_medico_id' => 'required|exists:detalle_medico,id'
+            ];
         }
-
-
-        $datosActualizados['rol'] = $nuevoRol;
-
-
-        if ($datosActualizados != $datosSinCambio) {
-            $persona->update($datosActualizados);
-
-            if ($persona->rol == 2) {
-                $fichaMedica = FichaMedica::where('persona_id', $persona->id)->first();
-                if ($fichaMedica) {
-                    $fichaMedica->update([
-                        'diagnostico' => $request->diagnostico,
-                        'consulta_programada' => $request->consulta_programada,
-                    ]);
-                }
-            }
-
-            return redirect()->route('personas.index')->with('success', '¡Persona Actualizada!');
-        }
-
-        // Si no hay cambios, solo registrar la bitácora
-        $usuario = User::find($request->idUsuario);
-        Bitacora::create([
-            'id_usuario' => $request->idUsuario,
-            'name_usuario' => $usuario->name,
-            'accion' => 'Actualización',
-            'tabla_afectada' => 'Personas',
-            'detalles' => "Se actualizó la persona: {$request->nombre}",
-            'fecha_hora' => now(),
+    
+        // 3. Validar los datos
+        $validatedData = $request->validate($rules);
+    
+        // 4. Actualizar datos básicos de la persona
+        $persona->update([
+            'nombre' => $validatedData['nombre'],
+            'nit' => $validatedData['nit'],
+            'telefono' => $validatedData['telefono'],
+            'fecha_nacimiento' => $validatedData['fecha_nacimiento'],
+            'rol' => $validatedData['rol']
         ]);
-
-        return redirect()->route('personas.index');
+    
+        // 5. Manejo de ficha médica para pacientes
+        if ($validatedData['rol'] == 2) {
+            $fichaMedicaData = [
+                'apellido_paterno' => $validatedData['apellido_paterno'],
+                'apellido_materno' => $validatedData['apellido_materno'],
+                'sexo' => $validatedData['sexo'],
+                'dpi' => $validatedData['dpi'],
+                'habla_lengua' => $validatedData['habla_lengua'],
+                'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
+                'direccion' => $validatedData['direccion'] ?? null,
+                'detalle_medico_id' => $validatedData['detalle_medico_id']
+            ];
+    
+            // Actualizar o crear ficha médica
+            if ($persona->fichasMedicas()->exists()) {
+                $persona->fichasMedicas()->first()->update($fichaMedicaData);
+            } else {
+                $persona->fichasMedicas()->create($fichaMedicaData);
+            }
+        } elseif ($persona->fichasMedicas()->exists()) {
+            // Si cambia de paciente a cliente, mantener la ficha pero marcarla como inactiva
+            $persona->fichasMedicas()->first()->update(['estado' => 0]);
+        }
+    
+        // 6. Redireccionar con mensaje de éxito
+        return redirect()->route('personas.index', $persona->id)
+               ->with('success', 'Datos actualizados correctamente');
     }
 
     // Método para eliminar una persona
