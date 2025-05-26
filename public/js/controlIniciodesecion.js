@@ -46,10 +46,18 @@ document.getElementById('login-form').addEventListener('submit', function (e) {
         });
     })
     .catch(error => {
+        let mensaje ='';
+        //Verifica si axios trajo una respuesta,verifica si la respuesta trae un cuerpo(normalmente esta en la propiedad data y 
+        //tendria que ser un json lo que esta en el cuerpo), y luego mira si el cuerpo trae una propiedad error. 
+        if (error.response && error.response.data && error.response.data.error) {
+            //Guarda en la variable lo que contiene la propiedad error del json que esta en el cuerpo de la respuesta que recivio laravel
+            mensaje = error.response.data.error;
+        }
+
         Swal.fire({
             icon: 'error',
             title: '¡Error!',
-            text: 'Credenciales incorrectas o hubo un error al intentar iniciar sesión.',
+            text:mensaje,
             showConfirmButton: false,
             timer:2000,
             customClass: {
