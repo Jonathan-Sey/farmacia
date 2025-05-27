@@ -129,7 +129,7 @@ Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.
 Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
 Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
 Route::get('personas/{id}', [PersonaController::class, 'show'])->name('persona.show');
-
+Route::resource('personas', PersonaController::class);
 
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);

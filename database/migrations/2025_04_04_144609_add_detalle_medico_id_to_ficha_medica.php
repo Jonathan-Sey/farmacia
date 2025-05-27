@@ -15,7 +15,7 @@ class AddDetalleMedicoIdToFichaMedica extends Migration
     {
         Schema::table('fichas_medicas', function (Blueprint $table) {
             // Agregar la columna detalle_medico_id como clave foránea
-            $table->foreignId('detalle_medico_id')->constrained('detalle_medico')->onDelete('cascade');
+            $table->foreignId('detalle_medico_id')->nullable()->constrained('detalle_medico')->onDelete('cascade');
         });
     }
     
