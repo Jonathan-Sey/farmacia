@@ -93,13 +93,12 @@
                         </div>
 
                         <div>
-                            <label for="DPI" class="uppercase block text-sm font-medium text-gray-900">DPI</label>
-                            <input
-                                type="text"
-                                name="DPI"
-                                id="DPI"
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                value="{{ old('DPI') }}">
+                            <label class="text-sm font-medium text-gray-700">DPI *</label>
+                                <input type="text" name="dpi" value="{{ old('dpi', $fichaMedica->DPI ?? '') }}"
+                                    class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                @error('dpi')
+                                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                                @enderror
                         </div>
 
                         <div>
@@ -233,4 +232,14 @@
         });
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if ($errors->has('dpi'))
+<script>
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: '{{ $errors->first('dpi') }}',
+  });
+</script>
+@endif
 @endpush

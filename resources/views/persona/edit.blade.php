@@ -159,4 +159,14 @@
         toggleFichaMedica();
     });
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if ($errors->has('dpi'))
+<script>
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: '{{ $errors->first('dpi') }}',
+  });
+</script>
+@endif
 @endpush
