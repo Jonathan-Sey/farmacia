@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use App\Models\DetalleMedico;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use SoftlogicGT\ValidationRulesGT\Rules\Dpi;
 
 class PersonaController extends Controller
 {
@@ -54,12 +55,20 @@ class PersonaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nombre' => 'required|string|max:255',
-            'nit' => 'nullable|string|max:10|unique:persona,nit',
-            'telefono' => 'nullable|string|max:20',
-            'fecha_nacimiento' => 'nullable|date',
-            'rol' => 'required|in:1,2',
-        ]);
+        'nombre' => 'required|string|max:255',
+        'nit' => 'nullable|string|max:10|unique:persona,nit',
+        'telefono' => 'nullable|string|max:20',
+        'fecha_nacimiento' => 'nullable|date',
+        'rol' => 'required|in:1,2',
+        'apellido_paterno' => 'required_if:rol,2|string|max:100',
+        'apellido_materno' => 'required_if:rol,2|string|max:100',
+        'sexo' => 'required_if:rol,2|in:Hombre,Mujer',
+        'dpi' => ['required_if:rol,2', new Dpi()],
+        'habla_lengua' => 'required_if:rol,2|in:Sí,No',
+        'tipo_sangre' => 'nullable|string|max:5',
+        'direccion' => 'nullable|string|max:255'
+    ]);
+
 
         $persona = Persona::create([
             'nombre' => $request->nombre,
@@ -77,7 +86,7 @@ class PersonaController extends Controller
                 'apellido_materno' => $request->apellido_materno,
                 'sexo' => $request->sexo,
                 'fecha_nacimiento' => $request->fecha_nacimiento,
-                'DPI' => $request->DPI,
+                'DPI' => $request->dpi,
                 'habla_lengua' => $request->habla_lengua,
                 'tipo_sangre' => $request->tipo_sangre,
                 'direccion' => $request->direccion,
@@ -137,7 +146,7 @@ public function update(Request $request, Persona $persona)
             'apellido_paterno' => 'required|string|max:100',
             'apellido_materno' => 'required|string|max:100',
             'sexo' => 'required|in:Hombre,Mujer',
-            'dpi' => 'required|string|max:20',
+            'dpi' => ['required', new Dpi()],
             'habla_lengua' => 'required|in:Sí,No',
             'tipo_sangre' => 'nullable|string|max:5',
             'direccion' => 'nullable|string|max:255'
