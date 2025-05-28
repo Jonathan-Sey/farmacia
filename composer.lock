@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0bd8796f8f14f265d658ea2e791fdc4e",
+    "content-hash": "c80ef73c5105483ca6ea749dbc35e539",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3138,6 +3138,61 @@
                 }
             ],
             "time": "2021-09-25T23:10:38+00:00"
+        },
+        {
+            "name": "softlogic-gt/laravel-validation-rules-gt",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/softlogic-gt/laravel-validation-rules-gt.git",
+                "reference": "f55dc198f7bb9f67aad044a65525f77a99b2df58"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/softlogic-gt/laravel-validation-rules-gt/zipball/f55dc198f7bb9f67aad044a65525f77a99b2df58",
+                "reference": "f55dc198f7bb9f67aad044a65525f77a99b2df58",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^7.0|^8.0|^9.0|^10.0",
+                "php": "^7.0|^8.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SoftlogicGT\\ValidationRulesGT\\ValidationRulesGTServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SoftlogicGT\\ValidationRulesGT\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Jose Galindo",
+                    "email": "jgalindo@softlogic.com.gt",
+                    "homepage": "https://softlogic.com.gt",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A set of useful Laravel validation rules for Guatemala (GT)",
+            "homepage": "https://github.com/softlogic-gt/laravel-validation-rules-gt",
+            "keywords": [
+                "laravel-validation-rules-gt",
+                "softlogic"
+            ],
+            "support": {
+                "issues": "https://github.com/softlogic-gt/laravel-validation-rules-gt/issues",
+                "source": "https://github.com/softlogic-gt/laravel-validation-rules-gt/tree/v1.0.1"
+            },
+            "time": "2024-12-10T19:49:34+00:00"
         },
         {
             "name": "swiftmailer/swiftmailer",
@@ -7979,12 +8034,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.3|^8.0"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
