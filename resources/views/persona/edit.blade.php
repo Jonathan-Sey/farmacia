@@ -1,141 +1,172 @@
 @extends('template')
 @section('titulo', 'Editar Persona')
+
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-
 @endpush
 
 @section('contenido')
-<div class="flex justify-center items-center mx-3 ">
-    <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
-        <form action="{{route('personas.update',['persona'=>$persona->id])}}" method="POST">
+<div class="flex justify-center items-center mx-3">
+    <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl mb-10">
+        <form action="{{ route('personas.update', $persona->id) }}" method="POST">
             @csrf
-            @method('PATCH')
+            @method('PUT')
 
-            <div id="usuario"></div>
-            <div class="border-b border-gray-900/10 pb-12">
-
-                <div class="mt-2 mb-5 flex flex-col gap-5 md:grid md:grid-cols-2 " >
-                    <div>
-                        <label for="nombre" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
-                        <input
-                            type="text"
-                            name="nombre"
-                            id="nombre"
-                            autocomplete="given-name"
-                            placeholder="Nombre"
-                            class="block w-full md:w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                            value="{{ old('nombre',$persona->nombre) }}">
-
-                        @error('nombre')
-                        <div role="alert" class="alert alert-error mt-4 p-2">
-                            <span class="text-white font-bold">{{ $message }}</span>
-                        </div>
-                        @enderror
-                    </div>
-                    <div class="flex flex-row gap-5">
-                        <div class="flex flex-col gap-1">
-                            <label for="rol">Paciente</label>
-                            <input name="rol" id="rol" type="checkbox" class="toggle toggle-success"
-                            {{ old('rol', $persona->rol) == 2 ? 'checked' : '' }}
-                            />
-                        </div>
-                    </div>
-                    
+            <!-- Datos Básicos -->
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Datos Básicos</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label for="nombre" class="text-sm font-medium text-gray-700">Nombre *</label>
+                    <input type="text" name="nombre" id="nombre" value="{{ old('nombre', $persona->nombre) }}"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
                 </div>
 
-
-                <div class="mt-2 mb-5">
-                    <label for="nit" class="uppercase block text-sm font-medium text-gray-900">Nit</label>
-                    <input
-                        type="text"
-                        name="nit"
-                        id="nit"
-                        autocomplete="given-name"
-                        placeholder="Nit"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        value="{{ old('nit',$persona->nit) }}">
-
-                    @error('nit')
-                    <div role="alert" class="alert alert-error mt-4 p-2">
-                        <span class="text-white font-bold">{{ $message }}</span>
-                    </div>
-                    @enderror
+                <div>
+                    <label for="rol" class="text-sm font-medium text-gray-700">Tipo de Persona *</label>
+                    <select name="rol" id="rol"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                        <option value="1" {{ $persona->rol == 1 ? 'selected' : '' }}>Cliente</option>
+                        <option value="2" {{ $persona->rol == 2 ? 'selected' : '' }}>Paciente</option>
+                    </select>
                 </div>
-
-                <div class="mt-2 mb-5">
-                    <label for="telefono" class="uppercase block text-sm font-medium text-gray-900">Telefono</label>
-                    <input
-                        type="text"
-                        name="telefono"
-                        id="telefono"
-                        autocomplete="given-name"
-                        placeholder="Telefono"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        value="{{ old('telefono',$persona->telefono) }}">
-
-                    @error('telefono')
-                    <div role="alert" class="alert alert-error mt-4 p-2">
-                        <span class="text-white font-bold">{{ $message }}</span>
-                    </div>
-                    @enderror
-                </div>
-
-                <div class="mt-2 mb-5">
-                    <label for="fecha_nacimiento" class="uppercase block text-sm font-medium text-gray-900">Fecha Nacimiento</label>
-                    <input
-                        type="date"
-                        name="fecha_nacimiento"
-                        min=""
-                        id="fecha_nacimiento"
-                        autocomplete="given-name"
-                        placeholder="date"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        value="{{ old('fecha_nacimiento',$persona->fecha_nacimiento) }}">
-
-                    @error('fecha_nacimiento')
-                    <div role="alert" class="alert alert-error mt-4 p-2">
-                        <span class="text-white font-bold">{{ $message }}</span>
-                    </div>
-                    @enderror
-                </div>
-
-
-
-
-
             </div>
 
-            <div class="mt-6 flex items-center justify-end gap-x-6">
-                <a href="{{route('personas.index')}}">
-                    <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
-                </a>
-                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
+            <!-- Datos Generales -->
+            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div>
+                    <label for="nit" class="text-sm font-medium text-gray-700">NIT</label>
+                    <input type="text" name="nit" id="nit" value="{{ old('nit', $persona->nit) }}"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+
+                <div>
+                    <label for="telefono" class="text-sm font-medium text-gray-700">Teléfono</label>
+                    <input type="text" name="telefono" id="telefono" value="{{ old('telefono', $persona->telefono) }}"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+
+                <div>
+                    <label for="fecha_nacimiento" class="text-sm font-medium text-gray-700">Fecha Nacimiento</label>
+                    <input type="date" name="fecha_nacimiento" id="fecha_nacimiento"
+                        value="{{ old('fecha_nacimiento', $persona->fecha_nacimiento) }}"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                </div>
+            </div>
+
+            <!-- Ficha Médica -->
+            @php $fichaMedica = $persona->fichasMedicas->first(); @endphp
+            <div id="ficha_medica" class="mt-8 {{ $persona->rol == 2 ? '' : 'hidden' }}">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Ficha Médica</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Apellido Paterno *</label>
+                        <input type="text" name="apellido_paterno"
+                            value="{{ old('apellido_paterno', $fichaMedica->apellido_paterno ?? '') }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Apellido Materno *</label>
+                        <input type="text" name="apellido_materno"
+                            value="{{ old('apellido_materno', $fichaMedica->apellido_materno ?? '') }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Sexo *</label>
+                        <select name="sexo"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option value="Hombre" {{ old('sexo', $fichaMedica->sexo ?? '') == 'Hombre' ? 'selected' : '' }}>Hombre</option>
+                            <option value="Mujer" {{ old('sexo', $fichaMedica->sexo ?? '') == 'Mujer' ? 'selected' : '' }}>Mujer</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">DPI *</label>
+                        <input type="text" name="dpi" value="{{ old('dpi', $fichaMedica->DPI ?? '') }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">¿Habla lengua?</label>
+                        <select name="habla_lengua"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                            <option value="Sí" {{ old('habla_lengua', $fichaMedica->habla_lengua ?? '') == 'Sí' ? 'selected' : '' }}>Sí</option>
+                            <option value="No" {{ old('habla_lengua', $fichaMedica->habla_lengua ?? '') == 'No' ? 'selected' : '' }}>No</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-sm font-medium text-gray-700">Tipo de Sangre</label>
+                        <input type="text" name="tipo_sangre" value="{{ old('tipo_sangre', $fichaMedica->tipo_sangre ?? '') }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-sm font-medium text-gray-700">Dirección</label>
+                        <input type="text" name="direccion" value="{{ old('direccion', $fichaMedica->direccion ?? '') }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="mt-6 flex justify-end gap-x-4">
+                <a href="{{ route('personas.index') }}" class="text-sm text-gray-600 hover:text-red-600">Cancelar</a>
+                <button type="submit"
+                    class="px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    Actualizar
+                </button>
             </div>
         </form>
     </div>
 </div>
-
-
 @endsection
+
 @push('js')
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="/js/obtenerUsuario.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    @if($errors->any())
-    Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: '{{ $errors->first() }}',
+    $(document).ready(function () {
+        function toggleFichaMedica() {
+            const isPaciente = $('#rol').val() == '2';
+            if (isPaciente) {
+                $('#ficha_medica').show();
+                $('#ficha_medica input, #ficha_medica select').prop('disabled', false);
+            } else {
+                $('#ficha_medica').hide();
+                $('#ficha_medica input, #ficha_medica select').prop('disabled', true);
+            }
+        }
+
+        $('#rol').change(function () {
+            const oldValue = $(this).data('old-value');
+            const newValue = $(this).val();
+
+            if (oldValue != newValue) {
+                Swal.fire({
+                    title: '¿Estás seguro?',
+                    text: 'Cambiar el tipo de persona modificará los campos requeridos.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, cambiar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (!result.isConfirmed) {
+                        $(this).val(oldValue);
+                    }
+                    toggleFichaMedica();
+                });
+            } else {
+                toggleFichaMedica();
+            }
         });
-        @endif
-        </script>
 
-
+        $('#rol').data('old-value', $('#rol').val());
+        toggleFichaMedica();
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if ($errors->has('dpi'))
+<script>
+  Swal.fire({
+    icon: 'error',
+    title: 'Error',
+    text: '{{ $errors->first('dpi') }}',
+  });
+</script>
+@endif
 @endpush
-
-
-

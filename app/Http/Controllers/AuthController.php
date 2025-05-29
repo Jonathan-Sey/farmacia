@@ -59,6 +59,10 @@ class AuthController extends Controller
             return response()->json(['error' => 'El usuario no tiene rol asignado'], 400);
         }
 
+        if($user->estado == 2){
+            return response()->json(['error' => 'Este usuario esta inactivo'], 404);
+        }
+
         $rol = $user->rol;
         $pestanas = $rol->pestanas()->pluck('ruta')->toArray();
 
@@ -66,7 +70,7 @@ class AuthController extends Controller
         $cookie = cookie(
             'jwt_token', // Nombre de la cookie
             $token, // Valor de la cookie
-            config('jwt.ttl') * 60, // Tiempo de expiración (en minutos)
+            config('jwt.ttl') * 120, // Tiempo de expiración (en minutos)
             '/', // Ruta (accesible en todo el dominio)
             null, // Dominio (null para el dominio actual)
             false, // Solo HTTPS (false para desarrollo local)
