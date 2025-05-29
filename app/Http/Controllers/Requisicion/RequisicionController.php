@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Almacen;
 use App\Models\Inventario;
 use App\Models\Producto;
+use App\Models\ReporteKardex;
 use App\Models\Requisicion;
 use App\Models\Sucursal;
 use Illuminate\Support\Facades\DB;
@@ -158,6 +159,8 @@ class RequisicionController extends Controller
 
                 $fechaVencimiento = optional($lotesDisponibles->first())->lote->fecha_vencimiento ?? now();
 
+                $cantidadAnterior = $almacenDestino ? $almacenDestino->cantidad : 0;
+
             if ($almacenDestino) {
                 $almacenDestino->cantidad += $cantidad;
                 $almacenDestino->save();
@@ -168,11 +171,22 @@ class RequisicionController extends Controller
                     'id_producto' => $producto,
                     'cantidad' => $cantidad,
                     'fecha_vencimiento' => $fechaVencimiento, // Fecha de vencimiento por defecto
-                    'id_user' => 1,
+                    'id_user' => $request->idUsuario,
                     'estado' => 1, // Estado activo
                 ]);
                 Log::info('Nuevo almacén de destino creado:', $almacenDestino->toArray());
             }
+
+             $reporte = ReporteKardex::create([
+                'producto_id' => $producto,
+                'sucursal_id' => $sucursal_destino,
+                'tipo_movimiento' => 'traslado',
+                'cantidad' => 0,
+                'Cantidad_anterior' =>$cantidadAnterior, // Cantidad antes del traslado
+                'Cantidad_nueva' => $almacenDestino->cantidad, // Cantidad después del traslado
+                'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                'fecha_movimiento' => now(),
+            ]);
 
             // Crear el registro de traslado
             $traslado = Requisicion::create([
@@ -182,8 +196,12 @@ class RequisicionController extends Controller
                 'id_lote' => $lotesDisponibles->first()->id_lote, // Tomar el primer lote como referencia
                 'cantidad' => $cantidad,
                 'fecha_traslado' => now(),
-                'id_usuario' => 1, // Aquí deberías usar el ID del usuario autenticado
+                'id_usuario' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
             ]);
+
+
+           
+
 
             Log::info('Traslado registrado:', $traslado->toArray());
 

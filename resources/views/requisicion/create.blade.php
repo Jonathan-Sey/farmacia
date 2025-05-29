@@ -9,6 +9,7 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{ route('requisiciones.store') }}" method="POST">
             @csrf
+               <div id="usuario"></div>
             <div class="border-b border-gray-900/10 pb-12">
                 <!-- Campo oculto para la sucursal de origen -->
                 <input type="hidden" name="id_sucursal_origen" id="id_sucursal_origen" value="1">
@@ -75,6 +76,7 @@
 </div>
 
 @push('js')
+<script src="/js/obtenerUsuario.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>

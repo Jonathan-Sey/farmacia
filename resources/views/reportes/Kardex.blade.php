@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Productos')
+@section('titulo','Personas')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -10,93 +10,45 @@
 @endpush
 
 @section('contenido')
-    <a href="{{ route('productos.create') }}">
+    <a href="{{ route('personas.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
     </a>
-    <a href="{{ route('productos.vencidos') }}">
-        <button class="btn btn-primary  text-white font-bold uppercase">
-            Ver productos vencidos
-        </button>
-    </a>
-
-   
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio_anterior</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio_nuevo</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
-                 
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Actualizado</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Sucursal</th>
+                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Usuario</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Tipo de movimiento</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Cantidad anterior</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Cantidad nueva</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha</th>
+                   
+            
                 </tr>
             </thead>
         </x-slot>
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($productos as $producto)
-                    @php
-                        $fechaActual = \Carbon\Carbon::now(); // Fecha actual
-                        $fechaCaducidad = \Carbon\Carbon::parse($producto->fecha_caducidad); // Convierte la fecha de caducidad a Carbon
-                        $diferenciaDias = $fechaActual->diffInDays($fechaCaducidad, false); // Diferencia en días (negativo si ya caducó)
-
-                    @endphp
+                @foreach ($reporte as $reportes)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_porcentaje}}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <a href="{{ $producto->imagen ? asset('uploads/' . $producto->imagen) : '#' }}">
-                            @if ($producto->imagen)
-                                <img src="{{ asset('uploads/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded">
-                            @else
-                                <span class="text-gray-500">Sin imagen</span>
-                            @endif
-                        </a>
-                        </td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->id}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->producto->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->sucursal->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->usuario->name}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->tipo_movimiento}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->cantidad}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->Cantidad_anterior}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->Cantidad_nueva}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->fecha_movimiento}}</td>
 
-                    <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
-                            @if ($producto->estado == 1)
-                                <span class="text-green-500 font-bold">Activo</span>
-                            @else
-                                <span class="text-red-500 font-bold">Inactivo</span>
-                            @endif
-                        </a>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->categoria->nombre}}</td>
                    
-                    <td class="px-6 py-4 whitespace-nowrap">{{$producto->updated_at}}</td>
-                    <td class="flex gap-2 justify-center">
-
-                        <form action="{{route('productos.edit',['producto'=>$producto->id])}}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                        </form>
-                       {{-- Formulario para ir a la página de edición de porcentaje --}}
-                        <form action="{{ route('productos.precio', $producto->id) }}" method="GET">
-                            @csrf
-                            <button type="submit" class="btn btn-success font-bold uppercase btn-sm">
-                                <i class='bx bx-dollar'></i>
-                            </button>
-                        </form>
-
-                          {{-- Botón Cambiar estado --}}
-                          <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $producto->id }}" data-estado="{{ $producto->estado }}" data-info="{{ $producto->nombre }}">
-                            <i class="fas fa-sync-alt"></i>
-                        </button>
-                    </td>
                 </tr>
                 @endforeach
             </tbody>
@@ -129,7 +81,7 @@
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
-            order: [0,'desc'],
+            order: [5,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
             },
@@ -142,7 +94,8 @@
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 7 },
+                { responsivePriority: 2, targets: 6 },
+
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -204,7 +157,7 @@
                     if (result.isConfirmed) {
                         // Realizar la solicitud Ajax para cambiar el estado
                         $.ajax({
-                            url: '/producto/' + Id + '/cambiar-estado',
+                            url: '/persona/' + Id + '/cambiar-estado',
                             method: 'POST',
                             data: {
                                 _token: '{{ csrf_token() }}',

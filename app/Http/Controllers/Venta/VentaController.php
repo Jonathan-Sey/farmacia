@@ -10,6 +10,7 @@ use App\Models\Sucursal;
 use App\Models\Venta;
 use App\Models\Almacen;
 use App\Models\Bitacora;
+use App\Models\ReporteKardex;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -86,7 +87,7 @@ class VentaController extends Controller
                     'id' => $almacen->producto->id,
                     'imagen' => asset('uploads/' . $almacen->producto->imagen),
                     'nombre' => $almacen->producto->nombre,
-                    'precio_venta' => $almacen->producto->precio_venta,
+                    'precio_venta' => $almacen->producto->precio_porcentaje,
                     'tipo' => $almacen->producto->tipo,
                     'stock' => $almacen->cantidad,
                 ];
@@ -112,6 +113,8 @@ class VentaController extends Controller
             'estado'=>'integer',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
+            'imagen_receta' => 'nullable|string',
+            'numero_reserva' => 'nullable|string|max:50'
 
         ]);
 
@@ -141,6 +144,9 @@ class VentaController extends Controller
             'id_usuario' => $request->idUsuario, // Usar el usuario actual o el correcto
             'id_persona' => $request->id_persona,
             'estado' => 1,
+            'es_prescrito' => $request->has('es_prescrito'),
+            'imagen_receta' => $request->imagen_receta,
+            'numero_reserva' => $request->numero_reserva
         ]);
 
         // Obtener los arrays de detalles
@@ -173,6 +179,17 @@ class VentaController extends Controller
                 'id_producto' => $idProducto,
                 'cantidad' => $arrayCantidad[$index],
                 'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+            ]);
+
+            $reportekardex = ReporteKardex::create([
+                'producto_id' => $idProducto,
+                'sucursal_id' => $request->id_sucursal,
+                'tipo_movimiento' => 'Venta',
+                'cantidad' => $arrayCantidad[$index],
+                'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
+                'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
+                'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                'fecha_movimiento' => now()
             ]);
         }
 
@@ -208,6 +225,9 @@ class VentaController extends Controller
     {
 
          //$venta->load('productos');
+         if($venta->imagen_receta){
+            $venta->imagen_receta_url = asset('uploads/' . $venta->imagen_receta);
+         }
         return view('venta.show',compact('venta'));
 
     }
