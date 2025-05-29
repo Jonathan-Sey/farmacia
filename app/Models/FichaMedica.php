@@ -11,6 +11,7 @@ class FichaMedica extends Model
     protected $table = 'fichas_medicas';        
     protected $fillable = [
         'persona_id',
+        'detalle_medico_id',
         'nombre',
         'apellido_paterno',
         'apellido_materno',
@@ -34,6 +35,7 @@ class FichaMedica extends Model
     }
     public function detalleMedico()
     {
-        return $this->belongsTo(Persona::class, 'persona_id'); // Relación de clave foránea con 'personas'
+        return $this->belongsTo(DetalleMedico::class, 'detalle_medico_id');
     }
+
 }

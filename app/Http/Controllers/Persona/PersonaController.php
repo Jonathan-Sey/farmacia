@@ -6,13 +6,15 @@ use App\Http\Controllers\Controller;
 use App\Models\Bitacora;
 use App\Models\Persona;
 use App\Models\User;
-use App\Models\FichaMedica;  // Asegúrate de incluir el modelo de FichaMedica
+use App\Models\FichaMedica;
 use Illuminate\Http\Request;
 use App\Models\DetalleMedico;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use SoftlogicGT\ValidationRulesGT\Rules\Dpi;
 
 class PersonaController extends Controller
 {
-    // Método para mostrar la lista de personas
     public function index()
     {
         $personas = Persona::select('id', 'nombre', 'nit', 'rol', 'telefono', 'estado')
@@ -21,18 +23,12 @@ class PersonaController extends Controller
         return view('persona.index', compact('personas'));
     }
 
-    // Método para mostrar el formulario de crear persona
     public function create()
     {
-        // Obtener todos los médicos de la tabla 'detalle_medico'
         $medicos = DetalleMedico::all();
-    
-        // Pasar la variable $medicos a la vista
         return view('persona.create', compact('medicos'));
     }
 
-
-    // Método para crear una persona
     protected function crearPersona(Request $request)
     {
         $this->validate($request, [
@@ -40,12 +36,12 @@ class PersonaController extends Controller
             'nit' => 'max:10|unique:persona,nit',
             'telefono' => 'max:20',
         ]);
-        $rol = $request->input('rol') == 2 ? 2 : 1;  // Rol 1 para cliente, 2 para paciente
+        $rol = $request->input('rol') == 2 ? 2 : 1;
 
         return Persona::create([
             'nombre' => $request->nombre,
             'nit' => $request->nit,
-            'rol' => $rol,  
+            'rol' => $rol,
             'telefono' => $request->telefono,
             'fecha_nacimiento' => $request->fecha_nacimiento,
         ]);
@@ -56,80 +52,59 @@ class PersonaController extends Controller
         return $this->hasMany(FichaMedica::class);
     }
 
-    // Método para almacenar una nueva persona y su ficha médica si es paciente
     public function store(Request $request)
-{
-    // Validar los datos de entrada
-    $request->validate([
+    {
+        $request->validate([
         'nombre' => 'required|string|max:255',
-        'apellido_paterno' => 'nullable|string|max:255',
-        'apellido_materno' => 'nullable|string|max:255',
-        'sexo' => 'nullable|in:Hombre,Mujer',
+        'nit' => 'nullable|string|max:10|unique:persona,nit',
+        'telefono' => 'nullable|string|max:20',
         'fecha_nacimiento' => 'nullable|date',
-        'DPI' => 'nullable|string|max:255',
-        'habla_lengua' => 'nullable|in:Sí,No',
-        'tipo_sangre' => 'nullable|in:O+,O-,A+,A-,B+,B-,AB+,AB-',
-        'direccion' => 'nullable|string|max:255',
-        'telefono' => 'nullable|string|max:255',
-        'foto' => 'nullable|string|max:255',
-        'diagnostico' => 'nullable|string',
-        'consulta_programada' => 'nullable|date',
-        'receta_foto' => 'nullable|image',
+        'rol' => 'required|in:1,2',
+        'apellido_paterno' => 'required_if:rol,2|string|max:100',
+        'apellido_materno' => 'required_if:rol,2|string|max:100',
+        'sexo' => 'required_if:rol,2|in:Hombre,Mujer',
+        'dpi' => ['required_if:rol,2', new Dpi()],
+        'habla_lengua' => 'required_if:rol,2|in:Sí,No',
+        'tipo_sangre' => 'nullable|string|max:5',
+        'direccion' => 'nullable|string|max:255'
     ]);
 
-    // Crear la persona
-    $persona = $this->crearPersona($request);
 
-    if ($persona->rol == 2) { // Si la persona es un paciente
-        // Subir la receta foto si existe
-        $receta_foto = null;
-        if ($request->hasFile('receta_foto')) {
-            $receta_foto = $request->file('receta_foto')->store('recetas', 'public');
+        $persona = Persona::create([
+            'nombre' => $request->nombre,
+            'nit' => $request->nit,
+            'telefono' => $request->telefono,
+            'fecha_nacimiento' => $request->fecha_nacimiento,
+            'rol' => $request->rol,
+        ]);
+
+        if ($persona->rol == 2) {
+            FichaMedica::create([
+                'persona_id' => $persona->id,
+                'nombre' => $request->nombre,
+                'apellido_paterno' => $request->apellido_paterno,
+                'apellido_materno' => $request->apellido_materno,
+                'sexo' => $request->sexo,
+                'fecha_nacimiento' => $request->fecha_nacimiento,
+                'DPI' => $request->dpi,
+                'habla_lengua' => $request->habla_lengua,
+                'tipo_sangre' => $request->tipo_sangre,
+                'direccion' => $request->direccion,
+                'telefono' => $request->telefono,
+                'foto' => $request->foto,
+                'diagnostico' => $request->diagnostico,
+                'consulta_programada' => $request->consulta_programada,
+                'receta_foto' => $request->receta_foto,
+                'detalle_medico_id' => $request->detalle_medico_id,
+            ]);
         }
 
-        // Crear la ficha médica
-        FichaMedica::create([
-            'persona_id' => $persona->id,
-            'nombre' => $request->nombre,
-            'apellido_paterno' => $request->apellido_paterno,
-            'apellido_materno' => $request->apellido_materno,
-            'sexo' => $request->sexo,
-            'fecha_nacimiento' => $request->fecha_nacimiento,
-            'DPI' => $request->DPI,
-            'habla_lengua' => $request->habla_lengua,
-            'tipo_sangre' => $request->tipo_sangre,
-            'direccion' => $request->direccion,
-            'telefono' => $request->telefono,
-            'foto' => $request->foto,
-            'diagnostico' => $request->diagnostico,
-            'consulta_programada' => $request->consulta_programada,
-            'receta_foto' => $receta_foto,
-        ]);
+        return redirect()->route('personas.index')->with('success', 'Persona registrada correctamente');
     }
 
-    // Registrar en la bitácora
-    $usuario = User::find($request->idUsuario);
-    Bitacora::create([
-        'id_usuario' => $request->idUsuario,
-        'name_usuario' => $usuario->name,
-        'accion' => 'Creación',
-        'tabla_afectada' => 'Personas',
-        'detalles' => "Se creó la persona: {$request->nombre}",
-        'fecha_hora' => now(),
-    ]);
-
-    return redirect()->route('personas.index')->with('success', 'Registro creado correctamente.');
-}
-
-
-    // Método para almacenar una persona desde ventas (JSON)
     public function storeFromVentas(Request $request)
     {
         $persona = $this->crearPersona($request);
-
-
-            // Obtener la lista actualizada de personas
-         //$personas = Persona::where('estado', '!=', '0')->get();
 
         return response()->json([
             'success' => true,
@@ -144,78 +119,83 @@ class PersonaController extends Controller
     }
 
     public function show($id)
-        {
-            $persona = Persona::with('fichasMedicas')->findOrFail($id); 
-            return view('persona.show', compact('persona'));
-        }
+    {
+        $persona = Persona::with('fichasMedicas')->findOrFail($id);
+        return view('persona.show', compact('persona'));
+    }
 
-    // Método para editar una persona
     public function edit(Persona $persona)
     {
-        return view('persona.edit', compact('persona'));
+        $fichaMedica = $persona->fichasMedicas()->first(); // Obtener ficha médica si existe
+        return view('persona.edit', compact('persona', 'fichaMedica'));
+    }
+public function update(Request $request, Persona $persona)
+{
+    Log::info('Iniciando update de persona', $request->all());
+
+    $rules = [
+        'nombre' => 'required|string|max:255|unique:persona,nombre,' . $persona->id,
+        'rol' => 'required|in:1,2',
+        'telefono' => 'nullable|string|max:20',
+        'fecha_nacimiento' => 'nullable|date',
+        'nit' => 'nullable|string|max:10|unique:persona,nit,' . $persona->id,
+    ];
+
+    if ($request->rol == 2) {
+        $rules += [
+            'apellido_paterno' => 'required|string|max:100',
+            'apellido_materno' => 'required|string|max:100',
+            'sexo' => 'required|in:Hombre,Mujer',
+            'dpi' => ['required', new Dpi()],
+            'habla_lengua' => 'required|in:Sí,No',
+            'tipo_sangre' => 'nullable|string|max:5',
+            'direccion' => 'nullable|string|max:255'
+        ];
     }
 
-    // Método para actualizar los datos de una persona
-    public function update(Request $request, Persona $persona)
-    {
-        $this->validate($request, [
-            'nombre' => 'required|string|max:45',
-            'nit' => 'max:10',
-            'telefono' => 'max:20',
-        ]);
+    $validatedData = $request->validate($rules);
 
-        $datosActualizados = $request->only(['nombre', 'nit', 'telefono', 'rol', 'fecha_nacimiento']);
-        $datosSinCambio = $persona->only(['nombre', 'nit', 'telefono', 'rol', 'fecha_nacimiento']);
+    DB::beginTransaction();
+    try {
+        $persona->nombre = $validatedData['nombre'];
+        $persona->nit = $validatedData['nit'] ?? null;
+        $persona->telefono = $validatedData['telefono'] ?? null;
+        $persona->fecha_nacimiento = $validatedData['fecha_nacimiento'] ?? null;
+        $persona->rol = $validatedData['rol'];
+        $persona->save();
 
-        // Validar el cambio de rol
-        $nuevoRol = $request->has('rol') ? 2 : 1;
-        if ($persona->rol != $nuevoRol) {
-            // Permitir cambio de cliente a paciente (1 a 2)
-            if ($persona->rol == 1 && $nuevoRol == 2) {
-                $datosActualizados['rol'] = 2;
-            }
-            // No permitir cambio de paciente a cliente (2 a 1)
-            elseif ($persona->rol == 2 && $nuevoRol == 1) {
-                return redirect()->route('personas.edit', $persona->id)
-                    ->withErrors(['rol' => 'No se permite cambiar el rol de paciente a cliente.']);
-            }
+        Log::info('Datos básicos actualizados', $persona->toArray());
+
+        if ($validatedData['rol'] == 2) {
+            $persona->fichasMedicas()->updateOrCreate(
+                ['persona_id' => $persona->id],
+                [
+                    'apellido_paterno' => $validatedData['apellido_paterno'],
+                    'apellido_materno' => $validatedData['apellido_materno'],
+                    'sexo' => $validatedData['sexo'],
+                    'DPI' => $validatedData['dpi'],
+                    'habla_lengua' => $validatedData['habla_lengua'],
+                    'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
+                    'direccion' => $validatedData['direccion'] ?? null
+                ]
+            );
+
+            Log::info('Ficha médica actualizada o creada para paciente');
         }
 
+        DB::commit();
+        Log::info('Fin del proceso de actualización OK');
 
-        $datosActualizados['rol'] = $nuevoRol;
+        return redirect()->route('personas.index')->with('success', 'Datos actualizados correctamente');
 
-
-        if ($datosActualizados != $datosSinCambio) {
-            $persona->update($datosActualizados);
-
-            if ($persona->rol == 2) {
-                $fichaMedica = FichaMedica::where('persona_id', $persona->id)->first();
-                if ($fichaMedica) {
-                    $fichaMedica->update([
-                        'diagnostico' => $request->diagnostico,
-                        'consulta_programada' => $request->consulta_programada,
-                    ]);
-                }
-            }
-
-            return redirect()->route('personas.index')->with('success', '¡Persona Actualizada!');
-        }
-
-        // Si no hay cambios, solo registrar la bitácora
-        $usuario = User::find($request->idUsuario);
-        Bitacora::create([
-            'id_usuario' => $request->idUsuario,
-            'name_usuario' => $usuario->name,
-            'accion' => 'Actualización',
-            'tabla_afectada' => 'Personas',
-            'detalles' => "Se actualizó la persona: {$request->nombre}",
-            'fecha_hora' => now(),
-        ]);
-
-        return redirect()->route('personas.index');
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Error al actualizar persona', ['error' => $e->getMessage()]);
+        return back()->with('error', 'Error al actualizar: ' . $e->getMessage());
     }
+}
 
-    // Método para eliminar una persona
+
     public function destroy(Request $request, Persona $persona)
     {
         $estado = $request->input('status', 0);
@@ -227,18 +207,15 @@ class PersonaController extends Controller
             $persona->save();
             return response()->json(['success' => true]);
         }
-        return response()->json(['success' => false]);
     }
 
-    // Método para cambiar el estado de una persona (activo / inactivo)
     public function cambiarEstado($id)
     {
         $persona = Persona::find($id);
 
         if ($persona) {
-            $persona->estado = $persona->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $persona->estado = $persona->estado == 1 ? 2 : 1;
             $persona->save();
-
             return response()->json(['success' => true]);
         }
 
