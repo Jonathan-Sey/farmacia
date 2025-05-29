@@ -37,7 +37,15 @@
                 </div>
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">DPI:</span>
-                    <p class="text-gray-800">{{ $persona->fichasMedicas->first()->DPI ?? 'No especificado' }}</p>
+                    <p class="text-gray-800">
+                        @if($persona->rol == 2)
+                            {{-- Paciente: DPI de ficha médica --}}
+                            {{ $persona->fichasMedicas->first()->DPI ?? 'No especificado' }}
+                        @else
+                            {{-- Cliente: DPI directo en persona --}}
+                            {{ $persona->DPI ?? 'No especificado' }}
+                        @endif
+                    </p>
                 </div>
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">Tipo de Sangre:</span>
@@ -73,6 +81,20 @@
                                 <img src="{{ asset('storage/' . $ficha->receta_foto) }}" alt="Receta Médica" class="w-32 h-32 object-cover cursor-pointer rounded-md" onclick="openModal('{{ asset('storage/' . $ficha->receta_foto) }}')">
                             </div>
                         @endif
+
+                        <!-- Botones Editar y Eliminar -->
+                        <div class="mt-3 space-x-2">
+                            <a href="{{ route('fichas.edit', $ficha->id) }}" 
+                            class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+                                Editar
+                            </a>
+
+                            <a href="{{ route('fichas.delete', $ficha->id) }}"
+                            onclick="return confirm('¿Seguro que deseas eliminar esta ficha médica?')"
+                            class="inline-block px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700">
+                                Eliminar
+                            </a>
+                        </div>
                     </li>
                 @endforeach
             </ul>

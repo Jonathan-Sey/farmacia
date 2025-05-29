@@ -36,6 +36,7 @@ class UnionRolPestanaSeeder extends Seeder
             ['rol_id' => 1, 'pestana_id' => 19, 'orden' => 19],
             ['rol_id' => 1, 'pestana_id' => 20, 'orden' => 20],
             ['rol_id' => 1, 'pestana_id' => 21, 'orden' => 21],
+            ['rol_id' => 1, 'pestana_id' => 22, 'orden' => 22],
         ];
 
         DB::table('rol_pestana')->insert($data);
