@@ -10,6 +10,7 @@ use App\Models\Sucursal;
 use App\Models\Venta;
 use App\Models\Almacen;
 use App\Models\Bitacora;
+use App\Models\ReporteKardex;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -178,6 +179,17 @@ class VentaController extends Controller
                 'id_producto' => $idProducto,
                 'cantidad' => $arrayCantidad[$index],
                 'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+            ]);
+
+            $reportekardex = ReporteKardex::create([
+                'producto_id' => $idProducto,
+                'sucursal_id' => $request->id_sucursal,
+                'tipo_movimiento' => 'Venta',
+                'cantidad' => $arrayCantidad[$index],
+                'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
+                'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
+                'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                'fecha_movimiento' => now()
             ]);
         }
 
