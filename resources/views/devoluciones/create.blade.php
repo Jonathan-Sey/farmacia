@@ -204,8 +204,40 @@
 @push('js')
 
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/obtenerUsuario.js"></script>
+    <script>
+        //uso del select2 para Ventas
+        $(document).ready(function(){
+            $('.select2-sucursal').select2({
+                width: '100%',
+                placeholder: "Buscar Venta",
+                allowClear: true
+            });
+        // pocicionar el cursor en el input para buscar producto
+        $('.select2-sucursal').on('select2-sucursal:open', function() {
+        document.querySelector('.select2-search__field').focus();
+        });
+
+        //uso del select2 para proveedores
+            $('.select2-producto').select2({
+                width: '100%',
+                placeholder: "Buscar producto",
+                allowClear: true
+            });
+        // pocicionar el cursor en el input para buscar producto
+        $('.select2-producto').on('select2-producto:open', function() {
+        document.querySelector('.select2-search__field').focus();
+        });
+    });
+
+    </script>
 
 <script>
+
+
     $(document).ready(function() {
         const ventas = $('#id_venta');
         const personaInput = $('#id_persona');
