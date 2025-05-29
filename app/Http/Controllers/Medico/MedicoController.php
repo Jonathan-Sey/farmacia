@@ -38,12 +38,12 @@ class MedicoController extends Controller
 
 
     /**
-     * Guardar un nuevo médico y sus horarios en la base de datos.
+         * Guardar un nuevo médico y sus horarios en la base de datos.
      */
     public function store(Request $request)
     {
         // Validación de los datos
-        $request->validate([
+        $request->validate([ 
             'id_usuario' => 'required|exists:users,id',
             'especialidad' => 'required|string|max:75',
             'numero_colegiado' => 'required|string|max:10',

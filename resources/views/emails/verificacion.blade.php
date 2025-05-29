@@ -1,91 +1,151 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>verificacion de devoluciones</title>
-
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Autorización de Devolución</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
       margin: 0;
       padding: 20px;
-      background-color: #f4f4f4;
-    }
-
-    h1 {
       color: #333;
     }
 
+    .container {
+      max-width: 700px;
+      margin: auto;
+      background-color: #ffffff;
+      padding: 30px 25px;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    h1 {
+      font-size: 24px;
+      color: #0056b3;
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
     p {
-      color: #555;
+      font-size: 15px;
+      line-height: 1.6;
+      margin: 10px 0;
+    }
+
+    .info-block {
+      background-color: #f8f9fa;
+      padding: 15px;
+      border-left: 4px solid #007BFF;
+      margin-bottom: 20px;
+      border-radius: 6px;
+    }
+
+    .info-block strong {
+      display: inline-block;
+      min-width: 150px;
+    }
+
+    .table-container {
+      overflow-x: auto;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 15px;
+      font-size: 14px;
     }
 
-    th,
-    td {
-      border: 1px solid #ddd;
-      padding: 8px;
+    th, td {
+      padding: 12px 10px;
+      border: 1px solid #e0e0e0;
       text-align: left;
     }
 
     th {
-      background-color: #f2f2f2;
+      background-color: #007BFF;
+      color: #ffffff;
     }
 
-    a {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 10px 15px;
-      background-color: #007BFF;
+    tbody tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+
+    .btn {
+      display: block;
+      margin: 30px auto 0;
+      padding: 14px 30px;
+      background-color: #28a745;
       color: white;
+      border: none;
+      border-radius: 6px;
+      text-align: center;
       text-decoration: none;
-      border-radius: 5px;
+      font-weight: bold;
+      font-size: 15px;
+      transition: background-color 0.3s ease;
     }
 
-    a:hover {
-      background-color: #0056b3;
+    .btn:hover {
+      background-color: #218838;
     }
 
-    table th {
-      background-color: #007BFF;
-      color: white;
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      .info-block strong {
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      table {
+        font-size: 13px;
+      }
     }
   </style>
 </head>
-
 <body>
-  <h1>Autorización de devolución</h1>
-  <p>Se ha creado una devolución con ID: {{ $devolucion->id }}</p>
-  <p>Detalles de la devolucion</p>
-  <table>
-    <thead>
-      <th>Nombre del producto</th>
-      <th>Cantidad</th>
-      <th>Monto</th>
-      <th>Motivo</th>
-      <th>Observaciones</th>
-    </thead>
-    <tbody>
-    @foreach ($devoluciones as $proveedor)
-      <tr>
-        <td>{{ $proveedor->productos->nombre }}</td>
-        <td>{{ $proveedor->cantidad }}</td>
-        <td>{{ $proveedor->monto }}</td>
-        <td>{{ $proveedor->motivo }}</td>
-        <td>{{ $proveedor->observaciones }}</td>
-      </tr>
-      @endforeach
-    </tbody>
-  </table>
+  <div class="container">
+    <h1>Autorización de Devolución</h1>
 
-  <p><a href="{{ $url }}">Autorizar devolución</a></p>
+    <div class="info-block">
+      <p><strong>ID de devolución:</strong> {{ $devolucion->id }}</p>
+      <p><strong>Motivo de la devolución:</strong> {{ $devolucion->motivo }}</p>
+      <p><strong>Fecha de solicitud:</strong> {{ $devolucion->created_at }}</p>
+    </div>
+
+    <p><strong>Productos incluidos en esta devolución:</strong></p>
+
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th>Cantidad</th>
+
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach ($devolucionesDetalles as $detalle)
+          <tr>
+            <td>{{ $detalle->producto->nombre ?? 'Producto no disponible' }}</td>
+            <td>{{ $detalle->cantidad }}</td>
+
+            <td>Q.{{ number_format($detalle->subtotal, 2) }}</td>
+      
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+
+    <a class="btn" href="{{ $url }}">Autorizar devolución</a>
+  </div>
 </body>
-
 </html>

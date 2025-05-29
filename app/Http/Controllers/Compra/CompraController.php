@@ -10,6 +10,7 @@ use App\Models\Inventario;
 use App\Models\Lote;
 use App\Models\Producto;
 use App\Models\Proveedor;
+use App\Models\ReporteKardex;
 use App\Models\User;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
@@ -44,6 +45,12 @@ class CompraController extends Controller
         // $proveedores = Proveedor::whereNotIn('estado',[0,2])->get();
         $proveedores = Proveedor::activos()->get();
         $productos = Producto::activos()->where('tipo',1)->get();
+
+        // nuevo valo, esto para mandar la url de la img
+        $productos->each(function ($producto){
+            $producto->imagen_url = asset('uploads/' . $producto->imagen);
+        });
+
         return view('compra.create',compact('proveedores','productos'));
     }
 
@@ -111,6 +118,22 @@ class CompraController extends Controller
                     //'estado' => 1,
                 ]);
 
+                //Cantidad anterior de los lotes
+
+                $lotes = Lote::where('id_producto', $idPoducto)->get(); 
+                $cantidad =$lotes->sum('cantidad');
+
+                $reportekardex = ReporteKardex::create([
+                    'producto_id' => $idPoducto,    
+                    'sucursal_id' => 1,
+                    'tipo_movimiento' => 'Compra',
+                    'cantidad' => 0,
+                    'Cantidad_anterior' => $cantidad, // Cantidad antes del traslado
+                    'Cantidad_nueva' =>$cantidad + $arrayCantidad[$index], // Cantidad después del la compra
+                    'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                    'fecha_movimiento' => now()
+                ]);
+
                     // Verificar si ya existe un registro en el inventario para este producto y lote
                 $inventarioExistente = Inventario::where('id_producto', $idPoducto)
                 ->where('id_lote', $lote->id)
@@ -150,7 +173,7 @@ class CompraController extends Controller
                 'name_usuario' => $usuario->name,
                 'accion' => 'Creación',
                 'tabla_afectada' => 'Compras',
-                'detalles' => "Se creó la compra: {$compra->numero_compra}", 
+                'detalles' => "Se creó la compra: {$compra->numero_compra}",
                 'fecha_hora' => now(),
             ]);
 
