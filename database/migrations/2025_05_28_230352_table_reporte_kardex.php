@@ -18,7 +18,7 @@ class TableReporteKardex extends Migration
             $table->foreignId('producto_id')->constrained('producto')->onDelete('cascade');
             $table->foreignId('sucursal_id')->constrained('sucursal')->onDelete('cascade');
             $table->string('tipo_movimiento');
-            $table->decimal('cantidad', 10, 2);
+            $table->integer('cantidad');
             $table->string('Cantidad_anterior');
             $table->string('Cantidad_nueva');
             $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
