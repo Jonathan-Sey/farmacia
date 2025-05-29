@@ -28,6 +28,7 @@
                         placeholder="Ingrese el porcentaje"
                         value="{{ old('porcentaje') }}"
                         min="0"
+                        max="30"
                         step="0.01"
                     />
                 </div>
@@ -63,8 +64,20 @@
     document.getElementById('porcentaje').addEventListener('input', function() {
         let precioActual = parseFloat(document.getElementById('precio_actual').textContent);
         let porcentaje = parseFloat(this.value);
+        // Si el porcentaje es mayor a 30, se limita y se muestra una alerta
+        if (porcentaje > 30) {
+            porcentaje = 30;
+            this.value = 30;
+            Swal.fire({
+                icon: 'warning',
+                title: 'Límite alcanzado',
+                text: 'El porcentaje no puede ser mayor al 30%.',
+                timer: 2000,
+                showConfirmButton: false
+            });
+        }
 
-        // Verificamos si el porcentaje es válido y calculamos el nuevo precio
+        // Se verifica si el porcentaje es válido y calculamos el nuevo precio
         if (!isNaN(porcentaje)) {
             let nuevoPrecio = precioActual + (precioActual * porcentaje / 100);
             document.getElementById('nuevo_precio').value = nuevoPrecio.toFixed(2); // Mostrar con 2 decimales

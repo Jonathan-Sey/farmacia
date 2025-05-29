@@ -6,68 +6,89 @@ use App\Http\Controllers\Controller;
 use App\Models\Bitacora;
 use App\Models\Persona;
 use App\Models\User;
+use App\Models\FichaMedica;
 use Illuminate\Http\Request;
+use App\Models\DetalleMedico;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use SoftlogicGT\ValidationRulesGT\Rules\Dpi;
 
 class PersonaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        $personas = Persona::select('id','nombre','nit','rol','telefono','estado')
-        ->where('estado','!=','0')
-        ->get();
-        return view('persona.index',compact('personas'));
+        $personas = Persona::select('id', 'nombre', 'nit', 'rol', 'telefono', 'estado')
+            ->where('estado', '!=', '0')
+            ->get();
+        return view('persona.index', compact('personas'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        return view('persona.create');
+        $medicos = DetalleMedico::all();
+        return view('persona.create', compact('medicos'));
     }
 
+     protected function crearPersona(Request $request)
+     {
+         $this->validate($request, [
+             'nombre' => 'required|string|max:45|unique:persona,nombre',
+             'nit' => 'max:10|unique:persona,nit',
+             'telefono' => 'max:20',
+         ]);
+         $rol = $request->input('rol') == 2 ? 2 : 1;
 
-    protected function crearPersona(Request $request)
+         return Persona::create([
+             'nombre' => $request->nombre,
+             'nit' => $request->nit,
+             'rol' => $rol,
+             'telefono' => $request->telefono,
+             'fecha_nacimiento' => $request->fecha_nacimiento,
+             'limite_compras' => 5,       // Valor por defecto
+             'periodo_control' => 30,     // Valor por defecto
+             'restriccion_activa' => false // Valor por defecto
+         ]);
+     }
+
+    public function fichasMedicas()
     {
-        $this->validate($request, [
-            'nombre' => 'required|string|max:45|unique:persona,nombre',
-            'nit' => 'max:10|unique:persona,nit',
-            'telefono' => 'max:20',
-        ]);
-        $rol = $request->input('rol') == 2 ? 2 : 1;  // Rol 1 para cliente, 2 para paciente
-
-        return Persona::create([
-            'nombre' => $request->nombre,
-            'nit' => $request->nit,
-            'rol' => $rol,
-            'telefono' => $request->telefono,
-            'fecha_nacimiento' => $request->fecha_nacimiento,
-        ]);
+        return $this->hasMany(FichaMedica::class);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        $persona = $this->crearPersona($request);
+        $request->validate([
+        'nombre' => 'required|string|max:255',
+        'nit' => 'nullable|string|max:10|unique:persona,nit',
+        'telefono' => 'nullable|string|max:20',
+        'fecha_nacimiento' => 'nullable|date',
+        'rol' => 'required|in:1,2',
+        'apellido_paterno' => 'required_if:rol,2|string|max:100',
+        'apellido_materno' => 'required_if:rol,2|string|max:100',
+        'sexo' => 'required_if:rol,2|in:Hombre,Mujer',
+        'dpi' => ['required_if:rol,2', new Dpi()],
+        'habla_lengua' => 'required_if:rol,2|in:Sí,No',
+        'tipo_sangre' => 'nullable|string|max:5',
+        'direccion' => 'nullable|string|max:255'
+    ]);
+           $persona = $this->crearPersona($request);
+        //   // Establecer valores por defecto
+        //     $persona->update([
+        //         'limite_compras' => 5,       // Valor por defecto
+        //         'periodo_control' => 30,      // Valor por defecto
+        //         'restriccion_activa' => false // Valor por defecto
+        //     ]);
 
-          // Establecer valores por defecto
-            $persona->update([
-                'limite_compras' => 5,       // Valor por defecto
-                'periodo_control' => 30,      // Valor por defecto
-                'restriccion_activa' => false // Valor por defecto
-            ]);
+            // $persona = Persona::create([
+            //     'nombre' => $request->nombre,
+            //     'nit' => $request->nit,
+            //     'telefono' => $request->telefono,
+            //     'fecha_nacimiento' => $request->fecha_nacimiento,
+            //     'rol' => $request->rol,
+            //     'limite_compras' => 5,       // Valor por defecto
+            //     'periodo_control' => 30,      // Valor por defecto
+            //     'restriccion_activa' => false // Valor por defecto
+            // ]);
 
         $usuario=User::find($request->idUsuario);
         Bitacora::create([
@@ -77,35 +98,30 @@ class PersonaController extends Controller
                 'tabla_afectada' => 'Personas',
                 'detalles' => "Se creó la persona: {$request->nombre}", //detalles especificos
                 'fecha_hora' => now(),
-        ]);
+            ]);
 
+        if ($persona->rol == 2) {
+            FichaMedica::create([
+                'persona_id' => $persona->id,
+                'nombre' => $request->nombre,
+                'apellido_paterno' => $request->apellido_paterno,
+                'apellido_materno' => $request->apellido_materno,
+                'sexo' => $request->sexo,
+                'fecha_nacimiento' => $request->fecha_nacimiento,
+                'DPI' => $request->dpi,
+                'habla_lengua' => $request->habla_lengua,
+                'tipo_sangre' => $request->tipo_sangre,
+                'direccion' => $request->direccion,
+                'telefono' => $request->telefono,
+                'foto' => $request->foto,
+                'diagnostico' => $request->diagnostico,
+                'consulta_programada' => $request->consulta_programada,
+                'receta_foto' => $request->receta_foto,
+                'detalle_medico_id' => $request->detalle_medico_id,
+            ]);
+        }
 
-        return redirect()->route('personas.index')->with('success', 'Registro creado correctamente.');
-
-        // $this -> validate($request,[
-        //     'nombre' => 'required|string|max:45',
-        //     'nit' => 'max:10',
-        //     'telefono' => 'max:20',
-
-        // ]);
-        // $rol = $request->has('rol') ? 2 : 1;
-
-        // Persona::create([
-        //     'nombre' => $request->nombre,
-        //     'nit' => $request->nit,
-        //     'rol' => $rol,
-        //     'telefono' => $request->telefono,
-        //    'fecha_nacimiento' => $request->fecha_nacimiento,
-        // ]);
-
-        // return redirect()->route('personas.index')->with('success', 'Registro creado correctamente.');
-        // return response()->json([
-        //     'success' => true,
-        //     'persona' => [
-        //         'id' => $persona->id,
-        //         'nombre' => $persona->nombre,
-        //     ],
-        // ]);
+        return redirect()->route('personas.index')->with('success', 'Persona registrada correctamente');
     }
     // Nuevos métodos para restricciones
     public function obtenerRestricciones(Persona $persona)
@@ -144,10 +160,7 @@ class PersonaController extends Controller
 
     public function storeFromVentas(Request $request)
     {
-
         $persona = $this->crearPersona($request);
-            // Obtener la lista actualizada de personas
-         //$personas = Persona::where('estado', '!=', '0')->get();
 
         return response()->json([
             'success' => true,
@@ -161,108 +174,95 @@ class PersonaController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
-        //
+        $persona = Persona::with('fichasMedicas')->findOrFail($id);
+        return view('persona.show', compact('persona'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Persona $persona)
     {
-        return view('persona.edit',compact('persona'));
+        $fichaMedica = $persona->fichasMedicas()->first(); // Obtener ficha médica si existe
+        return view('persona.edit', compact('persona', 'fichaMedica'));
+    }
+public function update(Request $request, Persona $persona)
+{
+    Log::info('Iniciando update de persona', $request->all());
+
+    $rules = [
+        'nombre' => 'required|string|max:255|unique:persona,nombre,' . $persona->id,
+        'rol' => 'required|in:1,2',
+        'telefono' => 'nullable|string|max:20',
+        'fecha_nacimiento' => 'nullable|date',
+        'nit' => 'nullable|string|max:10|unique:persona,nit,' . $persona->id,
+    ];
+
+    if ($request->rol == 2) {
+        $rules += [
+            'apellido_paterno' => 'required|string|max:100',
+            'apellido_materno' => 'required|string|max:100',
+            'sexo' => 'required|in:Hombre,Mujer',
+            'dpi' => ['required', new Dpi()],
+            'habla_lengua' => 'required|in:Sí,No',
+            'tipo_sangre' => 'nullable|string|max:5',
+            'direccion' => 'nullable|string|max:255'
+        ];
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Persona $persona)
-    {
-        // $this->validate($request,[
-        //     'nombre' => 'required|string|max:45',
-        //     'nit' => 'string|max:10',
-        //     'telefono' => 'string|max:20',
-        //     'fecha_nacimiento'=>'date',
-        // ]);
+    $validatedData = $request->validate($rules);
 
-        $this -> validate($request,[
-            'nombre' => 'required|string|max:45',
-            'nit' => 'max:10',
-            'telefono' => 'max:20',
+    DB::beginTransaction();
+    try {
+        $persona->nombre = $validatedData['nombre'];
+        $persona->nit = $validatedData['nit'] ?? null;
+        $persona->telefono = $validatedData['telefono'] ?? null;
+        $persona->fecha_nacimiento = $validatedData['fecha_nacimiento'] ?? null;
+        $persona->rol = $validatedData['rol'];
+        $persona->save();
 
-        ]);
+        Log::info('Datos básicos actualizados', $persona->toArray());
 
-        $datosActualizados = $request->only(['nombre','nit','telefono','rol','fecha_nacimiento']);
-        $datosSinCambio = $persona->only(['nombre','nit','telefono','rol','fecha_nacimiento']);
+        if ($validatedData['rol'] == 2) {
+            $persona->fichasMedicas()->updateOrCreate(
+                ['persona_id' => $persona->id],
+                [
+                    'apellido_paterno' => $validatedData['apellido_paterno'],
+                    'apellido_materno' => $validatedData['apellido_materno'],
+                    'sexo' => $validatedData['sexo'],
+                    'DPI' => $validatedData['dpi'],
+                    'habla_lengua' => $validatedData['habla_lengua'],
+                    'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
+                    'direccion' => $validatedData['direccion'] ?? null
+                ]
+            );
 
-        // Validar el cambio de rol
-        $nuevoRol = $request->has('rol') ? 2 : 1;
-        if ($persona->rol != $nuevoRol) {
-            // Permitir cambio de cliente a paciente (1 a 2)
-            if ($persona->rol == 1 && $nuevoRol == 2) {
-                $datosActualizados['rol'] = 2;
-            }
-            // No permitir cambio de paciente a cliente (2 a 1)
-            elseif ($persona->rol == 2 && $nuevoRol == 1)
-            {
-                return redirect()->route('personas.edit', $persona->id)
-                ->withErrors(['rol' => 'No se permite cambiar el rol de paciente a cliente.']);
-            }
+            Log::info('Ficha médica actualizada o creada para paciente');
         }
 
-        // Actualizar el rol
-        $datosActualizados['rol'] = $nuevoRol;
+        DB::commit();
+        Log::info('Fin del proceso de actualización OK');
 
-        if($datosActualizados != $datosSinCambio){
-            $persona->update($datosActualizados);
-            return redirect()->route('personas.index')->with('success','¡Persona Actualizado!');
-        }
+        return redirect()->route('personas.index')->with('success', 'Datos actualizados correctamente');
 
-        $usuario=User::find($request->idUsuario);
-        Bitacora::create([
-                'id_usuario' => $request->idUsuario,
-                'name_usuario' =>$usuario->name,
-                'accion' => 'Actualización',
-                'tabla_afectada' => 'Personas',
-                'detalles' => "Se actualizo la persona: {$request->nombre}", //detalles especificos
-                'fecha_hora' => now(),
-        ]);
-        return redirect()->route('personas.index');
-
+    } catch (\Exception $e) {
+        DB::rollBack();
+        Log::error('Error al actualizar persona', ['error' => $e->getMessage()]);
+        return back()->with('error', 'Error al actualizar: ' . $e->getMessage());
     }
+}
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
     public function destroy(Request $request, Persona $persona)
     {
         $estado = $request->input('status', 0);
-        if($estado == 0){
+        if ($estado == 0) {
             $persona->update(['estado' => 0]);
-            return redirect()->route('personas.index')->with('success','Persona eliminado con éxito!');
-        }else{
+            return redirect()->route('personas.index')->with('success', 'Persona eliminada con éxito!');
+        } else {
             $persona->estado = $estado;
             $persona->save();
             return response()->json(['success' => true]);
         }
-        return response()->json(['success'=> false]);
     }
 
     public function cambiarEstado($id)
@@ -270,9 +270,8 @@ class PersonaController extends Controller
         $persona = Persona::find($id);
 
         if ($persona) {
-            $persona->estado = $persona->estado == 1 ? 2 : 1; // Cambiar el estado (activo <-> inactivo)
+            $persona->estado = $persona->estado == 1 ? 2 : 1;
             $persona->save();
-
             return response()->json(['success' => true]);
         }
 

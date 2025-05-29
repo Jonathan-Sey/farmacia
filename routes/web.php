@@ -25,15 +25,18 @@ use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
 //use App\Http\Controllers\Traslado\TrasladoController;
 use App\Http\Controllers\solicitud\solicitudController;
-
+use App\Http\Controllers\FichaMedicaController;
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
 use App\Imports\ProductosImport;
 use App\Mail\validacion;
 use App\Models\Devoluciones;
+
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -119,7 +122,6 @@ Route::get('/productos/{id}/precio-porcentaje', [ProductoController::class, 'pre
 Route::patch('/productos/{id}/actualizar-precio', [ProductoController::class, 'actualizarPrecioPorcentaje'])->name('productos.actualizarprecio');
 Route::patch('/almacen/{id}/alerta-stock', [AlmacenController::class, 'updateAlertStock'])->name('almacenes.updateAlertStock');
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
-Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
 Route::resource('lotes', LoteController::class)->parameters(['lote' => 'lote']);
 Route::resource('Reporte_ventas', ReporteVentasController::class)->parameters(['Reporte_ventas' => 'Reporte_ventas']);
@@ -174,6 +176,11 @@ Route::get('/devoluciones/aceptar', [devolucionesController::class, 'aceptar'])-
 //NOTIFICACIONES
 Route::get('/notificaciones', [notificacionesController::class, 'index'])->name('notificaciones.index');
 Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])->name('notificaciones.destroy');
+Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
+Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
+Route::get('personas/{id}', [PersonaController::class, 'show'])->name('persona.show');
+Route::resource('personas', PersonaController::class);
+
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 // Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
