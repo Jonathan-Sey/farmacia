@@ -128,8 +128,13 @@ Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.
 
 Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
 Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
-Route::get('personas/{id}', [PersonaController::class, 'show'])->name('persona.show');
 Route::resource('personas', PersonaController::class);
+
+Route::get('personas/{persona_id}/fichas/{id}/edit', [FichaMedicaController::class, 'edit'])->name('fichas.edit');
+Route::put('personas/{persona_id}/fichas/{id}', [FichaMedicaController::class, 'update'])->name('fichas.update');
+
+Route::get('personas/fichas/{id}/delete', [FichaMedicaController::class, 'destroyConfirm'])->name('fichas.delete');
+Route::delete('personas/fichas/{id}', [FichaMedicaController::class, 'destroy'])->name('fichas.destroy');
 
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);

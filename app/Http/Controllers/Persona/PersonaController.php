@@ -34,6 +34,7 @@ class PersonaController extends Controller
         $this->validate($request, [
             'nombre' => 'required|string|max:45|unique:persona,nombre',
             'nit' => 'max:10|unique:persona,nit',
+            'dpi' => ['required', new Dpi()],
             'telefono' => 'max:20',
         ]);
         $rol = $request->input('rol') == 2 ? 2 : 1;
@@ -41,6 +42,7 @@ class PersonaController extends Controller
         return Persona::create([
             'nombre' => $request->nombre,
             'nit' => $request->nit,
+            'DPI' => $request->dpi,
             'rol' => $rol,
             'telefono' => $request->telefono,
             'fecha_nacimiento' => $request->fecha_nacimiento,
@@ -63,7 +65,7 @@ class PersonaController extends Controller
         'apellido_paterno' => 'required_if:rol,2|string|max:100',
         'apellido_materno' => 'required_if:rol,2|string|max:100',
         'sexo' => 'required_if:rol,2|in:Hombre,Mujer',
-        'dpi' => ['required_if:rol,2', new Dpi()],
+        'dpi' => ['required', new Dpi()],
         'habla_lengua' => 'required_if:rol,2|in:Sí,No',
         'tipo_sangre' => 'nullable|string|max:5',
         'direccion' => 'nullable|string|max:255'
@@ -73,6 +75,7 @@ class PersonaController extends Controller
         $persona = Persona::create([
             'nombre' => $request->nombre,
             'nit' => $request->nit,
+            'DPI' => $request->dpi,
             'telefono' => $request->telefono,
             'fecha_nacimiento' => $request->fecha_nacimiento,
             'rol' => $request->rol,
