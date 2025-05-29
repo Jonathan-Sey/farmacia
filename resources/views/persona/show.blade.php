@@ -7,10 +7,8 @@
     <div class="bg-white p-6 rounded-xl shadow-md mb-6">
         <h2 class="text-xl font-semibold text-gray-700 mb-4">Datos Personales</h2>
 
-        <!-- Contenedor de todos los datos de la persona -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-                <!-- Datos permanentes (nombre, NIT, teléfono, etc.) -->
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">Nombre:</span>
                     <p class="text-gray-800">{{ $persona->nombre }}</p>
@@ -31,33 +29,39 @@
                     <span class="font-medium text-gray-600 w-1/3">Estado:</span>
                     <p class="text-gray-800">{{ $persona->estado == 1 ? 'Activo' : 'Inactivo' }}</p>
                 </div>
+
+                {{-- Mostrar Sexo solo si hay ficha médica --}}
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">Sexo:</span>
-                    <p class="text-gray-800">{{ $persona->fichasMedicas->first()->sexo ?? 'No especificado' }}</p>
+                    <p class="text-gray-800">
+                        {{ optional($persona->fichasMedicas->first())->sexo ?? 'No especificado' }}
+                    </p>
                 </div>
+
+                {{-- DPI según rol --}}
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">DPI:</span>
                     <p class="text-gray-800">
                         @if($persona->rol == 2)
-                            {{-- Paciente: DPI de ficha médica --}}
-                            {{ $persona->fichasMedicas->first()->DPI ?? 'No especificado' }}
+                            {{ optional($persona->fichasMedicas->first())->DPI ?? 'No especificado' }}
                         @else
-                            {{-- Cliente: DPI directo en persona --}}
                             {{ $persona->DPI ?? 'No especificado' }}
                         @endif
                     </p>
                 </div>
+
+                {{-- Otros campos similares --}}
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">Tipo de Sangre:</span>
-                    <p class="text-gray-800">{{ $persona->fichasMedicas->first()->tipo_sangre ?? 'No especificado' }}</p>
+                    <p class="text-gray-800">{{ optional($persona->fichasMedicas->first())->tipo_sangre ?? 'No especificado' }}</p>
                 </div>
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">Habla Lengua:</span>
-                    <p class="text-gray-800">{{ $persona->fichasMedicas->first()->habla_lengua ?? 'No especificado' }}</p>
+                    <p class="text-gray-800">{{ optional($persona->fichasMedicas->first())->habla_lengua ?? 'No especificado' }}</p>
                 </div>
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">Dirección:</span>
-                    <p class="text-gray-800">{{ $persona->fichasMedicas->first()->direccion ?? 'No especificado' }}</p>
+                    <p class="text-gray-800">{{ optional($persona->fichasMedicas->first())->direccion ?? 'No especificado' }}</p>
                 </div>
             </div>
         </div>
@@ -82,16 +86,16 @@
                             </div>
                         @endif
 
-                        <!-- Botones Editar y Eliminar -->
                         <div class="mt-3 space-x-2">
-                            <a href="{{ route('fichas.edit', $ficha->id) }}" 
-                            class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+                            {{-- Enlaces con parámetros completos para evitar error --}}
+                            <a href="{{ route('fichas.edit', ['persona_id' => $persona->id, 'id' => $ficha->id]) }}" 
+                               class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
                                 Editar
                             </a>
 
-                            <a href="{{ route('fichas.delete', $ficha->id) }}"
-                            onclick="return confirm('¿Seguro que deseas eliminar esta ficha médica?')"
-                            class="inline-block px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700">
+                            <a href="{{ route('fichas.delete', ['persona_id' => $persona->id, 'id' => $ficha->id]) }}"
+                               onclick="return confirm('¿Seguro que deseas eliminar esta ficha médica?')"
+                               class="inline-block px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700">
                                 Eliminar
                             </a>
                         </div>
@@ -100,7 +104,7 @@
             </ul>
         @endif
 
-        <a href="{{ route('fichas.create', $persona->id) }}">
+        <a href="{{ route('fichas.create', ['persona_id' => $persona->id]) }}">
             <button type="button" class="w-full sm:w-auto text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 px-6 py-2 rounded-md text-sm font-semibold mt-4">
                 Agregar Ficha Médica
             </button>
@@ -114,7 +118,6 @@
 
     </div>
 
-    <!-- Modal para mostrar la imagen en tamaño grande -->
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="bg-white p-6 rounded-md max-w-4xl w-full">
             <span class="text-white text-2xl cursor-pointer absolute top-4 right-4" onclick="closeModal()">&times;</span>
@@ -128,7 +131,6 @@
             </div>
         </div>
     </div>
-
 </div>
 
 <script>
