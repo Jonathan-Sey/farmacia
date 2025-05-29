@@ -161,6 +161,11 @@ Route::get('/devoluciones/aceptar', [devolucionesController::class, 'aceptar'])-
 Route::get('/notificaciones', [notificacionesController::class, 'index'])->name('notificaciones.index');
 Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])->name('notificaciones.destroy');
 
+//reporte productos
+Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProducto'])->name('reporte.productos');
+
+Route::get('/reporte-inventario', [ReporteVentasController::class, 'generateReportProducto'])->name('inventario.reporte');
+
 //correos 
 
 
