@@ -13,7 +13,7 @@ use App\Models\Notificaciones;
 use App\Models\Persona;
 use App\Models\Sucursal;
 use App\Models\Venta;
-use App\Models\producto;
+use App\Models\Producto;
 use App\Models\Requisicion;
 use App\Models\User;
 use Carbon\Carbon;

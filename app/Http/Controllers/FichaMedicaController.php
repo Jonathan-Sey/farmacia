@@ -5,39 +5,44 @@ namespace App\Http\Controllers;
 use App\Models\Persona;
 use App\Models\FichaMedica;
 use Illuminate\Http\Request;
-
+use App\Models\DetalleMedico;
 class FichaMedicaController extends Controller
 {
     // Mostrar el formulario para crear una ficha médica para una persona existente
     public function create($persona_id)
     {
-        $persona = Persona::findOrFail($persona_id); // Encontrar la persona por ID
-        return view('fichas.create', compact('persona'));
+        $persona = Persona::findOrFail($persona_id);
+        $medicos = DetalleMedico::with('medico')
+                    ->activos()
+                    ->get(); // Encontrar la persona por ID
+        return view('fichas.create', compact('persona' , 'medicos'));
     }
 
     // Almacenar la nueva ficha médica
     public function store(Request $request, $persona_id)
     {
-        $request->validate([
-            'diagnostico' => 'required|string',
+        // Validar los datos
+        $data = $request->validate([
+            'detalle_medico_id'   => 'required|exists:detalle_medico,id',
+            'diagnostico'         => 'required|string',
             'consulta_programada' => 'required|date',
-            'receta_foto' => 'nullable|image|max:1024',
+            'receta_foto'         => 'nullable|image|max:5120',
         ]);
 
         // Subir la foto de la receta médica si existe
-        $receta_foto = null;
         if ($request->hasFile('receta_foto')) {
-            $receta_foto = $request->file('receta_foto')->store('recetas', 'public');
+            $data['receta_foto'] = $request->file('receta_foto')->store('recetas', 'public');
         }
 
-        // Crear la nueva ficha médica asociada a la persona
-        FichaMedica::create([
-            'persona_id' => $persona_id,
-            'diagnostico' => $request->diagnostico,
-            'consulta_programada' => $request->consulta_programada,
-            'receta_foto' => $receta_foto,
-        ]);
+        // Agregar persona_id al array validado
+        $data['persona_id'] = $persona_id;
 
-        return redirect()->route('personas.show', $persona_id)->with('success', 'Ficha médica agregada correctamente.');
+        // Crear la ficha médica
+        FichaMedica::create($data);
+
+        return redirect()
+            ->route('personas.show', $persona_id)
+            ->with('success', 'Ficha médica agregada correctamente.');
     }
+
 }
