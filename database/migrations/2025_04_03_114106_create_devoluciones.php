@@ -16,16 +16,13 @@ class CreateDevoluciones extends Migration
         Schema::create('devoluciones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('venta_id')->constrained('venta')->onDelete('cascade');
-            $table->foreignId('producto_id')->constrained('producto')->onDelete('cascade');
-            $table->integer('cantidad');
-            $table->decimal('monto', 10, 2);
-            $table->string('motivo')->nullable();
-            $table->boolean('estado')->default(false);
-            $table->string('observaciones')->nullable();
             $table->foreignId('usuario_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('persona_id')->constrained('persona')->onDelete('cascade');
             $table->foreignId('sucursal_id')->constrained('sucursal')->onDelete('cascade');
-            $table->date('fecha_caducidad')->nullable();
+            $table->decimal('total', 10, 2);
+            $table->string('motivo')->nullable();
+            $table->string('observaciones')->nullable();
+            $table->boolean('estado')->default(false);
             $table->date('fecha_devolucion');
             $table->timestamps();
         });

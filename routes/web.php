@@ -34,7 +34,7 @@ use App\Models\Devoluciones;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Mail;
+
 
 
 
@@ -165,6 +165,20 @@ Route::post('/personas/actualizar-restricciones', [PersonaController::class, 'ac
 
 
 //productos vencidos
+Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
+Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
+Route::get('personas/{id}', [PersonaController::class, 'show'])->name('personas.show');
+// Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
+// Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
+// Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
+// Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+// Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
+// Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
+
+Route::get('/devoluciones/autorizar/{id}/{id2}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
+Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVenta']);
+
+//productos vencidos
 Route::get('/productos-vencidos', [productosVencidosController::class, 'index'])->name('productos.vencidos');
 
 //devoluciones
@@ -188,8 +202,10 @@ Route::resource('personas', PersonaController::class);
 // Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
 // Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 
-Route::get('/devoluciones/autorizar/{id}/{id2}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
-Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVenta']);
+//reporte productos
+Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProducto'])->name('reporte.productos');
+
+Route::get('/reporte-inventario', [ReporteVentasController::class, 'generateReportProducto'])->name('inventario.reporte');
 
 //correos
 

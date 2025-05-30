@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Devoluciones')
+@section('titulo','Personas')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -10,7 +10,7 @@
 @endpush
 
 @section('contenido')
-    <a href="{{ route('devoluciones.create') }}">
+    <a href="{{ route('personas.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
@@ -20,49 +20,36 @@
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Numero de venta</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >motivo</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >observaciones</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >usuario</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >persona</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Sucursal</th>
+                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Usuario</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Tipo de movimiento</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Cantidad anterior</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Cantidad nueva</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >estado</th>
-                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
+                   
+            
                 </tr>
             </thead>
         </x-slot>
 
         <x-slot name="tbody">
             <tbody>
-                @foreach ($devoluciones as $devolucion)
+                @foreach ($reporte as $reportes)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$devolucion->id}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$devolucion->venta_id}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$devolucion->motivo}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$devolucion->observaciones}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$devolucion->usuario->name}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$devolucion->sucursal->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$devolucion->persona->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$devolucion->fecha_devolucion}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->id}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->producto->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->sucursal->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->usuario->name}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->tipo_movimiento}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->cantidad}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->Cantidad_anterior}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->Cantidad_nueva}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->fecha_movimiento}}</td>
 
-                    <td class=" px-6 py-4 whitespace-nowrap text-center">
-                        <a class="estado" data-id="{{ $devolucion->id}}" data-estado="{{$devolucion->estado}}">
-                            @if ($devolucion->estado == 1)
-                                <span class="text-green-500 font-bold">Activo</span>
-                            @else
-                                <span class="text-red-500 font-bold">Inactivo</span>
-                            @endif
-                        </a>
-                    </td>
-
-                    <td>
-                       <a href="{{ route('devoluciones.show', $devolucion->id) }}">Ver</a>
-                    </td>
-
-
+                   
                 </tr>
-
                 @endforeach
             </tbody>
         </x-slot>
@@ -97,12 +84,6 @@
             order: [5,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
-                 paginate: {
-                     first: `<i class="fa-solid fa-backward"></i>`,
-                     previous: `<i class="fa-solid fa-caret-left">`,
-                     next: `<i class="fa-solid fa-caret-right"></i>`,
-                     last: `<i class="fa-solid fa-forward"></i>`
-                 }
             },
             layout: {
                 topStart: {
@@ -113,7 +94,8 @@
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 7 },
+                { responsivePriority: 2, targets: 6 },
+
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -151,7 +133,6 @@
         });
 </script>
 @endif
-
 {{-- cambio de estado --}}
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -176,7 +157,7 @@
                     if (result.isConfirmed) {
                         // Realizar la solicitud Ajax para cambiar el estado
                         $.ajax({
-                            url: '/proveedor/' + Id + '/cambiar-estado',
+                            url: '/persona/' + Id + '/cambiar-estado',
                             method: 'POST',
                             data: {
                                 _token: '{{ csrf_token() }}',
@@ -212,5 +193,4 @@
         });
     });
 </script>
-
 @endpush

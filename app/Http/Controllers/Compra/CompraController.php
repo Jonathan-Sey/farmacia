@@ -13,6 +13,7 @@ use App\Models\Lote;
 use App\Models\Producto;
 use App\Models\Proveedor;
 use App\Models\Sucursal;
+use App\Models\ReporteKardex;
 use App\Models\User;
 use Illuminate\Http\Request;
 use PhpParser\Node\Stmt\TryCatch;
@@ -143,6 +144,21 @@ class CompraController extends Controller
                 $producto->ultimo_precio_compra = $arrayprecio[$index];
                 $producto->save();
 
+                //Cantidad anterior de los lotes
+
+                $lotes = Lote::where('id_producto', $idPoducto)->get();
+                $cantidad =$lotes->sum('cantidad');
+
+                $reportekardex = ReporteKardex::create([
+                    'producto_id' => $idPoducto,
+                    'sucursal_id' => 1,
+                    'tipo_movimiento' => 'Compra',
+                    'cantidad' => 0,
+                    'Cantidad_anterior' => $cantidad, // Cantidad antes del traslado
+                    'Cantidad_nueva' =>$cantidad + $arrayCantidad[$index], // Cantidad después del la compra
+                    'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                    'fecha_movimiento' => now()
+                ]);
 
                     // Verificar si ya existe un registro en el inventario para este producto y lote
                 $inventarioExistente = Inventario::where('id_producto', $idPoducto)

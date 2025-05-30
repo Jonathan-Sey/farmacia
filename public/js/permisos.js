@@ -22,6 +22,7 @@ const rutasMapeadas = {
     'Reporte_ventas_filtro': '/reporte/ventas/filtrar',
     'notificaciones': '/notificaciones',
     'Devoluciones': '/devoluciones',
+    'reporte-productos': '/reporte-productos',
 
 };
 
