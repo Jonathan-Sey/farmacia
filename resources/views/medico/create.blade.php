@@ -29,10 +29,18 @@
                 <div class="mt-2 mb-5">
                     <label for="especialidad" class="uppercase block text-sm font-medium text-gray-900">Especialidad</label>
                     <div class="border p-3 rounded-md bg-gray-100">
-                        <input type="text" name="especialidad" id="especialidad" placeholder="Especialidad"
-                            class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 outline outline-1 outline-gray-300 focus:outline-indigo-600"
-                            value="{{ old('especialidad') }}">
-                    </div>
+                        <label for="especialidad" class="block text-sm font-medium text-gray-700">Especialidad</label>
+                        <select name="especialidad" id="especialidad" class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 outline outline-1 outline-gray-300 focus:outline-indigo-600" required>
+                            <option value="" disabled selected>Selecciona una especialidad</option>
+                            <option value="Cardiología" {{ old('especialidad') == 'Cardiología' ? 'selected' : '' }}>Cardiología</option>
+                            <option value="Pediatría" {{ old('especialidad') == 'Pediatría' ? 'selected' : '' }}>Pediatría</option>
+                            <option value="Dermatología" {{ old('especialidad') == 'Dermatología' ? 'selected' : '' }}>Dermatología</option>
+                            <option value="Neurología" {{ old('especialidad') == 'Neurología' ? 'selected' : '' }}>Neurología</option>
+                            <option value="Ginecología" {{ old('especialidad') == 'Ginecología' ? 'selected' : '' }}>Ginecología</option>
+                            <option value="Oftalmología" {{ old('especialidad') == 'Oftalmología' ? 'selected' : '' }}>Oftalmología</option>
+                            <!-- Agrega más opciones según tus necesidades -->
+                        </select>
+                    </div>                    
                 </div>
 
                 <div class="mt-2 mb-5">
@@ -65,6 +73,8 @@
 @endsection
 
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     $(document).ready(function() {
         $('.select2').select2({
@@ -72,9 +82,68 @@
             placeholder: "Buscar usuario",
             allowClear: true
         });
+
+        // Validar el formulario antes de enviar
+        $('form').on('submit', function(e) {
+            if (!validarHorarios()) {
+                e.preventDefault(); // Detener el envío del formulario
+            }
+        });
     });
 
     let sucursales = @json($sucursales);
+
+    function validarHorarios() {
+        let horarios = document.querySelectorAll('[name^="horarios["]');
+        let esValido = true;
+        let mensajeError = '';
+
+        // Validar que haya al menos un horario
+        if (horarios.length === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debe agregar al menos un horario para el médico.',
+            });
+            return false;
+        }
+
+        // Validar cada horario individualmente
+        for (let i = 0; i < horarios.length / 4; i++) {
+            const sucursal = document.querySelector(`[name="horarios[${i}][sucursal_id]`).value;
+            const dia = document.querySelector(`[name="horarios[${i}][dia]`).value;
+            const horaInicio = document.querySelector(`[name="horarios[${i}][hora_inicio]`).value;
+            const horaFin = document.querySelector(`[name="horarios[${i}][hora_fin]`).value;
+
+            // Validar que la hora de inicio sea menor que la hora de fin
+            if (horaInicio >= horaFin) {
+                mensajeError = `En el horario ${i+1}, la hora de inicio debe ser anterior a la hora de finalización.`;
+                esValido = false;
+                break;
+            }
+
+            // Validar que la diferencia sea de al menos 30 minutos
+            const inicio = new Date(`2000-01-01T${horaInicio}`);
+            const fin = new Date(`2000-01-01T${horaFin}`);
+            const diferencia = (fin - inicio) / (1000 * 60); // diferencia en minutos
+            
+            if (diferencia < 30) {
+                mensajeError = `En el horario ${i+1}, la duración mínima debe ser de 30 minutos.`;
+                esValido = false;
+                break;
+            }
+        }
+
+        if (!esValido) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en los horarios',
+                text: mensajeError,
+            });
+        }
+
+        return esValido;
+    }
 
     function agregarHorario() {
         let container = document.getElementById('horarios-container');
