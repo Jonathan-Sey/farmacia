@@ -259,7 +259,7 @@ class ReporteVentasController extends Controller
             'producto:id,nombre,precio_venta',
             'bodega:id,nombre,ubicacion'
         ])->get();
-        return view('reportes.reporteproducto', compact('productos', 'sucursales'));
+        return view('reportes.reporteProducto', compact('productos', 'sucursales'));
     }
 
     public function generateReportProducto(Request $request)
