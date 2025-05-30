@@ -9,6 +9,7 @@ use App\Models\Bodega;
 use App\Models\Inventario;
 use App\Models\Lote;
 use App\Models\Producto;
+use App\Models\ReporteKardex;
 use App\Models\Requisicion;
 use App\Models\Sucursal;
 use Illuminate\Support\Facades\DB;
@@ -98,7 +99,6 @@ class RequisicionController extends Controller
             'id_sucursal_destino' => 'required',
             'id_producto' => 'required',
             'cantidad' => 'required|integer|min:1',
-
         ]);
 
         DB::beginTransaction();
@@ -106,22 +106,22 @@ class RequisicionController extends Controller
             $productoId = $request->id_producto;
             $sucursalDestinoId = $request->id_sucursal_destino;
             $cantidadRequerida = $request->cantidad;
+            $usuarioId = $request->idUsuario ?? 1;
 
             // 1. Obtener bodega principal
             $bodegaPrincipal = Bodega::principal()->firstOrFail();
 
-            // 2. Obtener lotes disponibles ordenados por fecha de vencimiento (más próximos a vencer primero)
+            // 2. Obtener lotes disponibles ordenados por fecha de vencimiento
             $lotes = Lote::whereHas('inventarios', function($query) use ($bodegaPrincipal, $productoId) {
-                $query->where('id_bodega', $bodegaPrincipal->id)
-                      ->where('id_producto', $productoId)
-                      ->where('cantidad', '>', 0);
-            })
-            ->with(['inventarios' => function($query) use ($bodegaPrincipal) {
-                $query->where('id_bodega', $bodegaPrincipal->id);
-            }])
-            ->orderBy('fecha_vencimiento', 'asc')
-            ->get();
-
+                    $query->where('id_bodega', $bodegaPrincipal->id)
+                          ->where('id_producto', $productoId)
+                          ->where('cantidad', '>', 0);
+                })
+                ->with(['inventarios' => function($query) use ($bodegaPrincipal) {
+                    $query->where('id_bodega', $bodegaPrincipal->id);
+                }])
+                ->orderBy('fecha_vencimiento', 'asc')
+                ->get();
 
             // 3. Verificar stock suficiente
             $stockTotal = $lotes->sum(function($lote) {
@@ -134,50 +134,65 @@ class RequisicionController extends Controller
 
             // 4. Procesar transferencia lote por lote
             $cantidadRestante = $cantidadRequerida;
-        $lotePrincipal = null;
+            $lotePrincipal = null;
+            $almacenDestino = null;
 
-        foreach ($lotes as $lote) {
-            if ($cantidadRestante <= 0) break;
+            foreach ($lotes as $lote) {
+                if ($cantidadRestante <= 0) break;
 
-            $inventario = $lote->inventarios->firstWhere('id_bodega', $bodegaPrincipal->id);
-            if (!$inventario) continue;
+                $inventario = $lote->inventarios->firstWhere('id_bodega', $bodegaPrincipal->id);
+                if (!$inventario) continue;
 
-            $cantidadDisponible = $inventario->cantidad;
-            $cantidadATransferir = min($cantidadDisponible, $cantidadRestante);
+                $cantidadDisponible = $inventario->cantidad;
+                $cantidadATransferir = min($cantidadDisponible, $cantidadRestante);
 
-            // Guardar el primer lote para registrar en la requisición
-            if (!$lotePrincipal) {
-                $lotePrincipal = $lote;
+                // Guardar el primer lote para registrar en la requisición
+                if (!$lotePrincipal) {
+                    $lotePrincipal = $lote;
+                }
+
+                // Restar de inventario (bodega principal)
+                $inventario->decrement('cantidad', $cantidadATransferir);
+
+                // Sumar a almacén (sucursal destino) usando la función actualizarAlmacen
+                $almacenDestino = $this->actualizarAlmacen(
+                    $sucursalDestinoId,
+                    $productoId,
+                    $cantidadATransferir,
+                    $lote->fecha_vencimiento,
+                    $usuarioId
+                );
+
+
+                $cantidadRestante -= $cantidadATransferir;
             }
 
-            // Restar de inventario (bodega principal)
-            $inventario->decrement('cantidad', $cantidadATransferir);
+            // Registrar en el kardex
+            $reporte = ReporteKardex::create([
+                'producto_id' => $productoId,
+                'sucursal_id' => $sucursalDestinoId,
+                'tipo_movimiento' => 'traslado',
+                'cantidad' => $cantidadATransferir, // Cambiado a la cantidad transferida en este lote
+                'Cantidad_anterior' => $almacenDestino->cantidad - $cantidadATransferir,
+                'Cantidad_nueva' => $almacenDestino->cantidad,
+                'usuario_id' => $usuarioId,
+                'fecha_movimiento' => now(),
+            ]);
 
-            // Sumar a almacén (sucursal destino)
-            $this->actualizarAlmacen(
-                $sucursalDestinoId,
-                $productoId,
-                $cantidadATransferir,
-                $lote->fecha_vencimiento
-            );
-
-            $cantidadRestante -= $cantidadATransferir;
-        }
             // 5. Registrar la requisición
             $requisicion = Requisicion::create([
                 'id_bodega_origen' => $bodegaPrincipal->id,
                 'id_sucursal_destino' => $sucursalDestinoId,
                 'id_producto' => $productoId,
-                'id_lote' => $lotePrincipal->id, // Tomamos el primer lote (más próximo a vencer)
+                'id_lote' => $lotePrincipal->id,
                 'cantidad' => $cantidadRequerida,
                 'fecha_traslado' => now(),
-                'id_usuario' => auth()->id() ?? 1,
+                'id_usuario' => $usuarioId,
             ]);
-
 
             DB::commit();
             Log::info('Requisición creada exitosamente:', $requisicion->toArray());
-        return redirect()->route('requisiciones.index')->with('success', 'Requisición realizada exitosamente.');
+            return redirect()->route('requisiciones.index')->with('success', 'Requisición realizada exitosamente.');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -187,22 +202,24 @@ class RequisicionController extends Controller
         }
     }
 
-    private function actualizarAlmacen($sucursalId, $productoId, $cantidad, $fechaVencimiento)
-{
-    // Actualizar o crear registro en almacén
-    Almacen::updateOrCreate(
-        [
-            'id_sucursal' => $sucursalId,
-            'id_producto' => $productoId
-        ],
-        [
-           'cantidad' => DB::raw("COALESCE(cantidad, 0) + $cantidad"),
-            'fecha_vencimiento' => $fechaVencimiento,
-            'id_user' => auth()->id() ?? 1,
-            'estado' => 1
-        ]
-    );
-}
+    private function actualizarAlmacen($sucursalId, $productoId, $cantidad, $fechaVencimiento, $usuarioId)
+    {
+        // Actualizar o crear registro en almacén
+    // Primero obtener o crear el registro
+    $almacen = Almacen::firstOrNew([
+        'id_sucursal' => $sucursalId,
+        'id_producto' => $productoId
+    ]);
+
+    // Actualizar manualmente la cantidad
+    $almacen->cantidad = ($almacen->cantidad ?? 0) + $cantidad;
+    $almacen->fecha_vencimiento = $fechaVencimiento;
+    $almacen->id_user = $usuarioId;
+    $almacen->estado = 1;
+    $almacen->save();
+
+    return $almacen;
+    }
 
     /**
      * Display the specified resource.

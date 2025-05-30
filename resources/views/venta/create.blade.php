@@ -1820,4 +1820,3 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
     }
 </script>
 @endpush
-

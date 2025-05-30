@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Reportes;
 
 use App\Http\Controllers\Controller;
 use App\Models\Compra;
+use App\Models\Inventario;
 use App\Models\Producto;
+use App\Models\ReporteKardex;
 use App\Models\Sucursal;
 use App\Models\User;
 use App\Models\Venta;
@@ -61,6 +63,17 @@ class ReporteVentasController extends Controller
         //return $productos;
 
         return view('reportes.ventas', compact('NumeroVentas', 'ventas', 'ventasFiltro', 'ventasPorDia', 'totalGeneral', 'diasMes', 'año', 'mes', 'nombreSucursales'));
+    }
+
+    public function create()
+
+    {
+        $reporte = ReporteKardex::with([
+            'producto',
+            'sucursal',
+            'usuario'
+        ])->get();
+        return view('reportes.Kardex', compact('reporte'));
     }
 
     // Filtrar por fecha
@@ -162,7 +175,7 @@ class ReporteVentasController extends Controller
             );
 
         // Filtrar por día específico
-      /*  if ($request->has('fecha')) {
+        /*  if ($request->has('fecha')) {
             $query->whereDate('v.fecha_venta', $request->fecha);
         }
 
@@ -230,12 +243,53 @@ class ReporteVentasController extends Controller
                 'dv.estado as estado_detalle'
             );
 
-            if ($request->has('usuario')) {
-                $query->where('v.id_usuario', $request->usuario);
-            }
-    
-            $ventas = $query->orderBy('v.fecha_venta', 'DESC')->get();
-    
-            return response()->json($ventas);
+        if ($request->has('usuario')) {
+            $query->where('v.id_usuario', $request->usuario);
+        }
+
+        $ventas = $query->orderBy('v.fecha_venta', 'DESC')->get();
+
+        return response()->json($ventas);
+    }
+
+    public function filtrarProducto()
+    {
+        $sucursales = Sucursal::all();
+        $productos = Inventario::with([
+            'producto:id,nombre,precio_venta',
+            'bodega:id,nombre,ubicacion'
+        ])->get();
+        return view('reportes.reporteproducto', compact('productos', 'sucursales'));
+    }
+
+    public function generateReportProducto(Request $request)
+    {
+        $sucursalId = $request->get('sucursal_id');
+        $semana = $request->get('semana');
+
+        $query = DB::table('almacen')
+            ->join('producto', 'almacen.id_producto', '=', 'producto.id')
+            ->join('sucursal', 'almacen.id_sucursal', '=', 'sucursal.id')
+            ->select(
+                'sucursal.nombre as sucursal',
+                'producto.nombre as producto',
+                DB::raw('WEEK(almacen.created_at, 3) as semana'),
+                DB::raw('SUM(almacen.cantidad * producto.precio_venta) as valor_total_producto')
+            );
+
+        if ($sucursalId) {
+            $query->where('almacen.id_sucursal', $sucursalId);
+        }
+
+        if ($semana) {
+            $query->whereRaw('WEEK(almacen.created_at, 3) = ?', [$semana]);
+        }
+
+        $resultado = $query
+            ->groupBy('sucursal.nombre', 'producto.nombre', DB::raw('WEEK(almacen.created_at, 3)'))
+            ->orderBy('semana')
+            ->get();
+
+        return response()->json($resultado);
     }
 }
