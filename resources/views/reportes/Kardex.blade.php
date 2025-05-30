@@ -1,6 +1,6 @@
 @extends('template')
 
-@section('titulo','Personas')
+@section('titulo','Reporte de ingresos y egresos')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -10,11 +10,7 @@
 @endpush
 
 @section('contenido')
-    <a href="{{ route('personas.create') }}">
-        <button class="btn btn-success text-white font-bold uppercase">
-            Crear
-        </button>
-    </a>
+   
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
