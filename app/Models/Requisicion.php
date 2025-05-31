@@ -11,7 +11,7 @@ class Requisicion extends Model
     use HasFactory;
 
     protected $fillable = [
-        'id_sucursal_origen',
+        'id_bodega_origen',
         'id_sucursal_destino',
         'id_producto',
         'id_lote',
@@ -20,9 +20,14 @@ class Requisicion extends Model
         'id_usuario',
     ];
 
-    public function sucursalOrigen()
+    // public function sucursalOrigen()
+    // {
+    //     return $this->belongsTo(Sucursal::class, 'id_sucursal_origen');
+    // }
+
+    public function bodegaOrigen()
     {
-        return $this->belongsTo(Sucursal::class, 'id_sucursal_origen');
+        return $this->belongsTo(Bodega::class, 'id_bodega_origen');
     }
 
     public function sucursalDestino()

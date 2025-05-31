@@ -35,7 +35,7 @@ class UsuarioController extends Controller
      */
     public function create(){
         $roles = Rol::where('estado', '!=', 0)->get();
-        return view('usuarios.create',compact('roles'));
+        return view('Usuarios.create',compact('roles'));
      }
 
     public function edit($id)
@@ -43,7 +43,7 @@ class UsuarioController extends Controller
         // Obtén al usuario por ID
         $user = User::findOrFail($id);
         $roles = Rol::where('estado', '!=', 0)->get();
-        return view('usuarios.edit', compact('user', 'roles'));
+        return view('Usuarios.edit', compact('user', 'roles'));
         }
 
     public function update(Request $request, $id)

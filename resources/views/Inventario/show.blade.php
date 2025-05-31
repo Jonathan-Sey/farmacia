@@ -5,7 +5,7 @@
 @section('contenido')
 <div class="card">
     <h2 class="text-xl font-bold mb-4">Lotes Originales</h2>
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto max-h-[500px]">
         <table class="table table-md table-pin-rows table-pin-cols">
             <thead>
                 <tr>
@@ -13,6 +13,7 @@
                     <th>Número de Lote</th>
                     <th>Producto</th>
                     <th>Cantidad Original</th>
+                    <th>Precio de compra</th>
                     <th>Fecha de Vencimiento</th>
                 </tr>
             </thead>
@@ -30,6 +31,8 @@
                     <td>{{ $lote->numero_lote }}</td>
                     <td>{{ $lote->producto->nombre }}</td>
                     <td>{{ $lote->cantidad }}</td>
+                    <td>{{ $lote->precio_compra }}</td>
+                    {{-- <td>{{ $lote->fecha_vencimiento }}</td> --}}
                     <td class="px-6 py-4 whitespace-nowrap">
                         @if($diferenciaDias < 0)
                             <span class="text-red-500 font-bold">
@@ -55,15 +58,16 @@
     </div>
 
     <h2 class="text-xl font-bold mt-8 mb-4">Lotes Disponibles en Inventario</h2>
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto max-h-[500px]">
         <table class="table table-md table-pin-rows table-pin-cols">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Número de Lote</th>
                     <th>Producto</th>
-                    <th>Sucursal</th>
+                    <th>Bodega</th>
                     <th>Cantidad Disponible</th>
+                    <th>Precio de compra</th>
                     <th>Fecha de Vencimiento</th>
                 </tr>
             </thead>
@@ -80,8 +84,10 @@
                     <th>{{ $iteracion }}</th>
                     <td>{{ $inventario->lote->numero_lote }}</td>
                     <td>{{ $inventario->producto->nombre }}</td>
-                    <td>{{ $inventario->sucursal->ubicacion }}</td>
+                    <td>{{ $inventario->bodega->nombre }}</td>
                     <td>{{ $inventario->cantidad }}</td>
+                    <td>{{ $inventario->lote->precio_compra }}</td>
+                    {{-- <td>{{ $inventario->lote->fecha_vencimiento }}</td> --}}
                     <td class="px-6 py-4 whitespace-nowrap">
                         @if($diferenciaDias < 0)
                             <span class="text-red-500 font-bold">

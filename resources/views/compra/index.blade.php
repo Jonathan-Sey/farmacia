@@ -36,7 +36,9 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$compra->numero_compra}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$compra->proveedor->empresa}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$compra->created_at}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$compra->comprobante}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">
+                        {{$compra->sucursal->nombre . ' - ' . $compra->sucursal->codigo_sucursal}}
+                    </td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$compra->total}}</td>
                     <td class="flex gap-2 justify-center">
 
@@ -96,11 +98,24 @@
             order: [0,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
+                 paginate: {
+                     first: `<i class="fa-solid fa-backward"></i>`,
+                     previous: `<i class="fa-solid fa-caret-left">`,
+                     next: `<i class="fa-solid fa-caret-right"></i>`,
+                     last: `<i class="fa-solid fa-forward"></i>`
+                 }
             },
             layout: {
                 topStart: {
 
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [

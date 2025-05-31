@@ -12,7 +12,7 @@
                <div id="usuario"></div>
             <div class="border-b border-gray-900/10 pb-12">
                 <!-- Campo oculto para la sucursal de origen -->
-                <input type="hidden" name="id_sucursal_origen" id="id_sucursal_origen" value="1">
+                {{-- <input type="hidden" name="id_bodega_origen" id="id_bodega_origen" value=""> --}}
                 {{-- <div class="mt-2 mb-5">
                     <label for="id_sucursal_origen" class="uppercase block text-sm font-medium text-gray-900">Sucursal Origen</label>
                     <select class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
@@ -24,6 +24,13 @@
                     </select>
                 </div> --}}
 
+                <div class="mt-2 mb-5">
+                    <label class="uppercase block text-sm font-medium text-gray-900">Bodega Origen</label>
+                    <p class="block w-full rounded-md bg-gray-100 px-3 py-1.5">{{ $bodegaPrincipal->nombre }}</p>
+                    <input type="hidden" name="id_bodega_origen" value="{{ $bodegaPrincipal->id }}">
+                </div>
+
+                <!-- Cambiar selector de bodega destino por selector de sucursal -->
                 <div class="mt-2 mb-5">
                     <label for="id_sucursal_destino" class="uppercase block text-sm font-medium text-gray-900">Sucursal Destino</label>
                     <select class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
@@ -115,46 +122,38 @@
 
         // Cargar lotes dinámicamente al seleccionar un producto
         $('#id_producto').change(function() {
-            var idProducto = $(this).val();
-            var idSucursalOrigen = $('#id_sucursal_origen').val();
-            if (idProducto && idSucursalOrigen) {
-                $.ajax({
-                    url: '/get-lotes/' + idProducto + '/' + idSucursalOrigen,
-                    type: 'GET',
-                    success: function(response) {
-                        $('#id_lote').empty();
-                        $('#id_lote').append('<option value="">Seleccionar lote</option>');
+        var idProducto = $(this).val();
+        var idBodegaPrincipal = {{ $bodegaPrincipal->id }};
 
-                        // response.forEach(function(lote) {
-                        //     $('#id_lote').append(`
-                        //         <option value="${lote.id}">
-                        //             ${lote.numero_lote} (Cantidad: ${lote.cantidad})
-                        //         </option>
-                        //     `);
-                        // });
-                        response.lotes.forEach(function(inventario) {
-                        $('#id_lote').append(`
-                            <option value="${inventario.id_lote}">
-                                ${inventario.lote.numero_lote} (Cantidad: ${inventario.cantidad})
-                            </option>
-                        `);
-                    });
-
-                       // Actualizar la cantidad total disponible
+        if (idProducto) {
+            $.ajax({
+                url: '/get-lotes/' + idProducto + '/' + idBodegaPrincipal,
+                type: 'GET',
+                success: function(response) {
+                    // Mostrar cantidad total disponible
                     $('#cantidad_disponible').text(response.cantidadTotal);
-                    console.log("Lotes cargados:", response.lotes);
-                    console.log("Cantidad total:", response.cantidadTotal);
 
-                    },
-                    error: function() {
-                        alert('Error al cargar los lotes');
+                    // Opcional: Mostrar información de lotes si tienes el select visible
+                    if ($('#id_lote').length) {
+                        $('#id_lote').empty().append('<option value="">Seleccionar lote</option>');
+
+                        response.lotes.forEach(function(inventario) {
+                            $('#id_lote').append(
+                                `<option value="${inventario.id_lote}">
+                                    ${inventario.lote.numero_lote} (Cantidad: ${inventario.cantidad})
+                                </option>`
+                            );
+                        });
                     }
-                });
-            } else {
-                $('#id_lote').empty();
-                $('#id_lote').append('<option value="">Seleccionar lote</option>');
-                $('#cantidad_disponible').text('0');
-            }
+                },
+                error: function() {
+                    $('#cantidad_disponible').text('0');
+                    alert('Error al cargar la información del producto');
+                }
+            });
+        } else {
+            $('#cantidad_disponible').text('0');
+        }
         });
     });
 </script>

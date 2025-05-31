@@ -26,6 +26,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('productos:revisar-vencidos')->everyMinute();// Se ejecuta cada hora
+        $schedule->command('clean:temp-images')->hourly();
     }
 
     /**

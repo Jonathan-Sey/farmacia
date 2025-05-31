@@ -40,7 +40,7 @@
                             <option value="Oftalmología" {{ old('especialidad') == 'Oftalmología' ? 'selected' : '' }}>Oftalmología</option>
                             <!-- Agrega más opciones según tus necesidades -->
                         </select>
-                    </div>                    
+                    </div>
                 </div>
 
                 <div class="mt-2 mb-5">
@@ -126,7 +126,7 @@
             const inicio = new Date(`2000-01-01T${horaInicio}`);
             const fin = new Date(`2000-01-01T${horaFin}`);
             const diferencia = (fin - inicio) / (1000 * 60); // diferencia en minutos
-            
+
             if (diferencia < 30) {
                 mensajeError = `En el horario ${i+1}, la duración mínima debe ser de 30 minutos.`;
                 esValido = false;

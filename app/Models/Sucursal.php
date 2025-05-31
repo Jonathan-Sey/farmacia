@@ -12,12 +12,14 @@ class Sucursal extends Model
     protected $fillable = [
         'imagen',
         'nombre',
+        'codigo_sucursal',
         'ubicacion',
         'telefono',
         'email',
         'encargado',
         'estado',
-        
+
+
     ];
 
     public function scopeActivos($query)
@@ -40,4 +42,7 @@ class Sucursal extends Model
      {
          return $this->hasMany(Inventario::class, 'id_sucursal');
      }
+
+
+
 }

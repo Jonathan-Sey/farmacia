@@ -26,7 +26,8 @@ class CreateVentasTable extends Migration
             $table->boolean('es_prescrito')->default(false);
             $table->string('imagen_receta')->nullable();
             $table->string('numero_reserva')->nullable();
-
+            // nuevo campo
+            $table->text('observaciones_receta')->nullable();
             $table->timestamps();
         });
     }

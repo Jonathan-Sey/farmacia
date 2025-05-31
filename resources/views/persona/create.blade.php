@@ -189,7 +189,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <div class="mt-6 flex items-center justify-end gap-x-6">
                 <a href="{{ route('personas.index') }}">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
@@ -223,13 +223,15 @@
                 $('#ficha_medica input, #ficha_medica select').prop('required', false);
             }
         }).trigger('change');
-    
+
         // Asegurar envío del formulario
         $('form').submit(function(e) {
-            if ($('#rol').val() == 1) {
-                $('#apellidos-section, #ficha_medica').find('input, select').prop('disabled', true);
-            }
-        });
+        if ($('#rol').val() == 1) {
+            // Deshabilitar todo excepto DPI
+            $('#apellidos-section, #ficha_medica').find('input, select').not('[name="dpi"]').prop('disabled', true);
+        }
+});
+
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
