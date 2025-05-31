@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Rol;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
@@ -64,7 +65,32 @@ class AuthController extends Controller
         }
 
         $rol = $user->rol;
-        $pestanas = $rol->pestanas()->pluck('ruta')->toArray();
+        // Obtener las pestañas ordenadas y la página de inicio
+        $pestanas = $rol->pestanas()
+        ->orderBy('rol_pestana.orden')
+        ->get();
+
+        // Obtener la ruta de la página de inicio
+        // Debug: Verificar datos del pivot
+    Log::info('Datos de pestañas con pivot:', $pestanas->map(function($p) {
+        return [
+            'id' => $p->id,
+            'nombre' => $p->nombre,
+            'ruta' => $p->ruta,
+            'orden' => $p->pivot->orden,
+            'es_inicio' => $p->pivot->es_inicio
+        ];
+    })->toArray());
+
+        // Obtener página de inicio usando el método del modelo
+        $paginaInicio = $rol->paginaInicio();
+        $rutaInicio = $paginaInicio ? $paginaInicio->ruta : '/dashboard';
+
+        // Solo las rutas de las pestañas para el frontend
+        $rutasPestanas = $pestanas->pluck('ruta')->toArray();
+
+
+        //$pestanas = $rol->pestanas()->pluck('ruta')->toArray();
 
         // Crear la cookie con el token JWT
         $cookie = cookie(
@@ -83,7 +109,8 @@ class AuthController extends Controller
                 'success' => true,
                 'token' => $token,
                 'user' => $user,
-                'pestanas' => $pestanas,
+                'pestanas' => $rutasPestanas,
+                'pagina_inicio' => $rutaInicio
             ])
             ->withCookie($cookie);
      }

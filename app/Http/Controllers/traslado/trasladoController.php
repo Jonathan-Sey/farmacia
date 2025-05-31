@@ -49,7 +49,7 @@ class trasladoController extends Controller
         $producto_id = $request->id_producto;
         $sucursal_origen_id = $request->id_sucursal_1;
         $sucursal_destino_id = $request->id_sucursal_2;
-     
+
         $cantidad = $request->cantidad;
 
         $almacen_origen = Almacen::where('id_producto', $producto_id)

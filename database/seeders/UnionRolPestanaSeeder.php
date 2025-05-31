@@ -40,7 +40,7 @@ class UnionRolPestanaSeeder extends Seeder
             ['rol_id' => 1, 'pestana_id' => 23, 'orden' => 23],
             ['rol_id' => 1, 'pestana_id' => 24, 'orden' => 24],
 
-           
+
 
         ];
 

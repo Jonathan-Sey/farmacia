@@ -19,6 +19,7 @@ use App\Http\Controllers\Lote\LoteController;
 use App\Http\Controllers\Medico\MedicoController;
 use App\Http\Controllers\notificaciones\notificacionesController;
 use App\Http\Controllers\Persona\PersonaController;
+use App\Http\Controllers\ProductoImportController;
 use App\Http\Controllers\Producto\productosVencidosController;
 use App\Http\Controllers\Reportes\ReporteVentasController;
 use App\Http\Controllers\Requisicion\RequisicionController;
@@ -27,6 +28,9 @@ use App\Http\Controllers\solicitud\solicitudController;
 use App\Http\Controllers\FichaMedicaController;
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
+use App\Imports\ProductosImport;
+use App\Mail\validacion;
+use App\Models\Devoluciones;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -75,6 +79,12 @@ Route::post('/consulta/{id}/cambiar-estado', [consultaController::class, 'cambia
 Route::post('/traslado/{id}/cambiar-estado', [trasladoController::class, 'cambiarEstado']);
 
 
+// rutas para el manejo de imagenes
+Route::post('/upload-image-temp', [ImagenController::class, 'upload'])->name('upload.image.temp');
+Route::post('/eliminar-imagen-temp', [ImagenController::class, 'eliminarTemp'])->name('eliminar.imagen.temp');
+//Route::post('/productos/{producto}', [ProductoController::class, 'update'])->name('productos.update');
+
+
 //Route::post('/login', [AuthController::class, 'login'])->name('auth.login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('auth.logout');
 Route::get('/dashboard/filtrarVentas', [Dashboard::class, 'filtrarVentas'])->name('dashboard.filtrarVentas');
@@ -85,6 +95,14 @@ Route::get('/dashboard', [Dashboard::class, 'index'])->name('dashboard.index');
 Route::resource('consultas', consultaController::class)->parameters(['consultas' => 'consulta']);
 Route::resource('medicos', MedicoController::class)->parameters(['medicos' => 'medico']);
 //Route::resource('categorias', CategoriaController::class)->parameters(['categorias' => 'categoria']);
+
+//rutas para las importaciones
+Route::get('/productos/importar', [ProductoImportController::class, 'mostrarImportacion'])->name('productos.importar');
+Route::post('/productos/importar', [ProductoImportController::class, 'procesarImportacion'])->name('productos.importar.procesar');
+Route::delete('/productos/importar/eliminar/{index}', [ProductoImportController::class, 'eliminarDeImportacion'])->name('productos.importar.eliminar');
+Route::post('/productos/guardar-importacion', [ProductoImportController::class, 'guardarImportacion'])->name('productos.importar.guardar');
+
+
 Route::get('/productos/historico', [ProductoController::class, 'verHistorico'])->name('historico.precios');
 Route::resource('usuarios', UsuarioController::class)->parameters(['usuarios' => 'usuario']);
 Route::post('/usuarios/register', [UsuarioController::class, 'register'])->name('usuarios.register');
@@ -119,11 +137,13 @@ Route::get("/ventas-informe/usuario", [ReporteVentasController::class, 'generate
 Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
-Route::get('/get-lotes/{idProducto}/{idSucursal}', [RequisicionController::class, 'getLotes'])->name('get.lotes');
-Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
+Route::get('/get-lotes/{idProducto}/{idBodega}', [RequisicionController::class, 'getLotes'])->name('get.lotes');
+Route::get('/inventario/{idProducto}/{idBodega}', [InventarioController::class, 'show'])->name('inventario.show');
 Route::get("notificaciones/cantidad", [notificacionesController::class, 'cantidadDeNotificaciones'])->name('notificaciones.cantidad');
 Route::get('/productos/stock/{id}/{sucursal}', [VentaController::class, 'obtenerStock']);
 Route::post('/personas/from-ventas', [PersonaController::class, 'storeFromVentas'])->name('personas.storeFromVentas');
+
+
 
 Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
 Route::resource('solicitud', solicitudController::class)->parameters(['solicitud' => 'solicitud']);
@@ -135,11 +155,19 @@ Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' =
 
 Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.image');
 
+
+// para la restriccion en ventas
+Route::get('/personas/{persona}/restricciones', [PersonaController::class, 'obtenerRestricciones'])
+     ->name('personas.restricciones');
+
+Route::post('/personas/actualizar-restricciones', [PersonaController::class, 'actualizarRestricciones'])
+     ->name('personas.actualizar-restricciones');
+
+
+//productos vencidos
 Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
 Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
-Route::get('personas/{id}', [PersonaController::class, 'show'])->name('persona.show');
-Route::resource('personas', PersonaController::class);
-
+Route::get('personas/{id}', [PersonaController::class, 'show'])->name('personas.show');
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 // Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
@@ -150,7 +178,7 @@ Route::resource('personas', PersonaController::class);
 Route::get('/devoluciones/autorizar/{id}/{id2}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
 Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVenta']);
 
-//productos vencidos 
+//productos vencidos
 Route::get('/productos-vencidos', [productosVencidosController::class, 'index'])->name('productos.vencidos');
 
 //devoluciones
@@ -159,15 +187,31 @@ Route::resource('devoluciones', devolucionesController::class)->parameters(['dev
 Route::get('/devoluciones/aceptar', [devolucionesController::class, 'aceptar'])->name('devoluciones.aceptar');
 
 
-//NOTIFICACIONES 
+//NOTIFICACIONES
 Route::get('/notificaciones', [notificacionesController::class, 'index'])->name('notificaciones.index');
 Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])->name('notificaciones.destroy');
+Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
+Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
+Route::resource('personas', PersonaController::class);
+
+Route::get('personas/{persona_id}/fichas/{id}/edit', [FichaMedicaController::class, 'edit'])->name('fichas.edit');
+Route::put('personas/{persona_id}/fichas/{id}', [FichaMedicaController::class, 'update'])->name('fichas.update');
+
+Route::get('personas/fichas/{id}/delete', [FichaMedicaController::class, 'destroyConfirm'])->name('fichas.delete');
+Route::delete('personas/fichas/{id}', [FichaMedicaController::class, 'destroy'])->name('fichas.destroy');
+
+// Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
+// Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
+// Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
+// Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+// Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
+// Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 
 //reporte productos
 Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProducto'])->name('reporte.productos');
 
 Route::get('/reporte-inventario', [ReporteVentasController::class, 'generateReportProducto'])->name('inventario.reporte');
 
-//correos 
+//correos
 
 

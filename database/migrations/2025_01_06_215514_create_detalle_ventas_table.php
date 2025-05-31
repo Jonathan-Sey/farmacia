@@ -19,6 +19,9 @@ class CreateDetalleVentasTable extends Migration
             $table->foreignId('id_producto')->constrained('producto');
             $table->integer('cantidad');
             $table->decimal('precio', 10, 2);
+            // nuevos campos dado para la justificacion y despueto
+            $table->decimal('precio_original', 10, 2); // Nuevo campo
+            $table->text('justificacion_descuento')->nullable(); // Nuevo campo
             $table->tinyInteger('estado')->default(1);
             $table->timestamps();
         });

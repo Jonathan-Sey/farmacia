@@ -55,7 +55,7 @@ class devolucionesController extends Controller
 
     public function store(Request $request)
     {
-        //   dd($request);   
+        //   dd($request);
         $validate = $request->validate([
             'id_venta' => 'required',
             'id_sucursal' => 'required',
@@ -201,7 +201,7 @@ class devolucionesController extends Controller
                 }
             }
         }
-        //notificacion 
+        //notificacion
         $notificacion = Notificaciones::create([
             'tipo' => 'Devolución',
             'mensaje' => 'Se ha registrado una nueva devolución, si esta aprobada se mostrara en el inventario.',

@@ -3,13 +3,16 @@
 namespace App\Http\Controllers\Compra;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ImagenController;
 use App\Models\Bitacora;
+use App\Models\Bodega;
 use App\Models\Compra;
 use App\Models\DetalleCompra;
 use App\Models\Inventario;
 use App\Models\Lote;
 use App\Models\Producto;
 use App\Models\Proveedor;
+use App\Models\Sucursal;
 use App\Models\ReporteKardex;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -28,7 +31,7 @@ class CompraController extends Controller
      */
     public function index()
     {
-        $compras = Compra::with('proveedor','detalleCompras','usuario')
+        $compras = Compra::with('proveedor','detalleCompras','usuario','sucursal')
         ->latest()
         ->activos()
         ->get();
@@ -43,6 +46,7 @@ class CompraController extends Controller
     public function create()
     {
         // $proveedores = Proveedor::whereNotIn('estado',[0,2])->get();
+        $sucursales= Sucursal::activos()->get();
         $proveedores = Proveedor::activos()->get();
         $productos = Producto::activos()->where('tipo',1)->get();
 
@@ -51,7 +55,7 @@ class CompraController extends Controller
             $producto->imagen_url = asset('uploads/' . $producto->imagen);
         });
 
-        return view('compra.create',compact('proveedores','productos'));
+        return view('compra.create',compact('proveedores','productos','sucursales'));
     }
 
     /**
@@ -67,13 +71,28 @@ class CompraController extends Controller
             'arrayprecio' => 'required|array',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
-            'arrayvencimiento.*' => 'required|date', // nuevo campo
+            'arrayvencimiento.*' => 'required|date',
             'estado'=>'integer',
+            'imagen_comprobante' => 'nullable|string',
+            'observaciones_comprobante' => 'nullable|string'
         ]);
 
 
         try{
             DB::beginTransaction();
+
+             // Obtener la bodega principal
+            $bodegaPrincipal = Bodega::principal()->firstOrFail();
+
+
+     // Mover imagen temporal si existe
+     $imagenComprobante = null;
+     if (!empty($request->imagen_comprobante)) {
+         $imagenController = new ImagenController();
+         $imagenComprobante = $imagenController->moverDefinitiva($request->imagen_comprobante)
+             ? $request->imagen_comprobante
+             : null;
+     }
             // generacion de codigo
             $ultimoId = Compra::max('id') ?? 0;
             $codigo = 'CR-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
@@ -81,13 +100,15 @@ class CompraController extends Controller
             $compra = Compra::create([
                 'numero_compra'=> $codigo,
                 'id_proveedor'=> $request->id_proveedor,
+                'id_sucursal' => $request->id_sucursal,
                 'id_usuario' => 1,
-                'comprobante'=> $request->comprobante,
                 'impuesto'=>$request->impuesto,
                 //'fecha_compra'=>$request->fecha_compra,
                 'fecha_compra' => Carbon::now()->format('Y-m-d'),
                 'total'=>$request->input('total'),
                 'estado' => 1,
+                'imagen_comprobante' => $imagenComprobante,
+                'observaciones_comprobante' => $request->observaciones_comprobante
             ]);
 
             // obtener los arrays de detalles
@@ -114,17 +135,22 @@ class CompraController extends Controller
                     'numero_lote' => $numeroLote,
                     'fecha_vencimiento' => $fechaVencimiento,
                     'cantidad' => $arrayCantidad[$index],
+                    'precio_compra' => $arrayprecio[$index], // guardamos en lote tambien
                     'id_compra' => $compra->id,
                     //'estado' => 1,
                 ]);
 
+                $producto = Producto::find($idPoducto);
+                $producto->ultimo_precio_compra = $arrayprecio[$index];
+                $producto->save();
+
                 //Cantidad anterior de los lotes
 
-                $lotes = Lote::where('id_producto', $idPoducto)->get(); 
+                $lotes = Lote::where('id_producto', $idPoducto)->get();
                 $cantidad =$lotes->sum('cantidad');
 
                 $reportekardex = ReporteKardex::create([
-                    'producto_id' => $idPoducto,    
+                    'producto_id' => $idPoducto,
                     'sucursal_id' => 1,
                     'tipo_movimiento' => 'Compra',
                     'cantidad' => 0,
@@ -137,7 +163,7 @@ class CompraController extends Controller
                     // Verificar si ya existe un registro en el inventario para este producto y lote
                 $inventarioExistente = Inventario::where('id_producto', $idPoducto)
                 ->where('id_lote', $lote->id)
-                ->where('id_sucursal', 1) // Sucursal principal
+                ->where('id_bodega', $bodegaPrincipal->id) // Sucursal principal
                 ->first();
 
 
@@ -159,7 +185,7 @@ class CompraController extends Controller
                         //  proceso de inventario
                         Inventario::create([
                             'id_producto' => $idPoducto,
-                            'id_sucursal' => 1, // Sucursal principal
+                            'id_bodega' => $bodegaPrincipal->id,
                             'id_lote' => $lote->id,
                             'cantidad' => $arrayCantidad[$index],
                         ]);
@@ -196,6 +222,9 @@ class CompraController extends Controller
     public function show(Compra $compra)
     {
         // $productos = $compra->productos();
+        if($compra->imagen_comprobante){
+            $compra->imagen_comprobante_url = asset('uploads/' . $compra->imagen_comprobante);
+         }
         return view('compra.show',compact('compra'));
 
     }
@@ -220,7 +249,7 @@ class CompraController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**

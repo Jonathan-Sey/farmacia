@@ -17,7 +17,7 @@
             @csrf
 
             <h3 class="text-xl font-semibold mb-4">Crear Ficha Médica para {{ $persona->nombre }}</h3>
-            
+
             <div class="mt-2 mb-5">
                 <label for="diagnostico" class="uppercase block text-sm font-medium text-gray-900">Diagnóstico</label>
                 <textarea
@@ -63,7 +63,7 @@
                 <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
             </div>
 
-            
+
         </form>
     </div>
 </div>

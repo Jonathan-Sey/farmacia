@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Requisicion;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Almacen;
+use App\Models\Bodega;
 use App\Models\Inventario;
+use App\Models\Lote;
 use App\Models\Producto;
 use App\Models\ReporteKardex;
 use App\Models\Requisicion;
@@ -23,16 +25,16 @@ class RequisicionController extends Controller
      */
     public function index()
     {
-        $requisiciones = Requisicion::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
+        $requisiciones = Requisicion::with(['producto', 'bodegaOrigen', 'sucursalDestino'])->get();
         return view('requisicion.index',compact('requisiciones'));
     }
-    public function getLotes($idProducto, $idSucursal)
+    public function getLotes($idProducto, $idBodegaPrincipal)
     {
         // $lotes = Lote::where('id_producto', $idProducto)->get();
         // return response()->json($lotes);
          // Obtener los lotes disponibles en el inventario de la sucursal de origen
         $lotes = Inventario::where('id_producto', $idProducto)
-        ->where('id_sucursal', $idSucursal)
+        ->where('id_bodega', $idBodegaPrincipal)
         ->where('cantidad', '>', 0)
         ->with(['lote' => function($query) {
             $query->orderBy('fecha_vencimiento', 'asc'); // Ordenar por fecha de vencimiento
@@ -59,10 +61,29 @@ class RequisicionController extends Controller
      */
     public function create()
     {
-        $productos = Producto::activos()->where('tipo',1)->get();
+        //$productos = Producto::activos()->where('tipo',1)->get();
+        $bodegaPrincipal  = Bodega::principal()->firstOrFail();; // almacen principal
+
+        // Obtener solo los productos que tienen inventario en la sucursal de origen
+        $productos = Producto::whereHas('inventarios', function($query) use ($bodegaPrincipal) {
+            $query->where('id_bodega', $bodegaPrincipal->id)
+                  ->where('cantidad', '>', 0);
+        })
+        ->with(['inventarios' => function($query) use ($bodegaPrincipal) {
+            $query->where('id_bodega', $bodegaPrincipal->id)
+                  ->where('cantidad', '>', 0)
+                  ->with(['lote' => function($q) {
+                    $q->orderBy('fecha_vencimiento', 'asc');
+                }]);
+        }])
+        ->where('tipo', 1)
+        ->where('estado', 1)
+        ->get();
+
+
         $sucursales = Sucursal::activos()->get();
-        $inventario = Inventario::all();
-        return view('requisicion.create',compact('productos','sucursales','inventario'));
+        //$inventario = Inventario::all();
+        return view('requisicion.create',compact('productos','sucursales','bodegaPrincipal'));
     }
 
     /**
@@ -75,145 +96,129 @@ class RequisicionController extends Controller
     {
         Log::info('Datos recibidos en el request:', $request->all());
         $this->validate($request, [
-            'id_sucursal_origen' => 'required',
             'id_sucursal_destino' => 'required',
             'id_producto' => 'required',
             'cantidad' => 'required|integer|min:1',
-            
         ]);
 
         DB::beginTransaction();
         try {
-            $producto = $request->id_producto;
-            // $sucursal_origen = $request->id_sucursal_origen;
-            $sucursal_origen = 1;
-            $sucursal_destino = $request->id_sucursal_destino;
-            $cantidad = $request->cantidad;
+            $productoId = $request->id_producto;
+            $sucursalDestinoId = $request->id_sucursal_destino;
+            $cantidadRequerida = $request->cantidad;
+            $usuarioId = $request->idUsuario ?? 1;
 
-            Log::info('Iniciando proceso de requisicion...');
-            Log::info('Producto:', ['id_producto' => $producto]);
-            Log::info('Sucursal Origen:', ['id_sucursal_origen' => $sucursal_origen]);
-            Log::info('Sucursal Destino:', ['id_sucursal_destino' => $sucursal_destino]);
-            Log::info('Cantidad:', ['cantidad' => $cantidad]);
+            // 1. Obtener bodega principal
+            $bodegaPrincipal = Bodega::principal()->firstOrFail();
 
-            // Obtener los lotes disponibles en la sucursal de origen, ordenados por fecha de vencimiento
-            $lotesDisponibles = Inventario::where('id_producto', $producto)
-                ->where('id_sucursal', $sucursal_origen)
-                ->where('cantidad', '>', 0)
-                ->with(['lote' => function($query) {
-                    $query->orderBy('fecha_vencimiento', 'asc');
+            // 2. Obtener lotes disponibles ordenados por fecha de vencimiento
+            $lotes = Lote::whereHas('inventarios', function($query) use ($bodegaPrincipal, $productoId) {
+                    $query->where('id_bodega', $bodegaPrincipal->id)
+                          ->where('id_producto', $productoId)
+                          ->where('cantidad', '>', 0);
+                })
+                ->with(['inventarios' => function($query) use ($bodegaPrincipal) {
+                    $query->where('id_bodega', $bodegaPrincipal->id);
                 }])
+                ->orderBy('fecha_vencimiento', 'asc')
                 ->get();
 
-            Log::info('Lotes disponibles:', $lotesDisponibles->toArray());
+            // 3. Verificar stock suficiente
+            $stockTotal = $lotes->sum(function($lote) {
+                return $lote->inventarios->sum('cantidad');
+            });
 
-            // Verificar si hay suficiente inventario en la sucursal de origen
-            $cantidadTotalDisponible = $lotesDisponibles->sum('cantidad');
-            Log::info('Cantidad total disponible:', ['cantidad_total_disponible' => $cantidadTotalDisponible]);
-
-            if ($cantidadTotalDisponible < $cantidad) {
-                Log::error('No hay suficiente inventario en la sucursal de origen.');
-                return redirect()->back()->with('error', 'No hay suficiente inventario en la sucursal de origen.');
+            if ($stockTotal < $cantidadRequerida) {
+                throw new \Exception("No hay suficiente stock en la bodega principal. Disponible: $stockTotal, Requerido: $cantidadRequerida");
             }
 
-            // Distribuir la cantidad solicitada entre los lotes disponibles
-            $cantidadRestante = $cantidad;
-            Log::info('Cantidad restante a trasladar:', ['cantidad_restante' => $cantidadRestante]);
+            // 4. Procesar transferencia lote por lote
+            $cantidadRestante = $cantidadRequerida;
+            $lotePrincipal = null;
+            $almacenDestino = null;
 
-            foreach ($lotesDisponibles as $inventarioOrigen) {
-                if ($cantidadRestante <= 0) {
-                    Log::info('Cantidad restante es 0, terminando el proceso.');
-                    break;
+            foreach ($lotes as $lote) {
+                if ($cantidadRestante <= 0) break;
+
+                $inventario = $lote->inventarios->firstWhere('id_bodega', $bodegaPrincipal->id);
+                if (!$inventario) continue;
+
+                $cantidadDisponible = $inventario->cantidad;
+                $cantidadATransferir = min($cantidadDisponible, $cantidadRestante);
+
+                // Guardar el primer lote para registrar en la requisición
+                if (!$lotePrincipal) {
+                    $lotePrincipal = $lote;
                 }
 
-                $cantidadATrasladar = min($inventarioOrigen->cantidad, $cantidadRestante);
-                Log::info('Cantidad a trasladar desde el lote:', [
-                    'id_lote' => $inventarioOrigen->id_lote,
-                    'cantidad_a_trasladar' => $cantidadATrasladar
-                ]);
+                // Restar de inventario (bodega principal)
+                $inventario->decrement('cantidad', $cantidadATransferir);
 
-                // Restar la cantidad del inventario de origen
-                $inventarioOrigen->cantidad -= $cantidadATrasladar;
-                $inventarioOrigen->save();
-                Log::info('Inventario de origen actualizado:', $inventarioOrigen->toArray());
+                // Sumar a almacén (sucursal destino) usando la función actualizarAlmacen
+                $almacenDestino = $this->actualizarAlmacen(
+                    $sucursalDestinoId,
+                    $productoId,
+                    $cantidadATransferir,
+                    $lote->fecha_vencimiento,
+                    $usuarioId
+                );
 
-                $cantidadRestante -= $cantidadATrasladar;
-                Log::info('Cantidad restante después del traslado:', ['cantidad_restante' => $cantidadRestante]);
+
+                $cantidadRestante -= $cantidadATransferir;
             }
 
-            // Actualizar el almacén de origen
-            $almacenOrigen = Almacen::where('id_sucursal', $sucursal_origen)
-                ->where('id_producto', $producto)
-                ->first();
-
-            if ($almacenOrigen) {
-                $almacenOrigen->cantidad -= $cantidad;
-                $almacenOrigen->save();
-                Log::info('Almacén de origen actualizado:', $almacenOrigen->toArray());
-            }
-
-            // Actualizar el almacén de destino
-            $almacenDestino = Almacen::where('id_sucursal', $sucursal_destino)
-                ->where('id_producto', $producto)
-                ->first();
-
-                $fechaVencimiento = optional($lotesDisponibles->first())->lote->fecha_vencimiento ?? now();
-
-                $cantidadAnterior = $almacenDestino ? $almacenDestino->cantidad : 0;
-
-            if ($almacenDestino) {
-                $almacenDestino->cantidad += $cantidad;
-                $almacenDestino->save();
-                Log::info('Almacén de destino actualizado:', $almacenDestino->toArray());
-            } else {
-                $almacenDestino = Almacen::create([
-                    'id_sucursal' => $sucursal_destino,
-                    'id_producto' => $producto,
-                    'cantidad' => $cantidad,
-                    'fecha_vencimiento' => $fechaVencimiento, // Fecha de vencimiento por defecto
-                    'id_user' => $request->idUsuario,
-                    'estado' => 1, // Estado activo
-                ]);
-                Log::info('Nuevo almacén de destino creado:', $almacenDestino->toArray());
-            }
-
-             $reporte = ReporteKardex::create([
-                'producto_id' => $producto,
-                'sucursal_id' => $sucursal_destino,
+            // Registrar en el kardex
+            $reporte = ReporteKardex::create([
+                'producto_id' => $productoId,
+                'sucursal_id' => $sucursalDestinoId,
                 'tipo_movimiento' => 'traslado',
-                'cantidad' => 0,
-                'Cantidad_anterior' =>$cantidadAnterior, // Cantidad antes del traslado
-                'Cantidad_nueva' => $almacenDestino->cantidad, // Cantidad después del traslado
-                'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                'cantidad' => $cantidadATransferir, // Cambiado a la cantidad transferida en este lote
+                'Cantidad_anterior' => $almacenDestino->cantidad - $cantidadATransferir,
+                'Cantidad_nueva' => $almacenDestino->cantidad,
+                'usuario_id' => $usuarioId,
                 'fecha_movimiento' => now(),
             ]);
 
-            // Crear el registro de traslado
-            $traslado = Requisicion::create([
-                'id_sucursal_origen' => $sucursal_origen,
-                'id_sucursal_destino' => $sucursal_destino,
-                'id_producto' => $producto,
-                'id_lote' => $lotesDisponibles->first()->id_lote, // Tomar el primer lote como referencia
-                'cantidad' => $cantidad,
+            // 5. Registrar la requisición
+            $requisicion = Requisicion::create([
+                'id_bodega_origen' => $bodegaPrincipal->id,
+                'id_sucursal_destino' => $sucursalDestinoId,
+                'id_producto' => $productoId,
+                'id_lote' => $lotePrincipal->id,
+                'cantidad' => $cantidadRequerida,
                 'fecha_traslado' => now(),
-                'id_usuario' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                'id_usuario' => $usuarioId,
             ]);
 
-
-           
-
-
-            Log::info('Traslado registrado:', $traslado->toArray());
-
             DB::commit();
-            Log::info('Traslado realizado exitosamente.');
-            return redirect()->route('requisiciones.index')->with('success', 'Traslado realizado exitosamente.');
+            Log::info('Requisición creada exitosamente:', $requisicion->toArray());
+            return redirect()->route('requisiciones.index')->with('success', 'Requisición realizada exitosamente.');
+
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error al realizar el traslado: ' . $e->getMessage());
             Log::error('Trace del error:', ['trace' => $e->getTraceAsString()]);
             return redirect()->back()->with('error', 'Error al realizar el traslado: ' . $e->getMessage());
         }
+    }
+
+    private function actualizarAlmacen($sucursalId, $productoId, $cantidad, $fechaVencimiento, $usuarioId)
+    {
+        // Actualizar o crear registro en almacén
+    // Primero obtener o crear el registro
+    $almacen = Almacen::firstOrNew([
+        'id_sucursal' => $sucursalId,
+        'id_producto' => $productoId
+    ]);
+
+    // Actualizar manualmente la cantidad
+    $almacen->cantidad = ($almacen->cantidad ?? 0) + $cantidad;
+    $almacen->fecha_vencimiento = $fechaVencimiento;
+    $almacen->id_user = $usuarioId;
+    $almacen->estado = 1;
+    $almacen->save();
+
+    return $almacen;
     }
 
     /**

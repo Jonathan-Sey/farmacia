@@ -33,12 +33,14 @@
                         </div>
                     </div>
                     <div class="flex flex-col text-left justify-start">
-                        <div class="px-6 w-auto break-words text-ba md:text-lg lg:text-xl">
+                        <div class="px-6 w-auto break-words md:text-lg lg:text-xl">
                             <p class="uppercase text-lg font-bold text-black">{{$sucursal->nombre}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-circle-user"></i> {{$sucursal->encargado}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-location-dot"></i> {{$sucursal->ubicacion}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-phone"></i> {{$sucursal->telefono}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-envelope"></i> {{$sucursal->email}}</p>
+
+
                         </div>
                         <div class="lg:grid lg:grid-cols-2 lg:mt-4 lg:gap-2 px-5 lg:justify-between ">
                             <div class="m-1">
@@ -115,11 +117,25 @@ $(document).ready(function() {
         responsive: true,
         order: [5,'desc'],
         language: {
-            url: '/js/i18n/Spanish.json',
-        },
+                url: '/js/i18n/Spanish.json',
+                 paginate: {
+                     first: `<i class="fa-solid fa-backward"></i>`,
+                     previous: `<i class="fa-solid fa-caret-left">`,
+                     next: `<i class="fa-solid fa-caret-right"></i>`,
+                     last: `<i class="fa-solid fa-forward"></i>`
+                 }
+            },
         layout: {
-            topStart: {
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                topStart: {
+
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [

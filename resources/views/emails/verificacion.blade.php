@@ -138,7 +138,7 @@
             <td>{{ $detalle->cantidad }}</td>
 
             <td>Q.{{ number_format($detalle->subtotal, 2) }}</td>
-      
+
           </tr>
           @endforeach
         </tbody>

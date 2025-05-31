@@ -257,7 +257,7 @@ class ReporteVentasController extends Controller
         $sucursales = Sucursal::all();
         $productos = Inventario::with([
             'producto:id,nombre,precio_venta',
-            'sucursal:id,nombre,ubicacion'
+            'bodega:id,nombre,ubicacion'
         ])->get();
         return view('reportes.reporteProducto', compact('productos', 'sucursales'));
     }
