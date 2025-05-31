@@ -41,6 +41,7 @@ class PersonaController extends Controller
          return Persona::create([
              'nombre' => $request->nombre,
              'nit' => $request->nit,
+             'DPI' => $request->dpi,
              'rol' => $rol,
              'telefono' => $request->telefono,
              'fecha_nacimiento' => $request->fecha_nacimiento,
@@ -49,6 +50,25 @@ class PersonaController extends Controller
              'restriccion_activa' => false // Valor por defecto
          ]);
      }
+    // protected function crearPersona(Request $request)
+    // {
+    //     $this->validate($request, [
+    //         'nombre' => 'required|string|max:45|unique:persona,nombre',
+    //         'nit' => 'max:10|unique:persona,nit',
+    //         'dpi' => ['required', new Dpi()],
+    //         'telefono' => 'max:20',
+    //     ]);
+    //     $rol = $request->input('rol') == 2 ? 2 : 1;
+
+    //     return Persona::create([
+    //         'nombre' => $request->nombre,
+    //         'nit' => $request->nit,
+    //         'DPI' => $request->dpi,
+    //         'rol' => $rol,
+    //         'telefono' => $request->telefono,
+    //         'fecha_nacimiento' => $request->fecha_nacimiento,
+    //     ]);
+    // }
 
     public function fichasMedicas()
     {
@@ -66,7 +86,7 @@ class PersonaController extends Controller
         'apellido_paterno' => 'required_if:rol,2|string|max:100',
         'apellido_materno' => 'required_if:rol,2|string|max:100',
         'sexo' => 'required_if:rol,2|in:Hombre,Mujer',
-        'dpi' => ['required_if:rol,2', new Dpi()],
+        'dpi' => ['required', new Dpi()],
         'habla_lengua' => 'required_if:rol,2|in:Sí,No',
         'tipo_sangre' => 'nullable|string|max:5',
         'direccion' => 'nullable|string|max:255'
@@ -99,6 +119,14 @@ class PersonaController extends Controller
                 'detalles' => "Se creó la persona: {$request->nombre}", //detalles especificos
                 'fecha_hora' => now(),
             ]);
+        // $persona = Persona::create([
+        //     'nombre' => $request->nombre,
+        //     'nit' => $request->nit,
+        //     'DPI' => $request->dpi,
+        //     'telefono' => $request->telefono,
+        //     'fecha_nacimiento' => $request->fecha_nacimiento,
+        //     'rol' => $request->rol,
+        // ]);
 
         if ($persona->rol == 2) {
             FichaMedica::create([
@@ -177,79 +205,124 @@ class PersonaController extends Controller
     public function show($id)
     {
         $persona = Persona::with('fichasMedicas')->findOrFail($id);
+
+        // Si es paciente pero no tiene ficha médica, crearla con datos mínimos
+        if ($persona->rol == 2 && $persona->fichasMedicas->isEmpty()) {
+            FichaMedica::create([
+                'persona_id' => $persona->id,
+                'nombre' => $persona->nombre,
+                'apellido_paterno' => '',
+                'apellido_materno' => '',
+                'sexo' => 'Hombre',
+                'fecha_nacimiento' => $persona->fecha_nacimiento,
+                'DPI' => $persona->DPI,
+                'habla_lengua' => 'No',
+                'tipo_sangre' => '',
+                'direccion' => '',
+                'telefono' => $persona->telefono,
+            ]);
+
+            // Recargar la relación para que ya contenga la ficha creada
+            $persona->load('fichasMedicas');
+        }
+
         return view('persona.show', compact('persona'));
     }
+
 
     public function edit(Persona $persona)
     {
         $fichaMedica = $persona->fichasMedicas()->first(); // Obtener ficha médica si existe
         return view('persona.edit', compact('persona', 'fichaMedica'));
     }
-public function update(Request $request, Persona $persona)
-{
-    Log::info('Iniciando update de persona', $request->all());
+    public function update(Request $request, Persona $persona)
+    {
+        Log::info('Iniciando update de persona', $request->all());
 
-    $rules = [
-        'nombre' => 'required|string|max:255|unique:persona,nombre,' . $persona->id,
-        'rol' => 'required|in:1,2',
-        'telefono' => 'nullable|string|max:20',
-        'fecha_nacimiento' => 'nullable|date',
-        'nit' => 'nullable|string|max:10|unique:persona,nit,' . $persona->id,
-    ];
-
-    if ($request->rol == 2) {
-        $rules += [
-            'apellido_paterno' => 'required|string|max:100',
-            'apellido_materno' => 'required|string|max:100',
-            'sexo' => 'required|in:Hombre,Mujer',
-            'dpi' => ['required', new Dpi()],
-            'habla_lengua' => 'required|in:Sí,No',
-            'tipo_sangre' => 'nullable|string|max:5',
-            'direccion' => 'nullable|string|max:255'
+        $rules = [
+            'nombre' => 'required|string|max:255|unique:persona,nombre,' . $persona->id,
+            'rol' => 'required|in:1,2',
+            'telefono' => 'nullable|string|max:20',
+            'fecha_nacimiento' => 'nullable|date',
+            'nit' => 'nullable|string|max:10|unique:persona,nit,' . $persona->id,
         ];
-    }
 
-    $validatedData = $request->validate($rules);
-
-    DB::beginTransaction();
-    try {
-        $persona->nombre = $validatedData['nombre'];
-        $persona->nit = $validatedData['nit'] ?? null;
-        $persona->telefono = $validatedData['telefono'] ?? null;
-        $persona->fecha_nacimiento = $validatedData['fecha_nacimiento'] ?? null;
-        $persona->rol = $validatedData['rol'];
-        $persona->save();
-
-        Log::info('Datos básicos actualizados', $persona->toArray());
-
-        if ($validatedData['rol'] == 2) {
-            $persona->fichasMedicas()->updateOrCreate(
-                ['persona_id' => $persona->id],
-                [
-                    'apellido_paterno' => $validatedData['apellido_paterno'],
-                    'apellido_materno' => $validatedData['apellido_materno'],
-                    'sexo' => $validatedData['sexo'],
-                    'DPI' => $validatedData['dpi'],
-                    'habla_lengua' => $validatedData['habla_lengua'],
-                    'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
-                    'direccion' => $validatedData['direccion'] ?? null
-                ]
-            );
-
-            Log::info('Ficha médica actualizada o creada para paciente');
+        if ($request->rol == 2) {
+            $rules += [
+                'apellido_paterno' => 'required|string|max:100',
+                'apellido_materno' => 'required|string|max:100',
+                'sexo' => 'required|in:Hombre,Mujer',
+                'dpi' => ['required', new Dpi()],
+                'habla_lengua' => 'required|in:Sí,No',
+                'tipo_sangre' => 'nullable|string|max:5',
+                'direccion' => 'nullable|string|max:255'
+            ];
         }
 
-        DB::commit();
-        Log::info('Fin del proceso de actualización OK');
+        $validatedData = $request->validate($rules);
 
-        return redirect()->route('personas.index')->with('success', 'Datos actualizados correctamente');
+        DB::beginTransaction();
+        try {
+            $persona->nombre = $validatedData['nombre'];
+            $persona->nit = $validatedData['nit'] ?? null;
+            $persona->telefono = $validatedData['telefono'] ?? null;
+            $persona->fecha_nacimiento = $validatedData['fecha_nacimiento'] ?? null;
+            $persona->rol = $validatedData['rol'];
+            $persona->save();
 
-    } catch (\Exception $e) {
-        DB::rollBack();
-        Log::error('Error al actualizar persona', ['error' => $e->getMessage()]);
-        return back()->with('error', 'Error al actualizar: ' . $e->getMessage());
+            Log::info('Datos básicos actualizados', $persona->toArray());
+
+            // Si el rol es paciente, actualizar o crear ficha médica
+            if ($validatedData['rol'] == 2) {
+                // Si no tiene ficha médica, crearla con datos mínimos para evitar error
+                if (!$persona->fichasMedicas()->exists()) {
+                    FichaMedica::create([
+                        'persona_id' => $persona->id,
+                        'nombre' => $persona->nombre,
+                        'apellido_paterno' => $validatedData['apellido_paterno'],
+                        'apellido_materno' => $validatedData['apellido_materno'],
+                        'sexo' => $validatedData['sexo'],
+                        'fecha_nacimiento' => $persona->fecha_nacimiento,
+                        'DPI' => $validatedData['dpi'],
+                        'habla_lengua' => $validatedData['habla_lengua'],
+                        'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
+                        'direccion' => $validatedData['direccion'] ?? null,
+                        'telefono' => $persona->telefono,
+                    ]);
+                } else {
+                    // Actualizar ficha médica existente
+                    $persona->fichasMedicas()->updateOrCreate(
+                        ['persona_id' => $persona->id],
+                        [
+                            'apellido_paterno' => $validatedData['apellido_paterno'],
+                            'apellido_materno' => $validatedData['apellido_materno'],
+                            'sexo' => $validatedData['sexo'],
+                            'DPI' => $validatedData['dpi'],
+                            'habla_lengua' => $validatedData['habla_lengua'],
+                            'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
+                            'direccion' => $validatedData['direccion'] ?? null,
+                        ]
+                    );
+                }
+
+                Log::info('Ficha médica actualizada o creada para paciente');
+            } else {
+                // Opcional: si cambió a cliente, puedes borrar la ficha médica o dejarla intacta
+                // $persona->fichasMedicas()->delete();
+            }
+
+            DB::commit();
+            Log::info('Fin del proceso de actualización OK');
+
+            return redirect()->route('personas.index')->with('success', 'Datos actualizados correctamente');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar persona', ['error' => $e->getMessage()]);
+            return back()->with('error', 'Error al actualizar: ' . $e->getMessage());
+        }
     }
-}
+
 
 
     public function destroy(Request $request, Persona $persona)
