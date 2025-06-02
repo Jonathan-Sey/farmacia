@@ -78,6 +78,12 @@
                     @enderror
                 </div>
 
+                <div id="usuario">
+                    
+                </div>
+
+              
+
                 <!-- Cantidad -->
                 <div class="mt-2 mb-5">
                     <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
@@ -154,6 +160,8 @@
         });
     });
 </script>
+
+<script src="/js/obtenerUsuario.js"></script>
 
 
 

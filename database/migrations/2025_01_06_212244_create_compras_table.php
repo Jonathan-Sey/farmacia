@@ -17,12 +17,15 @@ class CreateComprasTable extends Migration
             $table->id();
             $table->string('numero_compra')->uniqid();
             $table->foreignId('id_proveedor')->constrained('proveedor');
+            $table->foreignId('id_sucursal')->constrained('sucursal');
             $table->date('fecha_compra');
             $table->foreignId('id_usuario')->constrained('users');
-            $table->string('comprobante');
             $table->decimal('impuesto',8,2);
             $table->decimal('total',10,2);
             $table->tinyInteger('estado')->default(1);
+            // nuevos campos
+            $table->string('imagen_comprobante')->nullable();
+            $table->text('observaciones_comprobante')->nullable();
             $table->timestamps();
         });
     }

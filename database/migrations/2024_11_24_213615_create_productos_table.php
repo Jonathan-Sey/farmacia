@@ -16,11 +16,13 @@ class CreateProductosTable extends Migration
         Schema::create('producto', function (Blueprint $table) {
             $table->id();
             $table->string('codigo',12)->uniqued();
-            $table->string('nombre',255);
+            $table->string('nombre',255)->nullable();
+            $table->string('imagen')->nullable();
             $table->text('descripcion')->nullable();
+            $table->decimal('ultimo_precio_compra',10,2)->default(0);
             $table->decimal('precio_venta',10,2);
+            $table->decimal('precio_porcentaje',10,2);
             $table->tinyInteger('tipo')->default(1);
-            $table->date('fecha_caducidad')->nullable();
             $table->foreignId('id_categoria')->constrained('categoria');
             $table->tinyInteger('estado')->default(1);
 

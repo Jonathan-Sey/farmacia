@@ -13,6 +13,8 @@ class Almacen extends Model
         'id_sucursal',
         'id_producto',
         'cantidad',
+        'fecha_vencimiento',
+        'alerta_stock',
         'id_user',
         'estado',
     ];

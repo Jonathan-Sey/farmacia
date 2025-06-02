@@ -35,6 +35,10 @@ class RolPestanaSeeder extends Seeder
         Pestana::create(['nombre' => 'bitacora', 'slug' => 'bitacora','ruta' => 'bitacora']);
         Pestana::create(['nombre' => 'Reporte_ventas', 'slug' => 'Reporte_ventas','ruta' => 'Reporte_ventas']);
         Pestana::create(['nombre' => 'Reporte_ventas_filtro', 'slug' => 'Reporte_ventas_filtro','ruta' => '/reporte/ventas/filtrar']);
-
+        Pestana::create(['nombre' => 'Historico', 'slug' => 'Historico','ruta' => '/historico']);
+        Pestana::create(['nombre' => 'notificaciones', 'slug' => 'notificaciones','ruta' => '/notificaciones']);
+        Pestana::create(['nombre' => 'Devoluciones', 'slug' => 'devoluciones','ruta' => '/devoluciones']);
+        Pestana::create(['nombre' => 'reporte-productos', 'slug' => 'reporte-productos','ruta' => '/reporte-productos']);
+        Pestana::create(['nombre' => 'Ficha', 'slug' => 'Ficha','ruta' => '/fichas']);
     }
 }

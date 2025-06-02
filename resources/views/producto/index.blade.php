@@ -7,24 +7,42 @@
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
 
 
+
 @endpush
 
 @section('contenido')
+
+
     <a href="{{ route('productos.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
         </button>
     </a>
+    <a href="{{ route('productos.vencidos') }}">
+        <button class="btn btn-primary  text-white font-bold uppercase">
+            Ver productos vencidos
+        </button>
+    </a>
+
+    <a href="{{ route('productos.importar') }}">
+        <button class="btn  bg-red-500 hover:bg-red-600 text-white font-bold uppercase">
+            Importar desde Excel
+        </button>
+    </a>
+
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Ultimo Precio de compra</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio_anterior</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Precio_nuevo</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Categoría</th>
-                    {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Caducidad</th> --}}
+
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Actualizado</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>
@@ -34,16 +52,28 @@
         <x-slot name="tbody">
             <tbody>
                 @foreach ($productos as $producto)
-                    @php
+                    {{-- @php
                         $fechaActual = \Carbon\Carbon::now(); // Fecha actual
                         $fechaCaducidad = \Carbon\Carbon::parse($producto->fecha_caducidad); // Convierte la fecha de caducidad a Carbon
                         $diferenciaDias = $fechaActual->diffInDays($fechaCaducidad, false); // Diferencia en días (negativo si ya caducó)
 
-                    @endphp
+                    @endphp --}}
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->ultimo_precio_compra}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_porcentaje}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <a href="{{ $producto->imagen ? asset('uploads/' . $producto->imagen) : '#' }}">
+                            @if ($producto->imagen)
+                                <img src="{{ asset('uploads/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                            @else
+                                <span class="text-gray-500">Sin imagen</span>
+                            @endif
+                        </a>
+                        </td>
+
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
                             @if ($producto->estado == 1)
@@ -54,24 +84,7 @@
                         </a>
                     </td>
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->categoria->nombre}}</td>
-                    {{-- <td class="px-6 py-4 whitespace-nowrap">
-                        @if($diferenciaDias < 0)
-                            <span class="text-red-500 font-bold">
-                                {{ $fechaCaducidad->format('d/m/Y') }}
-                                     (Caducado)
-                            </span>
-                        @elseif($diferenciaDias <= 5)
-                            <span class= "text-yellow-500 font-bold">
-                                {{ $fechaCaducidad->format('d/m/Y') }}
-                                    (Próximo a caducar)
-                            </span>
-                        @else
-                            <span class="text-green-500 font-bold">
-                                {{ $fechaCaducidad->format('d/m/Y') }}
-                                    (Vigente)
-                            </span>
-                        @endif
-                    </td> --}}
+
                     <td class="px-6 py-4 whitespace-nowrap">{{$producto->updated_at}}</td>
                     <td class="flex gap-2 justify-center">
 
@@ -79,6 +92,13 @@
                             @csrf
                             <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
                                 <i class="fas fa-edit"></i>
+                            </button>
+                        </form>
+                       {{-- Formulario para ir a la página de edición de porcentaje --}}
+                        <form action="{{ route('productos.precio', $producto->id) }}" method="GET">
+                            @csrf
+                            <button type="submit" class="btn btn-success font-bold uppercase btn-sm">
+                                <i class='bx bx-dollar'></i>
                             </button>
                         </form>
 
@@ -113,35 +133,51 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//copiar</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">//excel</script>
 
-<script src=""></script>
+
 
 <script>
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
+            autoWidth: false,
             order: [0,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
+                 paginate: {
+                     first: `<i class="fa-solid fa-backward"></i>`,
+                     previous: `<i class="fa-solid fa-caret-left">`,
+                     next: `<i class="fa-solid fa-caret-right"></i>`,
+                     last: `<i class="fa-solid fa-forward"></i>`
+                 }
             },
-            layout: {
-                topStart: {
+             layout: {
+                 topStart: {
 
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
-                }
-            },
+                     buttons: [
+                         {
+                             extend: 'collection',
+                             text: 'Export',
+                            buttons: ['copy', 'pdf', 'excel', 'print'],
+                         },
+                         {
+                         extend: 'colvis',
+                     }
+                     ]
+                 }
+             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 6 },
+                { responsivePriority: 2, targets: 9 },
             ],
-            drawCallback: function() {
-                // Esperar un momento para asegurarse de que los botones se hayan cargado
-                setTimeout(function() {
-                    // Seleccionar los botones de paginación y agregar clases de DaisyUI
-                    $('a.paginate_button').addClass('btn btn-sm btn-primary mx-1'); // Todos los botones
-                    $('a.paginate_button.current').removeClass('btn-gray-800').addClass('btn btn-sm btn-primary'); // Resaltar la página actual
-                }, 100); // Espera 100 ms antes de aplicar las clases
-            },
+            // drawCallback: function() {
+            //     // Esperar un momento para asegurarse de que los botones se hayan cargado
+            //     setTimeout(function() {
+            //         // Seleccionar los botones de paginación y agregar clases de DaisyUI
+            //         $('a.paginate_button').addClass('btn btn-sm btn-primary mx-1'); // Todos los botones
+            //         $('a.paginate_button.current').removeClass('btn-gray-800').addClass('btn btn-sm btn-primary'); // Resaltar la página actual
+            //     }, 100); // Espera 100 ms antes de aplicar las clases
+            // },
         });
     });
 </script>
@@ -151,6 +187,9 @@
 {{-- Alerta de registro exitoso --}}
 @if (session('success'))
 <script>
+    const successMessages = {!! json_encode(session('success')) !!};
+    const messageText = Array.isArray(successMessages) ? successMessages.join('\n') : successMessages;
+
     const Toast = Swal.mixin({
         toast: true,
         position: "top-end",
@@ -162,12 +201,10 @@
             toast.onmouseleave = Swal.resumeTimer;
             }
         });
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log("Evento DOMContentLoaded disparado");
-                Toast.fire({ icon: "success",
-                title: "{{ session('success')}}"
-                });
-        });
+        Toast.fire({
+                icon: "success",
+                title: messageText
+            });
 </script>
 @endif
 {{-- cambio de estado --}}

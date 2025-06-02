@@ -9,11 +9,27 @@ document.addEventListener('DOMContentLoaded', function () {
         const limiteDeTiempo = Date.now() / 1000;
 
         if (decodificarToken.exp < limiteDeTiempo) {
-            alert('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
-
-            localStorage.clear();
-
-            window.location.href = '/';
+            Swal.fire({
+                icon: 'error',
+                title: '¡Error!',
+                text: 'Tu sesión a expirado.',
+                showConfirmButton: false,
+                timer:2000,
+                customClass: {
+                    popup: 'z-50',
+                },
+                didOpen: () => {
+                    const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+                    document.body.style.overflow = 'hidden'; // Desactiva el scroll
+                    document.body.style.marginRight = `${scrollBarWidth}px`; // Compensa la barra de scroll
+                },
+                willClose: () => {
+                    document.body.style.overflow = ''; // Restaura el scroll
+                    document.body.style.marginRight = ''; // Elimina el margen adicional
+                    localStorage.clear();//Elimina lo que esta en el local storage.
+                    window.location.href = '/';
+                }
+            });
         } else {
             //Axios incluira el token en todas las peticiones
             axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;

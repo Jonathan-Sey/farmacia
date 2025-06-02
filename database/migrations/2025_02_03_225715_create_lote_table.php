@@ -19,6 +19,7 @@ class CreateLoteTable extends Migration
             $table->string('numero_lote', 50);
             $table->date('fecha_vencimiento');
             $table->integer('cantidad');
+            $table->decimal('precio_compra', 10, 2); // Nuevo campo
             $table->unsignedBigInteger('id_compra');
             //$table->tinyInteger('estado')->default(1);
             $table->timestamps();

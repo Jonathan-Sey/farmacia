@@ -1,4 +1,5 @@
 <header>
+
     <div class="flex">
         <!-- Barra lateral fija -->
         <div class="hidden md:flex flex-col w-56 bg-[#073359] rounded-r-1xl overflow-hidden fixed top-0 left-0 h-full overflow-y-auto max-h-screen">
@@ -94,6 +95,14 @@
                         <span class="text-sm font-medium">Bitácora</span>
                     </a>
                 </li>
+                <li data-pestana="Historico" style="display:none;">
+                    <a href="{{ route('historico.precios') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book"></i>
+                        </span>
+                        <span class="text-sm font-medium">HistoricoPrecios</span>
+                    </a>
+                </li>
+
                 <li data-pestana="Categorias" style="display:none;">
                     <a href="{{ route('categorias.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-category"></i></span>
@@ -116,6 +125,12 @@
                     <a href="{{ route('roles.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-briefcase-alt"></i></span>
                         <span class="text-sm font-medium">Roles</span>
+                    </a>
+                </li>
+                <li data-pestana="Devoluciones" style="display:none;">
+                    <a href="{{ route('devoluciones.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-rotate-left"></i>  </span>
+                        <span class="text-sm font-medium">Devoluciones</span>
                     </a>
                 </li>
                 <!-- Botón Logout -->
@@ -184,6 +199,9 @@
             <li data-pestanal="bitacora" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book-medical"></i> Bitacora</a>
             </li>
+            <li data-pestanal="Historico" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
+                <a href="{{ route('historico.precios') }}"><i class="fa-solid fa-book-medical"></i> HistoricoPrecios</a>
+            </li>
             <li data-pestanal="Categorias" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('categorias.index') }}"><i class="bx bx-category"></i> Categorias</a>
             </li>
@@ -195,6 +213,9 @@
             </li>
             <li data-pestanal="Rol" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('roles.index') }}"><i class="bx bx-briefcase-alt"></i> Roles</a>
+            </li>
+            <li data-pestanal="Devoluciones" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('devoluciones.index') }}"><i class="fa-solid fa-rotate-left"></i> Devoluciones</a>
             </li>
             <li>
                 <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">

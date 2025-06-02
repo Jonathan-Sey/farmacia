@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Venta;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ImagenController;
 use App\Models\DetalleVenta;
 use App\Models\Producto;
 use App\Models\Persona;
@@ -10,6 +11,7 @@ use App\Models\Sucursal;
 use App\Models\Venta;
 use App\Models\Almacen;
 use App\Models\Bitacora;
+use App\Models\ReporteKardex;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -57,6 +59,8 @@ class VentaController extends Controller
      */
     public function create()
     {
+        $persona = request()->has('id_persona') ? Persona::find(request('id_persona')) : null;
+
      //   $productos = collect();
         $productos = Producto::activos()->get();
         $almacenesActivos = Almacen::activos()->get();
@@ -68,9 +72,9 @@ class VentaController extends Controller
 
 //        $productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
 
-        $personas = Persona::activos()->get();
+        $personas = Persona::activos()->orderBy('nombre')->get();
 
-        return view('venta.create',compact('productos','sucursales','personas','almacenesActivos'));
+        return view('venta.create',compact('sucursales','personas','almacenesActivos','persona'));
     }
 
     public function productosPorSucursal($id)
@@ -84,8 +88,9 @@ class VentaController extends Controller
             ->map(function($almacen) {
                 return [
                     'id' => $almacen->producto->id,
+                    'imagen' => asset('uploads/' . $almacen->producto->imagen),
                     'nombre' => $almacen->producto->nombre,
-                    'precio_venta' => $almacen->producto->precio_venta,
+                    'precio_venta' => $almacen->producto->precio_porcentaje,
                     'tipo' => $almacen->producto->tipo,
                     'stock' => $almacen->cantidad,
                 ];
@@ -105,14 +110,39 @@ class VentaController extends Controller
      */
     public function store(Request $request)
     {
+
+       //dd($request->all());
         //dd($request);
         $this->validate($request,[
             'arrayprecio' => 'required|array',
             'estado'=>'integer',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
+            'arrayPrecioOriginal.*' => 'numeric|min:0',
+            'arrayJustificacion.*' => 'nullable|string|max:255',
+            'imagen_receta' => 'nullable|string',
+            'numero_reserva' => 'nullable|string|max:50',
+            'observaciones_receta' => 'nullable|string|max:500'
 
         ]);
+
+        // validamos el control de compora por cliente
+        $persona = Persona::find($request->id_persona);
+
+        // Verificar restricciones
+        if ($persona->tieneRestriccion()) {
+            $mensaje = 'Esta persona tiene restricciones de compra: ';
+
+            if ($persona->restriccion_activa) {
+                $mensaje .= 'Restricción manual activada';
+            } else {
+                $mensaje .= "Excedió el límite de compras ({$persona->comprasRecientes()}/{$persona->limite_compras})";
+            }
+
+            return back()
+            ->with('error', $mensaje)
+            ->withInput();;
+        }
 
         //         // Verificar que el total enviado coincida con el recalculado
         // $subtotal = array_sum($request->get('arrayprecio'));
@@ -126,28 +156,44 @@ class VentaController extends Controller
     try {
         DB::beginTransaction();
 
+         // Mover imagen temporal a definitiva si existe
+         $imagenReceta = null;
+         if (!empty($request->imagen_receta)) {
+             $imagenController = new ImagenController();
+             $imagenReceta = $imagenController->moverDefinitiva($request->imagen_receta)
+                 ? $request->imagen_receta
+                 : null;
+         }
+
+
+
         // Redondear el impuesto y total
-        $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
-        $impuesto = round(($subtotal * $request->impuesto) / 100, 2); // Redondear impuesto
-        $total = round($subtotal + $impuesto, 2); // Redondear total
+        // $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
+        // $impuesto = round(($subtotal * $request->impuesto) / 100, 2);  // Redondear impuesto
+        // $total = round($subtotal + $impuesto, 2); // Redondear total
 
         // Crear el registro de venta
         $venta = Venta::create([
             'id_sucursal' => $request->id_sucursal,
             'fecha_venta' => $request->fecha_venta,
-            'impuesto' => $impuesto,
-            'total' => $request->total,
-            'id_usuario' => 1, // Usar el usuario actual o el correcto
+            'impuesto' => $request-> impuesto,
+            'total' => $request-> total,
+            'id_usuario' => $request->idUsuario, // Usar el usuario actual o el correcto
             'id_persona' => $request->id_persona,
             'estado' => 1,
+            'es_prescrito' => $request->has('es_prescrito'),
+            'imagen_receta' => $imagenReceta,
+            'numero_reserva' => $request->numero_reserva,
+            'observaciones_receta' => $request->observaciones_receta
         ]);
 
         // Obtener los arrays de detalles
         $arrayProducto_id = $request->get('arrayIdProducto');
         $arrayCantidad = $request->get('arraycantidad');
         $arrayprecio = $request->get('arrayprecio');
+        $arrayPrecioOriginal = $request->get('arrayPrecioOriginal');
+        $arrayJustificacion = $request->get('arrayJustificacion');
 
-        // Insertar los detalles de venta
         foreach ($arrayProducto_id as $index => $idProducto) {
             $producto = Producto::findOrFail($idProducto);
 
@@ -172,6 +218,19 @@ class VentaController extends Controller
                 'id_producto' => $idProducto,
                 'cantidad' => $arrayCantidad[$index],
                 'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+                'precio_original' => round($arrayPrecioOriginal[$index], 2),
+                'justificacion_descuento' => $arrayJustificacion[$index],
+            ]);
+
+            $reportekardex = ReporteKardex::create([
+                'producto_id' => $idProducto,
+                'sucursal_id' => $request->id_sucursal,
+                'tipo_movimiento' => 'Venta',
+                'cantidad' => $arrayCantidad[$index],
+                'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
+                'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
+                'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                'fecha_movimiento' => now()
             ]);
         }
 
@@ -205,8 +264,11 @@ class VentaController extends Controller
      */
     public function show(Venta $venta)
     {
-
+        $venta->load('detalles.producto');
          //$venta->load('productos');
+         if($venta->imagen_receta){
+            $venta->imagen_receta_url = asset('uploads/' . $venta->imagen_receta);
+         }
         return view('venta.show',compact('venta'));
 
     }
@@ -231,7 +293,7 @@ class VentaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+
     }
 
     /**

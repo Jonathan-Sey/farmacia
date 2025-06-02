@@ -9,8 +9,10 @@ use App\Models\Lote;
 use App\Models\Producto;
 use Illuminate\Http\Request;
 use App\Models\Sucursal;
+use App\Models\SucursalUser;
 use App\Models\Traslado;
 use App\Models\User;
+use App\Models\Vencidos;
 
 class AlmacenController extends Controller
 {
@@ -22,8 +24,10 @@ class AlmacenController extends Controller
     public function index()
     {
         //$traslados = Traslado::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
-        $almacenes = Almacen::with('producto:id,codigo,nombre,tipo')
+       
+        $almacenes = Almacen::with('producto:id,codigo,nombre,tipo,imagen')
         ->where('estado', '!=', 0)
+       
         ->get();
         //return($almacenes);
         return view('almacen.index',compact('almacenes'));
@@ -92,6 +96,7 @@ class AlmacenController extends Controller
         Almacen::create([
             'id_producto' => $request->id_producto,
             'id_sucursal' => $request->id_sucursal,
+            'fecha_vencimiento' => $request->fecha_vencimiento,
             'cantidad'=> 1,
             'id_user' => 1,
         ]);
@@ -217,4 +222,46 @@ class AlmacenController extends Controller
 
         return response()->json(['success' => false]);
     }
+
+    //Para mostrar lo que hay en la vista de modificar el alerta
+    public function alertStock($id)
+    {
+        $almacen = Almacen::findOrFail($id);
+        $productos = Producto::activos()->where('tipo', 2)->get();
+        $sucursales = Sucursal::activos()->get();
+
+        return view('almacen.alertStock', compact('almacen', 'productos', 'sucursales'));
+    }
+
+    //Actualiza la cantidad en el campo alerta_stock que se usa para mostrar la alerta de poco stock
+    public function updateAlertStock(Request $request, $id)
+    {
+        $request->validate([
+            'alerta_stock' => ['required', 'numeric', 'min:1'],
+        ]);
+        $almacen = Almacen::findOrFail($id);
+
+        // Actualizar el campo alerta_stock
+        $almacen->alerta_stock = $request->input('alerta_stock');
+        $almacen->save();
+
+        return redirect()->route('almacenes.index')->with('success', '¡Alerta de stock actualizada!');
+    }
+
+     //aqui se manda a la vista de productosa vencidos
+     public function productosVencidos()
+     {
+
+         $sucursales = Sucursal::activos()->get();
+         $almacenes = Almacen::with('producto:id,codigo,nombre');
+
+         return view('producto.vencidos', compact('sucursales', 'almacenes'));
+     }
+
+
+
+
+
+
+
 }

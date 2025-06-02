@@ -3,7 +3,108 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+@endpush
+@push('js')
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script>
+ Dropzone.autoDiscover = false;
+    const dropzone = new Dropzone("#dropzone", {
+        url: "{{ route('upload.image.temp') }}",
+        dictDefaultMessage: "Arrastra y suelta una imagen o haz clic aquí para subirla",
+        acceptedFiles: ".png,.jpg,.jpeg",
+        addRemoveLinks: true,
+        dictRemoveFile: "Borrar imagen",
+        maxFiles: 1,
+        uploadMultiple: false,
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        }
+    });
 
+    // Validación para una sola imagen
+    dropzone.on("addedfile", function(file) {
+        if (this.files.length > 1) {
+            this.removeFile(this.files[0]);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir una imagen.',
+                confirmButtonText: 'Aceptar',
+            });
+        }
+    });
+
+    dropzone.on("success", function(file, response) {
+        console.log("Archivo subido temporalmente:", response.imagen);
+        document.querySelector('[name="imagen"]').value = response.imagen;
+    });
+
+    dropzone.on("removedfile", function(file) {
+    const imagenNombre = document.querySelector('[name="imagen"]').value;
+    const imagenOriginal = "{{ $producto->imagen }}";
+
+    // Si es la imagen original, marcamos para eliminación
+    if (imagenNombre === imagenOriginal) {
+        // Agregamos un campo hidden para indicar que se debe eliminar la imagen
+        if (!document.querySelector('[name="eliminar_imagen"]')) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'eliminar_imagen';
+            input.value = '1';
+            document.querySelector('form').appendChild(input);
+        }
+    }
+    // Si es una imagen temporal, la eliminamos del servidor
+    else if (imagenNombre && imagenNombre !== imagenOriginal) {
+        fetch("{{ route('eliminar.imagen.temp') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ imagen: imagenNombre }),
+        });
+    }
+
+    // Limpiamos el campo de imagen
+    document.querySelector('[name="imagen"]').value = "";
+});
+
+    // Precargar la imagen existente
+    document.addEventListener("DOMContentLoaded", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+        if (imagenNombre) {
+            const mockFile = { name: imagenNombre, size: 12345 };
+            dropzone.emit("addedfile", mockFile);
+            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre);
+            dropzone.emit("complete", mockFile);
+        }
+    });
+
+    // Eliminar imagen temporal al cerrar la página si no se guardó
+    window.addEventListener("beforeunload", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+        const imagenOriginal = "{{ $producto->imagen }}";
+        const formSubmitted = document.querySelector('form').submitted;
+
+        if (imagenNombre && !formSubmitted && imagenNombre !== imagenOriginal) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+    });
+
+    // Marcar el formulario como enviado al hacer submit
+    document.querySelector('form').addEventListener('submit', function() {
+        this.submitted = true;
+    });
+</script>
 @endpush
 
 @section('contenido')
@@ -47,6 +148,19 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="mt-2 mb-5">
+                    <label class="uppercase block text-sm font-medium text-gray-900">Imagen del producto</label>
+                    <div id="dropzone" class="dropzone border-2 border-dashed rounded w-full h-60">
+                        <input type="hidden" name="imagen" value="{{ old('imagen', $producto->imagen)}}" >
+
+                    </div>
+                    @error('imagen')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message }}</span>
+                            </div>
+                    @enderror
+                </div>
                 {{-- <div class="mt-2 mb-5">
                     <label for="codigo" class="uppercase block text-sm font-medium text-gray-900">Codigo</label>
                     <input
@@ -85,19 +199,19 @@
                     @enderror
                 </div>
                 <div class="mt-2 mb-5">
-                    <label for="precio_venta" class="uppercase block text-sm font-medium text-gray-900">Precio</label>
+                    <label for="precio_porcentaje" class="uppercase block text-sm font-medium text-gray-900">Precio</label>
                     <input
                         type="number"
-                        name="precio_venta"
-                        id="precio_venta"
+                        name="precio_porcentaje"
+                        id="precio_porcentaje"
                         autocomplete="given-name"
                         placeholder="Precio"
                         min="1"
                         step="any"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        value="{{ old('precio_venta', $producto->precio_venta) }}">
+                        value="{{ old('precio_porcentaje', $producto->precio_porcentaje) }}">
 
-                    @error('precio_venta')
+                    @error('precio_porcentaje')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>

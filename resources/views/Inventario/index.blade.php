@@ -29,7 +29,7 @@
                 <tr class="bg-slate-600  ">
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >producto</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Bodega</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >No.lote</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad en inventario</th>
                     {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Estado</th> --}}
@@ -44,7 +44,7 @@
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->id_producto}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->producto}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->sucursal}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$index->bodega->nombre }}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_lotes}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$index->cantidad_total}}</td>
                     {{-- <td class="px-6 py-4 whitespace-nowrap">
@@ -66,7 +66,7 @@
                         {{-- <a href="{{ route('lotes.index', ['producto' => $index->id_producto, 'sucursal' => $index->id_sucursal]) }}" class="btn btn-primary font-bold uppercase btn-sm">
                             Ver
                         </a> --}}
-                        <a href="{{ route('inventario.show', ['idProducto' => $index->id_producto, 'idSucursal' => $index->id_sucursal]) }}" class="btn btn-primary font-bold uppercase btn-sm">
+                        <a href="{{ route('inventario.show', ['idProducto' => $index->id_producto, 'idBodega' => $index->id_bodega]) }}" class="btn btn-primary font-bold uppercase btn-sm">
                             Ver
                         </a>
 
@@ -166,11 +166,24 @@
             order: [0,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
+                 paginate: {
+                     first: `<i class="fa-solid fa-backward"></i>`,
+                     previous: `<i class="fa-solid fa-caret-left">`,
+                     next: `<i class="fa-solid fa-caret-right"></i>`,
+                     last: `<i class="fa-solid fa-forward"></i>`
+                 }
             },
             layout: {
                 topStart: {
 
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [

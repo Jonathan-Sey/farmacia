@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Rol;
-
+use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UsuarioController extends Controller
 {
@@ -24,7 +24,7 @@ class UsuarioController extends Controller
         // Filtrar solo usuarios activos y cargar el rol relacionado con las columnas específicas
         $usuarios = User::whereIn('estado', [1, 2])->with('rol:id,nombre')->get();
         // Pasar los usuarios y roles a la vista
-        return view('usuarios.index', compact('roles', 'usuarios'));
+        return view('Usuarios.index', compact('roles', 'usuarios'));
         }
 
 
@@ -35,7 +35,7 @@ class UsuarioController extends Controller
      */
     public function create(){
         $roles = Rol::where('estado', '!=', 0)->get();
-        return view('usuarios.create',compact('roles'));
+        return view('Usuarios.create',compact('roles'));
      }
 
     public function edit($id)
@@ -43,7 +43,7 @@ class UsuarioController extends Controller
         // Obtén al usuario por ID
         $user = User::findOrFail($id);
         $roles = Rol::where('estado', '!=', 0)->get();
-        return view('usuarios.edit', compact('user', 'roles'));
+        return view('Usuarios.edit', compact('user', 'roles'));
         }
 
     public function update(Request $request, $id)
@@ -160,6 +160,12 @@ class UsuarioController extends Controller
         }
 
         return response()->json(['success' => false]);
+    }
+
+    public function usuarioActual(Request $request)
+    {
+        $user = JWTAuth::parseToken()->authenticate();
+        return response()->json($user);
     }
 
 }

@@ -15,9 +15,8 @@ class socursalesSeeder extends Seeder
     public function run()
     {
         $data = [
-            ['nombre' => "Antigua", 'ubicacion' => "Antigua guatemala", 'estado' => 1],
-            ['nombre' => "Huehuetenango", 'ubicacion' => "Huenuetenango", 'estado' => 1],
-            
+            ['imagen' =>"",'nombre' => "Antigua", 'codigo_sucursal'=>"1", 'ubicacion' =>"Antigua guatemala",  'telefono'=>"48759654", 'email'=>"antigua@gmail.com", 'encargado'=>"Jose", 'estado' => 1],
+            ['imagen' =>"",'nombre' => "Huehuetenango", 'codigo_sucursal'=>"2", 'ubicacion' => "Huehuetenango", 'telefono'=>"59238745", 'email'=>"huehuetenango@gmail.com",'encargado'=>"Luis",  'estado' => 1],
         ];
 
         DB::table("sucursal")->insert($data);
