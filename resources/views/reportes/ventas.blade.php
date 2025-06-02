@@ -5,53 +5,53 @@
 @endpush
 
 @section('contenido')
-<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-        <a href="{{ route('Reporte_ventas.filtrarPorFecha') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3  ">
-                    <div class="flex flex-col items-center">
-                        <i class='bx bxs-package text-7xl lg:text-6xl md:text-6xl sm:text-6xl' ></i>
-                        <p class="uppercase text-lg font-bold">reporte por fecha</p>
-                    </div>
-                    <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                       
-                    </div>
+<div class="flex gap-5 mb-8 sm:grid-cols-2 justify-center">
+    <a href="{{ route('Reporte_ventas.filtrarPorFecha') }}">
+        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+            <div class="flex flex-col items-center">
+                <i class='bx bxs-package text-7xl lg:text-6xl md:text-6xl sm:text-6xl'></i>
+                <p class="uppercase text-lg font-bold">reporte por fecha</p>
             </div>
-        </a>
-        <a href="{{ route('sucursales.index') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2  sm:p-3 ">
-                    <div class="flex flex-col items-center">
-                        <i class='bx bxs-building text-7xl lg:text-6xl  sm:text-6xl' ></i>
-                        <p class="uppercase text-lg font-bold">reporte por sucursales</p>
-                    </div>
-                    <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                    
-                    </div>
-            </div>
-        </a>
-        <a href="{{ route('compras.index') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2  sm:p-3 ">
-                    <div class="flex flex-col items-center">
-                        <i class='fa-solid fa-cart-shopping text-7xl lg:text-6xl sm:text-6xl' ></i>
-                        <p class="uppercase text-lg font-bold">reporte por usuario </p>
-                    </div>
-                    <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                        
-                    </div>
-            </div>
-        </a>
-        <a href="{{ route('ventas.index') }}">
-            <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg grid grid-cols-2 justify-center align-middle items-center text-center sm:grid-cols-1 lg:grid-cols-1 lg:p-2 sm:p-3">
-                    <div class="flex flex-col items-center">
-                        <i class='fa-solid fa-bag-shopping text-7xl lg:text-6xl sm:text-6xl' ></i>
-                        <p class="uppercase text-lg font-bold">reporte por maquina</p>
-                    </div>
-                    <div class="uppercase font-bold sm:text-5xl lg:text-6xl xl:text-7xl">
-                        
-                    </div>
-            </div>
-        </a>
+        </div>
+    </a>
 
-    </div>
+    <a href="{{ route('Reporte_ventas.filtrarPorSucursal') }}">
+        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+            <div class="flex flex-col items-center">
+                <i class='bx bxs-building text-7xl lg:text-6xl sm:text-6xl'></i>
+                <p class="uppercase text-lg font-bold">reporte por sucursales</p>
+            </div>
+        </div>
+    </a>
+
+    <a href="{{ route('Reporte_ventas.filtrarPorUsuario') }}">
+        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+            <div class="flex flex-col items-center">
+                <i class='fa-solid bx bxs-user text-7xl lg:text-6xl sm:text-6xl'></i>
+                <p class="uppercase text-lg font-bold">reporte por usuario</p>
+            </div>
+        </div>
+    </a>
+
+    <a href="{{ route('reporte.productos') }}">
+        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+            <div class="flex flex-col items-center">
+                <i class='fa-solid fa-bag-shopping text-7xl lg:text-6xl sm:text-6xl'></i>
+                <p class="uppercase text-lg font-bold">reporte por producto</p>
+            </div>
+        </div>
+    </a>
+
+    <a href="{{ route('Reporte_ventas.create') }}">
+        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+            <div class="flex flex-col items-center">
+                <i class='fa-solid fa-bag-shopping text-7xl lg:text-6xl sm:text-6xl'></i>
+                <p class="uppercase text-lg font-bold">reporte Ingresos y Egresos</p>
+            </div>
+        </div>
+    </a>
+</div>
+
 
 
     <div class="grid gap-5 grid-cols-1 items-start mb-8">

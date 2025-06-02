@@ -25,6 +25,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('productos:revisar-vencidos')->everyMinute();// Se ejecuta cada hora
+        $schedule->command('clean:temp-images')->hourly();
     }
 
     /**

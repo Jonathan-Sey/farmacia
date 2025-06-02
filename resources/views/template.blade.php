@@ -37,8 +37,8 @@
 
     <div class="flex justify-end items-center p-6  bg-gray-100">
 
-        <a href="{{ route('solicitud.index') }}">
-            <button id="notificacion" class="relative inline-flex items-center p-3 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300" aria-label="5 notifications">
+        <a href="{{ route('notificaciones.index') }}">
+            <button id="notificacion" class="relative inline-flex  p-3 text-sm font-medium  text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300" aria-label="5 notifications">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
@@ -64,7 +64,7 @@
     </main>
 
     <!-- Footer -->
-    <div class=" ml-4 md:ml-[200px]">
+    <div class=" ml-4 md:ml-[200px]" id="piepagina">
         <x-footer class="bg-gray-800 text-white p-4 text-center w-full" />
     </div>
     <script src="{{ asset('js/axios.min.js') }}"></script>

@@ -3981,10 +3981,6 @@ details.collapse summary::-webkit-details-marker {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-.py-3\.5 {
-  padding-top: 0.875rem;
-  padding-bottom: 0.875rem;
-}
 .pb-12 {
   padding-bottom: 3rem;
 }
@@ -4240,10 +4236,6 @@ details.collapse summary::-webkit-details-marker {
 .ring-cyan-500 {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(6 182 212 / var(--tw-ring-opacity, 1));
-}
-.blur {
-  --tw-blur: blur(8px);
-  filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
@@ -4641,10 +4633,6 @@ details.collapse summary::-webkit-details-marker {
 
   .md\:w-1\/5 {
     width: 20%;
-  }
-
-  .md\:w-full {
-    width: 100%;
   }
 
   .md\:grid-cols-2 {

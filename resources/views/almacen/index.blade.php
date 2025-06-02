@@ -14,14 +14,20 @@
         <button class="btn btn-success text-white font-bold uppercase">
             Asignar servicio
         </button>
+        </a>
+        <a href="{{route('solicitud.index')}}">
+        <button class="btn btn-primary text-white font-bold uppercase">
+            Solicitar productos
+        </button>
     </a>
+
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >ID</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Tipo</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >sucursal</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >cantidad</th>
@@ -36,9 +42,15 @@
             <tbody>
                 @foreach ($almacenes as $almacen)
                 <tr>
-                    <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->id}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->codigo}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        @if ($almacen->producto->imagen)
+                            <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                        @else
+                            <span class="text-gray-500">Sin imagen</span>
+                        @endif
+                    </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a href="#" class="estado">
                             @if ($almacen->producto->tipo == 1)
@@ -49,13 +61,14 @@
                         </a>
                     </td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->sucursal->nombre}}</td>
+                    {{-- muestra la cantidad que hay y usa la cantidad minima que se tiene en el campo alerta_stock en la base de datos para mostrar el alerta de poco stock --}}
                     <td class="text-left px-6 py-4 whitespace-nowrap">
                             @if ($almacen->producto->tipo == 2)
                             <span class="text-green-500 font-bold">{{$almacen->cantidad}}</span>
                             @else
-                                <span class="{{ $almacen->cantidad <= 10 ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
+                                <span class="{{ $almacen->cantidad <= $almacen->alerta_stock ? 'text-red-500 font-bold' : 'text-green-500 font-bold' }}">
                                     {{$almacen->cantidad}}
-                                    @if ($almacen->cantidad <= 10)
+                                    @if ($almacen->cantidad <= $almacen->alerta_stock)
                                         <span class="text-red-400">(Poco stock)</span>
                                     @endif
                                 </span>
@@ -79,6 +92,13 @@
                                     <i class="fas fa-edit"></i>
                                 </button>
                             </form>
+                        @endif
+
+                       {{--  boton para modificar en que cantidad debe lanzar la alerta --}}
+                        @if ($almacen->producto->tipo == 1)
+                        <a href="{{ route('almacenes.alertStock', $almacen->id) }}" class="btn bg-red-500 font-bold uppercase btn-sm">
+                            <i class='bx bx-bell'></i>
+                        </a>
                         @endif
 
                         <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $almacen->id }}" data-estado="{{ $almacen->estado }}" data-info="{{ $almacen->nombre }}">
@@ -120,17 +140,30 @@
             order: [0,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
+                 paginate: {
+                     first: `<i class="fa-solid fa-backward"></i>`,
+                     previous: `<i class="fa-solid fa-caret-left">`,
+                     next: `<i class="fa-solid fa-caret-right"></i>`,
+                     last: `<i class="fa-solid fa-forward"></i>`
+                 }
             },
             layout: {
                 topStart: {
 
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 2 },
-                { responsivePriority: 2, targets: 7 },
+                { responsivePriority: 2, targets: 6 },
             ],
 
 

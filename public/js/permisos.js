@@ -19,7 +19,14 @@ const rutasMapeadas = {
     'bitacora': '/bitacora',
     'Solicitud': '/solicitud',
     'Reporte_ventas': '/Reporte_ventas',
-    'Reporte_ventas_filtro': '/reporte/ventas/filtrar'
+    'Reporte_ventas_filtro': '/reporte/ventas/filtrar',
+<<<<<<< HEAD
+    'notificaciones': '/notificaciones',
+    'Devoluciones': '/devoluciones',
+    'reporte-productos': '/reporte-productos',
+
+=======
+>>>>>>> eli
 };
 
 function tienePermiso(ruta) {
@@ -45,13 +52,46 @@ function tienePermiso(ruta) {
 
 function verificarPermiso(ruta) {
     if (!tienePermiso(ruta)) {
-        alert('No tienes permiso para acceder a esta vista.');
-        window.location.href = '/';
+        Swal.fire({
+            icon: 'error',
+            title: '¡Error!',
+            text: 'No tienes permiso para acceder a esta pagina.',
+            showConfirmButton: false,
+            timer:2000,
+            customClass: {
+                popup: 'z-50',
+            },
+            didOpen: () => {
+                const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+                document.body.style.overflow = 'hidden'; // Desactiva el scroll
+                document.body.style.marginRight = `${scrollBarWidth}px`; // Compensa la barra de scroll
+                document.querySelector('main').style.display = 'none';//Para ocultar el contenido del main.
+                document.getElementById('piepagina').style.display = 'none';//Para ocultar el footer de la pagina.
+            },
+            willClose: () => {
+                document.body.style.overflow = ''; // Restaura el scroll
+                document.body.style.marginRight = ''; // Elimina el margen adicional
+
+                const ultimaRuta = localStorage.getItem('ultimaRutaValida');//Obtiene la ultima ruta que se setio y que tiene permiso para acceder
+                if (ultimaRuta) {
+                    window.location.href = ultimaRuta;//Regresa a la ruta anterior que si tenia permiso
+                } else {
+                    window.history.back(); //Regresa si no hay ultima ruta
+                }
+
+            }
+        });
     }
 }
 
 // verificacion de permisos
 window.addEventListener('load', function () {
     const rutaActual = window.location.pathname; // Obtener la ruta actual
+
+    // Guardar la ruta actual solo si tiene permiso
+    if (tienePermiso(rutaActual)) {
+        localStorage.setItem('ultimaRutaValida', rutaActual);
+    }
+
     verificarPermiso(rutaActual); // Verificar permisos
 });

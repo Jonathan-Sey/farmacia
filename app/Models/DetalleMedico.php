@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class DetalleMedico extends Model
 {
@@ -37,6 +38,11 @@ class DetalleMedico extends Model
         return $this->hasMany(Consulta::class, 'id_medico');
     }
 
+    public function medico()
+    {
+        return $this->belongsTo(User::class, 'id_usuario');
+    }
+    
     protected $with = ['horarios.sucursal'];
     // Relación con Horarios
     public function horarios()

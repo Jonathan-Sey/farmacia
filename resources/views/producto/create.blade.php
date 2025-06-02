@@ -3,8 +3,93 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 
 @endpush
+@push("js")
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script>
+    Dropzone.autoDiscover = false;
+    const dropzone = new Dropzone("#dropzone", {
+        url: "{{ route('upload.image.temp') }}",
+        dictDefaultMessage: "Arrastra y suelta una imagen o haz clic aquí para subirla",
+        acceptedFiles: ".png,.jpg,.jpeg",
+        addRemoveLinks: true,
+        dictRemoveFile: "Borrar imagen",
+        maxFiles: 1,
+        uploadMultiple: false,
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        }
+    });
+
+    dropzone.on("addedfile", function(file) {
+        if (this.files.length > 1) {
+            this.removeFile(this.files[0]);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir una imagen.',
+                confirmButtonText: 'Aceptar',
+            });
+        }
+    });
+
+    dropzone.on("success", function(file, response) {
+        console.log("Archivo subido temporalmente:", response.imagen);
+        document.querySelector('[name="imagen"]').value = response.imagen;
+    });
+
+    dropzone.on("removedfile", function(file) {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+        if (imagenNombre) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+        document.querySelector('[name="imagen"]').value = "";
+    });
+
+    // Eliminar imagen temporal al cerrar la página
+    window.addEventListener("beforeunload", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+        if (imagenNombre && !document.querySelector('form').submitted) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+    });
+
+    // Marcar el formulario como enviado al hacer submit
+    document.querySelector('form').addEventListener('submit', function() {
+        this.submitted = true;
+    });
+
+    // Precargar imagen en edición
+    document.addEventListener("DOMContentLoaded", function() {
+        const imagenNombre = document.querySelector('[name="imagen"]').value;
+        if (imagenNombre) {
+            const mockFile = { name: imagenNombre, size: 12345 };
+            dropzone.emit("addedfile", mockFile);
+            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre);
+            dropzone.emit("complete", mockFile);
+        }
+    });
+</script>
+
+
+@endpush
+
 
 @section('contenido')
 <div class="flex justify-center items-center mx-3 ">
@@ -45,7 +130,21 @@
                             />
                         </div>
                     </div>
+
                 </div>
+                <div class="mt-2 mb-5">
+                    <label class="uppercase block text-sm font-medium text-gray-900">Imagen del producto</label>
+                    <div id="dropzone" class="dropzone border-2 border-dashed rounded w-full h-60">
+                        <input type="hidden" name="imagen" value="{{ old('imagen')}}" >
+
+                    </div>
+                    @error('imagen')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message }}</span>
+                            </div>
+                        @enderror
+                </div>
+
 
                 <div class="mt-2 mb-5">
                     <label for="nombre" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
@@ -66,37 +165,48 @@
                 </div>
 
                 <div class="mt-2 mb-5">
-                    <label for="precio_venta" class="uppercase block text-sm font-medium text-gray-900">Precio</label>
-                    <input
-                        type="text"
-                        name="precio_venta"
-                        id="precio_venta"
-                        placeholder="Precio"
-                        min="1"
-                        step="any"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        value="{{ old('precio_venta') }}">
+                        <div >
+                            <label for="precio_venta" class="uppercase block text-sm font-medium text-gray-900">Precio venta</label>
+                            <input
+                                type="text"
+                                name="precio_venta"
+                                id="precio_venta"
+                                placeholder="Precio venta"
+                                min="1"
+                                step="any"
+                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                value="{{ old('precio_venta') }}">
 
-                    @error('precio_venta')
+                            @error('precio_venta')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message }}</span>
+                            </div>
+                            @enderror
+                        </div>
+                </div>
+
+
+
+                <div class="mt-2 mb-5">
+                    <label for="precio_porcentaje" class="uppercase block text-sm font-medium text-gray-900">Margen de Ganancia (%)</label>
+                    <input
+                        type="number"
+                        name="precio_porcentaje"
+                        id="precio_porcentaje"
+                        placeholder="Porcentaje de ganancia"
+                        min="0"
+                        step="0.01"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                        value="{{ old('precio_porcentaje') }}">
+
+                    @error('precio_porcentaje')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
                 </div>
 
-                <div class="mt-2 mb-5">
-                    <label for="porcentaje" class="uppercase block text-sm font-medium text-gray-900">Porcentaje de aumento (%)</label>
-                    <input
-                        type="number"
-                        id="porcentaje"
-                        placeholder="Ejemplo: 10 para 10%"
-                        min="0"
-                        step="any"
-                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
-                </div>
-{{--
-
-                <div class="mt-2">
+            {{--<div class="mt-2">
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
                     <textarea name="descripcion"
                     require
@@ -109,12 +219,6 @@
                     </div>
                     @enderror
                 </div>
-
-
-
-
-
-
                 <div class="mt-2 mb-5">
                     <label for="fecha_caducidad" class="uppercase block text-sm font-medium text-gray-900">Fecha de Vencimiento</label>
                     <input
@@ -124,7 +228,6 @@
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('fecha_caducidad') }}">
                 </div> --}}
-
                 <div class="mt-2">
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
                     <textarea name="descripcion"
@@ -149,54 +252,5 @@
 </div>
 
 <script src="/js/obtenerUsuario.js"></script>
-<script>
-
-let precioBase = 0; // almacena el precio original
-
-// Función para desformatear el valor ingresado (para cálculos)
-function desformatearMoneda(valor) {
-  return parseFloat(valor.replace(/[^\d.-]/g, '')) || 0;
- }
-
-// Función para formatear el número como moneda
- function formatearMoneda(valor) {
-     return valor.toFixed(2); // Deja solo dos decimales
- }
-
-// Evento para actualizar el precio mientras se escribe el valor en "precio_venta"
-document.getElementById('precio_venta').addEventListener('input', function() {
-    let precioIngresado = desformatearMoneda(document.getElementById('precio_venta').value);
-    precioBase = precioIngresado;
-    document.getElementById('precio_venta').value = precioIngresado; // Mantenemos el valor tal cual lo escribe el usuario
-    calcularPrecioFinal(); // Llamamos la función de cálculo después de cambiar el precio
-});
-
-// Evento para actualizar el precio cuando se pierda el foco del campo
-document.getElementById('precio_venta').addEventListener('blur', function() {
-    let precioIngresado = desformatearMoneda(document.getElementById('precio_venta').value);
-    document.getElementById('precio_venta').value = formatearMoneda(precioIngresado); // Formateamos el valor a dos decimales
-    calcularPrecioFinal(); // Llamamos la función de cálculo después de que el campo pierde el foco
-});
-
-// Evento para actualizar el precio al modificar el porcentaje
-document.getElementById('porcentaje').addEventListener('input', function() {
-    calcularPrecioFinal(); // Llamamos a la función de cálculo al cambiar el porcentaje
-});
-
-function calcularPrecioFinal() {
-    let precioBaseActual = precioBase;
-    let porcentaje = parseFloat(document.getElementById('porcentaje').value) || 0;
-
-    // Si el porcentaje es 0, mostramos solo el precio base
-    if (porcentaje === 0) {
-        document.getElementById('precio_venta').value = formatearMoneda(precioBaseActual);
-    } else {
-        // Calculamos el precio con el porcentaje y lo mostramos
-        let precioFinal = precioBaseActual + (precioBaseActual * (porcentaje / 100));
-        document.getElementById('precio_venta').value = formatearMoneda(precioFinal);
-    }
-}
-
-</script>
 
 @endsection
