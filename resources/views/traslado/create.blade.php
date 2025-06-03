@@ -19,6 +19,7 @@
         color: #1f2937;
         font-weight: 700;
     }
+
 </style>
 @endpush
 
@@ -31,10 +32,10 @@
 
             <div class="border-b border-gray-200 pb-6">
                 <div class="mb-5">
-                    <div class="flex gap-6 justify-center">
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
                         <!-- Sucursal Origen -->
-                        <div class="w-1/2">
-                            <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal salida</label>
+                        <div class="w-full md:w-1/2">
+                            {{-- <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal salida</label>
                             <select class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                     name="id_sucursal_1" id="id_sucursal_1" required>
                                 <option value="">Seleccionar sucursal</option>
@@ -44,16 +45,44 @@
                             </select>
                             @error('id_sucursal_1')
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                            @enderror
+                            @enderror --}}
+                            <x-select2
+                                id="id_sucursal_1"
+                                name="id_sucursal_1"
+                                label="Sucursal salida"
+                                :options="$sucursales->pluck('nombre', 'id')"
+                                :selected="old('id_sucursal_1')"
+                                placeholder="Seleccionar Salida"
+                                required
+                                class="select2-sucursal"
+                                :maxLength="20"
+                            />
                         </div>
 
-                        <div class="w-1/2 flex gap-6 p-6 items-center justify-center">
+                        <!-- Flecha - Solo visible en pantallas medianas/grandes -->
+                        <div class="hidden md:flex w-1/2 gap-6 p-6 items-center justify-center">
                             <i class="fa-solid fa-arrow-right"></i>
                         </div>
 
+                        <!-- Flecha para móviles - Aparece entre los selects -->
+                        <div class="md:hidden flex justify-center py-2">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </div>
+
                         <!-- Sucursal Destino -->
-                        <div class="w-1/2">
-                            <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal entrada</label>
+                        <div class="w-full md:w-1/2">
+                            <x-select2
+                                name="id_sucursal_2"
+                                label="Sucursal Entrada"
+                                :options="$sucursales->pluck('nombre', 'id')"
+                                :selected="old('id_sucursal_2')"
+                                placeholder="Seleccionar Entrada"
+                                class="select2-sucursal"
+                                id="id_sucursal_2"
+                                required
+                                :maxLength="20"
+                            />
+                            {{-- <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal entrada</label>
                             <select class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                     name="id_sucursal_2" id="id_sucursal_2" required>
                                 <option value="">Seleccionar sucursal</option>
@@ -63,21 +92,31 @@
                             </select>
                             @error('id_sucursal_2')
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                            @enderror
+                            @enderror --}}
                         </div>
                     </div>
                 </div>
 
                 <!-- Producto -->
                 <div class="mt-2 mb-5">
-                    <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto</label>
+                    {{-- <label for="id_producto" class="uppercase block text-sm font-medium text-gray-900">Producto</label>
                     <select class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             name="id_producto" id="id_producto" required disabled>
                         <option value="">Seleccione primero una sucursal de origen</option>
                     </select>
                     @error('id_producto')
                         <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                    @enderror
+                    @enderror --}}
+                    <x-select2
+                        name="id_producto"
+                        label="Producto"
+                        :options="[]"
+                        required
+                        class="select2-producto"
+                        withStock="true"
+                        :maxLength="30"
+                        disabled
+                    />
 
                     <!-- Mostrar stock disponible -->
                     <div id="stock-disponible" class="stock-info hidden">
@@ -113,22 +152,10 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/obtenerUsuario.js"></script>
-
-<script>
-@push('js')
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="/js/obtenerUsuario.js"></script>
+<script src="/js/select2-global.js"></script>
 
 <script>
 $(document).ready(function() {
-    // Inicializar selects
-    $('.select2-sucursal, .select2-producto').select2({
-        width: '100%',
-        placeholder: "Seleccionar",
-        allowClear: true
-    });
-
     // Variables para controlar stock
     let stockDisponible = 0;
 
@@ -219,5 +246,4 @@ $(document).ready(function() {
     });
 });
 </script>
-@endpush
 @endpush

@@ -32,11 +32,11 @@
 
             <div class="border-b border-gray-200 pb-6">
                 <div class="mb-5">
-                    <div class="flex gap-6 justify-center">
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
                         <!-- Sucursal Origen -->
-                        <div class="w-1/2">
-                            <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal salida</label>
-                            <select class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                        <div class="w-full md:w-1/2">
+                            {{-- <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal salida</label> --}}
+                            {{-- <select class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                     name="id_sucursal_1" id="id_sucursal_1" required>
                                 <option value="">Seleccionar sucursal</option>
                                 @foreach ($sucursales as $sucursal)
@@ -45,16 +45,45 @@
                             </select>
                             @error('id_sucursal_1')
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                            @enderror
+                            @enderror --}}
+                            <x-select2
+                                name="id_sucursal_1"
+                                label="Sucursal salida"
+                                :options="$sucursales->pluck('nombre', 'id')"
+                                :selected="$traslado->id_sucursal_origen"
+                                placeholder="Seleccionar Salida"
+                                required
+                                 id="id_sucursal_1"
+                                class="select2-sucursal"
+                                :maxLength="20"
+                            />
                         </div>
 
-                        <div class="w-1/2 flex gap-6 p-6 items-center justify-center">
+                        <!-- Flecha - Solo visible en pantallas medianas/grandes -->
+                        <div class="hidden md:flex w-1/2 gap-6 p-6 items-center justify-center">
                             <i class="fa-solid fa-arrow-right"></i>
                         </div>
 
+                         <!-- Flecha para móviles - Aparece entre los selects -->
+                         <div class="md:hidden flex justify-center py-2">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </div>
+
+
                         <!-- Sucursal Destino -->
-                        <div class="w-1/2">
-                            <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal entrada</label>
+                        <div class="w-full md:w-1/2">
+                            <x-select2
+                                name="id_sucursal_2"
+                                label="Sucursal Entrada"
+                                :options="$sucursales->pluck('nombre', 'id')"
+                                :selected="$traslado->id_sucursal_destino"
+                                placeholder="Seleccionar Entrada"
+                                class="select2-sucursal"
+                                id="id_sucursal_2"
+                                required
+                                :maxLength="20"
+                            />
+                            {{-- <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal entrada</label>
                             <select class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                     name="id_sucursal_2" id="id_sucursal_2" required>
                                 <option value="">Seleccionar sucursal</option>
@@ -64,7 +93,7 @@
                             </select>
                             @error('id_sucursal_2')
                                 <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
-                            @enderror
+                            @enderror --}}
                         </div>
                     </div>
                 </div>
