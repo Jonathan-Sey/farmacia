@@ -150,6 +150,8 @@ Route::resource('solicitud', solicitudController::class)->parameters(['solicitud
 //Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
 //Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
 //Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+// Nueva ruta para obtener stock específico
+Route::get('/stock-por-sucursal-producto/{sucursalId}/{productoId}', [trasladoController::class, 'obtenerStock']);
 Route::get('/productos-por-sucursal/{id_sucursal}', [trasladoController::class, 'obtenerProductos']);
 Route::resource('bitacora', bitacoraController::class)->parameters(['bitacora' => 'bitacora']);
 

@@ -119,6 +119,15 @@
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5 flex flex-col gap-5 md:grid md:grid-cols-2 " >
                     <div class="mt-2 mb-5">
+                        {{-- <x-select2
+                            name="id_categoria"
+                            label="Categoria"
+                            :options="$categorias->pluck('nombre', 'id')"
+                            :selected="old('id_categoria', $producto->id_categoria)"
+                            placeholder="Seleccionar una categoría"
+                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                        /> --}}
+
                         <label for="id_categoria" class="uppercase block text-sm font-medium text-gray-900">Categoría</label>
                         <select
                             class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
@@ -268,10 +277,10 @@
 
 @endsection
 @push('js')
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="/js/obtenerUsuario.js"></script>
+    <script src="/js/select2-global.js"></script>
     <script>
         // limitar la fecha a datos actuales
         // document.addEventListener('DOMContentLoaded', function(){
@@ -294,29 +303,5 @@
         document.querySelector('.select2-search__field').focus();
         });
     </script>
-
-{{-- <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const tipoCheckbox = document.getElementById('tipo');
-        const fechaCaducidadContainer = document.getElementById('fecha_caducidad_container');
-        const fechaCaducidadInput = document.getElementById('fecha_caducidad');
-
-        const toggleFechaCaducidad = () => {
-            if (tipoCheckbox.checked) {
-                fechaCaducidadContainer.style.display = 'none';
-                fechaCaducidadInput.removeAttribute('required');
-                fechaCaducidadInput.value = '';
-            } else {
-                fechaCaducidadContainer.style.display = 'block';
-                fechaCaducidadInput.setAttribute('required', 'required');
-            }
-        };
-
-        tipoCheckbox.addEventListener('change', toggleFechaCaducidad);
-        // Ejecutar la función al cargar la página para establecer el estado inicial
-        toggleFechaCaducidad(); });
-</script> --}}
-
-
 @endpush
 
