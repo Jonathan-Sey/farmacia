@@ -2,6 +2,7 @@
 @section('titulo', 'Editar Farmacia')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 @endpush
 @push('js')
@@ -165,7 +166,7 @@
                         </div>
                         @enderror
                 {{-- Select para elegir al encargado --}}
-                <div class="mt-2 mb-5">
+                {{-- <div class="mt-2 mb-5">
                     <label for="encargado" class="uppercase block text-sm font-medium text-gray-900">Nombre Encargado</label>
                     <select
                         name="encargado"
@@ -184,7 +185,16 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
-                </div>
+                </div> --}}
+
+                <x-select2
+                name="encargado"
+                label="Nombre Encargado"
+                :options="$usuarios->pluck('name', 'name')"
+                :selected="old('encargado', $sucursal->encargado)"
+                placeholder="Selecciona un encargado"
+                required
+            />
 
 
 
@@ -261,6 +271,8 @@
 
 @endsection
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const selectUsuarios = document.getElementById("id_usuario");
