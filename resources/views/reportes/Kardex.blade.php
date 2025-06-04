@@ -36,7 +36,7 @@
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->id}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->producto->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->sucursal->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->nombre_sucursal}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->usuario->name}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->tipo_movimiento}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->cantidad}}</td>
