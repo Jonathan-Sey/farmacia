@@ -222,9 +222,10 @@ class VentaController extends Controller
                 'justificacion_descuento' => $arrayJustificacion[$index],
             ]);
 
+             $nombreSucursal = Sucursal::find($request->id_sucursal)->nombre;
             $reportekardex = ReporteKardex::create([
                 'producto_id' => $idProducto,
-                'sucursal_id' => $request->id_sucursal,
+                'nombre_sucursal' => $nombreSucursal,
                 'tipo_movimiento' => 'Venta',
                 'cantidad' => $arrayCantidad[$index],
                 'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta

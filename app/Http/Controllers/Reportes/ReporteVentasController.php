@@ -70,7 +70,7 @@ class ReporteVentasController extends Controller
     {
         $reporte = ReporteKardex::with([
             'producto',
-            'sucursal',
+           
             'usuario'
         ])->get();
         return view('reportes.Kardex', compact('reporte'));
