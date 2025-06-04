@@ -155,7 +155,7 @@
                     <x-select2
                         name="encargado"
                         label="Nombre Encargado"
-                        :options="$usuarios->pluck('name', 'name')"
+                        :options="$usuarios->pluck('name', 'id')"
                         :selected="old('encargado')"
                         placeholder="Selecciona un encargado"
                         required

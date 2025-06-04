@@ -17,11 +17,12 @@ class MedicoController extends Controller
      */
     public function index()
     {
-        $medicos = DetalleMedico::with(['usuario:id,name', 'horarios.sucursal'])
-            ->select('id', 'id_usuario', 'especialidad', 'estado', 'numero_colegiado')
-            ->get();
+        $medicos = DetalleMedico::with(['usuario:id,name', 'horarios' => function($query) {
+            $query->with('sucursal')->latest();
+        }])
+        ->select('id', 'id_usuario', 'especialidad', 'estado', 'numero_colegiado')
+        ->get();
 
-        //return $medicos;
         return view('medico.index', compact('medicos'));
     }
 
@@ -30,7 +31,7 @@ class MedicoController extends Controller
      */
     public function create()
     {
-    $usuarios = User::all();
+        $usuarios = User::all();
     $sucursales = Sucursal::all(); // Asegúrate de que esta consulta está correcta
 
     return view('medico.create', compact('usuarios', 'sucursales'));
@@ -43,7 +44,7 @@ class MedicoController extends Controller
     public function store(Request $request)
     {
         // Validación de los datos
-        $request->validate([ 
+        $validatedData = $request->validate([
             'id_usuario' => 'required|exists:users,id',
             'especialidad' => 'required|string|max:75',
             'numero_colegiado' => 'required|string|max:10',
@@ -57,21 +58,23 @@ class MedicoController extends Controller
 
         // Crear el médico
         $medico = DetalleMedico::create([
-            'id_usuario' => $request->id_usuario,
-            'especialidad' => $request->especialidad,
-            'numero_colegiado' => $request->numero_colegiado,
-            'estado' => 1, // Activo por defecto
-            'horarios' => json_encode($request->horarios),
+            'id_usuario' => $validatedData['id_usuario'],
+            'especialidad' => $validatedData['especialidad'],
+            'numero_colegiado' => $validatedData['numero_colegiado'],
+            'estado' => 1,
+           // 'horarios' => json_encode($request->horarios),
         ]);
 
         // Guardar los horarios
-        foreach ($request->horarios as $horario) {
+        foreach ($validatedData['horarios'] as $horario) {
             Horario::create([
                 'medico_id' => $medico->id,
                 'sucursal_id' => $horario['sucursal_id'],
-                'horarios' => json_encode([
-                    $horario['dia'] => [$horario['hora_inicio'] . '-' . $horario['hora_fin']]
-                ]),
+                'horarios' => [ // Pasamos directamente el array
+                    $horario['dia'] => [
+                        $horario['hora_inicio'] . '-' . $horario['hora_fin']
+                    ]
+                ],
             ]);
         }
 
@@ -86,12 +89,50 @@ class MedicoController extends Controller
         $usuarios = User::all();
         $sucursales = Sucursal::all();
 
-        // Asegurar que los horarios y sucursales se carguen correctamente
-        $medico->load(['horarios.sucursal']);
+        // Obtener horarios directamente con una consulta
+        $horarios = Horario::where('medico_id', $medico->id)
+                    ->with('sucursal')
+                    ->get();
 
-        // Verificar si ahora los horarios aparecen correctamente    dd($medico->toArray());
-        return view('medico.edit', compact('medico', 'usuarios', 'sucursales'));
+        $horariosTransformados = [];
+
+        foreach ($horarios as $horario) {
+            // Usar el casting automático del modelo Horario
+            $horariosArray = $horario->horarios;
+
+            // Si por alguna razón sigue siendo string
+            if (is_string($horariosArray)) {
+                $horariosArray = json_decode($horariosArray, true);
+            }
+
+            if (!is_array($horariosArray)) {
+                continue;
+            }
+
+            foreach ($horariosArray as $dia => $rangos) {
+                if (!is_array($rangos)) {
+                    $rangos = [$rangos];
+                }
+
+                foreach ($rangos as $rango) {
+                    if (is_string($rango) && strpos($rango, '-') !== false) {
+                        list($hora_inicio, $hora_fin) = explode('-', $rango);
+
+                        $horariosTransformados[] = [
+                            'sucursal_id' => $horario->sucursal_id ?? null,
+                            'dia' => $dia,
+                            'hora_inicio' => trim($hora_inicio),
+                            'hora_fin' => trim($hora_fin),
+                            'horario_id' => $horario->id
+                        ];
+                    }
+                }
+            }
+        }
+
+        return view('medico.edit', compact('medico', 'usuarios', 'sucursales', 'horariosTransformados'));
     }
+
 
 
 
@@ -101,11 +142,10 @@ class MedicoController extends Controller
      */
     public function update(Request $request, DetalleMedico $medico)
     {
-        $request->validate([
+        $validated = $request->validate([
             'id_usuario' => 'required|exists:users,id',
-            'especialidad' => 'required|string|max:75',
+          //  'especialidad' => 'required|string|max:75',
             'numero_colegiado' => 'required|string|max:10',
-            'estado' => 'required|integer',
             'horarios' => 'required|array',
             'horarios.*.sucursal_id' => 'required|exists:sucursal,id',
             'horarios.*.dia' => 'required|string',
@@ -113,29 +153,55 @@ class MedicoController extends Controller
             'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
         ]);
 
-        // ✅ 1. Actualizar los datos del médico
+           // Verificar que horarios es un array
+    if (!is_array($validated['horarios'])) {
+        return back()->with('error', 'Formato de horarios inválido');
+    }
+        // Actualizar datos del medico
         $medico->update([
             'id_usuario' => $request->id_usuario,
-            'especialidad' => $request->especialidad,
+            //'especialidad' => $request->especialidad,
             'numero_colegiado' => $request->numero_colegiado,
-            'estado' => $request->estado,
         ]);
 
-        // ✅ 2. Eliminar todos los horarios anteriores del médico
-        $medico->horarios()->delete();
+        // Obtener ids de los horarios enviados
+    $idsRecibidos = collect($request->horarios)
+    ->pluck('horario_id')
+    ->filter()
+    ->toArray();
 
-        // ✅ 3. Insertar los nuevos horarios
-        foreach ($request->horarios as $horario) {
+    // Eliminar horarios que ya no están en el formulario
+    Horario::where('medico_id', $medico->id)
+        ->whereNotIn('id', $idsRecibidos)
+        ->delete();
+
+    // Recorrer y actualizar o crear horarios
+    foreach ($validated['horarios'] as $horario) {
+        $horarioData = [
+            $horario['dia'] => [$horario['hora_inicio'] . '-' . $horario['hora_fin']]
+        ];
+
+        if (isset($horario['horario_id'])) {
+            Horario::where('id', $horario['horario_id'])
+                ->update([
+                    'sucursal_id' => $horario['sucursal_id'],
+                    'horarios' => $horarioData // Ya no usamos json_encode aquí
+                ]);
+        } else {
             Horario::create([
                 'medico_id' => $medico->id,
                 'sucursal_id' => $horario['sucursal_id'],
-                'horarios' => json_encode([
-                    $horario['dia'] => [$horario['hora_inicio'] . '-' . $horario['hora_fin']]
-                ]),
+                'horarios' => $horarioData // Ya no usamos json_encode aquí
             ]);
         }
+    }
+     // Forzar refresco de la relación
+     $medico->load('horarios');
 
-        return redirect()->route('medicos.index')->with('success', '¡Médico actualizado exitosamente!');
+         // Alternativa: refrescar toda la instancia
+    $medico->refresh();
+
+    return redirect()->route('medicos.index')->with('success', 'Médico actualizado correctamente');
     }
 
 

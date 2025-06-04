@@ -14,7 +14,7 @@
 
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5">
-                    <label for="id_usuario" class="uppercase block text-sm font-medium text-gray-900">Usuario</label>
+                    {{-- <label for="id_usuario" class="uppercase block text-sm font-medium text-gray-900">Usuario</label>
                     <div class="border p-3 rounded-md bg-gray-100">
                         <select class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 outline outline-1 outline-gray-300 focus:outline-indigo-600"
                             name="id_usuario" id="id_usuario">
@@ -23,7 +23,16 @@
                             <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
+                    <x-select2
+                        id="id_usuario"
+                        name="id_usuario"
+                        label="Usuario"
+                        :options="$usuarios->pluck('name', 'id')"
+                        :selected="old('id_usuario')"
+                        placeholder="Buscar Usuario"
+                        required
+                    />
                 </div>
 
                 <div class="mt-2 mb-5">
@@ -51,6 +60,11 @@
                             value="{{ old('numero_colegiado') }}">
                     </div>
                 </div>
+                @error('numero_colegiado')
+                <div role="alert" class="alert alert-error mt-4 p-2">
+                    <span class="text-white font-bold">{{ $message }}</span>
+                </div>
+                @enderror
 
                 <div class="mt-2 mb-5">
                     <label for="horarios" class="uppercase block text-sm font-medium text-gray-900">Sucursales y Horarios</label>
@@ -75,13 +89,10 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
 <script>
     $(document).ready(function() {
-        $('.select2').select2({
-            width: '100%',
-            placeholder: "Buscar usuario",
-            allowClear: true
-        });
+
 
         // Validar el formulario antes de enviar
         $('form').on('submit', function(e) {
@@ -146,45 +157,61 @@
     }
 
     function agregarHorario() {
-        let container = document.getElementById('horarios-container');
-        let index = container.children.length;
-        let div = document.createElement('div');
-        div.classList.add("mt-2", "mb-5", "p-3", "border", "border-gray-300", "rounded-md", "bg-white");
+    let container = document.getElementById('horarios-container');
+    let index = container.children.length;
 
-        let options = `<option value="">Seleccione una sucursal</option>`;
-        sucursales.forEach(sucursal => {
-            options += `<option value="${sucursal.id}">${sucursal.nombre}</option>`;
+    // Verificar si hay datos antiguos para este índice
+    let oldData = @json(old('horarios') ?? []);
+    let oldHorario = oldData[index] || {};
+
+    let div = document.createElement('div');
+    div.classList.add("mt-2", "mb-5", "p-3", "border", "border-gray-300", "rounded-md", "bg-white");
+
+    let options = `<option value="">Seleccione una sucursal</option>`;
+    sucursales.forEach(sucursal => {
+        let selected = oldHorario.sucursal_id == sucursal.id ? 'selected' : '';
+        options += `<option value="${sucursal.id}" ${selected}>${sucursal.nombre}</option>`;
+    });
+
+    div.innerHTML = `
+        <div class="border p-3 rounded-md bg-gray-100">
+            <label class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
+            <select name="horarios[${index}][sucursal_id]" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
+                ${options}
+            </select>
+
+            <label class="uppercase block text-sm font-medium text-gray-900 mt-2">Día</label>
+            <select name="horarios[${index}][dia]" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
+                <option value="lunes" ${oldHorario.dia == 'lunes' ? 'selected' : ''}>Lunes</option>
+                <option value="martes" ${oldHorario.dia == 'martes' ? 'selected' : ''}>Martes</option>
+                <option value="miércoles" ${oldHorario.dia == 'miércoles' ? 'selected' : ''}>Miércoles</option>
+                <option value="jueves" ${oldHorario.dia == 'jueves' ? 'selected' : ''}>Jueves</option>
+                <option value="viernes" ${oldHorario.dia == 'viernes' ? 'selected' : ''}>Viernes</option>
+                <option value="sábado" ${oldHorario.dia == 'sábado' ? 'selected' : ''}>Sábado</option>
+                <option value="domingo" ${oldHorario.dia == 'domingo' ? 'selected' : ''}>Domingo</option>
+            </select>
+
+            <label class="uppercase block text-sm font-medium text-gray-900 mt-2">Hora Inicio</label>
+            <input type="time" name="horarios[${index}][hora_inicio]" value="${oldHorario.hora_inicio || ''}" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
+
+            <label class="uppercase block text-sm font-medium text-gray-900 mt-2">Hora Fin</label>
+            <input type="time" name="horarios[${index}][hora_fin]" value="${oldHorario.hora_fin || ''}" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
+        </div>
+        <button type="button" onclick="this.parentElement.remove()" class="mt-3 block w-full rounded-md bg-red-600 px-3 py-1.5 text-white font-semibold hover:bg-red-700">
+            Eliminar Sucursal y Horario
+        </button>
+    `;
+    container.appendChild(div);
+}
+
+// Agregar horarios automáticamente si hay datos antiguos
+$(document).ready(function() {
+    let oldHorarios = @json(old('horarios') ?? []);
+    if (oldHorarios.length > 0) {
+        oldHorarios.forEach((horario, index) => {
+            agregarHorario();
         });
-
-        div.innerHTML = `
-            <div class="border p-3 rounded-md bg-gray-100">
-                <label class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
-                <select name="horarios[${index}][sucursal_id]" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
-                    ${options}
-                </select>
-
-                <label class="uppercase block text-sm font-medium text-gray-900 mt-2">Día</label>
-                <select name="horarios[${index}][dia]" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
-                    <option value="lunes">Lunes</option>
-                    <option value="martes">Martes</option>
-                    <option value="miércoles">Miércoles</option>
-                    <option value="jueves">Jueves</option>
-                    <option value="viernes">Viernes</option>
-                    <option value="sábado">Sábado</option>
-                    <option value="domingo">Domingo</option>
-                </select>
-
-                <label class="uppercase block text-sm font-medium text-gray-900 mt-2">Hora Inicio</label>
-                <input type="time" name="horarios[${index}][hora_inicio]" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
-
-                <label class="uppercase block text-sm font-medium text-gray-900 mt-2">Hora Fin</label>
-                <input type="time" name="horarios[${index}][hora_fin]" required class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900">
-            </div>
-            <button type="button" onclick="this.parentElement.remove()" class="mt-3 block w-full rounded-md bg-red-600 px-3 py-1.5 text-white font-semibold hover:bg-red-700">
-                Eliminar Sucursal y Horario
-            </button>
-        `;
-        container.appendChild(div);
     }
+});
 </script>
 @endpush
