@@ -190,13 +190,15 @@ class ReporteVentasController extends Controller
             $query->whereYear('v.fecha_venta', $request->año);
         }
 
+          // Ordenar por fecha de venta descendente
+        $ventas = $query->orderBy('v.fecha_venta', 'DESC')->get();*/
+
         // Filtrar por rango de fechas
         if ($request->has('fechaInicio') && $request->has('fechaFin')) {
             $query->whereBetween('v.fecha_venta', [$request->fechaInicio, $request->fechaFin]);
         }
 
-        // Ordenar por fecha de venta descendente
-        $ventas = $query->orderBy('v.fecha_venta', 'DESC')->get();*/
+      
 
         if ($request->has('sucursal')) {
             $query->where('v.id_sucursal', $request->sucursal);
@@ -242,6 +244,10 @@ class ReporteVentasController extends Controller
                 'v.estado as estado_venta',
                 'dv.estado as estado_detalle'
             );
+
+              if ($request->has('fechaInicio') && $request->has('fechaFin')) {
+            $query->whereBetween('v.fecha_venta', [$request->fechaInicio, $request->fechaFin]);
+        }
 
         if ($request->has('usuario')) {
             $query->where('v.id_usuario', $request->usuario);
