@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Reporte de ventas por sucursal')
+@section('titulo', 'Reporte de ventas por Usuario')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -35,6 +35,20 @@
         </div>
 
 
+        -->
+
+        <div>
+            <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
+                <label for="Usuario" class="block text-sm font-medium text-gray-600">Usuario:</label>
+                <select id="Usuario" name="Usuario" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                    <option value="" disabled selected>Seleccione un usuario</option>
+                    @foreach($usuarios as $usuario)
+                    <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+
         <div class="flex gap-4">
             <div class="flex-1 m-2">
                 <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
@@ -46,18 +60,6 @@
                 <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
                 <input type="date" id="fechaFin" name="fechaFin"
                     class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-        </div>-->
-
-        <div>
-            <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
-                <label for="Usuario" class="block text-sm font-medium text-gray-600">Usuario:</label>
-                <select id="Usuario" name="Usuario" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-                    <option value="" disabled selected>Seleccione un usuario</option>
-                    @foreach($usuarios as $usuario)
-                    <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
-                    @endforeach
-                </select>
             </div>
         </div>
 
@@ -108,27 +110,26 @@
 
 
 <script>
-    document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
-        // Obtener valores de los inputs
-        const usuario = document.getElementById('Usuario').value;
-        console.log(usuario);
-        /* const mes = document.getElementById('mes').value;
-         const año = document.getElementById('año').value;
-         const fechaInicio = document.getElementById('fechaInicio').value;
-         const fechaFin = document.getElementById('fechaFin').value;*/
+ document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
+    // Obtener valores de los inputs
+    const usuario = document.getElementById('Usuario').value;
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
 
-        // Construir URL
-        let url = '/ventas-informe/usuario?';
-        if (usuario) url += `usuario=${usuario}&`;
+    // Construir URL con parámetros
+    let url = '/ventas-informe/usuario?';
+    if (usuario) url += `usuario=${encodeURIComponent(usuario)}&`;
+    if (fechaInicio) url += `fechaInicio=${encodeURIComponent(fechaInicio)}&`;
+    if (fechaFin) url += `fechaFin=${encodeURIComponent(fechaFin)}&`;
 
-        try {
-            // Fetch data
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Error en la respuesta');
-            const data = await response.json();
+    try {
+        // Fetch data
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Error en la respuesta');
+        const data = await response.json();
 
-            // Generar HTML de las filas
-            const rows = data.map(venta => `
+        // Generar HTML de las filas
+        const rows = data.map(venta => `
             <tr>
                 <td class="px-6 py-3">${venta.venta_id}</td>
                 <td class="px-6 py-3">${venta.nombre_producto || 'N/A'}</td>
@@ -142,50 +143,44 @@
             </tr>
         `).join('');
 
-            // Insertar filas en la tabla
-            const tbody = document.getElementById('tabla');
-            tbody.innerHTML = rows;
+        // Insertar filas en la tabla
+        const tbody = document.getElementById('tabla');
+        tbody.innerHTML = rows;
 
-            // Destruir DataTable si existe
-            if ($.fn.DataTable.isDataTable('#example')) {
-                $('#example').DataTable().destroy();
-                tbody.innerHTML = ''; // Limpiar temporalmente
-                tbody.innerHTML = rows; // Volver a insertar
-            }
-
-            // Inicializar DataTable
-            $('#example').DataTable({
-                responsive: true,
-                order: [
-                    [0, 'desc']
-                ],
-                language: {
-                url: '/js/i18n/Spanish.json',
-                 paginate: {
-                     first: `<i class="fa-solid fa-backward"></i>`,
-                     previous: `<i class="fa-solid fa-caret-left">`,
-                     next: `<i class="fa-solid fa-caret-right"></i>`,
-                     last: `<i class="fa-solid fa-forward"></i>`
-                 }
-            },
-                dom: 'Bfrtip',
-                buttons: ['copy', 'excel', 'pdf', 'print', 'colvis'],
-                columnDefs: [{
-                        responsivePriority: 1,
-                        targets: 0
-                    },
-                    {
-                        responsivePriority: 2,
-                        targets: 1
-                    }
-                ]
-            });
-
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
+        // Destruir DataTable si existe
+        if ($.fn.DataTable.isDataTable('#example')) {
+            $('#example').DataTable().destroy();
+            tbody.innerHTML = ''; // Limpiar temporalmente
+            tbody.innerHTML = rows; // Volver a insertar
         }
-    });
+
+        // Inicializar DataTable
+        $('#example').DataTable({
+            responsive: true,
+            order: [[0, 'desc']],
+            language: {
+                url: '/js/i18n/Spanish.json',
+                paginate: {
+                    first: `<i class="fa-solid fa-backward"></i>`,
+                    previous: `<i class="fa-solid fa-caret-left"></i>`,
+                    next: `<i class="fa-solid fa-caret-right"></i>`,
+                    last: `<i class="fa-solid fa-forward"></i>`
+                }
+            },
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf', 'print', 'colvis'],
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 }
+            ]
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
+    }
+});
+
 </script>
 
 
