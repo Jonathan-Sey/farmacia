@@ -16,7 +16,7 @@ class TableReporteKardex extends Migration
         Schema::create('reporte_kardex', function (Blueprint $table) {
             $table->id();
             $table->foreignId('producto_id')->constrained('producto')->onDelete('cascade');
-            $table->foreignId('sucursal_id')->constrained('sucursal')->onDelete('cascade');
+            $table->string('nombre_sucursal');
             $table->string('tipo_movimiento');
             $table->integer('cantidad');
             $table->string('Cantidad_anterior');

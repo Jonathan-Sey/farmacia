@@ -210,29 +210,30 @@ class VentaController extends Controller
                 // Descontar inventario
                 $almacen->cantidad -= $arrayCantidad[$index];
                 $almacen->save();
+
+                $nombreSucursal = Sucursal::find($request->id_sucursal)->nombre;
+                $reportekardex = ReporteKardex::create([
+                    'producto_id' => $idProducto,
+                    'nombre_sucursal' => $nombreSucursal,
+                    'tipo_movimiento' => 'Venta',
+                    'cantidad' => $arrayCantidad[$index],
+                    'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
+                    'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
+                    'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                    'fecha_movimiento' => now()
+                ]);
             }
 
-            // Crear el detalle de venta
-            DetalleVenta::create([
-                'id_venta' => $venta->id,
-                'id_producto' => $idProducto,
-                'cantidad' => $arrayCantidad[$index],
-                'precio' => round($arrayprecio[$index], 2), // Redondear el precio
-                'precio_original' => round($arrayPrecioOriginal[$index], 2),
-                'justificacion_descuento' => $arrayJustificacion[$index],
-            ]);
-
-            $reportekardex = ReporteKardex::create([
-                'producto_id' => $idProducto,
-                'sucursal_id' => $request->id_sucursal,
-                'tipo_movimiento' => 'Venta',
-                'cantidad' => $arrayCantidad[$index],
-                'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
-                'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
-                'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
-                'fecha_movimiento' => now()
-            ]);
-        }
+                    // Crear el detalle de venta
+                    DetalleVenta::create([
+                       'id_venta' => $venta->id,
+                       'id_producto' => $idProducto,
+                       'cantidad' => $arrayCantidad[$index],
+                       'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+                       'precio_original' => round($arrayPrecioOriginal[$index], 2),
+                       'justificacion_descuento' => $arrayJustificacion[$index],
+                     ]);
+            }
 
         DB::commit();
 

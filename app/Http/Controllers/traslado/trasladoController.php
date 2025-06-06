@@ -5,6 +5,7 @@ namespace App\Http\Controllers\traslado;
 use App\Http\Controllers\Controller;
 use App\Models\Almacen;
 use App\Models\Bitacora;
+use App\Models\Notificaciones;
 use App\Models\Producto;
 use App\Models\Solicitud;
 use App\Models\Sucursal;
@@ -120,6 +121,14 @@ class trasladoController extends Controller
                 "estado" => 1
             ]
         );
+
+        $notificacion =  Notificaciones::create([
+            'tipo' => 'traslado',
+            'mensaje' => "Se ha realizado un traslado del producto {$request->id_producto} con la cantidad de {$request->cantidad} desde la sucursal {$request->id_sucursal_1} a la sucursal {$request->id_sucursal_2}.",
+            'accion' => 'Ver detalles',
+            'url' => route('traslado.index'),
+            'estado' => false,
+         ]);
 
          // Bitacora
          $usuario = User::find($request->idUsuario);
