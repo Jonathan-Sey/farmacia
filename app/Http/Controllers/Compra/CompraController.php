@@ -31,11 +31,11 @@ class CompraController extends Controller
      */
     public function index()
     {
-        $compras = Compra::with('proveedor','detalleCompras','usuario','sucursal')
-        ->latest()
-        ->activos()
-        ->get();
-        return view('compra.index',compact('compras'));
+        $compras = Compra::with('proveedor', 'detalleCompras', 'usuario', 'sucursal')
+            ->latest()
+            ->activos()
+            ->get();
+        return view('compra.index', compact('compras'));
     }
 
     /**
@@ -46,16 +46,16 @@ class CompraController extends Controller
     public function create()
     {
         // $proveedores = Proveedor::whereNotIn('estado',[0,2])->get();
-        $sucursales= Sucursal::activos()->get();
+        $sucursales = Sucursal::activos()->get();
         $proveedores = Proveedor::activos()->get();
-        $productos = Producto::activos()->where('tipo',1)->get();
+        $productos = Producto::activos()->where('tipo', 1)->get();
 
         // nuevo valo, esto para mandar la url de la img
-        $productos->each(function ($producto){
+        $productos->each(function ($producto) {
             $producto->imagen_url = asset('uploads/' . $producto->imagen);
         });
 
-        return view('compra.create',compact('proveedores','productos','sucursales'));
+        return view('compra.create', compact('proveedores', 'productos', 'sucursales'));
     }
 
     /**
@@ -66,46 +66,46 @@ class CompraController extends Controller
      */
     public function store(Request $request)
     {
-      // dd($request);
-        $this->validate($request,[
+        // dd($request);
+        $this->validate($request, [
             'arrayprecio' => 'required|array',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
             'arrayvencimiento.*' => 'required|date',
-            'estado'=>'integer',
+            'estado' => 'integer',
             'imagen_comprobante' => 'nullable|string',
             'observaciones_comprobante' => 'nullable|string'
         ]);
 
 
-        try{
+        try {
             DB::beginTransaction();
 
-             // Obtener la bodega principal
+            // Obtener la bodega principal
             $bodegaPrincipal = Bodega::principal()->firstOrFail();
 
 
-     // Mover imagen temporal si existe
-     $imagenComprobante = null;
-     if (!empty($request->imagen_comprobante)) {
-         $imagenController = new ImagenController();
-         $imagenComprobante = $imagenController->moverDefinitiva($request->imagen_comprobante)
-             ? $request->imagen_comprobante
-             : null;
-     }
+            // Mover imagen temporal si existe
+            $imagenComprobante = null;
+            if (!empty($request->imagen_comprobante)) {
+                $imagenController = new ImagenController();
+                $imagenComprobante = $imagenController->moverDefinitiva($request->imagen_comprobante)
+                    ? $request->imagen_comprobante
+                    : null;
+            }
             // generacion de codigo
             $ultimoId = Compra::max('id') ?? 0;
             $codigo = 'CR-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
             //creando el registro de compra
             $compra = Compra::create([
-                'numero_compra'=> $codigo,
-                'id_proveedor'=> $request->id_proveedor,
+                'numero_compra' => $codigo,
+                'id_proveedor' => $request->id_proveedor,
                 'id_sucursal' => $request->id_sucursal,
                 'id_usuario' => 1,
-                'impuesto'=>$request->impuesto,
+                'impuesto' => $request->impuesto,
                 //'fecha_compra'=>$request->fecha_compra,
                 'fecha_compra' => Carbon::now()->format('Y-m-d'),
-                'total'=>$request->input('total'),
+                'total' => $request->input('total'),
                 'estado' => 1,
                 'imagen_comprobante' => $imagenComprobante,
                 'observaciones_comprobante' => $request->observaciones_comprobante
@@ -114,16 +114,27 @@ class CompraController extends Controller
             // obtener los arrays de detalles
             $arrayProducto_id = $request->get('arrayIdProducto');
             $arrayCantidad = $request->get('arraycantidad');
-            $arrayprecio= $request->get('arrayprecio');
+            $arrayprecio = $request->get('arrayprecio');
             $arrayvencimiento = $request->get('arrayvencimiento');
 
             //insertar los detalels
-            foreach($arrayProducto_id as $index => $idPoducto){
+            foreach ($arrayProducto_id as $index => $idPoducto) {
                 DetalleCompra::create([
                     'id_compra' => $compra->id,
                     'id_producto' => $idPoducto,
                     'cantidad' => $arrayCantidad[$index],
-                    'precio'=> $arrayprecio[$index]
+                    'precio' => $arrayprecio[$index]
+                ]);
+
+                $reporteKardex = ReporteKardex::create([
+                    'producto_id' => $idPoducto,
+                    'nombre_sucursal' => "Bodega principal", // Sucursal principal
+                    'cantidad' => $arrayCantidad[$index],
+                    'Cantidad_anterior' => 0, // Asumiendo que es la primera compra
+                    'Cantidad_nueva' => $arrayCantidad[$index],
+                    'usuario_id' => 1,
+                    'tipo_movimiento' => 'Compra',
+                    'fecha_movimiento' => Carbon::now(),
                 ]);
 
                 //  manejo de lotes
@@ -147,30 +158,23 @@ class CompraController extends Controller
                 //Cantidad anterior de los lotes
 
                 $lotes = Lote::where('id_producto', $idPoducto)->get();
-                $cantidad =$lotes->sum('cantidad');
+                $cantidad = $lotes->sum('cantidad');
 
-                $reportekardex = ReporteKardex::create([
-                    'producto_id' => $idPoducto,
-                    'sucursal_id' => 1,
-                    'tipo_movimiento' => 'Compra',
-                    'cantidad' => 0,
-                    'Cantidad_anterior' => $cantidad, // Cantidad antes del traslado
-                    'Cantidad_nueva' =>$cantidad + $arrayCantidad[$index], // Cantidad después del la compra
-                    'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
-                    'fecha_movimiento' => now()
-                ]);
 
-                    // Verificar si ya existe un registro en el inventario para este producto y lote
+                // Verificar si ya existe un registro en el inventario para este producto y lote
                 $inventarioExistente = Inventario::where('id_producto', $idPoducto)
-                ->where('id_lote', $lote->id)
-                ->where('id_bodega', $bodegaPrincipal->id) // Sucursal principal
-                ->first();
+                    ->where('id_lote', $lote->id)
+                    ->where('id_bodega', $bodegaPrincipal->id) // Sucursal principal
+                    ->first();
 
 
                 if ($inventarioExistente) {
                     // Si existe, actualizar la cantidad
                     $inventarioExistente->cantidad += $arrayCantidad[$index];
                     $inventarioExistente->save();
+               
+
+                   
 
                     // prueba de eliminacion
                     // if ($inventarioExistente->cantidad > 0) {
@@ -182,15 +186,16 @@ class CompraController extends Controller
                     // }
                 } else {
 
-                        //  proceso de inventario
-                        Inventario::create([
-                            'id_producto' => $idPoducto,
-                            'id_bodega' => $bodegaPrincipal->id,
-                            'id_lote' => $lote->id,
-                            'cantidad' => $arrayCantidad[$index],
-                        ]);
-                }
+                    //  proceso de inventario
+                    Inventario::create([
+                        'id_producto' => $idPoducto,
+                        'id_bodega' => $bodegaPrincipal->id,
+                        'id_lote' => $lote->id,
+                        'cantidad' => $arrayCantidad[$index],
+                    ]);
 
+                  
+                }
             }
 
             $usuario = User::find($request->idUsuario);
@@ -205,7 +210,7 @@ class CompraController extends Controller
 
             DB::commit();
             return redirect()->route('compras.index')->with('success', 'Compra creado exitosamente');
-        }catch(Exception $e){
+        } catch (Exception $e) {
             // cancelar transaccion
             Log::error('Error al crear la compra: ' . $e->getMessage());
             DB::rollBack();
@@ -222,11 +227,10 @@ class CompraController extends Controller
     public function show(Compra $compra)
     {
         // $productos = $compra->productos();
-        if($compra->imagen_comprobante){
+        if ($compra->imagen_comprobante) {
             $compra->imagen_comprobante_url = asset('uploads/' . $compra->imagen_comprobante);
-         }
-        return view('compra.show',compact('compra'));
-
+        }
+        return view('compra.show', compact('compra'));
     }
 
     /**
@@ -247,10 +251,7 @@ class CompraController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-
-    }
+    public function update(Request $request, $id) {}
 
     /**
      * Remove the specified resource from storage.
@@ -261,14 +262,14 @@ class CompraController extends Controller
     public function destroy(Request $request, Compra $compra)
     {
         $estado = $request->input('status', 0);
-        if($estado == 0){
+        if ($estado == 0) {
             $compra->update(['estado' => 0]);
-            return redirect()->route('compras.index')->with('success','Compra eliminado con éxito!');
-        }else{
+            return redirect()->route('compras.index')->with('success', 'Compra eliminado con éxito!');
+        } else {
             $compra->estado = $estado;
             $compra->save();
             return response()->json(['success' => true]);
         }
-        return response()->json(['success'=> false]);
+        return response()->json(['success' => false]);
     }
 }

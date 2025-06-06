@@ -11,7 +11,7 @@ class ReporteKardex extends Model
     protected $table = 'reporte_kardex';
     protected $fillable = [
         'producto_id',
-        'sucursal_id',
+        'nombre_sucursal',
         'tipo_movimiento',
         'cantidad',
         'Cantidad_anterior',
@@ -24,10 +24,7 @@ class ReporteKardex extends Model
     {
         return $this->belongsTo(Producto::class, 'producto_id');
     }
-    public function sucursal()
-    {
-        return $this->belongsTo(Sucursal::class, 'sucursal_id');
-    }
+  
     public function usuario()
     {
         return $this->belongsTo(User::class, 'usuario_id');

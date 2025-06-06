@@ -114,9 +114,15 @@
     <h1>Autorización de Devolución</h1>
 
     <div class="info-block">
-      <p><strong>ID de devolución:</strong> {{ $devolucion->id }}</p>
-      <p><strong>Motivo de la devolución:</strong> {{ $devolucion->motivo }}</p>
-      <p><strong>Fecha de solicitud:</strong> {{ $devolucion->created_at }}</p>
+      <p><strong>ID Venta:</strong> {{ $datos->venta_id }}</p>
+      <p><strong>ID Usuario:</strong> {{ $datos['usuario_id'] }}</p>
+      <p><strong>ID Persona:</strong> {{ $datos['persona_id'] }}</p>
+      <p><strong>ID Sucursal:</strong> {{ $datos['sucursal_id'] }}</p>
+      <p><strong>Motivo de la devolución:</strong> {{ $datos['motivo'] }}</p>
+      <p><strong>Total:</strong> Q.{{ number_format($datos['total'], 2) }}</p>
+      <p><strong>Observaciones:</strong> {{ $datos['observaciones'] }}</p>
+      <p><strong>Estado:</strong> {{ ucfirst($datos['estado']) }}</p>
+      <p><strong>Fecha de solicitud:</strong> {{ now() }}</p>
     </div>
 
     <p><strong>Productos incluidos en esta devolución:</strong></p>
@@ -125,20 +131,19 @@
       <table>
         <thead>
           <tr>
-            <th>Producto</th>
+            <th>Producto ID</th>
             <th>Cantidad</th>
-
+            <th>Precio</th>
             <th>Subtotal</th>
           </tr>
         </thead>
         <tbody>
-          @foreach ($devolucionesDetalles as $detalle)
+          @foreach ($datos->detalles as $detalle)
           <tr>
-            <td>{{ $detalle->producto->nombre ?? 'Producto no disponible' }}</td>
-            <td>{{ $detalle->cantidad }}</td>
-
-            <td>Q.{{ number_format($detalle->subtotal, 2) }}</td>
-
+            <td>{{ $detalle['producto_id'] }}</td>
+            <td>{{ $detalle['cantidad'] }}</td>
+            <td>Q.{{ number_format($detalle['precio'], 2) }}</td>
+            <td>Q.{{ number_format($detalle['precio'] * $detalle['cantidad'], 2) }}</td>
           </tr>
           @endforeach
         </tbody>
