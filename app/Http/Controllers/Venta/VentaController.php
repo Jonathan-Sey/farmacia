@@ -29,20 +29,21 @@ class VentaController extends Controller
 
     public function index()
     {
-        $ventas = Venta::with(['sucursal','persona','usuario'])
-        ->where('estado',1)
-        ->latest()
-        ->get();
+        $ventas = Venta::with(['sucursal', 'persona', 'usuario'])
+            ->where('estado', 1)
+            ->latest()
+            ->get();
 
-        return view('venta.index',compact('ventas'));
+        return view('venta.index', compact('ventas'));
     }
-    public function obtenerStock($id, $sucursal) {
+    public function obtenerStock($id, $sucursal)
+    {
         Log::info('Solicitud para obtener stock:', ['id_producto' => $id, 'id_sucursal' => $sucursal]);
 
         // Buscar el almacén que contiene el producto en la sucursal específica
         $almacen = Almacen::where('id_producto', $id)
-                          ->where('id_sucursal', $sucursal)
-                          ->first();
+            ->where('id_sucursal', $sucursal)
+            ->first();
 
         if ($almacen) {
             Log::info('Stock encontrado:', ['stock' => $almacen->cantidad]);
@@ -61,20 +62,20 @@ class VentaController extends Controller
     {
         $persona = request()->has('id_persona') ? Persona::find(request('id_persona')) : null;
 
-     //   $productos = collect();
+        //   $productos = collect();
         $productos = Producto::activos()->get();
         $almacenesActivos = Almacen::activos()->get();
 
-         // Filtrar los productos disponibles en almacenes activos
-         //$productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
+        // Filtrar los productos disponibles en almacenes activos
+        //$productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
         // Obtener las sucursales relacionadas a los almacenes activos
         $sucursales = Sucursal::whereIn('id', $almacenesActivos->pluck('id_sucursal'))->get();
 
-//        $productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
+        //        $productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
 
         $personas = Persona::activos()->orderBy('nombre')->get();
 
-        return view('venta.create',compact('sucursales','personas','almacenesActivos','persona'));
+        return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona'));
     }
 
     public function productosPorSucursal($id)
@@ -85,7 +86,7 @@ class VentaController extends Controller
             ->where('estado', 1) // validar estado
             ->with('producto')  // Obtener la relación con el producto
             ->get()
-            ->map(function($almacen) {
+            ->map(function ($almacen) {
                 return [
                     'id' => $almacen->producto->id,
                     'imagen' => asset('uploads/' . $almacen->producto->imagen),
@@ -111,11 +112,11 @@ class VentaController extends Controller
     public function store(Request $request)
     {
 
-       //dd($request->all());
+        //dd($request->all());
         //dd($request);
-        $this->validate($request,[
+        $this->validate($request, [
             'arrayprecio' => 'required|array',
-            'estado'=>'integer',
+            'estado' => 'integer',
             'arraycantidad.*' => 'integer|min:1',
             'arrayprecio.*' => 'numeric|min:0',
             'arrayPrecioOriginal.*' => 'numeric|min:0',
@@ -140,8 +141,8 @@ class VentaController extends Controller
             }
 
             return back()
-            ->with('error', $mensaje)
-            ->withInput();;
+                ->with('error', $mensaje)
+                ->withInput();;
         }
 
         //         // Verificar que el total enviado coincida con el recalculado
@@ -153,108 +154,110 @@ class VentaController extends Controller
         //     throw new Exception("El total enviado no coincide con el cálculo en el servidor.");
         // }
 
-    try {
-        DB::beginTransaction();
+        try {
+            DB::beginTransaction();
 
-         // Mover imagen temporal a definitiva si existe
-         $imagenReceta = null;
-         if (!empty($request->imagen_receta)) {
-             $imagenController = new ImagenController();
-             $imagenReceta = $imagenController->moverDefinitiva($request->imagen_receta)
-                 ? $request->imagen_receta
-                 : null;
-         }
-
-
-
-        // Redondear el impuesto y total
-        // $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
-        // $impuesto = round(($subtotal * $request->impuesto) / 100, 2);  // Redondear impuesto
-        // $total = round($subtotal + $impuesto, 2); // Redondear total
-
-        // Crear el registro de venta
-        $venta = Venta::create([
-            'id_sucursal' => $request->id_sucursal,
-            'fecha_venta' => $request->fecha_venta,
-            'impuesto' => $request-> impuesto,
-            'total' => $request-> total,
-            'id_usuario' => $request->idUsuario, // Usar el usuario actual o el correcto
-            'id_persona' => $request->id_persona,
-            'estado' => 1,
-            'es_prescrito' => $request->has('es_prescrito'),
-            'imagen_receta' => $imagenReceta,
-            'numero_reserva' => $request->numero_reserva,
-            'observaciones_receta' => $request->observaciones_receta
-        ]);
-
-        // Obtener los arrays de detalles
-        $arrayProducto_id = $request->get('arrayIdProducto');
-        $arrayCantidad = $request->get('arraycantidad');
-        $arrayprecio = $request->get('arrayprecio');
-        $arrayPrecioOriginal = $request->get('arrayPrecioOriginal');
-        $arrayJustificacion = $request->get('arrayJustificacion');
-
-        foreach ($arrayProducto_id as $index => $idProducto) {
-            $producto = Producto::findOrFail($idProducto);
-
-            // Validar productos físicos (tipo = 1)
-            if ($producto->tipo == 1) {
-                $almacen = Almacen::where('id_sucursal', $request->id_sucursal)
-                    ->where('id_producto', $idProducto)
-                    ->first();
-
-                if (!$almacen || $almacen->cantidad < $arrayCantidad[$index]) {
-                    throw new Exception("No hay suficiente inventario para el producto: {$producto->nombre}");
-                }
-
-                // Descontar inventario
-                $almacen->cantidad -= $arrayCantidad[$index];
-                $almacen->save();
+            // Mover imagen temporal a definitiva si existe
+            $imagenReceta = null;
+            if (!empty($request->imagen_receta)) {
+                $imagenController = new ImagenController();
+                $imagenReceta = $imagenController->moverDefinitiva($request->imagen_receta)
+                    ? $request->imagen_receta
+                    : null;
             }
 
-            // Crear el detalle de venta
-            DetalleVenta::create([
-                'id_venta' => $venta->id,
-                'id_producto' => $idProducto,
-                'cantidad' => $arrayCantidad[$index],
-                'precio' => round($arrayprecio[$index], 2), // Redondear el precio
-                'precio_original' => round($arrayPrecioOriginal[$index], 2),
-                'justificacion_descuento' => $arrayJustificacion[$index],
+
+
+            // Redondear el impuesto y total
+            // $subtotal = array_sum($request->get('arrayprecio')); // Calcular subtotal
+            // $impuesto = round(($subtotal * $request->impuesto) / 100, 2);  // Redondear impuesto
+            // $total = round($subtotal + $impuesto, 2); // Redondear total
+
+            // Crear el registro de venta
+            $venta = Venta::create([
+                'id_sucursal' => $request->id_sucursal,
+                'fecha_venta' => $request->fecha_venta,
+                'impuesto' => $request->impuesto,
+                'total' => $request->total,
+                'id_usuario' => $request->idUsuario, // Usar el usuario actual o el correcto
+                'id_persona' => $request->id_persona,
+                'estado' => 1,
+                'es_prescrito' => $request->has('es_prescrito'),
+                'imagen_receta' => $imagenReceta,
+                'numero_reserva' => $request->numero_reserva,
+                'observaciones_receta' => $request->observaciones_receta
             ]);
 
-             $nombreSucursal = Sucursal::find($request->id_sucursal)->nombre;
-            $reportekardex = ReporteKardex::create([
-                'producto_id' => $idProducto,
-                'nombre_sucursal' => $nombreSucursal,
-                'tipo_movimiento' => 'Venta',
-                'cantidad' => $arrayCantidad[$index],
-                'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
-                'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
-                'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
-                'fecha_movimiento' => now()
-            ]);
-        }
+            // Obtener los arrays de detalles
+            $arrayProducto_id = $request->get('arrayIdProducto');
+            $arrayCantidad = $request->get('arraycantidad');
+            $arrayprecio = $request->get('arrayprecio');
+            $arrayPrecioOriginal = $request->get('arrayPrecioOriginal');
+            $arrayJustificacion = $request->get('arrayJustificacion');
 
-        DB::commit();
+            foreach ($arrayProducto_id as $index => $idProducto) {
+                $producto = Producto::findOrFail($idProducto);
 
-        $usuario=User::find($request->idUsuario);
-        Bitacora::create([
+                // Validar productos físicos (tipo = 1)
+                if ($producto->tipo == 1) {
+                    $almacen = Almacen::where('id_sucursal', $request->id_sucursal)
+                        ->where('id_producto', $idProducto)
+                        ->first();
+
+                    if (!$almacen || $almacen->cantidad < $arrayCantidad[$index]) {
+                        throw new Exception("No hay suficiente inventario para el producto: {$producto->nombre}");
+                    }
+
+                    // Descontar inventario
+                    $almacen->cantidad -= $arrayCantidad[$index];
+                    $almacen->save();
+                }
+
+                // Crear el detalle de venta
+                DetalleVenta::create([
+                    'id_venta' => $venta->id,
+                    'id_producto' => $idProducto,
+                    'cantidad' => $arrayCantidad[$index],
+                    'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+                    'precio_original' => round($arrayPrecioOriginal[$index], 2),
+                    'justificacion_descuento' => $arrayJustificacion[$index],
+                ]);
+
+                if ($producto->tipo == 1) { // Solo registrar kardex para productos físicos
+                    $nombreSucursal = Sucursal::find($request->id_sucursal)->nombre;
+                    $reportekardex = ReporteKardex::create([
+                        'producto_id' => $idProducto,
+                        'nombre_sucursal' => $nombreSucursal,
+                        'tipo_movimiento' => 'Venta',
+                        'cantidad' => $arrayCantidad[$index],
+                        'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
+                        'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
+                        'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                        'fecha_movimiento' => now()
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            $usuario = User::find($request->idUsuario);
+            Bitacora::create([
                 'id_usuario' => $request->idUsuario,
-                'name_usuario' =>$usuario->name,
+                'name_usuario' => $usuario->name,
                 'accion' => 'Creación',
                 'tabla_afectada' => 'Venta',
                 'detalles' => "Se creó la venta: {$usuario->id}", //detalles especificos
                 'fecha_hora' => now(),
-        ]);
+            ]);
 
-        return redirect()->route('ventas.index')->with('success', 'Venta creada exitosamente');
-    } catch (Exception $e) {
-        // Cancelar transacción en caso de error
-        DB::rollBack();
+            return redirect()->route('ventas.index')->with('success', 'Venta creada exitosamente');
+        } catch (Exception $e) {
+            // Cancelar transacción en caso de error
+            DB::rollBack();
 
-        return redirect()->route('ventas.create')->with('error', 'Error al crear la venta: ' . $e->getMessage());
+            return redirect()->route('ventas.create')->with('error', 'Error al crear la venta: ' . $e->getMessage());
+        }
     }
-}
 
 
     /**
@@ -266,12 +269,11 @@ class VentaController extends Controller
     public function show(Venta $venta)
     {
         $venta->load('detalles.producto');
-         //$venta->load('productos');
-         if($venta->imagen_receta){
+        //$venta->load('productos');
+        if ($venta->imagen_receta) {
             $venta->imagen_receta_url = asset('uploads/' . $venta->imagen_receta);
-         }
-        return view('venta.show',compact('venta'));
-
+        }
+        return view('venta.show', compact('venta'));
     }
 
     /**
@@ -292,10 +294,7 @@ class VentaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-
-    }
+    public function update(Request $request, $id) {}
 
     /**
      * Remove the specified resource from storage.
@@ -306,15 +305,14 @@ class VentaController extends Controller
     public function destroy(Request $request, Venta $venta)
     {
         $estado = $request->input('status', 0);
-        if($estado == 0){
+        if ($estado == 0) {
             $venta->update(['estado' => 0]);
-            return redirect()->route('ventas.index')->with('success','Venta eliminado con éxito!');
-        }else{
+            return redirect()->route('ventas.index')->with('success', 'Venta eliminado con éxito!');
+        } else {
             $venta->estado = $estado;
             $venta->save();
             return response()->json(['success' => true]);
         }
-        return response()->json(['success'=> false]);
-
+        return response()->json(['success' => false]);
     }
 }
