@@ -14,7 +14,7 @@ use Illuminate\Queue\SerializesModels;
 class validacion extends Mailable
 {
 
-    public $devolucion;
+    public $solicitud;
     public $notificaciones;
     use Queueable, SerializesModels;
 
@@ -23,9 +23,10 @@ class validacion extends Mailable
      *
      * @return void
      */
-    public function __construct($devolucion, $notificaciones)
+    public function __construct( $solicitud, $notificaciones)
     {
-        $this->devolucion = $devolucion;
+    
+        $this->solicitud = $solicitud;
         $this->notificaciones = $notificaciones;
     }
 
@@ -39,24 +40,12 @@ class validacion extends Mailable
     public function build()
     {
 
-        $devoluciones = Devoluciones::with(['sucursal', 'usuario'])->where('id', $this->devolucion->id)
-            ->latest()
-            ->get();
+       return $this->subject('Autorización requerida para devolución')
+           ->view('emails.verificacion')
+           ->with([
+               'url' => route('devoluciones.autorizar', [$this->solicitud->id, $this->notificaciones->id]),
+               'datos' => $this->solicitud,
 
-        $devolucionesDetalles = DetalleDevolucion::with(['producto'])->where('devolucion_id', $this->devolucion->id)
-            ->latest()
-            ->get();
-
-        $notificaciones = Notificaciones::where('id', $this->notificaciones->id)->first();
-
-        return $this->subject('Autorización requerida para devolución')
-            ->view('emails.verificacion')
-            ->with([
-                'devolucion' => $this->devolucion,
-                'url' => route('devoluciones.autorizar', [$this->devolucion->id, $this->notificaciones->id]),
-                'devoluciones' => $devoluciones,
-                'devolucionesDetalles' => $devolucionesDetalles,
-
-            ]);
+           ]);
     }
 }

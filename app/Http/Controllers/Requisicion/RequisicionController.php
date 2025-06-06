@@ -167,10 +167,12 @@ class RequisicionController extends Controller
                 $cantidadRestante -= $cantidadATransferir;
             }
 
+            $nombreSucursalDestino = Sucursal::findOrFail($sucursalDestinoId)->nombre;
+
             // Registrar en el kardex
             $reporte = ReporteKardex::create([
                 'producto_id' => $productoId,
-                'sucursal_id' => $sucursalDestinoId,
+                'nombre_sucursal' => $nombreSucursalDestino,
                 'tipo_movimiento' => 'traslado',
                 'cantidad' => $cantidadATransferir, // Cambiado a la cantidad transferida en este lote
                 'Cantidad_anterior' => $almacenDestino->cantidad - $cantidadATransferir,
