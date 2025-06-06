@@ -45,8 +45,8 @@
                      {{-- boton cambio de estado --}}
                      <td>
                         <form action="{{route( 'notificaciones.destroy',$notificacion->id )}}" method="get">
-                        <button type="sumit"  class="btn btn-warning btn-sm cambiar-estado-btn" data-id="{{ $notificacion->id }}" data-estado="{{ $notificacion->leido }}" data-info="">
-                                <i class="fas fa-sync-alt"></i>
+                        <button type="submit"  class="btn btn-success btn-sm cambiar-estado-btn" data-id="{{ $notificacion->id }}" data-estado="{{ $notificacion->leido }}" data-info="">
+                                <i class="fa-solid fa-check-double"></i>
                             </button>
                         </form>
 

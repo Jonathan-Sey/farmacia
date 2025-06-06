@@ -27,9 +27,13 @@ class InventarioController extends Controller
         // ->get();
         //return $inventario; 
         //se compruba que no exista producto vencido en el inventario
+        // Obtener productos vencidos del lote
         $productosVencidos = Lote::where('fecha_vencimiento', '<', Carbon::now())->get();
 
-        if ($productosVencidos->isNotEmpty()) {
+        // Obtener productos vencidos del almacén
+        $almacenVencido = Almacen::where('fecha_vencimiento', '<', Carbon::now())->get();
+
+        if ($productosVencidos->isNotEmpty() || $almacenVencido->isNotEmpty()) {
 
             foreach ($productosVencidos as $producto) {
                 // Obtener todas las requisiciones relacionadas con este lote
