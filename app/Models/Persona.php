@@ -101,4 +101,9 @@ class Persona extends Model
     {
         return $this->hasMany(FichaMedica::class, 'persona_id');
     }
+
+    public function persona()
+{
+    return $this->belongsTo(Persona::class, 'id_persona');
+}
 }
