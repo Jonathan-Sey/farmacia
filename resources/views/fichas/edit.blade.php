@@ -11,7 +11,7 @@
     Dropzone.autoDiscover = false;
     const dropzone = new Dropzone("#dropzone-receta", {
         url: "{{ route('upload.image.temp') }}",
-        dictDefaultMessage: "Arrastra y suelta la receta médica o haz clic aquí para subirla",
+        dictDefaultMessage: "y suelta la receta médica o haz clic aquí para subirla",
         acceptedFiles: ".png,.jpg,.jpeg,.pdf",
         addRemoveLinks: true,
         dictRemoveFile: "Borrar archivo",
@@ -40,41 +40,44 @@
     });
 
     dropzone.on("removedfile", function(file) {
-        const imagenNombre = document.querySelector('[name="receta_foto"]').value;
-        const imagenOriginal = "{{ $ficha->receta_foto }}";
+    const imagenNombre = document.querySelector('[name="receta_foto"]').value;
+    const imagenOriginal = "{{ $ficha->receta_foto ? basename($ficha->receta_foto) : '' }}";
 
-        if (imagenNombre === imagenOriginal) {
-            if (!document.querySelector('[name="eliminar_receta"]')) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'eliminar_receta';
-                input.value = '1';
-                document.querySelector('form').appendChild(input);
-            }
+    if (imagenNombre === imagenOriginal) {
+        if (!document.querySelector('[name="eliminar_receta"]')) {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'eliminar_receta';
+            input.value = '1';
+            document.querySelector('form').appendChild(input);
         }
-        else if (imagenNombre && imagenNombre !== imagenOriginal) {
-            fetch("{{ route('eliminar.imagen.temp') }}", {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ imagen: imagenNombre }),
-            });
-        }
-        document.querySelector('[name="receta_foto"]').value = "";
-    });
+    }
+    else if (imagenNombre && imagenNombre !== imagenOriginal) {
+        fetch("{{ route('eliminar.imagen.temp') }}", {
+            method: "POST",
+            headers: {
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ imagen: imagenNombre }),
+        });
+    }
 
-    // Precargar la receta existente
-    document.addEventListener("DOMContentLoaded", function() {
-        const recetaNombre = document.querySelector('[name="receta_foto"]').value;
-        if (recetaNombre) {
-            const mockFile = { name: recetaNombre, size: 12345 };
-            dropzone.emit("addedfile", mockFile);
-            dropzone.emit("thumbnail", mockFile, "{{ asset('storage/recetas') }}/" + recetaNombre);
-            dropzone.emit("complete", mockFile);
-        }
-    });
+    document.querySelector('[name="receta_foto"]').value = "";
+});
+
+// Precargar la receta existente
+document.addEventListener("DOMContentLoaded", function() {
+    const recetaNombre = document.querySelector('[name="receta_foto"]').value;
+    if (recetaNombre) {
+        const nombreArchivo = recetaNombre.includes('/') ? recetaNombre.split('/').pop() : recetaNombre;
+        const mockFile = { name: nombreArchivo, size: 12345 };
+        dropzone.emit("addedfile", mockFile);
+        dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + nombreArchivo);
+        dropzone.emit("complete", mockFile);
+    }
+});
+
 
     // Eliminar archivo temporal al cerrar la página si no se guardó
     window.addEventListener("beforeunload", function() {
