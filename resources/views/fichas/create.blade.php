@@ -1,5 +1,83 @@
 @extends('template')
 
+@push('css')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+@endpush
+
+@push('js')
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script>
+    Dropzone.autoDiscover = false;
+    const dropzone = new Dropzone("#dropzone-receta", {
+        url: "{{ route('upload.image.temp') }}",
+        dictDefaultMessage: "Arrastra y suelta la receta médica o haz clic aquí para subirla",
+        acceptedFiles: ".png,.jpg,.jpeg,.pdf",
+        addRemoveLinks: true,
+        dictRemoveFile: "Borrar archivo",
+        maxFiles: 1,
+        uploadMultiple: false,
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        }
+    });
+
+    dropzone.on("addedfile", function(file) {
+        if (this.files.length > 1) {
+            this.removeFile(this.files[0]);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir un archivo.',
+                confirmButtonText: 'Aceptar',
+            });
+        }
+    });
+
+    dropzone.on("success", function(file, response) {
+        console.log("Archivo subido temporalmente:", response.imagen);
+        document.querySelector('[name="receta_foto"]').value = response.imagen;
+    });
+
+    dropzone.on("removedfile", function(file) {
+        const imagenNombre = document.querySelector('[name="receta_foto"]').value;
+        if (imagenNombre) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+        document.querySelector('[name="receta_foto"]').value = "";
+    });
+
+    // Eliminar archivo temporal al cerrar la página
+    window.addEventListener("beforeunload", function() {
+        const imagenNombre = document.querySelector('[name="receta_foto"]').value;
+        if (imagenNombre && !document.querySelector('form').submitted) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+    });
+
+    // Marcar el formulario como enviado al hacer submit
+    document.querySelector('form').addEventListener('submit', function() {
+        this.submitted = true;
+    });
+</script>
+
+@endpush
+
+
 @section('contenido')
 <div class="flex justify-center items-center mx-3">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
@@ -52,8 +130,15 @@
             </div>
 
             <div class="mt-4">
-                <label for="receta_foto" class="block text-sm font-medium text-gray-700">Foto de la Receta</label>
-                <input type="file" name="receta_foto" id="receta_foto" class="mt-1 block w-full" accept="image/*">
+                <label class="block text-sm font-medium text-gray-700">Foto/PDF de la Receta</label>
+                <div id="dropzone-receta" class="dropzone border-2 border-dashed rounded w-full h-40">
+                    <input type="hidden" name="receta_foto" value="{{ old('receta_foto') }}">
+                </div>
+                @error('receta_foto')
+                    <div role="alert" class="alert alert-error mt-4 p-2">
+                        <span class="text-white font-bold">{{ $message }}</span>
+                    </div>
+                @enderror
             </div>
 
             <div class="mt-6 flex items-center justify-end gap-x-6">

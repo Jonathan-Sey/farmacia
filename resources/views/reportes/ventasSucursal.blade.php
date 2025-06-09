@@ -58,6 +58,21 @@
                     <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
                     @endforeach
                 </select>
+
+                  <div class="flex gap-4">
+            <div class="flex-1 m-2">
+                <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
+                <input type="date" id="fechaInicio" name="fechaInicio"
+                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+            </div>
+
+            <div class="flex-1 m-2">
+                <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
+                <input type="date" id="fechaFin" name="fechaFin"
+                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+            </div>
+        </div>
+
             </div>
         </div>
 
@@ -108,27 +123,22 @@
 
 
 <script>
-    document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
-        // Obtener valores de los inputs
-        const sucursal = document.getElementById('sucursal').value;
-        console.log(sucursal);
-        /* const mes = document.getElementById('mes').value;
-         const año = document.getElementById('año').value;
-         const fechaInicio = document.getElementById('fechaInicio').value;
-         const fechaFin = document.getElementById('fechaFin').value;*/
+   document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
+    const sucursal = document.getElementById('sucursal').value;
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
 
-        // Construir URL
-        let url = '/ventas-informe/sucursal?';
-        if (sucursal) url += `sucursal=${sucursal}&`;
+    let url = '/ventas-informe/sucursal?';
+    if (sucursal) url += `sucursal=${sucursal}&`;
+    if (fechaInicio) url += `fechaInicio=${fechaInicio}&`;
+    if (fechaFin) url += `fechaFin=${fechaFin}&`;
 
-        try {
-            // Fetch data
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('Error en la respuesta');
-            const data = await response.json();
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Error en la respuesta');
+        const data = await response.json();
 
-            // Generar HTML de las filas
-            const rows = data.map(venta => `
+        const rows = data.map(venta => `
             <tr>
                 <td class="px-6 py-3">${venta.venta_id}</td>
                 <td class="px-6 py-3">${venta.nombre_producto || 'N/A'}</td>
@@ -142,50 +152,40 @@
             </tr>
         `).join('');
 
-            // Insertar filas en la tabla
-            const tbody = document.getElementById('tabla');
+        const tbody = document.getElementById('tabla');
+        tbody.innerHTML = rows;
+
+        if ($.fn.DataTable.isDataTable('#example')) {
+            $('#example').DataTable().destroy();
+            tbody.innerHTML = ''; 
             tbody.innerHTML = rows;
-
-            // Destruir DataTable si existe
-            if ($.fn.DataTable.isDataTable('#example')) {
-                $('#example').DataTable().destroy();
-                tbody.innerHTML = ''; // Limpiar temporalmente
-                tbody.innerHTML = rows; // Volver a insertar
-            }
-
-            // Inicializar DataTable
-            $('#example').DataTable({
-                responsive: true,
-                order: [
-                    [0, 'desc']
-                ],
-                language: {
-                url: '/js/i18n/Spanish.json',
-                 paginate: {
-                     first: `<i class="fa-solid fa-backward"></i>`,
-                     previous: `<i class="fa-solid fa-caret-left">`,
-                     next: `<i class="fa-solid fa-caret-right"></i>`,
-                     last: `<i class="fa-solid fa-forward"></i>`
-                 }
-            },
-                dom: 'Bfrtip',
-                buttons: ['copy', 'excel', 'pdf', 'print', 'colvis'],
-                columnDefs: [{
-                        responsivePriority: 1,
-                        targets: 0
-                    },
-                    {
-                        responsivePriority: 2,
-                        targets: 1
-                    }
-                ]
-            });
-
-        } catch (error) {
-            console.error('Error:', error);
-            Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
         }
-    });
+
+        $('#example').DataTable({
+            responsive: true,
+            order: [[0, 'desc']],
+            language: {
+                url: '/js/i18n/Spanish.json',
+                paginate: {
+                    first: `<i class="fa-solid fa-backward"></i>`,
+                    previous: `<i class="fa-solid fa-caret-left"></i>`,
+                    next: `<i class="fa-solid fa-caret-right"></i>`,
+                    last: `<i class="fa-solid fa-forward"></i>`
+                }
+            },
+            dom: 'Bfrtip',
+            buttons: ['copy', 'excel', 'pdf', 'print', 'colvis'],
+            columnDefs: [
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 1 }
+            ]
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
+    }
+});
 </script>
 
 

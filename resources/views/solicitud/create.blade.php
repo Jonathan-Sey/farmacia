@@ -2,6 +2,7 @@
 @section('titulo', 'Crear solicitud de articulos ')
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @section('contenido')
@@ -13,7 +14,15 @@
                 <div class="mb-5">
                     <div class="flex gap-6 justify-center">
                         <div class="w-1/2">
-                            <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal a solicitar </label>
+                            <x-select2
+                                name="id_sucursal_1"
+                                label="Sucursal a solicitar"
+                                :options="$sucursales->pluck('nombre', 'id')"
+                                :selected="old('id_sucursal_1')"
+                                placeholder="Seleccionar una Sucursal"
+                                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                            />
+                            {{-- <label for="id_sucursal_1" class="uppercase block text-sm font-medium text-gray-900">Sucursal a solicitar </label>
                             <select
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_1"
@@ -27,7 +36,7 @@
                             <div role="alert" class="alert alert-error mt-4 p-2">
                                 <span class="text-white font-bold">{{ $message }}</span>
                             </div>
-                            @enderror
+                            @enderror --}}
                         </div>
 
                         <div class="w-1/2 flex gap-6 p-6 items-center justify-center">
@@ -35,7 +44,16 @@
                         </div>
 
                         <div class="w-1/2">
-                            <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal que solicita</label>
+                            <x-select2
+                                name="id_sucursal_2"
+                                label="Sucursal que solicita"
+                                :options="$sucursales->pluck('nombre', 'id')"
+                                :selected="old('id_sucursal_2')"
+                                placeholder="Seleccionar una Sucursal"
+                                id="id_sucursal_2"
+                                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                            />
+                            {{-- <label for="id_sucursal_2" class="uppercase block text-sm font-medium text-gray-900">Sucursal que solicita</label>
                             <select
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal_2"
@@ -49,7 +67,7 @@
                             <div role="alert" class="alert alert-error mt-4 p-2">
                                 <span class="text-white font-bold">{{ $message }}</span>
                             </div>
-                            @enderror
+                            @enderror --}}
                         </div>
                     </div>
                 </div>
@@ -57,7 +75,16 @@
 
                 <!-- Producto -->
                 <div class="mt-2 mb-5">
-                    <label for="id_producto6" class="uppercase block text-sm font-medium text-gray-900">Producto que nesecesita</label>
+                    <x-select2
+                        name="id_producto"
+                        label="Producto que necesita"
+                        :options="[]"
+                        :selected="old('id_producto')"
+                        placeholder="Seleccionar un producto"
+                        id="id_producto"
+                        class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                    />
+                    {{-- <label for="id_producto6" class="uppercase block text-sm font-medium text-gray-900">Producto que nesecesita</label>
                     <select
                         class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         name="id_producto"
@@ -71,7 +98,7 @@
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
-                    @enderror
+                    @enderror --}}
                 </div>
 
                 <!-- Cantidad -->
@@ -119,6 +146,10 @@
 <div class="mt-5">
     <h2 class="text-center m-5 font-bold text-lg">Detalle de la solicitud</h2>
     <div class="overflow-x-auto">
+        <div id="usuario">
+
+        </div>
+
         <table id="tabla-productos" class="table  table-md table-pin-rows table-pin-cols">
             <thead>
                 <tr>
@@ -128,7 +159,7 @@
                     <td>Producto</td>
                     <td>Cantidad</td>
                     <td>descripcion</td>
-                    <th></th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -156,120 +187,302 @@
 </div>
 </div>
 
+
 <script>
-    document.getElementById('id_sucursal_1').addEventListener('change', function() {
-        let sucursalId = this.value;
-        let productosSelect = document.getElementById('id_producto');
+// Carga de productos según sucursal seleccionada
+$(document).ready(function() {
+    // Escuchar cambios en el select de sucursal
+    $('#id_sucursal_1').on('change', function() {
+    let sucursalId = $(this).val();
+    let productosSelect = $('#id_producto');
 
-        // Limpiar el select de productos
-        productosSelect.innerHTML = '<option value="">Seleccione un producto</option>';
+    productosSelect.empty().append('<option value="">Seleccione un producto</option>');
+    productosSelect.val(null).trigger('change');
 
-        if (sucursalId) {
-            fetch(`/productos-por-sucursal/${sucursalId}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.forEach(producto => {
-                        let option = document.createElement('option');
-                        option.value = producto.id_producto;
-                        option.textContent = producto.producto.nombre;
-                        productosSelect.appendChild(option);
-                    });
-                })
-                .catch(error => console.error('Error:', error));
+    if (sucursalId) {
+        productosSelect.prop('disabled', true);
+
+        fetch(`/productos-por-sucursal/${sucursalId}?tipo=1`) // Filtra por tipo=1 (productos)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(producto => {
+                    // Verificar que sea producto (tipo=1)
+                    if(producto.producto && producto.producto.tipo == 1) {
+                        let option = new Option(producto.producto.nombre, producto.id_producto);
+                        productosSelect.append(option);
+                    }
+                });
+                productosSelect.prop('disabled', false).trigger('change');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                productosSelect.prop('disabled', false);
+            });
+    }
+});
+
+    // Mantener la funcionalidad de exclusión entre sucursales
+    $('#id_sucursal_1').on('change', function() {
+        let valor1 = $(this).val();
+        let select2 = $('#id_sucursal_2');
+
+        if (valor1) {
+            // Obtener opciones originales (todas las sucursales)
+            let opcionesOriginales = {!! $sucursales->pluck('nombre', 'id')->toJson() !!};
+
+            // Filtrar para excluir la sucursal seleccionada
+            let opcionesFiltradas = Object.keys(opcionesOriginales)
+                .filter(id => id != valor1)
+                .reduce((obj, key) => {
+                    obj[key] = opcionesOriginales[key];
+                    return obj;
+                }, {});
+
+            // Actualizar el segundo select
+            select2.empty().select2({
+                data: $.map(opcionesFiltradas, function(text, id) {
+                    return { id: id, text: text };
+                }),
+                placeholder: "Seleccionar una Sucursal"
+            });
         }
     });
-</script>
 
-<script>
-    $(document).ready(function() {
-        $('#btn-agregar').click(function() {
-            agregarProducto();
-        });
-
-
-    })
-
-    let contador = 0;
-
-    function agregarProducto() {
-        let id_producto = $('#id_producto').val();
-        const selectProducto = document.getElementById("id_producto");
-        const opciones = Array.from(selectProducto.options);
-
-        const opcionBuscada = opciones.find(option => option.value === id_producto);
-            let producto = opcionBuscada.text;
-
-        let cantidad = $('#cantidad').val();
-        let descripcion = $('#descripcion').val();
-
-        let sucursal_1 = $('#id_sucursal_1').val();
-        const selectsucursal1 = document.getElementById("id_sucursal_1");
-        const opcionesSucursal1 = Array.from(selectsucursal1.options);
-        const opcionBuscadaSucursal = opcionesSucursal1.find(option => option.value === sucursal_1);
-            let sucursal_1T = opcionBuscadaSucursal.text;
-
-        let sucursal_2 = $('#id_sucursal_2').val();
-        const selectsucursal2 = document.getElementById("id_sucursal_2");
-        const opcionesSucursal2 = Array.from(selectsucursal2.options);
-        const opcionBuscadaSucursa2 = opcionesSucursal2.find(option => option.value === sucursal_2);
-            let sucursal_2T = opcionBuscadaSucursa2.text;
-
-        if (id_producto != '' && producto != '' && cantidad != '' && descripcion != '' && sucursal_1 != '' && sucursal_2 != '') {
-            if (parseInt(cantidad) > 0 && (cantidad % 1 == 0)) {
-
-                contador++;
-                $('#tabla-productos tbody').append(`
-                            <tr id="fila${contador}">
-                                <th>${contador}</th>
-                                 <td><input type="hidden" name="arraySucursal1[]" value="${sucursal_1}">${sucursal_1T}</td>
-                                <td><input type="hidden" name="arraySucursal2[]" value="${sucursal_2}">${sucursal_2T}</td>
-                                <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
-                                <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
-                                <td><input type="hidden" name="arrayDescripcion[]" value="${descripcion}">${descripcion}</td>
-
-
-                                <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
-                            </tr> `);
-
-                limpiar();
-
-            } else {
-                mensaje('favor ingresar una cantidad entera');
-            }
-
+    // Configurar el botón agregar/actualizar
+    $('#btn-agregar').click(function() {
+        if ($(this).text() === 'Actualizar') {
+            let id = $(this).data('edit-id');
+            actualizarProducto(id);
         } else {
-            mensaje('Los campos estan vacios');
+            agregarProducto();
         }
+    });
+});
+
+let contador = 0;
+
+function agregarProducto() {
+    let id_producto = $('#id_producto').val();
+    let producto = $('#id_producto option:selected').text();
+    let cantidad = $('#cantidad').val();
+    let descripcion = $('#descripcion').val();
+    let sucursal_1 = $('#id_sucursal_1').val();
+    let sucursal_1T = $('#id_sucursal_1 option:selected').text();
+    let sucursal_2 = $('#id_sucursal_2').val();
+    let sucursal_2T = $('#id_sucursal_2 option:selected').text();
+
+    // Validación de campos requeridos
+    let errores = [];
+    if (!sucursal_1) errores.push('Debe seleccionar una sucursal de origen');
+    if (!sucursal_2) errores.push('Debe seleccionar una sucursal destino');
+    if (!id_producto) errores.push('Debe seleccionar un producto');
+    if (!cantidad) errores.push('Debe ingresar una cantidad');
+    if (!descripcion) errores.push('Debe ingresar una descripción');
+
+    if (errores.length > 0) {
+        mensaje(errores.join('<br>'));
+        return;
     }
 
-</script>
+    // Validación de cantidad entera positiva
+    if (!/^\d+$/.test(cantidad) || parseInt(cantidad) <= 0) {
+        mensaje('La cantidad debe ser un número entero positivo');
+        return;
+    }
 
-<script>
-    var select1 = document.getElementById('id_sucursal_1');
-    var select2 = document.getElementById('id_sucursal_2');
-
-
-    const opcionesOriginales = Array.from(select2.options).map(option => option.cloneNode(true));
-
-    select1.addEventListener('change', function() {
-        let valor1 = select1.value;
-
-
-        select2.innerHTML = '';
-
-        opcionesOriginales.forEach(option => {
-            if (option.value !== valor1) {
-                select2.appendChild(option.cloneNode(true));
+    // Verificar si el producto ya existe en la tabla
+    let productoExistente = $(`#tabla-productos tbody tr input[name="arrayIdProducto[]"][value="${id_producto}"]`).closest('tr');
+    if (productoExistente.length > 0) {
+        Swal.fire({
+            title: 'Producto ya agregado',
+            text: 'Este producto ya está en la solicitud. ¿Desea editarlo?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, editar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let id = productoExistente.attr('id').replace('fila', '');
+                editarProducto(id);
             }
         });
+        return;
+    }
+
+    contador++;
+    $('#tabla-productos tbody').append(`
+        <tr id="fila${contador}">
+            <th>${contador}</th>
+            <td><input type="hidden" name="arraySucursal1[]" value="${sucursal_1}">${sucursal_1T}</td>
+            <td><input type="hidden" name="arraySucursal2[]" value="${sucursal_2}">${sucursal_2T}</td>
+            <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
+            <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
+            <td><input type="hidden" name="arrayDescripcion[]" value="${descripcion}">${descripcion}</td>
+            <td class="flex gap-2">
+                <button type="button" onclick="editarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button>
+                <button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button>
+             </td>
+        </td>`);
+
+    limpiar();
+}
+
+function editarProducto(id) {
+    let fila = $(`#fila${id}`);
+
+    // Obtener valores actuales
+    let sucursal1 = fila.find('input[name="arraySucursal1[]"]').val();
+    let sucursal1T = $(`#id_sucursal_1 option[value="${sucursal1}"]`).text();
+    let sucursal2 = fila.find('input[name="arraySucursal2[]"]').val();
+    let sucursal2T = $(`#id_sucursal_2 option[value="${sucursal2}"]`).text();
+    let producto = fila.find('input[name="arrayIdProducto[]"]').val();
+    let productoT = $(`#id_producto option[value="${producto}"]`).text();
+    let cantidad = fila.find('input[name="arraycantidad[]"]').val();
+    let descripcion = fila.find('input[name="arrayDescripcion[]"]').val();
+
+    // Obtener opciones de sucursales para los selects del modal
+    let opcionesSucursal1 = $('#id_sucursal_1').html();
+    let opcionesSucursal2 = $('#id_sucursal_2').html();
+    let opcionesProductos = $('#id_producto').html();
+
+    Swal.fire({
+        title: 'Editar Producto',
+        html: `
+            <div class="text-left">
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Sucursal Origen</label>
+                    <select id="swal-sucursal1" class="w-full p-2 border rounded">
+                        ${opcionesSucursal1}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Sucursal Destino</label>
+                    <select id="swal-sucursal2" class="w-full p-2 border rounded">
+                        ${opcionesSucursal2}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Producto</label>
+                    <select id="swal-producto" class="w-full p-2 border rounded">
+                        ${opcionesProductos}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Cantidad</label>
+                    <input id="swal-cantidad" type="number" min="1" value="${cantidad}" class="w-full p-2 border rounded">
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Descripción</label>
+                    <textarea id="swal-descripcion" class="w-full p-2 border rounded">${descripcion}</textarea>
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        cancelButtonText: 'Cancelar',
+        focusConfirm: false,
+        preConfirm: () => {
+            return {
+                sucursal1: $('#swal-sucursal1').val(),
+                sucursal1T: $('#swal-sucursal1 option:selected').text(),
+                sucursal2: $('#swal-sucursal2').val(),
+                sucursal2T: $('#swal-sucursal2 option:selected').text(),
+                producto: $('#swal-producto').val(),
+                productoT: $('#swal-producto option:selected').text(),
+                cantidad: $('#swal-cantidad').val(),
+                descripcion: $('#swal-descripcion').val()
+            };
+        },
+        didOpen: () => {
+            // Establecer valores iniciales en los selects
+            $('#swal-sucursal1').val(sucursal1);
+            $('#swal-sucursal2').val(sucursal2);
+            $('#swal-producto').val(producto);
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const data = result.value;
+
+            // Validaciones
+            if (!data.sucursal1 || !data.sucursal2 || !data.producto || !data.cantidad || !data.descripcion) {
+                mensaje('Todos los campos son requeridos');
+                return;
+            }
+
+            if (!/^\d+$/.test(data.cantidad) || parseInt(data.cantidad) <= 0) {
+                mensaje('La cantidad debe ser un número entero positivo');
+                return;
+            }
+
+            // Actualizar la fila
+            $(`#fila${id}`).html(`
+                <th>${id}</th>
+                <td><input type="hidden" name="arraySucursal1[]" value="${data.sucursal1}">${data.sucursal1T}</td>
+                <td><input type="hidden" name="arraySucursal2[]" value="${data.sucursal2}">${data.sucursal2T}</td>
+                <td><input type="hidden" name="arrayIdProducto[]" value="${data.producto}">${data.productoT}</td>
+                <td><input type="hidden" name="arraycantidad[]" value="${data.cantidad}">${data.cantidad}</td>
+                <td><input type="hidden" name="arrayDescripcion[]" value="${data.descripcion}">${data.descripcion}</td>
+                <td class="flex gap-2">
+                    <button type="button" onclick="editarProducto('${id}')">
+                        <i class="p-3 cursor-pointer fa-solid fa-edit"></i>
+                    </button>
+                    <button type="button" onclick="eliminarProducto('${id}')">
+                        <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            `);
+        }
     });
+}
+
+function eliminarProducto(id) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $(`#fila${id}`).remove();
+            // Reindexar las filas restantes
+            $('#tabla-productos tbody tr').each(function(index) {
+                $(this).find('th').text(index + 1);
+            });
+            contador = $('#tabla-productos tbody tr').length;
+
+            Swal.fire(
+                '¡Eliminado!',
+                'El producto ha sido eliminado.',
+                'success'
+            );
+        }
+    });
+}
+
+function limpiar() {
+    $('#id_producto').val(null).trigger('change');
+    $('#cantidad').val('');
+    $('#descripcion').val('');
+    $('#btn-agregar').text('Agregar').removeData('edit-id');
+}
+
+function mensaje(texto, icono = "error") {
+    Swal.fire({
+        icon: icono,
+        title: 'Error',
+        html: texto,
+        confirmButtonText: 'Aceptar'
+    });
+}
 </script>
-
-
-
-
 
 @endsection
 @push('js')
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
 @endpush

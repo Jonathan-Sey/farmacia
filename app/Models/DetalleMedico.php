@@ -42,11 +42,20 @@ class DetalleMedico extends Model
     {
         return $this->belongsTo(User::class, 'id_usuario');
     }
-    
-    protected $with = ['horarios.sucursal'];
+
+    //protected $with = ['horarios'];
+
+    public function getHorariosAttribute()
+    {
+        if (!array_key_exists('horarios', $this->relations)) {
+            $this->load('horarios');
+        }
+
+        return $this->getRelation('horarios');
+    }
     // Relación con Horarios
     public function horarios()
     {
-        return $this->hasMany(Horario::class, 'medico_id');
+        return $this->hasMany(Horario::class, 'medico_id', 'id');
     }
 }

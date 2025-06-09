@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Requisicion;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Almacen;
+use App\Models\Bitacora;
 use App\Models\Bodega;
 use App\Models\Inventario;
 use App\Models\Lote;
@@ -12,6 +13,7 @@ use App\Models\Producto;
 use App\Models\ReporteKardex;
 use App\Models\Requisicion;
 use App\Models\Sucursal;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -100,6 +102,19 @@ class RequisicionController extends Controller
             'id_producto' => 'required',
             'cantidad' => 'required|integer|min:1',
         ]);
+         // Bitacora
+         $usuario = User::find($request->idUsuario);
+         $producto = Producto::find($request->id_producto);
+         $sucursal = Sucursal::find($request->id_sucursal_destino);
+         Bitacora::create([
+             'id_usuario' => $request->idUsuario,
+             'name_usuario' => $usuario->name,
+             'accion' => 'Creación',
+             'tabla_afectada' => 'Traslado',
+             'detalles' => "Se creo la solicitud de: {$producto->nombre} con la cantidad de: {$request->cantidad} hacia la sucursal: {$sucursal->nombre}", 
+             'fecha_hora' => now(),
+         ]);
+
 
         DB::beginTransaction();
         try {
@@ -167,10 +182,12 @@ class RequisicionController extends Controller
                 $cantidadRestante -= $cantidadATransferir;
             }
 
+            $nombreSucursalDestino = Sucursal::findOrFail($sucursalDestinoId)->nombre;
+
             // Registrar en el kardex
             $reporte = ReporteKardex::create([
                 'producto_id' => $productoId,
-                'sucursal_id' => $sucursalDestinoId,
+                'nombre_sucursal' => $nombreSucursalDestino,
                 'tipo_movimiento' => 'traslado',
                 'cantidad' => $cantidadATransferir, // Cambiado a la cantidad transferida en este lote
                 'Cantidad_anterior' => $almacenDestino->cantidad - $cantidadATransferir,

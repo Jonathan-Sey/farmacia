@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class FichaMedica extends Model
 {
     use HasFactory;
-    protected $table = 'fichas_medicas';        
+    protected $table = 'fichas_medicas';
     protected $fillable = [
         'persona_id',
         'detalle_medico_id',
@@ -37,5 +37,11 @@ class FichaMedica extends Model
     {
         return $this->belongsTo(DetalleMedico::class, 'detalle_medico_id');
     }
+
+    //   // Accesor para la URL completa de la receta
+    //   public function getRecetaUrlAttribute()
+    //   {
+    //       return $this->receta_foto ? asset('storage/' . $this->receta_foto) : null;
+    //   }
 
 }
