@@ -1,22 +1,31 @@
 @extends('template')
 
 @section('content')
-<h2>Eliminar Ficha Médica</h2>
+<div class="flex justify-center items-center mx-3">
+    <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
+        <h3 class="text-xl font-semibold mb-4">Confirmar Eliminación</h3>
 
-<p>¿Está seguro que desea eliminar esta ficha médica del paciente {{ $ficha->persona->nombre }}?</p>
+        <p class="mb-6">¿Estás seguro que deseas eliminar esta ficha médica?</p>
 
-<ul>
-    <li>Diagnóstico: {{ $ficha->diagnostico }}</li>
-    <li>Consulta programada: {{ $ficha->consulta_programada->format('d/m/Y') }}</li>
-    @if($ficha->receta_foto)
-    <li><img src="{{ asset('storage/' . $ficha->receta_foto) }}" alt="Receta" width="150"></li>
-    @endif
-</ul>
+        <div class="bg-gray-100 p-4 rounded-lg mb-6">
+            <p><strong>Diagnóstico:</strong> {{ $ficha->diagnostico }}</p>
+            <p><strong>Médico:</strong> {{ $ficha->detalleMedico->usuario->name ?? 'No asignado' }}</p>
+            <p><strong>Consulta programada:</strong> {{ $ficha->consulta_programada }}</p>
+        </div>
 
-<form action="{{ route('fichas.destroy', $ficha->id) }}" method="POST">
-    @csrf
-    @method('DELETE')
-    <button type="submit" onclick="return confirm('¿Confirma eliminar esta ficha?')">Eliminar</button>
-    <a href="{{ route('personas.show', $ficha->persona_id) }}">Cancelar</a>
-</form>
+        <form action="{{ route('fichas.destroy', $ficha->id) }}" method="POST">
+            @csrf
+            @method('DELETE')
+
+            <div class="flex justify-end gap-x-4">
+                <a href="{{ route('personas.show', $ficha->persona_id) }}" class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400">
+                    Cancelar
+                </a>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
+                    Confirmar Eliminación
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 @endsection

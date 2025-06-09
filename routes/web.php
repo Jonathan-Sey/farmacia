@@ -167,16 +167,6 @@ Route::post('/personas/actualizar-restricciones', [PersonaController::class, 'ac
 
 
 //productos vencidos
-Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
-Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
-Route::get('personas/{id}', [PersonaController::class, 'show'])->name('personas.show');
-// Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
-// Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
-// Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
-// Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
-// Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
-// Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
-
 Route::get('/devoluciones/autorizar/{id}/{idNot}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
 Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVenta']);
 
@@ -192,15 +182,30 @@ Route::get('/devoluciones/aceptar', [devolucionesController::class, 'aceptar'])-
 //NOTIFICACIONES
 Route::get('/notificaciones', [notificacionesController::class, 'index'])->name('notificaciones.index');
 Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])->name('notificaciones.destroy');
-Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
-Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
-Route::resource('personas', PersonaController::class);
 
-Route::get('personas/{persona_id}/fichas/{id}/edit', [FichaMedicaController::class, 'edit'])->name('fichas.edit');
-Route::put('personas/{persona_id}/fichas/{id}', [FichaMedicaController::class, 'update'])->name('fichas.update');
 
-Route::get('personas/fichas/{id}/delete', [FichaMedicaController::class, 'destroyConfirm'])->name('fichas.delete');
-Route::delete('personas/fichas/{id}', [FichaMedicaController::class, 'destroy'])->name('fichas.destroy');
+
+
+//Route::resource('personas', PersonaController::class);
+Route::get('personas/{id}', [PersonaController::class, 'show'])->name('personas.show');
+// Route::get('personas/fichas/{id}/delete', [FichaMedicaController::class, 'destroyConfirm'])->name('fichas.delete');
+// Route::delete('personas/fichas/{id}', [FichaMedicaController::class, 'destroy'])->name('fichas.destroy');
+
+// Rutas para fichas médicas
+Route::prefix('personas/{persona_id}')->group(function () {
+    Route::get('/fichas/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
+    Route::post('/fichas', [FichaMedicaController::class, 'store'])->name('fichas.store');
+
+    Route::get('/fichas/{ficha}/edit', [FichaMedicaController::class, 'edit'])->name('fichas.edit');
+    Route::put('/fichas/{ficha}', [FichaMedicaController::class, 'update'])->name('fichas.update');
+});
+Route::delete('/fichas/{ficha}', [FichaMedicaController::class, 'destroy'])->name('fichas.destroy');
+
+//Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
+//Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
+//Route::get('personas/{persona_id}/fichas/{id}/edit', [FichaMedicaController::class, 'edit'])->name('fichas.edit');
+//Route::put('personas/{persona_id}/fichas/{id}', [FichaMedicaController::class, 'update'])->name('fichas.update');
+
 
 // Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
 // Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
@@ -214,6 +219,6 @@ Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProduc
 
 Route::get('/reporte-inventario', [ReporteVentasController::class, 'generateReportProducto'])->name('inventario.reporte');
 
-//correos
+
 
 
