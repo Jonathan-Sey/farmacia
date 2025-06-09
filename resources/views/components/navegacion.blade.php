@@ -185,22 +185,22 @@
                <a href="{{ route('medicos.index') }}"><i class="fa-solid fa-briefcase-medical"></i> Medicos</a>
             </li>
             <li data-pestanal="Consultas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('consultas.index') }}"><i class="fa-solid fa-book-medical"></i> Consultas</a>
+                <a href="{{ route('consultas.index') }}"><i class="fa-solid fa-stethoscope"></i> Consultas</a>
             </li>
             <li data-pestanal="Inventario" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('inventario.index') }}"><i class="fa-solid fa-book-medical"></i>Inventario</a>
+                <a href="{{ route('inventario.index') }}"><i class="fa-solid fa-shopping-basket"></i> Inventario</a>
             </li>
             <li data-pestanal="Requisiciones" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('requisiciones.index') }}"><i class="fa-solid fa-book-medical"></i>Requisiciones</a>
+                <a href="{{ route('requisiciones.index') }}"><i class="fa-solid fa-shipping-fast"></i> Requisiciones</a>
             </li>
             <li data-pestanal="Traslados" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('traslado.index') }}"><i class="fa-solid fa-book-medical"></i>do</a>
             </li>
             <li data-pestanal="bitacora" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book-medical"></i> Bitacora</a>
+                <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book"></i> Bitacora</a>
             </li>
             <li data-pestanal="Historico" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
-                <a href="{{ route('historico.precios') }}"><i class="fa-solid fa-book-medical"></i> HistoricoPrecios</a>
+                <a href="{{ route('historico.precios') }}"><i class="fa-solid fa-book"></i> HistoricoPrecios</a>
             </li>
             <li data-pestanal="Categorias" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('categorias.index') }}"><i class="bx bx-category"></i> Categorias</a>

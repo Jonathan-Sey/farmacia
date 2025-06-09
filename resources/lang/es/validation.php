@@ -135,6 +135,10 @@ return [
     'prohibits' => 'El campo :attribute no permite que :other esté presente.',
     'regex' => 'El formato del campo :attribute no es válido.',
     'required' => 'El campo :attribute es requerido.',
+   
+
+
+
     'required_array_keys' => 'El campo :attribute debe contener entradas para: :values.',
     'required_if' => 'El campo :attribute es requerido cuando el campo :other es :value.',
     'required_if_accepted' => 'El campo :attribute es requerido cuando el campo :other es aceptado.',
@@ -187,7 +191,15 @@ return [
     | de "email". Esto simplemente nos ayuda a hacer los mensajes un poco más limpios.
     |
     */
-
-    'attributes' => [],
+'attributes' => [
+    'pestanas' => 'pestañas',
+    'id_categoria' => 'categoría',
+     'id_producto' => 'producto',
+     'id_sucursal' => 'sucursal',
+     'id_persona' => 'personas',
+     'id_medico' => 'médico',
+     'id_sucursal_1' => 'sucursal 1',
+     'id_sucursal_2' => 'sucursal 2',
+],
 
 ];
