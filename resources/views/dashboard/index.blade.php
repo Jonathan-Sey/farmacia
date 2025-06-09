@@ -93,7 +93,7 @@
     </div>
 
 
-    <div class="grid gap-5 sm:grid-cols-1 lg:grid-cols-2 items-start mb-8">
+    <div class="grid gap-5 md:grid-cols-1 xl:grid-cols-2 items-start mb-8">
         <div class=" max-h-[400px] overflow-x-auto bg-[#045951] p-2 rounded-lg shadow-lg text-center">
             <h2 class="text-2xl m-2 font-bold  text-white">Últimas ventas</h2>
             <table class="table table-xs table-pin-rows table-pin-cols min-w-full sm:min-w-[400px]">
@@ -192,6 +192,10 @@
         const Meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
         function reformarChart(diasMes, ventasPorDia, totalGeneral, mes, año){
+            // odenamos las ventas
+            const ventasRedondeadas = ventasPorDia.map(venta => round(venta));
+
+
             // diseño de la tabla
             let totalVentas = round(totalGeneral);
             Highcharts.chart('ventasMes', {
@@ -215,17 +219,27 @@
                         text: 'Total de ingresos por día'
                     },
                     labels: {
-                        format: '{value}'
+                        formatter: function() {
+                            return round(this.value); // Aplicar redondeo a las etiquetas del eje Y
+                        }
                     }
                 },
                 tooltip: {
                     crosshairs: true,
-                    shared: true
+                    shared: true,
+                    formatter: function() {
+                // Formatear el tooltip para mostrar valores redondeados
+                        return '<b>' + this.x + '</b><br/>' +
+                            this.series.name + ': <b>Q.' + round(this.y) + '</b>';
+                    }
                 },
                 plotOptions: {
                     line: {
                         dataLabels:{
-                            enabled:true
+                            enabled:true,
+                            formatter: function() {
+                                return round(this.y); // Redondear los datos mostrados en la gráfica
+                            }
                         },
                         marker: {
                             radius: 4,
@@ -240,7 +254,7 @@
                         enabled: true,
                         symbol: 'circle'
                     },
-                    data: ventasPorDia
+                    data: ventasRedondeadas
 
                 }]
             });
@@ -318,7 +332,12 @@
             rangeSelectorFrom: "De",
             rangeSelectorTo: "A",
             rangeSelectorZoom: "Periodo",
-            }
+            },
+
+                tooltip:{
+                    valueDecimals: 2
+                }
+
         });
         </script>
 
@@ -353,7 +372,7 @@ function actualizarGraficaProductosVendidos(productosVendidos, mes, año) {
         },
         tooltip: {
             valueSuffix: '%',
-            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+  pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b><br>Cantidad: <b>{point.y}</b>'
         },
         plotOptions: {
             pie: {
@@ -361,7 +380,7 @@ function actualizarGraficaProductosVendidos(productosVendidos, mes, año) {
                 cursor: 'pointer',
                 dataLabels: [{
                     enabled: true,
-                    format: '<b>{point.name}</b>: {point.y} Und',
+                    format: '<b>{point.name}</b>: {point.y:.0f} Und',
                     style: {
                         color: '#000000', // Color del texto en negro
                         fontSize: '12px'

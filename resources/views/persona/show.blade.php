@@ -75,29 +75,35 @@
         @else
             <ul class="space-y-4">
                 @foreach ($persona->fichasMedicas as $ficha)
-                    <li class="border-b pb-4">
+                    <li class="border-b pb-4 break-words">
                         <p><strong class="text-gray-600">Diagnóstico:</strong> {{ $ficha->diagnostico }}</p>
                         <p><strong class="text-gray-600">Médico:</strong> {{ $ficha->detalleMedico->usuario->name ?? 'No asignado' }}</p>
                         <p><strong class="text-gray-600">Consulta Programada:</strong> {{ $ficha->consulta_programada }}</p>
 
-                        @if ($ficha->receta_foto)
+                        {{-- @if ($ficha->receta_foto)
                             <div class="mt-4">
                                 <img src="{{ asset('storage/' . $ficha->receta_foto) }}" alt="Receta Médica" class="w-32 h-32 object-cover cursor-pointer rounded-md" onclick="openModal('{{ asset('storage/' . $ficha->receta_foto) }}')">
                             </div>
-                        @endif
+                        @endif --}}
+                        <div>
+                            @if ($ficha->receta_foto)
+                            <img src="{{ asset('uploads/' . $ficha->receta_foto) }}" alt="Receta Médica" class="w-32 h-32 object-cover cursor-pointer rounded-md" onclick="openModal('{{ asset('uploads/' . $ficha->receta_foto) }}')">
+                            @else
+                                <span class="text-gray-500">Sin imagen</span>
+                            @endif
+                        </div>
 
                         <div class="mt-3 space-x-2">
                             {{-- Enlaces con parámetros completos para evitar error --}}
-                            <a href="{{ route('fichas.edit', ['persona_id' => $persona->id, 'id' => $ficha->id]) }}" 
-                               class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
-                                Editar
-                            </a>
-
-                            <a href="{{ route('fichas.delete', ['persona_id' => $persona->id, 'id' => $ficha->id]) }}"
-                               onclick="return confirm('¿Seguro que deseas eliminar esta ficha médica?')"
-                               class="inline-block px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700">
+                            <a href="{{ route('fichas.edit', ['persona_id' => $persona->id, 'ficha' => $ficha->id]) }}"
+                                class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+                                 Editar
+                             </a>
+{{--
+                             <button onclick="confirmarEliminacion({{ $ficha->id }}, {{ $persona->id }})"
+                                class="inline-block px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700">
                                 Eliminar
-                            </a>
+                            </button> --}}
                         </div>
                     </li>
                 @endforeach
@@ -133,6 +139,33 @@
     </div>
 </div>
 
+@endsection
+
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+@if (session('success'))
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1600,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("Evento DOMContentLoaded disparado");
+                Toast.fire({ icon: "success",
+                title: "{{ session('success')}}"
+                });
+        });
+</script>
+@endif
+
 <script>
     function openModal(imageSrc) {
         document.getElementById('imageModal').classList.remove('hidden');
@@ -143,4 +176,55 @@
         document.getElementById('imageModal').classList.add('hidden');
     }
 </script>
-@endsection
+
+<script>
+    function confirmarEliminacion(fichaId, personaId) {
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¡No podrás revertir esto!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Enviar solicitud DELETE
+                fetch(`/fichas/${fichaId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Error en la respuesta');
+                })
+                .then(data => {
+                    Swal.fire(
+                        '¡Eliminado!',
+                        'La ficha médica ha sido eliminada.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = `/personas/${personaId}`;
+                    });
+                })
+                .catch(error => {
+                    Swal.fire(
+                        'Error',
+                        'Hubo un problema al eliminar la ficha médica.',
+                        'error'
+                    );
+                    console.error('Error:', error);
+                });
+            }
+        });
+    }
+    </script>
+
+@endpush

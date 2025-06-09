@@ -37,44 +37,52 @@
                     <td class="px-6 py-4">{{$medico->numero_colegiado}}</td>
                     <td class="px-6 py-4">
                         @if (!empty($medico->horarios))
-                            @foreach ($medico->horarios as $horario)
-                                @php
-                                    $decodedHorario = json_decode($horario->horarios, true);
-                                @endphp
-                                @if (is_array($decodedHorario))
-                                    <div class="bg-white p-2 rounded-md shadow-md border border-gray-200 mb-2 w-64">
-                                        <span class="font-bold text-indigo-600 flex items-center">
-                                            <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
-                                            {{ $horario->sucursal->nombre ?? 'Sin sucursal' }}
-                                        </span>
-                                        <table class="w-full mt-1 text-xs">
-                                            <thead>
+                            @php
+                                $sucursalesAgrupadas = $medico->horarios->groupBy('sucursal_id');
+                            @endphp
+                            @foreach ($sucursalesAgrupadas as $sucursalId => $horariosSucursal)
+                            @php
+                                $nombreSucursal = optional($horariosSucursal->first()->sucursal)->nombre ?? 'Sin sucursal';
+                            $diasAgrupados = [];
+
+                            foreach ($horariosSucursal as $horario) {
+                                $datos = $horario->horarios;
+                                if (is_array($datos)) {
+                                    foreach ($datos as $dia => $rangos) {
+                                        if (!isset($diasAgrupados[$dia])) {
+                                            $diasAgrupados[$dia] = [];
+                                        }
+                                        $diasAgrupados[$dia] = array_merge($diasAgrupados[$dia], $rangos);
+                                    }
+                                }
+                            }
+                            @endphp
+
+                            <div class="bg-white p-2 rounded-md shadow-md border border-gray-200 mb-2 w-64">
+                                <span class="font-bold text-indigo-600 flex items-center">
+                                    <i class="fas fa-map-marker-alt text-red-500 mr-2"></i>
+                                    {{ $nombreSucursal }}
+                                </span>
+                                <table class="w-full mt-1 text-xs">
+                                    <thead>
+                                        <tr class="border-b">
+                                            <th class="text-left font-semibold">Día</th>
+                                            <th class="text-left font-semibold">Horario</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($diasAgrupados as $dia => $rangos)
+                                            @foreach ($rangos as $rango)
                                                 <tr class="border-b">
-                                                    <th class="text-left font-semibold">Día</th>
-                                                    <th class="text-left font-semibold">Horario</th>
+                                                    <td class="py-1">{{ ucfirst($dia) }}</td>
+                                                    <td class="py-1">{{ $rango }}</td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                @foreach ($decodedHorario as $dia => $horas)
-                                                    @if (is_array($horas))
-                                                        @foreach ($horas as $rango)
-                                                            <tr class="border-b">
-                                                                <td class="py-1">{{ ucfirst($dia) }}</td>
-                                                                <td class="py-1">{{ $rango }}</td>
-                                                            </tr>
-                                                        @endforeach
-                                                    @else
-                                                        <tr class="border-b">
-                                                            <td class="py-1">{{ ucfirst($dia) }}</td>
-                                                            <td class="py-1">{{ $horas }}</td>
-                                                        </tr>
-                                                    @endif
-                                                @endforeach
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                @endif
-                            @endforeach
+                                            @endforeach
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        @endforeach
                         @else
                             <span class="text-gray-500">Sin horarios</span>
                         @endif

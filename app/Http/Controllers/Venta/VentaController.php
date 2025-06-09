@@ -208,34 +208,32 @@ class VentaController extends Controller
                         throw new Exception("No hay suficiente inventario para el producto: {$producto->nombre}");
                     }
 
-                    // Descontar inventario
-                    $almacen->cantidad -= $arrayCantidad[$index];
-                    $almacen->save();
-                }
+                // Descontar inventario
+                $almacen->cantidad -= $arrayCantidad[$index];
+                $almacen->save();
 
-                // Crear el detalle de venta
-                DetalleVenta::create([
-                    'id_venta' => $venta->id,
-                    'id_producto' => $idProducto,
+                $nombreSucursal = Sucursal::find($request->id_sucursal)->nombre;
+                $reportekardex = ReporteKardex::create([
+                    'producto_id' => $idProducto,
+                    'nombre_sucursal' => $nombreSucursal,
+                    'tipo_movimiento' => 'Venta',
                     'cantidad' => $arrayCantidad[$index],
-                    'precio' => round($arrayprecio[$index], 2), // Redondear el precio
-                    'precio_original' => round($arrayPrecioOriginal[$index], 2),
-                    'justificacion_descuento' => $arrayJustificacion[$index],
+                    'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
+                    'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
+                    'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                    'fecha_movimiento' => now()
                 ]);
+            }
 
-                if ($producto->tipo == 1) { // Solo registrar kardex para productos físicos
-                    $nombreSucursal = Sucursal::find($request->id_sucursal)->nombre;
-                    $reportekardex = ReporteKardex::create([
-                        'producto_id' => $idProducto,
-                        'nombre_sucursal' => $nombreSucursal,
-                        'tipo_movimiento' => 'Venta',
-                        'cantidad' => $arrayCantidad[$index],
-                        'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
-                        'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
-                        'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
-                        'fecha_movimiento' => now()
-                    ]);
-                }
+                    // Crear el detalle de venta
+                    DetalleVenta::create([
+                       'id_venta' => $venta->id,
+                       'id_producto' => $idProducto,
+                       'cantidad' => $arrayCantidad[$index],
+                       'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+                       'precio_original' => round($arrayPrecioOriginal[$index], 2),
+                       'justificacion_descuento' => $arrayJustificacion[$index],
+                     ]);
             }
 
             DB::commit();
