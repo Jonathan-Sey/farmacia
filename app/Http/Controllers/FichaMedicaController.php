@@ -31,24 +31,17 @@ class FichaMedicaController extends Controller
             'receta_foto'         => 'nullable|string',
         ]);
 
-
-
-        // Mover la receta de temp a la ubicación definitiva
+        // Mover la receta de temp a definitivo
         if (!empty($data['receta_foto'])) {
             $imagenController = new ImagenController();
             $moved = $imagenController->moverDefinitiva($data['receta_foto']);
 
-            if ($moved) {
-                $data['receta_foto'] = 'recetas/' . $data['receta_foto'];
-            } else {
-                unset($data['receta_foto']);
+            if (!$moved) {
+                return back()->with('error', 'No se pudo guardar la receta médica');
             }
         }
 
-        // Agregar persona_id al array validado
         $data['persona_id'] = $persona_id;
-
-        // Crear la ficha médica
         FichaMedica::create($data);
 
         return redirect()
@@ -76,39 +69,50 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
             'receta_foto'         => 'nullable|string',
         ]);
 
-                // Manejo de la receta
-                if ($request->has('eliminar_receta') && $request->eliminar_receta) {
-                    // Eliminar receta existente si hay una
-                    if ($ficha->receta_foto) {
-                        Storage::disk('public')->delete($ficha->receta_foto);
-                        $data['receta_foto'] = null;
-                    }
-                } elseif (!empty($data['receta_foto']) && $data['receta_foto'] !== $ficha->receta_foto) {
-                    // Mover la nueva receta de temp a la ubicación definitiva
-                    $imagenController = new ImagenController();
-                    $moved = $imagenController->moverDefinitiva($data['receta_foto']);
+        DB::beginTransaction();
+        try {
+            $imagenOriginal = $ficha->receta_foto ? basename($ficha->receta_foto) : null;
+            $nuevaImagen = $request->receta_foto;
 
-                    if ($moved) {
-                        // Eliminar receta anterior si existe
-                        if ($ficha->receta_foto) {
-                            Storage::disk('public')->delete($ficha->receta_foto);
-                        }
-                        $data['receta_foto'] = $data['receta_foto'];
-                    } else {
-                        unset($data['receta_foto']);
-                    }
-                } else {
-                    // Mantener la receta existente
-                    unset($data['receta_foto']);
+            // Manejo de eliminación de receta
+            if ($request->has('eliminar_receta') && $request->eliminar_receta == '1') {
+                // Eliminar la receta anterior si existe
+                if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                    unlink(public_path('uploads/' . $imagenOriginal));
+                }
+                $data['receta_foto'] = null;
+            }
+            // Manejo de nueva receta
+            elseif ($nuevaImagen && $nuevaImagen !== $imagenOriginal) {
+                $imagenController = new ImagenController();
+                $imagenMovida = $imagenController->moverDefinitiva($nuevaImagen);
+
+                if (!$imagenMovida) {
+                    throw new \Exception('No se pudo guardar la nueva receta');
                 }
 
-                $ficha->update($data);
+                // Eliminar la receta anterior si existe
+                if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                    unlink(public_path('uploads/' . $imagenOriginal));
+                }
 
+                $data['receta_foto'] = $nuevaImagen;
+            }
+            else {
+                $data['receta_foto'] = $ficha->receta_foto;
+            }
 
+            $ficha->update($data);
+            DB::commit();
 
-        return redirect()
-            ->route('personas.show', $persona_id)
-            ->with('success', 'Ficha médica actualizada correctamente.');
+            return redirect()
+                ->route('personas.show', $persona_id)
+                ->with('success', 'Ficha médica actualizada correctamente.');
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Error al actualizar la ficha: ' . $e->getMessage());
+        }
     }
 
 // // // Mostrar vista para confirmar eliminación
