@@ -48,7 +48,7 @@
                 <div>
                     <label for="fecha_nacimiento" class="text-sm font-medium text-gray-700">Fecha Nacimiento</label>
                     <input type="date" name="fecha_nacimiento" id="fecha_nacimiento"
-                        value="{{ old('fecha_nacimiento', $persona->fecha_nacimiento) }}"
+                          value="{{ old('fecha_nacimiento', $persona->fecha_nacimiento ? $persona->fecha_nacimiento->format('Y-m-d') : '') }}"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                 </div>
             </div>
@@ -105,8 +105,8 @@
             </div>
 
             <!-- Botones -->
-            <div class="mt-6 flex justify-end gap-x-4">
-                <a href="{{ route('personas.index') }}" class="text-sm text-gray-600 hover:text-red-600">Cancelar</a>
+            <div class="mt-6 flex items-center justify-end gap-x-4">
+                <a href="{{ route('personas.index') }}" class="text-sm font-semibold text-gray-900">Cancelar</a>
                 <button type="submit"
                     class="px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
                     Actualizar
