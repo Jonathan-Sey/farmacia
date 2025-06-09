@@ -146,6 +146,10 @@
 <div class="mt-5">
     <h2 class="text-center m-5 font-bold text-lg">Detalle de la solicitud</h2>
     <div class="overflow-x-auto">
+        <div id="usuario">
+
+        </div>
+
         <table id="tabla-productos" class="table  table-md table-pin-rows table-pin-cols">
             <thead>
                 <tr>
@@ -155,7 +159,7 @@
                     <td>Producto</td>
                     <td>Cantidad</td>
                     <td>descripcion</td>
-                    <th></th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -183,40 +187,39 @@
 </div>
 </div>
 
+
 <script>
 // Carga de productos según sucursal seleccionada
 $(document).ready(function() {
-    // Escuchar cambios en el select de sucursal (ahora es un Select2)
+    // Escuchar cambios en el select de sucursal
     $('#id_sucursal_1').on('change', function() {
-        let sucursalId = $(this).val();
-        let productosSelect = $('#id_producto');
+    let sucursalId = $(this).val();
+    let productosSelect = $('#id_producto');
 
-        // Limpiar el select de productos
-        productosSelect.empty().append('<option value="">Seleccione un producto</option>');
-        productosSelect.val(null).trigger('change');
+    productosSelect.empty().append('<option value="">Seleccione un producto</option>');
+    productosSelect.val(null).trigger('change');
 
-        if (sucursalId) {
-            // Mostrar loading en el select de productos
-            productosSelect.prop('disabled', true);
+    if (sucursalId) {
+        productosSelect.prop('disabled', true);
 
-            fetch(`/productos-por-sucursal/${sucursalId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Agregar nuevas opciones
-                    data.forEach(producto => {
+        fetch(`/productos-por-sucursal/${sucursalId}?tipo=1`) // Filtra por tipo=1 (productos)
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(producto => {
+                    // Verificar que sea producto (tipo=1)
+                    if(producto.producto && producto.producto.tipo == 1) {
                         let option = new Option(producto.producto.nombre, producto.id_producto);
                         productosSelect.append(option);
-                    });
-
-                    // Habilitar y actualizar Select2
-                    productosSelect.prop('disabled', false).trigger('change');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    productosSelect.prop('disabled', false);
+                    }
                 });
-        }
-    });
+                productosSelect.prop('disabled', false).trigger('change');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                productosSelect.prop('disabled', false);
+            });
+    }
+});
 
     // Mantener la funcionalidad de exclusión entre sucursales
     $('#id_sucursal_1').on('change', function() {
@@ -245,9 +248,14 @@ $(document).ready(function() {
         }
     });
 
-    // Resto de tu código (agregarProducto, etc.)
+    // Configurar el botón agregar/actualizar
     $('#btn-agregar').click(function() {
-        agregarProducto();
+        if ($(this).text() === 'Actualizar') {
+            let id = $(this).data('edit-id');
+            actualizarProducto(id);
+        } else {
+            agregarProducto();
+        }
     });
 });
 
@@ -263,36 +271,218 @@ function agregarProducto() {
     let sucursal_2 = $('#id_sucursal_2').val();
     let sucursal_2T = $('#id_sucursal_2 option:selected').text();
 
-    if (id_producto && producto && cantidad && descripcion && sucursal_1 && sucursal_2) {
-        if (parseInt(cantidad) > 0 && (cantidad % 1 == 0)) {
-            contador++;
-            $('#tabla-productos tbody').append(`
-                <tr id="fila${contador}">
-                    <th>${contador}</th>
-                    <td><input type="hidden" name="arraySucursal1[]" value="${sucursal_1}">${sucursal_1T}</td>
-                    <td><input type="hidden" name="arraySucursal2[]" value="${sucursal_2}">${sucursal_2T}</td>
-                    <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
-                    <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
-                    <td><input type="hidden" name="arrayDescripcion[]" value="${descripcion}">${descripcion}</td>
-                    <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
-                </tr>`);
-            limpiar();
-        } else {
-            mensaje('favor ingresar una cantidad entera');
-        }
-    } else {
-        mensaje('Los campos estan vacios');
+    // Validación de campos requeridos
+    let errores = [];
+    if (!sucursal_1) errores.push('Debe seleccionar una sucursal de origen');
+    if (!sucursal_2) errores.push('Debe seleccionar una sucursal destino');
+    if (!id_producto) errores.push('Debe seleccionar un producto');
+    if (!cantidad) errores.push('Debe ingresar una cantidad');
+    if (!descripcion) errores.push('Debe ingresar una descripción');
+
+    if (errores.length > 0) {
+        mensaje(errores.join('<br>'));
+        return;
     }
+
+    // Validación de cantidad entera positiva
+    if (!/^\d+$/.test(cantidad) || parseInt(cantidad) <= 0) {
+        mensaje('La cantidad debe ser un número entero positivo');
+        return;
+    }
+
+    // Verificar si el producto ya existe en la tabla
+    let productoExistente = $(`#tabla-productos tbody tr input[name="arrayIdProducto[]"][value="${id_producto}"]`).closest('tr');
+    if (productoExistente.length > 0) {
+        Swal.fire({
+            title: 'Producto ya agregado',
+            text: 'Este producto ya está en la solicitud. ¿Desea editarlo?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, editar',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                let id = productoExistente.attr('id').replace('fila', '');
+                editarProducto(id);
+            }
+        });
+        return;
+    }
+
+    contador++;
+    $('#tabla-productos tbody').append(`
+        <tr id="fila${contador}">
+            <th>${contador}</th>
+            <td><input type="hidden" name="arraySucursal1[]" value="${sucursal_1}">${sucursal_1T}</td>
+            <td><input type="hidden" name="arraySucursal2[]" value="${sucursal_2}">${sucursal_2T}</td>
+            <td><input type="hidden" name="arrayIdProducto[]" value="${id_producto}">${producto}</td>
+            <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
+            <td><input type="hidden" name="arrayDescripcion[]" value="${descripcion}">${descripcion}</td>
+            <td class="flex gap-2">
+                <button type="button" onclick="editarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button>
+                <button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button>
+             </td>
+        </td>`);
+
+    limpiar();
+}
+
+function editarProducto(id) {
+    let fila = $(`#fila${id}`);
+
+    // Obtener valores actuales
+    let sucursal1 = fila.find('input[name="arraySucursal1[]"]').val();
+    let sucursal1T = $(`#id_sucursal_1 option[value="${sucursal1}"]`).text();
+    let sucursal2 = fila.find('input[name="arraySucursal2[]"]').val();
+    let sucursal2T = $(`#id_sucursal_2 option[value="${sucursal2}"]`).text();
+    let producto = fila.find('input[name="arrayIdProducto[]"]').val();
+    let productoT = $(`#id_producto option[value="${producto}"]`).text();
+    let cantidad = fila.find('input[name="arraycantidad[]"]').val();
+    let descripcion = fila.find('input[name="arrayDescripcion[]"]').val();
+
+    // Obtener opciones de sucursales para los selects del modal
+    let opcionesSucursal1 = $('#id_sucursal_1').html();
+    let opcionesSucursal2 = $('#id_sucursal_2').html();
+    let opcionesProductos = $('#id_producto').html();
+
+    Swal.fire({
+        title: 'Editar Producto',
+        html: `
+            <div class="text-left">
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Sucursal Origen</label>
+                    <select id="swal-sucursal1" class="w-full p-2 border rounded">
+                        ${opcionesSucursal1}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Sucursal Destino</label>
+                    <select id="swal-sucursal2" class="w-full p-2 border rounded">
+                        ${opcionesSucursal2}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Producto</label>
+                    <select id="swal-producto" class="w-full p-2 border rounded">
+                        ${opcionesProductos}
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Cantidad</label>
+                    <input id="swal-cantidad" type="number" min="1" value="${cantidad}" class="w-full p-2 border rounded">
+                </div>
+                <div class="mb-4">
+                    <label class="block mb-1 font-medium">Descripción</label>
+                    <textarea id="swal-descripcion" class="w-full p-2 border rounded">${descripcion}</textarea>
+                </div>
+            </div>
+        `,
+        showCancelButton: true,
+        confirmButtonText: 'Guardar',
+        cancelButtonText: 'Cancelar',
+        focusConfirm: false,
+        preConfirm: () => {
+            return {
+                sucursal1: $('#swal-sucursal1').val(),
+                sucursal1T: $('#swal-sucursal1 option:selected').text(),
+                sucursal2: $('#swal-sucursal2').val(),
+                sucursal2T: $('#swal-sucursal2 option:selected').text(),
+                producto: $('#swal-producto').val(),
+                productoT: $('#swal-producto option:selected').text(),
+                cantidad: $('#swal-cantidad').val(),
+                descripcion: $('#swal-descripcion').val()
+            };
+        },
+        didOpen: () => {
+            // Establecer valores iniciales en los selects
+            $('#swal-sucursal1').val(sucursal1);
+            $('#swal-sucursal2').val(sucursal2);
+            $('#swal-producto').val(producto);
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            const data = result.value;
+
+            // Validaciones
+            if (!data.sucursal1 || !data.sucursal2 || !data.producto || !data.cantidad || !data.descripcion) {
+                mensaje('Todos los campos son requeridos');
+                return;
+            }
+
+            if (!/^\d+$/.test(data.cantidad) || parseInt(data.cantidad) <= 0) {
+                mensaje('La cantidad debe ser un número entero positivo');
+                return;
+            }
+
+            // Actualizar la fila
+            $(`#fila${id}`).html(`
+                <th>${id}</th>
+                <td><input type="hidden" name="arraySucursal1[]" value="${data.sucursal1}">${data.sucursal1T}</td>
+                <td><input type="hidden" name="arraySucursal2[]" value="${data.sucursal2}">${data.sucursal2T}</td>
+                <td><input type="hidden" name="arrayIdProducto[]" value="${data.producto}">${data.productoT}</td>
+                <td><input type="hidden" name="arraycantidad[]" value="${data.cantidad}">${data.cantidad}</td>
+                <td><input type="hidden" name="arrayDescripcion[]" value="${data.descripcion}">${data.descripcion}</td>
+                <td class="flex gap-2">
+                    <button type="button" onclick="editarProducto('${id}')">
+                        <i class="p-3 cursor-pointer fa-solid fa-edit"></i>
+                    </button>
+                    <button type="button" onclick="eliminarProducto('${id}')">
+                        <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
+                    </button>
+                </td>
+            `);
+        }
+    });
+}
+
+function eliminarProducto(id) {
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: "¡No podrás revertir esto!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $(`#fila${id}`).remove();
+            // Reindexar las filas restantes
+            $('#tabla-productos tbody tr').each(function(index) {
+                $(this).find('th').text(index + 1);
+            });
+            contador = $('#tabla-productos tbody tr').length;
+
+            Swal.fire(
+                '¡Eliminado!',
+                'El producto ha sido eliminado.',
+                'success'
+            );
+        }
+    });
 }
 
 function limpiar() {
     $('#id_producto').val(null).trigger('change');
     $('#cantidad').val('');
     $('#descripcion').val('');
+    $('#btn-agregar').text('Agregar').removeData('edit-id');
+}
+
+function mensaje(texto, icono = "error") {
+    Swal.fire({
+        icon: icono,
+        title: 'Error',
+        html: texto,
+        confirmButtonText: 'Aceptar'
+    });
 }
 </script>
+
 @endsection
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/select2-global.js"></script>
 @endpush
