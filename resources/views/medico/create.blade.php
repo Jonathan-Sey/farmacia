@@ -40,14 +40,12 @@
                     <div class="border p-3 rounded-md bg-gray-100">
                         <label for="especialidad" class="block text-sm font-medium text-gray-700">Especialidad</label>
                         <select name="especialidad" id="especialidad" class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 outline outline-1 outline-gray-300 focus:outline-indigo-600" required>
-                            <option value="" disabled selected>Selecciona una especialidad</option>
-                            <option value="Cardiología" {{ old('especialidad') == 'Cardiología' ? 'selected' : '' }}>Cardiología</option>
-                            <option value="Pediatría" {{ old('especialidad') == 'Pediatría' ? 'selected' : '' }}>Pediatría</option>
-                            <option value="Dermatología" {{ old('especialidad') == 'Dermatología' ? 'selected' : '' }}>Dermatología</option>
-                            <option value="Neurología" {{ old('especialidad') == 'Neurología' ? 'selected' : '' }}>Neurología</option>
-                            <option value="Ginecología" {{ old('especialidad') == 'Ginecología' ? 'selected' : '' }}>Ginecología</option>
-                            <option value="Oftalmología" {{ old('especialidad') == 'Oftalmología' ? 'selected' : '' }}>Oftalmología</option>
-                            <!-- Agrega más opciones según tus necesidades -->
+                            <option value="">Seleccione una especialidad</option>
+                            @foreach ($especialidades as $especialidad)
+                            <option value="{{ $especialidad->id }}" {{ old('especialidad') == $especialidad->id ? 'selected' : '' }}>
+                                {{ $especialidad->nombre }}
+                            </option>
+                            @endforeach
                         </select>
                     </div>
                 </div>
