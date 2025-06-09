@@ -13,6 +13,7 @@ use App\Http\Controllers\Usuario\UsuarioController;
 use App\Http\Controllers\Consulta\consultaController;
 use App\Http\Controllers\Dashboard;
 use App\Http\Controllers\devoluciones\devolucionesController;
+use App\Http\Controllers\Especialidades\especialidadesController;
 use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\Inventario\InventarioController;
 use App\Http\Controllers\Lote\LoteController;
@@ -77,6 +78,7 @@ Route::post('/persona/{id}/cambiar-estado', [PersonaController::class, 'cambiarE
 Route::post('/medico/{id}/cambiar-estado', [MedicoController::class, 'cambiarEstado']);
 Route::post('/consulta/{id}/cambiar-estado', [consultaController::class, 'cambiarEstado']);
 Route::post('/traslado/{id}/cambiar-estado', [trasladoController::class, 'cambiarEstado']);
+Route::post('/especialidades/{id}/cambiar-estado', [especialidadesController::class, 'cambiarEstado']);
 
 
 // rutas para el manejo de imagenes
@@ -124,6 +126,7 @@ Route::patch('/almacen/{id}/alerta-stock', [AlmacenController::class, 'updateAle
 Route::resource('personas', PersonaController::class)->parameters(['personas' => 'persona']);
 Route::resource('inventario', InventarioController::class)->parameters(['inventario' => 'inventario']);
 Route::resource('lotes', LoteController::class)->parameters(['lote' => 'lote']);
+Route::resource("especialidades", especialidadesController::class)->parameters(['especialidades' => 'especialidades']);
 Route::resource('Reporte_ventas', ReporteVentasController::class)->parameters(['Reporte_ventas' => 'Reporte_ventas']);
 Route::get('/reporte/ventas/filtrar/fecha', [ReporteVentasController::class, 'filtrarPorFecha'])->name('Reporte_ventas.filtrarPorFecha');
 Route::get('/reporte/ventas/filtrar/sucursal', [ReporteVentasController::class, 'filtrarPorSucursal'])->name('Reporte_ventas.filtrarPorSucursal');
