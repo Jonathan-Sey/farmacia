@@ -102,12 +102,14 @@ class AlmacenController extends Controller
         ]);
 
         $usuario=User::find($request->idUsuario);
+        $producto = Producto::find($request->id_producto); // Obtener el producto por su ID
+        $sucursal = Sucursal::find($request->id_sucursal); // Obtener la sucursal por su ID
            Bitacora::create([
                    'id_usuario' => $request->idUsuario,
                    'name_usuario' =>$usuario->name,
                    'accion' => 'Creación',
                    'tabla_afectada' => 'Almacenes',
-                   'detalles' => "Se creó el almacen: {$request->id_sucursal}", //detalles especificos
+                    'detalles' => "Se asignó el producto: {$producto->nombre} a la sucursal: {$sucursal->nombre}", //detalles especificos
                    'fecha_hora' => now(),
            ]);
 
