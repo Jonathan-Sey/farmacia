@@ -121,16 +121,20 @@ class trasladoController extends Controller
             ]
         );
 
-         // Bitacora
-         $usuario = User::find($request->idUsuario);
-         Bitacora::create([
-             'id_usuario' => $request->idUsuario,
-             'name_usuario' => $usuario->name,
-             'accion' => 'Creación',
-             'tabla_afectada' => 'Traslado',
-             'detalles' => "Se creo el traslado del producto {$request->id_producto} con la cantidad de {$request->cantidad}", // Se usa el nombre de la sucursal
-             'fecha_hora' => now(),
-         ]);
+        $usuario = User::find($request->idUsuario);
+        $producto = Producto::find($request->id_producto);
+        $sucursalOrigen = Sucursal::find($request->id_sucursal_1);
+        $sucursalDestino = Sucursal::find($request->id_sucursal_2);
+
+        // Registrar en la bitácora
+        Bitacora::create([
+            'id_usuario' => $request->idUsuario,
+            'name_usuario' => $usuario->name,
+            'accion' => 'Creación',
+            'tabla_afectada' => 'Traslado',
+           'detalles' => "Traslado actualizado: {$producto->nombre}, de {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
+            'fecha_hora' => now(),
+        ]);
 
 
 
@@ -203,14 +207,18 @@ public function update(Request $request, traslado $traslado)
             "id_user" => $request->idUsuario
         ]);
 
-        // 5. Registrar en bitácora
-        $usuario = User::find($request->idUsuario);
+           $usuario = User::find($request->idUsuario);
+        $producto = Producto::find($request->id_producto);
+        $sucursalOrigen = Sucursal::find($request->id_sucursal_1);
+        $sucursalDestino = Sucursal::find($request->id_sucursal_2);
+
+        // Registrar en la bitácora
         Bitacora::create([
             'id_usuario' => $request->idUsuario,
             'name_usuario' => $usuario->name,
             'accion' => 'Actualización',
             'tabla_afectada' => 'Traslado',
-            'detalles' => "Se actualizó el traslado del producto {$request->id_producto} con la cantidad de {$request->cantidad}",
+           'detalles' => "Traslado actualizado: {$producto->nombre}, de {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
             'fecha_hora' => now(),
         ]);
 
