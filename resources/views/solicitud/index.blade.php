@@ -55,17 +55,15 @@
                     </td>
                     <td class="flex gap-2 justify-center">
 
-
-                        {{-- Botón Eliminar --}}
-                        <button type="button" class="btn btn-success font-bold uppercase eliminar-btn btn-sm" data-id="{{ $solicitud->id }}" data-info="{{ $solicitud->nombre }}">
-                        <i class="fa-solid fa-check"></i>
-                        </button>
-
-                        {{-- Formulario oculto para eliminación --}}
-                        <form id="form-eliminar{{ $solicitud->id }}" action="{{ route('solicitud.destroy', $solicitud->id) }}" method="POST" style="display: none;">
+                        <form action="{{ route('solicitud.destroy', $solicitud->id) }}" method="POST" id="form-eliminar{{ $solicitud->id }}">
                             @csrf
                             @method('DELETE')
+                            <button type="submit" class="eliminar-btn btn btn-danger text-white font-bold " >
+                                <i class="fa-solid fa-check"></i>
+                            </button>
                         </form>
+
+                      
                     </td>
                 </tr>
                 @endforeach
@@ -172,7 +170,7 @@ $(document).ready(function(){
         var estado = $(this).data('estado');
 
         $.ajax({
-            url: '/sucursales/' + Id,
+            url: '/solicitudes/' + Id,
             method: 'POST',
             data: {
                 _token: '{{ csrf_token() }}',
