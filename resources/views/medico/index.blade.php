@@ -12,6 +12,10 @@
         <button class="btn btn-success text-white font-bold uppercase">Crear</button>
     </a>
 
+    <a href="{{ route('especialidades.index') }}">  
+        <button class="btn btn-primary text-white font-bold uppercase">Crear Especialidad</button>
+    </a>
+
     <x-data-table>
         <x-slot name="thead">
             <thead class="text-white font-bold">
@@ -33,7 +37,7 @@
                 <tr>
                     <td class="px-6 py-4">{{$medico->id}}</td>
                     <td class="px-6 py-4">{{$medico->usuario->name}}</td>
-                    <td class="px-6 py-4">{{$medico->especialidad}}</td>
+                    <td class="px-6 py-4">{{$medico->especialidad->nombre}}</td>
                     <td class="px-6 py-4">{{$medico->numero_colegiado}}</td>
                     <td class="px-6 py-4">
                         @if (!empty($medico->horarios))

@@ -15,7 +15,7 @@ class DetalleMedico extends Model
 
     protected $fillable = [
         'id_usuario',
-        'especialidad',
+        'id_especialidad',
         'numero_colegiado',
         'estado',
         'horarios',
@@ -41,6 +41,11 @@ class DetalleMedico extends Model
     public function medico()
     {
         return $this->belongsTo(User::class, 'id_usuario');
+    }
+
+    public function especialidad()
+    {
+        return $this->belongsTo(Especialidades::class, 'id_especialidad');
     }
 
     //protected $with = ['horarios'];

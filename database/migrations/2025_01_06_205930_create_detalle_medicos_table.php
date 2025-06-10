@@ -16,10 +16,12 @@ class CreateDetalleMedicosTable extends Migration
         Schema::create('detalle_medico', function (Blueprint $table) {
             $table->id();
             $table->foreignId('id_usuario')->constrained('users');
-            $table->string('especialidad',75);
-            $table->string('numero_colegiado',10);
+               $table->unsignedBigInteger('id_especialidad');
+            $table->string('numero_colegiado', 10);
             $table->tinyInteger('estado')->default(1);
             $table->timestamps();
+
+             $table->foreign('id_especialidad')->references('id')->on('especialidades');
         });
     }
 

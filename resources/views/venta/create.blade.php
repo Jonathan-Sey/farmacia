@@ -1243,27 +1243,62 @@ function recalcularTotales() {
     }
 
     function generarResumenVenta() {
-        let mensaje = `<h4 class="text-lg font-bold">Resumen de la Venta</h4>`;
-        mensaje += `<table class="table-auto w-full my-4">`;
-        mensaje += `<thead><tr class="bg-gray-100"><th class="px-4 py-2">Producto</th><th class="px-4 py-2">Cantidad</th><th class="px-4 py-2">Precio</th><th class="px-4 py-2">Subtotal</th></tr></thead>`;
-        mensaje += `<tbody>`;
+    let mensaje = `
+    <div class="w-full max-w-[100vw]">
+        <h5 class="text-md font-semibold mb-4 text-center">Resumen de la Venta</h5>
 
-        $('#tabla-productos tbody tr').each(function() {
-            const producto = $(this).find('td:eq(0)').text();
-            const cantidad = $(this).find('td:eq(1)').text();
-            const precio = $(this).find('td:eq(2)').html(); // Usamos html() para capturar el precio con descuento tachado
-            const subtotal = $(this).find('td:eq(3)').text();
+        <!-- Tabla principal -->
+        <div class="overflow-x-auto">
+            <table class="table table-zebra table-sm md:table-md w-full">
+                <thead>
+                    <tr class="bg-base-200">
+                        <th class="w-[50%] min-w-[150px]">Producto</th>
+                        <th class="text-center w-[15%]">Cantidad</th>
+                        <th class="text-right w-[20%]">Precio</th>
+                        <th class="text-right w-[15%]">Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>`;
 
-            mensaje += `<tr><td class="border px-4 py-2">${producto}</td><td class="border px-4 py-2 text-center">${cantidad}</td><td class="border px-4 py-2 text-right">${precio}</td><td class="border px-4 py-2 text-right">${subtotal}</td></tr>`;
-        });
+    $('#tabla-productos tbody tr').each(function() {
+        const producto = $(this).find('td:eq(0)').text().trim();
+        const cantidad = $(this).find('td:eq(1)').text().trim();
+        const precio = $(this).find('td:eq(2)').html().trim(); // Usamos html() para mantener formato de descuento
+        const subtotal = $(this).find('td:eq(3)').text().trim();
 
-        mensaje += `</tbody></table>`;
-        mensaje += `<div class="mt-4 text-right"><strong>Subtotal:</strong> ${$('#suma').text()}</div>`;
-        mensaje += `<div class="text-right"><strong>IVA:</strong> ${$('#iva').text()}</div>`;
-        mensaje += `<div class="text-right font-bold text-lg"><strong>TOTAL:</strong> ${$('#total').text()}</div>`;
+        mensaje += `
+                    <tr>
+                        <td class="break-words max-w-[150px] md:max-w-none" title="${producto}">${producto}</td>
+                        <td class="text-center">${cantidad}</td>
+                        <td class="text-right">${precio}</td>
+                        <td class="text-right">${subtotal}</td>
+                    </tr>`;
+    });
 
-        return mensaje;
-    }
+    mensaje += `
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Totales -->
+        <div class="mt-4 grid grid-cols-1 gap-1 text-sm md:text-base">
+            <div class="flex justify-between border-b pb-1">
+                <span class="font-medium">SUMA:</span>
+                <span>${$('#suma').text().trim()}</span>
+            </div>
+            <div class="flex justify-between border-b pb-1">
+                <span class="font-medium">IVA %:</span>
+                <span>${$('#iva').text().trim()}</span>
+            </div>
+            <div class="flex justify-between font-bold text-lg mt-2">
+                <span>TOTAL:</span>
+                <span>${$('#total').text().trim()}</span>
+            </div>
+        </div>
+    </div>`;
+
+    return mensaje;
+}
 
     // Modificar el evento submit del formulario
     document.getElementById('formVenta').addEventListener('submit', function(e) {

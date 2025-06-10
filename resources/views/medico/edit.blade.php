@@ -46,6 +46,20 @@
                 </div>
 
                 <div class="mt-2 mb-5">
+                    <label for="id_especialidad" class="uppercase block text-sm font-medium text-gray-900">Especialidad</label>
+                    <div class="border p-3 rounded-md bg-gray-100">
+                        <select name="id_especialidad" id="id_especialidad" class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 outline outline-1 outline-gray-300 focus:outline-indigo-600">
+                            <option value="">Seleccione una especialidad</option>
+                            @foreach ($especialidades as $especialidad)
+                                <option value="{{ $especialidad->id }}" {{ old('id_especialidad', $medico->id_especialidad) == $especialidad->id ? 'selected' : '' }}>
+                                    {{ $especialidad->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+
+                <div class="mt-2 mb-5">
                     <label for="horarios" class="uppercase block text-sm font-medium text-gray-900">Sucursales y Horarios</label>
                     <div id="horarios-container">
                         @if(empty($horariosTransformados))
