@@ -85,7 +85,7 @@ class devolucionesController extends Controller
             'tipo' => 'Devolución',
             'mensaje' => 'Hay una nueva solicitud de devolución pendiente de autorización.',
             'accion' => 'Revisar correo',
-            'url' => "Gmail.com",
+            'url' => "https://mail.google.com/",
             'leido' => false,
         ]);
 
