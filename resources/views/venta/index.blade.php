@@ -38,7 +38,7 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$venta->id}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$venta->usuario->name}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$venta->persona->nombre}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$venta->sucursal->nombre}} {{$venta->sucursal->ubicacion}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{$venta->sucursal->nombre}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$venta->updated_at}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$venta->total}}</td>
                     <td class="flex gap-2 justify-center">
