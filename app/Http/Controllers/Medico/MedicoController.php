@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Medico;
 use App\Http\Controllers\Controller;
 use App\Models\Bitacora;
 use App\Models\DetalleMedico;
+use App\Models\Especialidades;
 use App\Models\User;
 use App\Models\Horario;
 use Illuminate\Http\Request;
@@ -17,10 +18,10 @@ class MedicoController extends Controller
      */
     public function index()
     {
-        $medicos = DetalleMedico::with(['usuario:id,name', 'horarios' => function($query) {
+        $medicos = DetalleMedico::with(['usuario:id,name', 'especialidad:id,nombre', 'horarios' => function($query) {
             $query->with('sucursal')->latest();
         }])
-        ->select('id', 'id_usuario', 'especialidad', 'estado', 'numero_colegiado')
+        ->select('id', 'id_usuario', 'id_especialidad', 'estado', 'numero_colegiado')
         ->get();
 
         return view('medico.index', compact('medicos'));
@@ -33,8 +34,10 @@ class MedicoController extends Controller
     {
         $usuarios = User::all();
     $sucursales = Sucursal::all(); // Asegúrate de que esta consulta está correcta
+    $especialidades = Especialidades::all(); // Si necesitas las especialidades, puedes obtenerlas aquí
 
-    return view('medico.create', compact('usuarios', 'sucursales'));
+        // Puedes pasar las especialidades a la vista si es necesario
+        return view('medico.create', compact('usuarios', 'sucursales', 'especialidades'));
     }
 
 
@@ -59,7 +62,7 @@ class MedicoController extends Controller
         // Crear el médico
         $medico = DetalleMedico::create([
             'id_usuario' => $validatedData['id_usuario'],
-            'especialidad' => $validatedData['especialidad'],
+            'id_especialidad' => $validatedData['especialidad'],
             'numero_colegiado' => $validatedData['numero_colegiado'],
             'estado' => 1,
            // 'horarios' => json_encode($request->horarios),
@@ -98,6 +101,7 @@ class MedicoController extends Controller
     {
         $usuarios = User::all();
         $sucursales = Sucursal::all();
+        $especialidades = Especialidades::all(); // Si necesitas las especialidades, puedes obtenerlas aquí
 
         // Obtener horarios directamente con una consulta
         $horarios = Horario::where('medico_id', $medico->id)
@@ -140,7 +144,7 @@ class MedicoController extends Controller
             }
         }
 
-        return view('medico.edit', compact('medico', 'usuarios', 'sucursales', 'horariosTransformados'));
+        return view('medico.edit', compact('medico', 'usuarios', 'sucursales', 'horariosTransformados', 'especialidades'));
     }
 
 
@@ -154,7 +158,7 @@ class MedicoController extends Controller
     {
         $validated = $request->validate([
             'id_usuario' => 'required|exists:users,id',
-          //  'especialidad' => 'required|string|max:75',
+            'id_especialidad' => 'required|exists:especialidades,id',
             'numero_colegiado' => 'required|string|max:10',
             'horarios' => 'required|array',
             'horarios.*.sucursal_id' => 'required|exists:sucursal,id',
@@ -179,7 +183,7 @@ class MedicoController extends Controller
         // Actualizar datos del medico
         $medico->update([
             'id_usuario' => $request->id_usuario,
-            //'especialidad' => $request->especialidad,
+            'id_especialidad' => $request->id_especialidad,
             'numero_colegiado' => $request->numero_colegiado,
         ]);
 
