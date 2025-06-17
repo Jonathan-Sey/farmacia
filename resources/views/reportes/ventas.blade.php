@@ -5,7 +5,7 @@
 @endpush
 
 @section('contenido')
-<div class="flex gap-5 mb-8 sm:grid-cols-2 justify-center">
+<div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
     <a href="{{ route('Reporte_ventas.filtrarPorFecha') }}">
         <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
             <div class="flex flex-col items-center">
