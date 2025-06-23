@@ -26,7 +26,7 @@
                 <button type="submit" class="btn btn-outline font-bold w-full text-white hover:bg-[#00000050] hover:text-white hover:border-white py-2 rounded-full">Iniciar Sesión</button>
             </form>
         </div>
-        
+
         <!-- Sección de la imagen -->
         <div class="w-full md:w-1/2  p-6 hidden md:block">
             <img src="/Logos/Fuente.webp" alt="Imagen de inicio de sesión" class="w-full h-[500px] max-w-sm rounded-lg shadow-md">
@@ -34,8 +34,13 @@
     </div>
 </div>
 
+<<<<<<< HEAD
 <script src="{{ secure_asset('js/axios.min.js') }}"></script>
 <script src="/js/controlIniciodesecion.js"></script>
+=======
+<script src="{{ asset('js/axios.min.js') }}"></script>
+>>>>>>> 9a9114a4e786e7826d0fdf15cfa7b3ea2c317a6a
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ asset('js/controlIniciodesecion.js')}}"></script>
 @endsection
 

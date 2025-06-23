@@ -4672,6 +4672,10 @@ details.collapse summary::-webkit-details-marker {
     margin-left: 200px;
   }
 
+  .md\:mt-1 {
+    margin-top: 0.25rem;
+  }
+
   .md\:mt-5 {
     margin-top: 1.25rem;
   }

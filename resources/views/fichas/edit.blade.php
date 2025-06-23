@@ -138,11 +138,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 <select name="detalle_medico_id" id="detalle_medico_id" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" required>
                     <option value="" disabled>-- Seleccione un médico --</option>
                     @foreach($medicos as $detalle)
-                      <option value="{{ $detalle->id }}"
-                          {{ old('detalle_medico_id', $ficha->detalle_medico_id) == $detalle->id ? 'selected' : '' }}>
-                        {{ $detalle->usuario->name }}
-                        @if($detalle->especialidad) – {{ $detalle->especialidad }} @endif
-                      </option>
+                    <option value="{{ $detalle->id }}"
+                        {{ old('detalle_medico_id', $ficha->detalle_medico_id) == $detalle->id ? 'selected' : '' }}>
+                        {{ $detalle->usuario->name }} - {{ $detalle->especialidad->nombre ?? ''}}
+                    </option>
                     @endforeach
                 </select>
             </div>
