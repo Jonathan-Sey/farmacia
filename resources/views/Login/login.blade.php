@@ -37,6 +37,6 @@
 <script src="{{ secure_asset('js/axios.min.js') }}"></script>
 <script src="/js/controlIniciodesecion.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{{ asset('js/controlIniciodesecion.js')}}"></script>
+<script src="{{ secure_asset('js/controlIniciodesecion.js')}}"></script>
 @endsection
 
