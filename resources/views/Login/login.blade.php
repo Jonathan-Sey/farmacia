@@ -34,12 +34,8 @@
     </div>
 </div>
 
-<<<<<<< HEAD
 <script src="{{ secure_asset('js/axios.min.js') }}"></script>
 <script src="/js/controlIniciodesecion.js"></script>
-=======
-<script src="{{ asset('js/axios.min.js') }}"></script>
->>>>>>> 9a9114a4e786e7826d0fdf15cfa7b3ea2c317a6a
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ asset('js/controlIniciodesecion.js')}}"></script>
 @endsection
