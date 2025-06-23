@@ -82,12 +82,12 @@
 
                         {{-- @if ($ficha->receta_foto)
                             <div class="mt-4">
-                                <img src="{{ asset('storage/' . $ficha->receta_foto) }}" alt="Receta Médica" class="w-32 h-32 object-cover cursor-pointer rounded-md" onclick="openModal('{{ asset('storage/' . $ficha->receta_foto) }}')">
+                                <img src="{{ secure_asset('storage/' . $ficha->receta_foto) }}" alt="Receta Médica" class="w-32 h-32 object-cover cursor-pointer rounded-md" onclick="openModal('{{ secure_asset('storage/' . $ficha->receta_foto) }}')">
                             </div>
                         @endif --}}
                         <div>
                             @if ($ficha->receta_foto)
-                            <img src="{{ asset('uploads/' . $ficha->receta_foto) }}" alt="Receta Médica" class="w-32 h-32 object-cover cursor-pointer rounded-md" onclick="openModal('{{ asset('uploads/' . $ficha->receta_foto) }}')">
+                            <img src="{{ secure_asset('uploads/' . $ficha->receta_foto) }}" alt="Receta Médica" class="w-32 h-32 object-cover cursor-pointer rounded-md" onclick="openModal('{{ secure_asset('uploads/' . $ficha->receta_foto) }}')">
                             @else
                                 <span class="text-gray-500">Sin imagen</span>
                             @endif

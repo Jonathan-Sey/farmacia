@@ -46,7 +46,7 @@
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         @if ($almacen->producto->imagen)
-                            <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                            <img src="{{ secure_asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
                         @else
                             <span class="text-gray-500">Sin imagen</span>
                         @endif

@@ -19,7 +19,7 @@
                     <div class="flex flex-col items-center gap-3 p-2">
                         <div>
                             @if ($sucursal->imagen)
-                            <img src="{{ asset('uploads/' . $sucursal->imagen) }}" alt="{{ $sucursal->nombre }}" class="w-60 h-auto object-cover rounded-xl">
+                            <img src="{{ secure_asset('uploads/' . $sucursal->imagen) }}" alt="{{ $sucursal->nombre }}" class="w-60 h-auto object-cover rounded-xl">
                             @else
                                 <span class="text-gray-500">Sin imagen</span>
                             @endif

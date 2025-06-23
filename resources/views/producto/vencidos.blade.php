@@ -33,7 +33,7 @@
                    
                     @if ($almacen->producto->imagen)
                         <div class="mt-2">
-                            <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                            <img src="{{ secure_asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
                         </div>
                     @else
                         <span class="text-gray-500 block">Sin imagen</span>

@@ -89,7 +89,7 @@ class VentaController extends Controller
             ->map(function ($almacen) {
                 return [
                     'id' => $almacen->producto->id,
-                    'imagen' => asset('uploads/' . $almacen->producto->imagen),
+                    'imagen' => secure_asset('uploads/' . $almacen->producto->imagen),
                     'nombre' => $almacen->producto->nombre,
                     'precio_venta' => $almacen->producto->precio_porcentaje,
                     'tipo' => $almacen->producto->tipo,
@@ -269,7 +269,7 @@ class VentaController extends Controller
         $venta->load('detalles.producto');
         //$venta->load('productos');
         if ($venta->imagen_receta) {
-            $venta->imagen_receta_url = asset('uploads/' . $venta->imagen_receta);
+            $venta->imagen_receta_url = secure_asset('uploads/' . $venta->imagen_receta);
         }
         return view('venta.show', compact('venta'));
     }

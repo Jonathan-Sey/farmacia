@@ -67,16 +67,16 @@
     <div class=" ml-4 md:ml-[200px]" id="piepagina">
         <x-footer class="bg-gray-800 text-white p-4 text-center w-full" />
     </div>
-    <script src="{{ asset('js/axios.min.js') }}"></script>
-    {{-- <script src="{{ asset('js/datepicker/jquery-ui.js') }}"></script> --}}
-    <script src="{{ asset('/js/barraResponsive.js') }}"></script>
+    <script src="{{ secure_asset('js/axios.min.js') }}"></script>
+    {{-- <script src="{{ secure_asset('js/datepicker/jquery-ui.js') }}"></script> --}}
+    <script src="{{ secure_asset('/js/barraResponsive.js') }}"></script>
     <script type="module" src="/js/controldeNavPorRoles.js"></script>
-    <script src="{{ asset('js/auth.js') }}"></script>
-    <script src="{{ asset('js/permisos.js') }}"></script>
-    <script src="{{ asset('js/logout.js') }}"></script>
-    <script src="{{ asset('js/cerrarSesion.js') }}"></script>
-    <script src="{{ asset('js/obtenerUsuario.js') }}"></script>
-    <script src="{{ asset('js/cantidad.js') }}"></script>
+    <script src="{{ secure_asset('js/auth.js') }}"></script>
+    <script src="{{ secure_asset('js/permisos.js') }}"></script>
+    <script src="{{ secure_asset('js/logout.js') }}"></script>
+    <script src="{{ secure_asset('js/cerrarSesion.js') }}"></script>
+    <script src="{{ secure_asset('js/obtenerUsuario.js') }}"></script>
+    <script src="{{ secure_asset('js/cantidad.js') }}"></script>
 
 
     @stack('css')

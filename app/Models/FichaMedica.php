@@ -41,7 +41,7 @@ class FichaMedica extends Model
     //   // Accesor para la URL completa de la receta
     //   public function getRecetaUrlAttribute()
     //   {
-    //       return $this->receta_foto ? asset('storage/' . $this->receta_foto) : null;
+    //       return $this->receta_foto ? secure_asset('storage/' . $this->receta_foto) : null;
     //   }
 
 }

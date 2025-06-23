@@ -1568,7 +1568,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     accepted: true
                 };
                 this.emit("addedfile", mockFile);
-                this.emit("thumbnail", mockFile, "{{ asset('uploads/temp') }}/" + imagenExistente);
+                this.emit("thumbnail", mockFile, "{{ secure_asset('uploads/temp') }}/" + imagenExistente);
                 this.emit("complete", mockFile);
             }
 

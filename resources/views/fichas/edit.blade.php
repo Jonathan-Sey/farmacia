@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
         const nombreArchivo = recetaNombre.includes('/') ? recetaNombre.split('/').pop() : recetaNombre;
         const mockFile = { name: nombreArchivo, size: 12345 };
         dropzone.emit("addedfile", mockFile);
-        dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + nombreArchivo);
+        dropzone.emit("thumbnail", mockFile, "{{ secure_asset('uploads') }}/" + nombreArchivo);
         dropzone.emit("complete", mockFile);
     }
 });
