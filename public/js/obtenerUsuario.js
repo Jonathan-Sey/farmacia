@@ -3,7 +3,6 @@ document.addEventListener('DOMContentLoaded', function () {
     function obtenerUsuario() {
         const token = localStorage.getItem('jwt_token');
         const crearUsuario = document.getElementById('usuario');
-        const user = document.getElementById("idUsuario");
 
         if (!token) {
             Swal.fire({
@@ -28,9 +27,10 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if (crearUsuario) {
             crearUsuario.innerHTML = ` <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
+            
+            document.getElementById("idUsuario").style.display = "none";
         }
 
-        user.style.display = "none";
 
     }
 
