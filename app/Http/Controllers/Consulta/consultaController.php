@@ -90,14 +90,14 @@ class consultaController extends Controller
             'estado' => 1,
 
         ]);
-
+        $persona = Persona::find($request->id_persona);
         $usuario=User::find($request->idUsuario);
         Bitacora::create([
                 'id_usuario' => $request->idUsuario,
                 'name_usuario' =>$usuario->name,
                 'accion' => 'Creación',
                 'tabla_afectada' => 'Consultas',
-                'detalles' => "Se creó la consulta por: {$request->asunto}-Del paciente{$request->id_persona}", //detalles especificos
+                 'detalles' => "Se creó la consulta por: {$request->asunto} - del paciente: {$persona->nombre}", 
                 'fecha_hora' => now(),
         ]);
         return redirect()->route('consultas.index')->with('success', 'Registro creado correctamente.');
@@ -142,27 +142,32 @@ class consultaController extends Controller
             'id_medico' => 'required',
             'detalle' => 'required',
         ]);
+         
 
         $datosActualizados = $request->only(['asunto','id_persona','id_medico','fecha_consulta','proxima_cita','detalle']);
         $datosSinActualizar = $consulta->only(['asunto','id_persona','id_medico','fecha_consulta','proxima_cita','detalle']);
 
-        if($datosActualizados != $datosSinActualizar){
-            $consulta->update($datosActualizados);
-            return redirect()->route('consultas.index')->with('success','¡Consulta actualizado!');
-        }
+         if ($datosActualizados != $datosSinActualizar) {
+        $consulta->update($datosActualizados);
 
+        // Obtener el usuario que hace la acción (mejor usar Auth si aplica)
+        $persona = Persona::find($request->id_persona);
         $usuario=User::find($request->idUsuario);
         Bitacora::create([
                 'id_usuario' => $request->idUsuario,
                 'name_usuario' =>$usuario->name,
                 'accion' => 'Actualización',
                 'tabla_afectada' => 'Consultas',
-                'detalles' => "Se creó la consulta por: {$request->asunto} -Del paciente{$request->id_persona}", //detalles especificos
+                 'detalles' => "Se actualizo la consulta por: {$request->asunto} - del paciente: {$persona->nombre}", 
                 'fecha_hora' => now(),
         ]);
 
-        return redirect()->route('consultas.index');
+        return redirect()->route('consultas.index')->with('success','¡Consulta actualizada!');
     }
+
+    return redirect()->route('consultas.index')->with('info', 'No se realizaron cambios.');
+}
+    
 
     /**
      * Remove the specified resource from storage.
