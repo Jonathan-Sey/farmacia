@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(response => {
             const totalCantidad = response.data.cantidad;
-            console.log("Cantidad de solicitudes:", totalCantidad);
+           // console.log("Cantidad de solicitudes:", totalCantidad);
 
             if (cantidad) {
                 if (totalCantidad == 0) {
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     `);
                 }
-               
+
             }
         })
         .catch(error => {
