@@ -35,7 +35,7 @@
 <body class="relative min-h-screen flex flex-col bg-gray-100">
     <!-- Encabezado -->
 
-    <div class="flex justify-end items-center p-6  bg-gray-100">
+    <div class="flex justify-end items-center p-6  bg-gray-100 mt-10 md:mt-1 ">
 
         <a href="{{ route('notificaciones.index') }}">
             <button id="notificacion" class="relative inline-flex  p-3 text-sm font-medium  text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300" aria-label="5 notifications">

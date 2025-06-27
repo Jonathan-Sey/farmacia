@@ -116,4 +116,13 @@ class solicitudController extends Controller
 
         return redirect()->route('solicitud.index')->with('success', 'Solicitud creada exitosamente');
     }
+
+    public function destroy($id)
+    {
+        $solicitud = detalleSolicitud::findOrFail($id);
+        $solicitud->estado = 0; // Cambiar el estado a 0 para eliminar lógicamente
+        $solicitud->save();
+
+        return redirect()->route('solicitud.index')->with('success', 'Solicitud eliminada exitosamente');
+    }
 }
