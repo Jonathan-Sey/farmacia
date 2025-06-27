@@ -3434,6 +3434,9 @@ details.collapse summary::-webkit-details-marker {
 .mt-8 {
   margin-top: 2rem;
 }
+.mt-\[10px\] {
+  margin-top: 10px;
+}
 .block {
   display: block;
 }
@@ -3494,6 +3497,9 @@ details.collapse summary::-webkit-details-marker {
 }
 .h-\[200px\] {
   height: 200px;
+}
+.h-\[300px\] {
+  height: 300px;
 }
 .h-\[500px\] {
   height: 500px;
@@ -4456,6 +4462,9 @@ details.collapse summary::-webkit-details-marker {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+}
+.hover\:underline:hover {
+  text-decoration-line: underline;
 }
 .hover\:file\:bg-blue-100::file-selector-button:hover {
   --tw-bg-opacity: 1;
