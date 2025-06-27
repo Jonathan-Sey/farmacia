@@ -89,7 +89,7 @@
 @endsection
 
 @push('js')
-@push('js')
+
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -106,23 +106,18 @@
 <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.html5.min.js">
     //botones en general
 </script>
-<script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.print.min.js">
-    //imprimir
-</script>
+
 <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.colVis.min.js">
     //fltrar columnas
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">
     //pdf
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">
-    //copiar
-</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">
-    //excel
+
 </script>
 
-<script src=""></script>
+
+
+
 
 <script>
     $(document).ready(function() {
@@ -145,7 +140,7 @@
                         {
                             extend: 'collection',
                         text: 'Export',
-                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        buttons: ['pdf']
                         },
                         'colvis'
                     ]
