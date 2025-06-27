@@ -13,23 +13,13 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 class CategoriaController extends Controller
 {
 
-    //   public function __construct() {
-    //       if (request()->is('api/*')) {
-    //         $this->middleware('auth:api', ['except' => ['index','show']]);
-    //            $this->middleware('role:2', ['only' => ['create', 'store', 'update', 'destroy']]);
-    //       } else {
-    //           $this->middleware('auth', ['except' => [ 'index','show','create']]);
-    //           $this->middleware('role:2', ['only' => ['create', 'store', 'update', 'destroy']]);
-    //       }
-    //       Log::info('Middleware applied in CategoriaController', ['path' => request()->path()]);
-    //   }
-
-
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
+
+
     public function index()
     {
         $categorias = Categoria::select('id','nombre','descripcion','estado','created_at')
@@ -163,6 +153,17 @@ class CategoriaController extends Controller
                return response()->json(['success'=> false]);
     }
 
+/**
+* La función "cambiarEstado" cambia el estado de una categoria entre activa e inactiva
+*
+* @param id La función "cambiarEstado" toma un parametro, se utiliza para encontrar un modelo `Categoría`
+* por su ID. La función alterna el "estado" de la categoria entre 1 y 2
+* 1 es activa y 2 es inactivo
+*
+* @return verdadoer cuando se encuentra la categoría con el ID especificado y su estado se alterna correctamente entre
+* activa e inactiva, este devuelve una respuesta JSON con "success" , Si no se encuentra la categoria
+*, devolverá una respuesta JSON con `success` establecido en `false`.
+*/
     public function cambiarEstado($id)
     {
         $categoria = Categoria::find($id);

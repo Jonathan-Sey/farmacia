@@ -193,8 +193,8 @@
             <li data-pestanal="Requisiciones" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('requisiciones.index') }}"><i class="fa-solid fa-shipping-fast"></i> Requisiciones</a>
             </li>
-            <li data-pestanal="Traslados" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('traslado.index') }}"><i class="fa-solid fa-book-medical"></i>do</a>
+            <li data-pestanal="Traslado" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('traslado.index') }}"><i class="fa-solid fa-book-medical"></i>Traslado</a>
             </li>
             <li data-pestanal="bitacora" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
                 <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book"></i> Bitacora</a>

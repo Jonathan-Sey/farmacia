@@ -16,19 +16,21 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
         return;
     }
 
+    // Verifica si el elemento existe
+    if (!crearUsuario) {
+        return; // Termina silenciosamente si no está presente
+    }
+
     const decodificarToken = jwt_decode(token);
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    const UserId = decodificarToken.id;
 
-
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-
-        const UserId = decodificarToken.id;
-
-      console.log(UserId)
+    //console.log(UserId)
     crearUsuario.innerHTML = ` <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
     document.getElementById("idUsuario").style.display = "none";
 
 }
 
-obtenerUsuario();})
+obtenerUsuario();
+});
 
