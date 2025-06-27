@@ -20,7 +20,7 @@ class UsuarioController extends Controller
     public function index()
         {
 
-        $roles = Rol::where('estado', '!=', 0)->get();
+        $roles = Rol::where('estado', '!=', 2)->get();
         // Filtrar solo usuarios activos y cargar el rol relacionado con las columnas específicas
         $usuarios = User::whereIn('estado', [1, 2])->with('rol:id,nombre')->get();
         // Pasar los usuarios y roles a la vista
@@ -34,7 +34,7 @@ class UsuarioController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(){
-        $roles = Rol::where('estado', '!=', 0)->get();
+        $roles = Rol::where('estado', '!=', 2)->get();
         return view('Usuarios.create',compact('roles'));
      }
 
@@ -42,7 +42,7 @@ class UsuarioController extends Controller
         {
         // Obtén al usuario por ID
         $user = User::findOrFail($id);
-        $roles = Rol::where('estado', '!=', 0)->get();
+        $roles = Rol::where('estado', '!=', 2)->get();
         return view('Usuarios.edit', compact('user', 'roles'));
         }
 

@@ -31,6 +31,7 @@ class CompraController extends Controller
      */
     public function index()
     {
+        // se manda unicamente los datos necesarios de la compra
         $compras = Compra::with('proveedor', 'detalleCompras', 'usuario', 'sucursal')
             ->latest()
             ->activos()
@@ -45,7 +46,7 @@ class CompraController extends Controller
      */
     public function create()
     {
-        // $proveedores = Proveedor::whereNotIn('estado',[0,2])->get();
+        // obtener solo los registros con estados activos
         $sucursales = Sucursal::activos()->get();
         $proveedores = Proveedor::activos()->get();
         $productos = Producto::activos()->where('tipo', 1)->get();
@@ -58,12 +59,7 @@ class CompraController extends Controller
         return view('compra.create', compact('proveedores', 'productos', 'sucursales'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
         // dd($request);
@@ -85,7 +81,7 @@ class CompraController extends Controller
             $bodegaPrincipal = Bodega::principal()->firstOrFail();
 
 
-            // Mover imagen temporal si existe
+            // Mover imagen temporal si existe esto es para el caso de comprobante
             $imagenComprobante = null;
             if (!empty($request->imagen_comprobante)) {
                 $imagenController = new ImagenController();
@@ -117,7 +113,7 @@ class CompraController extends Controller
             $arrayprecio = $request->get('arrayprecio');
             $arrayvencimiento = $request->get('arrayvencimiento');
 
-            //insertar los detalels
+            //insertar los detalles
             foreach ($arrayProducto_id as $index => $idPoducto) {
                 DetalleCompra::create([
                     'id_compra' => $compra->id,
@@ -156,7 +152,6 @@ class CompraController extends Controller
                 $producto->save();
 
                 //Cantidad anterior de los lotes
-
                 $lotes = Lote::where('id_producto', $idPoducto)->get();
                 $cantidad = $lotes->sum('cantidad');
 
@@ -172,18 +167,7 @@ class CompraController extends Controller
                     // Si existe, actualizar la cantidad
                     $inventarioExistente->cantidad += $arrayCantidad[$index];
                     $inventarioExistente->save();
-               
 
-                   
-
-                    // prueba de eliminacion
-                    // if ($inventarioExistente->cantidad > 0) {
-                    //     Inventario::where('id_producto', $idPoducto)
-                    //         ->where('id_lote', $lote->id)
-                    //         ->where('id_sucursal', 1)
-                    //         ->where('cantidad', 0)
-                    //         ->delete();
-                    // }
                 } else {
 
                     //  proceso de inventario
@@ -194,7 +178,7 @@ class CompraController extends Controller
                         'cantidad' => $arrayCantidad[$index],
                     ]);
 
-                  
+
                 }
             }
 

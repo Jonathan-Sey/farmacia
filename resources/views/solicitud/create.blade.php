@@ -12,8 +12,8 @@
 
             <div class="border-b border-gray-200 pb-6">
                 <div class="mb-5">
-                    <div class="flex gap-6 justify-center">
-                        <div class="w-1/2">
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
+                        <div class="w-full md:w-1/2">
                             <x-select2
                                 name="id_sucursal_1"
                                 label="Sucursal a solicitar"
@@ -43,7 +43,7 @@
                             <i class="fa-solid fa-arrow-right"></i>
                         </div>
 
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2">
                             <x-select2
                                 name="id_sucursal_2"
                                 label="Sucursal que solicita"
@@ -131,7 +131,7 @@
 
             <!-- Botones -->
             <div class="mt-6 flex items-center justify-end space-x-4">
-                <a href="{{route('sucursales.index')}}" class="text-sm font-semibold p-4 text-gray-600 hover:text-gray-800">Cancelar</a>
+                <a href="{{route('almacenes.index')}}" class="text-sm font-semibold p-4 text-gray-600 hover:text-gray-800">Cancelar</a>
                 <button id="btn-agregar" type="button" class=" cursor-pointer mt-3 rounded-md bg-indigo-600 px-3 w-full py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Agregar</button>
             </div>
 
