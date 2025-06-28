@@ -287,7 +287,7 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/select2-global.js"></script>
-<script>
+{{-- <script>
 document.addEventListener("DOMContentLoaded", function () {
     const selectUsuarios = document.getElementById("id_usuario");
     const selectedUsersList = document.getElementById("selected-users-list");
@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Inicializar lista si ya hay seleccionados por old()
     updateSelectedUsers();
 });
-</script>
+</script> --}}
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
