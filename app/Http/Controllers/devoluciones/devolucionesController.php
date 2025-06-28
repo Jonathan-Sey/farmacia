@@ -57,6 +57,17 @@ class devolucionesController extends Controller
 
     public function store(Request $request)
     {
+
+        //verificar que solo se pueda hacer la devolucin de 8am a 4pm
+
+        $horaActual = Carbon::now()->format('H:i');
+        $horaApertura = '08:00';
+        $horaCierre = '16:00';
+
+        if ($horaActual < $horaApertura || $horaActual > $horaCierre) {
+           return redirect()->route('devoluciones.index')->with('error', 'Las devoluciones solo se pueden realizar de 8:00 a 16:00 horas.');
+        }
+
         $validate = $request->validate([
             'id_venta' => 'required',
             'id_sucursal' => 'required',
@@ -69,7 +80,7 @@ class devolucionesController extends Controller
 
         $nombreUsuario = User::find($request->idUsuario)->name;
 
-        $solicitud = SolicitudDevolucion::create([
+        $solicitud1 = SolicitudDevolucion::create([
             'venta_id' => $request->id_venta,
             'usuario_id' => $request->idUsuario,
             'persona_id' => $request->id_persona,
@@ -77,9 +88,14 @@ class devolucionesController extends Controller
             'total' => $request->total,
             'motivo' => $request->motivo,
             'observaciones' => $request->observaciones,
+            'fecha_vencimiento' => $request->fecha_vencimiento,
             'fecha_solicitud' => now(),
             'detalles' => json_encode($request->detalles),
         ]);
+
+        $solicitud = SolicitudDevolucion::with(['venta', 'usuario', 'persona', 'sucursal'])
+            ->where('id', $solicitud1->id)
+            ->first();
 
         $notificacion = Notificaciones::create([
             'tipo' => 'Devolución',
@@ -114,66 +130,28 @@ class devolucionesController extends Controller
 
         $devolucion = Devoluciones::create([
             'venta_id' => $solicitud->venta_id,
-            'usuario_id' => $solicitud->usuario_id,
-            'persona_id'  => $solicitud->persona_id,
             'sucursal_id' => $solicitud->sucursal_id,
-            'total' => $solicitud->total,
-            'motivo' => $solicitud->motivo,
-            'estado' => true,
+            'persona_id' => $solicitud->persona_id,
             'observaciones' => $solicitud->observaciones,
+            'motivo' => $solicitud->motivo,
+            'total' => $solicitud->total,
             'fecha_devolucion' => now(),
+            'usuario_id' => $solicitud->usuario_id,
+            'estado' => 1, // Estado 1 para autorizado
         ]);
 
         foreach ($detalles as $detalle) {
-            DB::table('devoluciones_detalles')->insert([
+            DetalleDevolucion::create([
                 'devolucion_id' => $devolucion->id,
                 'producto_id' => $detalle['producto_id'],
                 'cantidad' => $detalle['cantidad'],
                 'precio' => $detalle['precio'],
                 'subtotal' => $detalle['precio'] * $detalle['cantidad'],
-                'estado' => true,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'fecha_caducidad' => $solicitud->fecha_vencimiento,
             ]);
 
-            // Buscar el detalle de venta correspondiente
-            $detalleVenta = DetalleVenta::where('id_venta', $solicitud->venta_id)
-                ->where('id_producto', $detalle['producto_id'])
-                ->first();
-
-            if ($detalleVenta) {
-                $detalleVenta->cantidad -= $detalle['cantidad'];
-
-                if ($detalleVenta->cantidad <= 0) {
-                    $detalleVenta->delete(); // Eliminar si la cantidad queda en 0 o menos
-                } else {
-                    $detalleVenta->save(); // Guardar si aún queda cantidad
-                }
-            }
+          
         }
-
-
-
-
-        Venta::find($solicitud->venta_id)->update([
-            'total' => max(0, Venta::find($solicitud->venta_id)->total - $solicitud->total),
-        ]);
-
-        //borrar la venta si el total es 0
-        if (Venta::find($solicitud->venta_id)->total <= 0) {
-            Venta::find($solicitud->venta_id)->delete();
-        }
-
-        
-        $nuevaNotificacion = Notificaciones::create([
-            'tipo' => 'Devolución',
-            'mensaje' => 'La solicitud de devolución ha sido autorizada.',
-            'accion' => 'Ver detalles',
-            'url' => route('devoluciones.show', $devolucion->id),
-            'leido' => false,
-        ]);
-
-        $solicitud->delete(); // Ya fue procesada
 
         return redirect()->route('devoluciones.index')->with('success', 'Devolución autorizada y registrada correctamente.');
     }

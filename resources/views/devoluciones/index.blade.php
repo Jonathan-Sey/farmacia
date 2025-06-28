@@ -57,7 +57,7 @@
                     </td>
 
                     <td>
-                       <a href="{{ route('devoluciones.show', $devolucion->id) }}">Ver</a>
+                       <a class="btn btn-warning font-bold uppercase btn-sm" href="{{ route('devoluciones.show', $devolucion->id) }}">Ver</a>
                     </td>
 
 
@@ -151,6 +151,32 @@
         });
 </script>
 @endif
+
+{{-- Alerta de error --}}
+
+@if (session('error'))
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1600,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("Evento DOMContentLoaded disparado");
+                Toast.fire({ icon: "error",
+                title: "{{ session('error')}}"
+                });
+        });
+</script>
+@endif
+
+
 
 {{-- cambio de estado --}}
 <script>
