@@ -13,41 +13,7 @@
 <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
 
     <form id="formReporte" class="space-y-4">
-        <!-- Fila Día, Mes, Año -->
-        <!--<div class="flex gap-4">
-            <div class="flex-1 m-2">
-                <label for="fecha" class="block text-sm font-medium text-gray-600 ">Día:</label>
-                <input type="date" id="fecha" name="fecha"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-
-            <div class="flex-1 m-2">
-                <label for="mes" class="block text-sm font-medium text-gray-600">Mes:</label>
-                <input type="month" id="mes" name="mes"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-
-            <div class="flex-1 m-2">
-                <label for="año" class="block text-sm font-medium text-gray-600">Año:</label>
-                <input type="number" id="año" name="año" min="2000" max="2100"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-        </div>
-
-
-        <div class="flex gap-4">
-            <div class="flex-1 m-2">
-                <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
-                <input type="date" id="fechaInicio" name="fechaInicio"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-
-            <div class="flex-1 m-2">
-                <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
-                <input type="date" id="fechaFin" name="fechaFin"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-        </div>-->
+       
 
         <div>
             <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
@@ -59,7 +25,7 @@
                     @endforeach
                 </select>
 
-                  <div class="flex gap-4">
+                  <div class="flex flex-col sm:flex-row gap-4">
             <div class="flex-1 m-2">
                 <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
                 <input type="date" id="fechaInicio" name="fechaInicio"

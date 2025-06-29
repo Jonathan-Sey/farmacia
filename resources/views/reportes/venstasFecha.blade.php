@@ -4,95 +4,127 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
+
+<style>
+/* Estilos para el toggle personalizado */
+.toggle-bg {
+    position: relative;
+    display: inline-block;
+    width: 2.5rem; /* 40px */
+    height: 1.5rem; /* 24px */
+    background-color: #d1d5db; /* gray-300 */
+    border-radius: 9999px;
+    box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+    transition: background-color 0.3s ease-in-out;
+}
+
+.toggle-dot {
+    position: absolute;
+    top: 0.125rem; /* 2px */
+    left: 0.125rem; /* 2px */
+    width: 1.25rem; /* 20px */
+    height: 1.25rem; /* 20px */
+    background-color: white;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    transition: transform 0.3s ease-in-out;
+}
+
+/* Estados del toggle */
+#buscarPorRango:checked ~ .toggle-bg {
+    background-color: #3b82f6; /* blue-500 */
+}
+
+#buscarPorRango:checked ~ .toggle-bg .toggle-dot {
+    transform: translateX(1rem); /* 16px */
+}
+
+#buscarPorRango:focus ~ .toggle-bg {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5), inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+}
+
+/* Efectos hover */
+.toggle-bg:hover {
+    background-color: #9ca3af; /* gray-400 */
+}
+
+#buscarPorRango:checked ~ .toggle-bg:hover {
+    background-color: #2563eb; /* blue-600 */
+}
+
+/* Transición suave para el cursor */
+label:hover {
+    cursor: pointer;
+}
+</style>
 @endpush
 
 @section('contenido')
 
-   <!--<div class="flex flex-col gap-6 p-6 bg-gray-100 rounded-lg shadow-md">
+  
 
-        <div class="flex gap-4">
-            <div class="flex flex-col gap-2 w-full">
-                <label for="dia" class="text-sm font-semibold text-gray-700">Día</label>
-                <select name="dia" id="dia" class="p-3 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 w-full bg-white">
-                    <option value="1">1</option>
-                    <option value="2">2</option>
 
-                </select>
-            </div>
+<div class="max-w-5xl mx-auto p-4 sm:p-6 m-2 sm:m-5 bg-white rounded-lg shadow-md">
 
-            <div class="flex flex-col gap-2 w-full">
-                <label for="mes" class="text-sm font-semibold text-gray-700">Mes</label>
-                <select name="mes" id="mes" class="p-3 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 w-full bg-white">
-                    <option value="1">Enero</option>
-                    <option value="2">Febrero</option>
-
-                </select>
-            </div>
-
-            <div class="flex flex-col gap-2 w-full">
-                <label for="anio" class="text-sm font-semibold text-gray-700">Año</label>
-                <select name="anio" id="anio" class="p-3 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 w-full bg-white">
-                    <option value="2025">2025</option>
-                    <option value="2026">2026</option>
-                </select>
+    <form id="formReporte" class="space-y-4 sm:space-y-6">
+        <!-- Toggle para alternar modo de búsqueda -->
+        <div class="flex items-center justify-center sm:justify-start mb-4">
+            <div class="flex items-center gap-2 ">
+                 <span class="ml-3 text-sm font-medium text-gray-600 select-none">
+                        Buscar por rango de fechas
+                    </span>
+                <label for="buscarPorRango" class="flex items-center cursor-pointer">
+                    <div class="relative">
+                        <input type="checkbox" id="buscarPorRango" class="sr-only">
+                        <div class="toggle-bg">
+                            <div class="toggle-dot"></div>
+                        </div>
+                    </div>
+                   
+                </label>
             </div>
         </div>
 
-        <div class="flex flex-col gap-2">
-            <label class="text-sm font-semibold text-gray-700">Rango de Fechas</label>
-            <div class="flex gap-4 w-full">
-                <input type="date" name="fecha_inicio" id="fecha_inicio" class="p-3 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 w-full bg-white">
-                <input type="date" name="fecha_fin" id="fecha_fin" class="p-3 border border-gray-300 rounded-lg focus:ring focus:ring-green-300 w-full bg-white">
-            </div>
-        </div>
-
-        <button type="button" id="btnGenerarInforme" class="mt-4 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg shadow-md hover:bg-green-700 focus:outline-none focus:ring focus:ring-green-300">Generar Informe</button>
-    </div>-->
-
-
-    <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
-
-    <form id="formReporte" class="space-y-4">
-        <!-- Fila Día, Mes, Año -->
-        <div class="flex gap-4">
-            <div class="flex-1 m-2">
-                <label for="fecha" class="block text-sm font-medium text-gray-600 ">Día:</label>
+        <!-- Campos individuales (Día, Mes, Año) -->
+        <div id="camposIndividuales" class="flex flex-col sm:flex-row gap-2 sm:gap-4">
+            <div class="flex-1 mb-4 sm:mb-0">
+                <label for="fecha" class="block text-sm font-medium text-gray-600 mb-1">Día:</label>
                 <input type="date" id="fecha" name="fecha"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                    class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
             </div>
 
-            <div class="flex-1 m-2">
-                <label for="mes" class="block text-sm font-medium text-gray-600">Mes:</label>
+            <div class="flex-1 mb-4 sm:mb-0">
+                <label for="mes" class="block text-sm font-medium text-gray-600 mb-1">Mes:</label>
                 <input type="month" id="mes" name="mes"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                    class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
             </div>
 
-            <div class="flex-1 m-2">
-                <label for="año" class="block text-sm font-medium text-gray-600">Año:</label>
+            <div class="flex-1 mb-4 sm:mb-0">
+                <label for="año" class="block text-sm font-medium text-gray-600 mb-1">Año:</label>
                 <input type="number" id="año" name="año" min="2000" max="2100"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                    class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
             </div>
         </div>
 
-        <!-- Fila Desde - Hasta -->
-        <div class="flex gap-4">
-            <div class="flex-1 m-2">
-                <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
+        <!-- Campos de rango (ocultos por defecto) -->
+        <div id="camposRango" class="hidden flex-col sm:flex-row gap-2 sm:gap-4">
+            <div class="flex-1 mb-4 sm:mb-0">
+                <label for="fechaInicio" class="block text-sm font-medium text-gray-600 mb-1">Desde:</label>
                 <input type="date" id="fechaInicio" name="fechaInicio"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                    class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
             </div>
 
-            <div class="flex-1 m-2">
-                <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
+            <div class="flex-1 mb-4 sm:mb-0">
+                <label for="fechaFin" class="block text-sm font-medium text-gray-600 mb-1">Hasta:</label>
                 <input type="date" id="fechaFin" name="fechaFin"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                    class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
             </div>
         </div>
 
         <!-- Botón -->
-        <div class="flex justify-end mt-4">
+        <div class="flex flex-col sm:flex-row justify-center sm:justify-end mt-6">
             <button type="button" id="btnGenerarInforme"
-                class="px-4 py-2 bg-green-500 text-white rounded-lg shadow hover:bg-green-700 transition">
+                class="w-full sm:w-auto px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 focus:bg-green-600 focus:ring-4 focus:ring-green-200 transition-all duration-200 font-medium text-sm sm:text-base">
                 Generar Informe
             </button>
         </div>
@@ -136,7 +168,35 @@
 
 
     <script>
-  document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
+// Manejar el cambio del checkbox para alternar entre modos de búsqueda
+document.getElementById('buscarPorRango').addEventListener('change', function() {
+    const camposIndividuales = document.getElementById('camposIndividuales');
+    const camposRango = document.getElementById('camposRango');
+    
+    if (this.checked) {
+        // Mostrar campos de rango y ocultar campos individuales
+        camposIndividuales.classList.add('hidden');
+        camposRango.classList.remove('hidden');
+        camposRango.classList.add('flex');
+        
+        // Limpiar valores de campos individuales
+        document.getElementById('fecha').value = '';
+        document.getElementById('mes').value = '';
+        document.getElementById('año').value = '';
+    } else {
+        // Mostrar campos individuales y ocultar campos de rango
+        camposRango.classList.add('hidden');
+        camposRango.classList.remove('flex');
+        camposIndividuales.classList.remove('hidden');
+        
+        // Limpiar valores de campos de rango
+        document.getElementById('fechaInicio').value = '';
+        document.getElementById('fechaFin').value = '';
+    }
+});
+
+// Script principal para generar informe
+document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
     // Obtener valores de los inputs
     const fecha = document.getElementById('fecha').value;
     const mes = document.getElementById('mes').value;
