@@ -115,13 +115,13 @@
 
     <div class="info-block">
       <p><strong>ID Venta:</strong> {{ $datos->venta_id }}</p>
-      <p><strong>ID Usuario:</strong> {{ $datos['usuario_id'] }}</p>
-      <p><strong>ID Persona:</strong> {{ $datos['persona_id'] }}</p>
-      <p><strong>ID Sucursal:</strong> {{ $datos['sucursal_id'] }}</p>
+      <p><strong>ID Usuario:</strong> {{ $datos->usuario->name}}</p>
+      <p><strong>ID Persona:</strong> {{ $datos->persona->nombre }}</p>
+      <p><strong>ID Sucursal:</strong> {{ $datos->sucursal->nombre}}</p>
       <p><strong>Motivo de la devolución:</strong> {{ $datos['motivo'] }}</p>
       <p><strong>Total:</strong> Q.{{ number_format($datos['total'], 2) }}</p>
       <p><strong>Observaciones:</strong> {{ $datos['observaciones'] }}</p>
-      <p><strong>Estado:</strong> {{ ucfirst($datos['estado']) }}</p>
+      
       <p><strong>Fecha de solicitud:</strong> {{ now() }}</p>
     </div>
 

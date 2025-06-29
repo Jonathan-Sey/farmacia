@@ -5,48 +5,57 @@
 @endpush
 
 @section('contenido')
-<div class="flex gap-5 mb-8 sm:grid-cols-2 justify-center">
-    <a href="{{ route('Reporte_ventas.filtrarPorFecha') }}">
-        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-5 mb-8 px-4">
+    <a href="{{ route('Reporte_ventas.filtrarPorFecha') }}" class="block">
+        <div class="h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center p-3 hover:shadow-xl transition-shadow duration-300">
             <div class="flex flex-col items-center">
-                <i class='bx bxs-package text-7xl lg:text-6xl md:text-6xl sm:text-6xl'></i>
-                <p class="uppercase text-lg font-bold">reporte por fecha</p>
+                <i class='bx bxs-package text-5xl sm:text-6xl lg:text-7xl text-gray-700'></i>
+                <p class="uppercase text-sm sm:text-base lg:text-lg font-bold mt-2">reporte por fecha</p>
             </div>
         </div>
     </a>
 
-    <a href="{{ route('Reporte_ventas.filtrarPorSucursal') }}">
-        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+    <a href="{{ route('Reporte_ventas.filtrarPorSucursal') }}" class="block">
+        <div class="h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center p-3 hover:shadow-xl transition-shadow duration-300">
             <div class="flex flex-col items-center">
-                <i class='bx bxs-building text-7xl lg:text-6xl sm:text-6xl'></i>
-                <p class="uppercase text-lg font-bold">reporte por sucursales</p>
+                <i class='bx bxs-building text-5xl sm:text-6xl lg:text-7xl text-gray-700'></i>
+                <p class="uppercase text-sm sm:text-base lg:text-lg font-bold mt-2">reporte por sucursales</p>
             </div>
         </div>
     </a>
 
-    <a href="{{ route('Reporte_ventas.filtrarPorUsuario') }}">
-        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+    <a href="{{ route('Reporte_ventas.filtrarPorUsuario') }}" class="block">
+        <div class="h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center p-3 hover:shadow-xl transition-shadow duration-300">
             <div class="flex flex-col items-center">
-                <i class='fa-solid bx bxs-user text-7xl lg:text-6xl sm:text-6xl'></i>
-                <p class="uppercase text-lg font-bold">reporte por usuario</p>
+                <i class='fa-solid bx bxs-user text-5xl sm:text-6xl lg:text-7xl text-gray-700'></i>
+                <p class="uppercase text-sm sm:text-base lg:text-lg font-bold mt-2">reporte por usuario</p>
             </div>
         </div>
     </a>
 
-    <a href="{{ route('reporte.productos') }}">
-        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+    <a href="{{ route('reporte.productos') }}" class="block">
+        <div class="h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center p-3 hover:shadow-xl transition-shadow duration-300">
             <div class="flex flex-col items-center">
-                <i class='fa-solid fa-bag-shopping text-7xl lg:text-6xl sm:text-6xl'></i>
-                <p class="uppercase text-lg font-bold">reporte por producto</p>
+                <i class='fa-solid fa-bag-shopping text-5xl sm:text-6xl lg:text-7xl text-gray-700'></i>
+                <p class="uppercase text-sm sm:text-base lg:text-lg font-bold mt-2">reporte por producto</p>
             </div>
         </div>
     </a>
 
-    <a href="{{ route('Reporte_ventas.create') }}">
-        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+    <a href="{{ route('Reporte_ventas.create') }}" class="block">
+        <div class="h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center p-3 hover:shadow-xl transition-shadow duration-300">
             <div class="flex flex-col items-center">
-                <i class='fa-solid fa-bag-shopping text-7xl lg:text-6xl sm:text-6xl'></i>
-                <p class="uppercase text-lg font-bold">reporte Ingresos y Egresos</p>
+                <i class='fa-solid fa-bag-shopping text-5xl sm:text-6xl lg:text-7xl text-gray-700'></i>
+                <p class="uppercase text-sm sm:text-base lg:text-lg font-bold mt-2">reporte Ingresos y Egresos</p>
+            </div>
+        </div>
+    </a>
+
+     <a href="{{ route('productos.vencidos') }}" class="block">
+        <div class="h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center p-3 hover:shadow-xl transition-shadow duration-300">
+            <div class="flex flex-col items-center">
+                <i class='fa-solid fa-bag-shopping text-5xl sm:text-6xl lg:text-7xl text-gray-700'></i>
+                <p class="uppercase text-sm sm:text-base lg:text-lg font-bold mt-2">reporte productos vencidos</p>
             </div>
         </div>
     </a>

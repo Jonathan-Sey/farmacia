@@ -57,7 +57,7 @@
                     </td>
 
                     <td>
-                       <a href="{{ route('devoluciones.show', $devolucion->id) }}">Ver</a>
+                       <a class="btn btn-warning font-bold uppercase btn-sm" href="{{ route('devoluciones.show', $devolucion->id) }}">Ver</a>
                     </td>
 
 
@@ -94,7 +94,7 @@
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
-            order: [5,'desc'],
+            order: [0,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
                  paginate: {
@@ -107,13 +107,22 @@
             layout: {
                 topStart: {
 
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 7 },
+                { responsivePriority: 2, targets: 9 },
+
+
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -151,6 +160,32 @@
         });
 </script>
 @endif
+
+{{-- Alerta de error --}}
+
+@if (session('error'))
+<script>
+    const Toast = Swal.mixin({
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false,
+        timer: 1600,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+            toast.onmouseenter = Swal.stopTimer;
+            toast.onmouseleave = Swal.resumeTimer;
+            }
+        });
+            document.addEventListener('DOMContentLoaded', function() {
+                console.log("Evento DOMContentLoaded disparado");
+                Toast.fire({ icon: "error",
+                title: "{{ session('error')}}"
+                });
+        });
+</script>
+@endif
+
+
 
 {{-- cambio de estado --}}
 <script>

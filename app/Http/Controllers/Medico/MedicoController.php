@@ -67,6 +67,16 @@ class MedicoController extends Controller
             'estado' => 1,
            // 'horarios' => json_encode($request->horarios),
         ]);
+         $usuario = User::find($request->id_usuario);
+
+    Bitacora::create([
+        'id_usuario' => $request->id_usuario,
+        'name_usuario' => $usuario->name,
+        'accion' => 'Creación',
+        'tabla_afectada' => 'Medico',
+        'detalles' => "Se creó el médico: {$usuario->name}",
+        'fecha_hora' => now(),
+    ]);
 
         // Guardar los horarios
         foreach ($validatedData['horarios'] as $horario) {
@@ -156,6 +166,15 @@ class MedicoController extends Controller
             'horarios.*.hora_inicio' => 'required|date_format:H:i',
             'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
         ]);
+         $usuario = User::find($request->id_usuario);
+         Bitacora::create([
+        'id_usuario' => $request->id_usuario,
+        'name_usuario' => $usuario->name,
+        'accion' => 'Actualización',
+        'tabla_afectada' => 'Medico',
+        'detalles' => "Se actualizo el médico: {$usuario->name}",
+        'fecha_hora' => now(),
+    ]);
 
            // Verificar que horarios es un array
     if (!is_array($validated['horarios'])) {
@@ -204,6 +223,8 @@ class MedicoController extends Controller
 
          // Alternativa: refrescar toda la instancia
     $medico->refresh();
+
+    
 
     return redirect()->route('medicos.index')->with('success', 'Médico actualizado correctamente');
     }

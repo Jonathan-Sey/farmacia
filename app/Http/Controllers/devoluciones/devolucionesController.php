@@ -26,7 +26,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class devolucionesController extends Controller
 {
-    public function index()
+ public function index()
     {
         $devoluciones = Devoluciones::with(['sucursal', 'usuario', 'persona'])->where('estado', 1)
             ->latest()
@@ -57,6 +57,17 @@ class devolucionesController extends Controller
 
     public function store(Request $request)
     {
+        //verificar que solo se pueda hacer la devolucin de 8am a 4pm
+
+        $horaActual = Carbon::now()->format('H:i');
+        $horaApertura = '08:00';
+        $horaCierre = '16:00';
+
+        if ($horaActual < $horaApertura || $horaActual > $horaCierre) {
+           return redirect()->route('devoluciones.index')->with('error', 'Las devoluciones solo se pueden realizar de 8:00 a 16:00 horas.');
+        }
+
+        
         $validate = $request->validate([
             'id_venta' => 'required',
             'id_sucursal' => 'required',
@@ -69,7 +80,7 @@ class devolucionesController extends Controller
 
         $nombreUsuario = User::find($request->idUsuario)->name;
 
-        $solicitud = SolicitudDevolucion::create([
+        $solicitud1 = SolicitudDevolucion::create([
             'venta_id' => $request->id_venta,
             'usuario_id' => $request->idUsuario,
             'persona_id' => $request->id_persona,
@@ -80,6 +91,10 @@ class devolucionesController extends Controller
             'fecha_solicitud' => now(),
             'detalles' => json_encode($request->detalles),
         ]);
+
+         $solicitud = SolicitudDevolucion::with(['venta', 'usuario', 'persona', 'sucursal'])
+            ->where('id', $solicitud1->id)
+            ->first();
 
         $notificacion = Notificaciones::create([
             'tipo' => 'Devolución',
@@ -155,14 +170,13 @@ class devolucionesController extends Controller
 
 
 
-        Venta::find($solicitud->venta_id)->update([
-            'total' => max(0, Venta::find($solicitud->venta_id)->total - $solicitud->total),
+        $venta = Venta::find($solicitud->venta_id);
+        $nuevoTotal = max(0, $venta->total - $solicitud->total);
+        
+        $venta->update([
+            'total' => $nuevoTotal,
+            'estado' => $nuevoTotal <= 0 ? 0 : $venta->estado, // Marcar como inactiva si total es 0
         ]);
-
-        //borrar la venta si el total es 0
-        if (Venta::find($solicitud->venta_id)->total <= 0) {
-            Venta::find($solicitud->venta_id)->delete();
-        }
 
         
         $nuevaNotificacion = Notificaciones::create([

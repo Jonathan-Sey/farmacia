@@ -12,62 +12,67 @@
 </style>
 
 <style>
-.toggle-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-}
+    .toggle-wrapper {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
 
-.custom-toggle {
-  position: relative;
-  display: inline-block;
-  width: 60px;
-  height: 34px;
-}
+    .custom-toggle {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 34px;
+    }
 
-.custom-toggle input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+    .custom-toggle input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
 
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #f44336; /* rojo apagado */
-  transition: 0.4s;
-  border-radius: 34px;
-  box-shadow: inset -2px -2px 5px rgba(255,255,255,0.5),
-              inset 2px 2px 5px rgba(0,0,0,0.2);
-}
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #f44336;
+        /* rojo apagado */
+        transition: 0.4s;
+        border-radius: 34px;
+        box-shadow: inset -2px -2px 5px rgba(255, 255, 255, 0.5),
+            inset 2px 2px 5px rgba(0, 0, 0, 0.2);
+    }
 
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-  border-radius: 50%;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 26px;
+        width: 26px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
 
-.custom-toggle input:checked + .slider {
-  background-color: #4caf50; /* verde encendido */
-}
+    .custom-toggle input:checked+.slider {
+        background-color: #4caf50;
+        /* verde encendido */
+    }
 
-.custom-toggle input:checked + .slider:before {
-  transform: translateX(26px);
-}
+    .custom-toggle input:checked+.slider:before {
+        transform: translateX(26px);
+    }
 
-.toggle-label {
-  font-size: 14px;
-  color: #333;
-}
+    .toggle-label {
+        font-size: 14px;
+        color: #333;
+    }
 </style>
 
 @endpush
@@ -94,6 +99,14 @@
                             <option value="{{ $venta->id }}">{{ $venta->id }}</option>
                             @endforeach
                         </select>
+
+                        @error('id_venta')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message}}</span>
+                        </div>
+
+
+                        @enderror
                     </div>
                     <div class="mt-3 mb-5">
                         <label class="uppercase block text-sm font-medium text-gray-900">Motivo</label>
@@ -103,6 +116,14 @@
                             id="motivo"
                             style="height: 150px;"
                             placeholder="Motivo de la devolución"></textarea>
+
+                        @error('motivo')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message}}</span>
+                        </div>
+
+
+                        @enderror
                     </div>
 
 
@@ -124,6 +145,14 @@
                             class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             readonly>
                         <input type="hidden" name="id_sucursal" id="id_sucursal">
+
+                        @error('sucursal_nombre')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message}}</span>
+                        </div>
+
+
+                        @enderror
                     </div>
 
                     <div class="mt-2 mb-5">
@@ -136,6 +165,15 @@
                             readonly>
                         <input type="hidden" name="id_persona" id="id_persona">
 
+
+                        @error('persona_nombre')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message}}</span>
+                        </div>
+
+
+                        @enderror
+
                     </div>
                     <div class="mt-2 mb-5">
                         <label for="observaciones" class="uppercase block text-sm font-medium text-gray-900">Observaciones del producto</label>
@@ -145,6 +183,15 @@
                             style="height: 150px;"
                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             placeholder="Observaciones"></textarea>
+                        @error('observaciones')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message}}</span>
+                        </div>
+
+
+                        @enderror
+
+
                     </div>
 
                     <div class="toggle-wrapper">
@@ -208,36 +255,33 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/obtenerUsuario.js"></script>
-    <script>
-        //uso del select2 para Ventas
-        $(document).ready(function(){
-            $('.select2-sucursal').select2({
-                width: '100%',
-                placeholder: "Buscar Venta",
-                allowClear: true
-            });
+<script>
+    //uso del select2 para Ventas
+    $(document).ready(function() {
+        $('.select2-sucursal').select2({
+            width: '100%',
+            placeholder: "Buscar Venta",
+            allowClear: true
+        });
         // pocicionar el cursor en el input para buscar producto
         $('.select2-sucursal').on('select2-sucursal:open', function() {
-        document.querySelector('.select2-search__field').focus();
+            document.querySelector('.select2-search__field').focus();
         });
 
         //uso del select2 para proveedores
-            $('.select2-producto').select2({
-                width: '100%',
-                placeholder: "Buscar producto",
-                allowClear: true
-            });
+        $('.select2-producto').select2({
+            width: '100%',
+            placeholder: "Buscar producto",
+            allowClear: true
+        });
         // pocicionar el cursor en el input para buscar producto
         $('.select2-producto').on('select2-producto:open', function() {
-        document.querySelector('.select2-search__field').focus();
+            document.querySelector('.select2-search__field').focus();
         });
     });
-
-    </script>
+</script>
 
 <script>
-
-
     $(document).ready(function() {
         const ventas = $('#id_venta');
         const personaInput = $('#id_persona');
