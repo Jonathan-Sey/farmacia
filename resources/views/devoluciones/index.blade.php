@@ -94,7 +94,7 @@
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
-            order: [5,'desc'],
+            order: [0,'desc'],
             language: {
                 url: '/js/i18n/Spanish.json',
                  paginate: {
@@ -107,13 +107,22 @@
             layout: {
                 topStart: {
 
-                    buttons: ['copy', 'excel', 'pdf', 'print', 'colvis']
+                    buttons: [
+                        {
+                            extend: 'collection',
+                        text: 'Export',
+                        buttons: ['copy', 'pdf', 'excel', 'print']
+                        },
+                        'colvis'
+                    ]
                 }
             },
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 7 },
+                { responsivePriority: 2, targets: 9 },
+
+
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
