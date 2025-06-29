@@ -42,7 +42,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const userName = decodificarToken.name;
             //const userTabs = decodificarToken.pestanas;
 
-            document.getElementById('user-name').innerText = userName;
+            const nombreUsuario = document.getElementById('user-name');
+            if(nombreUsuario){
+                nombreUsuario.innerHTML = userName;
+            }
+
             // Configurar las pestañas del menú
             // const userName = decodificarToken.name;
             // document.getElementById('user-name').innerText = userName;

@@ -18,7 +18,12 @@ class CreateSucursalsTable extends Migration
             $table->string('imagen')->nullable();
             $table->string('nombre',35)->uniqued();
             $table->string('codigo_sucursal',50)->unique();
-            $table->string('ubicacion', 50);
+            $table->string('ubicacion', 200);
+            // campos para la ubicacion
+            $table->decimal('latitud', 10, 7)->nullable(); // aca es x
+            $table->decimal('longitud', 10, 7)->nullable();// aca es y
+            // desde aca almacenamos la direccion de google
+            $table->string('google_maps_link', 500)->nullable();
             $table->string('telefono',10);
             $table->string('email',50);
             $table->string('encargado',100);
