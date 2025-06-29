@@ -16,13 +16,14 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
         return;
     }
 
+    // Verifica si el elemento existe
+    if (!crearUsuario) {
+        return; // Termina silenciosamente si no está presente
+    }
+
     const decodificarToken = jwt_decode(token);
-
-
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-
-
-        const UserId = decodificarToken.id;
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    const UserId = decodificarToken.id;
 
      
     if (crearUsuario) {
@@ -33,5 +34,6 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
 
 }
 
-obtenerUsuario();})
+obtenerUsuario();
+});
 

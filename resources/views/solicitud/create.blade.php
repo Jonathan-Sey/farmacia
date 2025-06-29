@@ -12,8 +12,8 @@
 
             <div class="border-b border-gray-200 pb-6">
                 <div class="mb-5">
-                    <div class="flex gap-6 justify-center">
-                        <div class="w-1/2">
+                    <div class="flex flex-col md:flex-row gap-4 justify-center">
+                        <div class="w-full md:w-1/2">
                             <x-select2
                                 name="id_sucursal_1"
                                 label="Sucursal a solicitar"
@@ -43,7 +43,7 @@
                             <i class="fa-solid fa-arrow-right"></i>
                         </div>
 
-                        <div class="w-1/2">
+                        <div class="w-full md:w-1/2">
                             <x-select2
                                 name="id_sucursal_2"
                                 label="Sucursal que solicita"

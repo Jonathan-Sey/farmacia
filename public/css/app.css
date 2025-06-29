@@ -3359,6 +3359,10 @@ details.collapse summary::-webkit-details-marker {
   margin-top: 2rem;
   margin-bottom: 2rem;
 }
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
 .-mt-px {
   margin-top: -1px;
 }
@@ -3434,6 +3438,9 @@ details.collapse summary::-webkit-details-marker {
 .mt-8 {
   margin-top: 2rem;
 }
+.mt-\[10px\] {
+  margin-top: 10px;
+}
 .block {
   display: block;
 }
@@ -3494,6 +3501,9 @@ details.collapse summary::-webkit-details-marker {
 }
 .h-\[200px\] {
   height: 200px;
+}
+.h-\[300px\] {
+  height: 300px;
 }
 .h-\[500px\] {
   height: 500px;
@@ -4457,6 +4467,9 @@ details.collapse summary::-webkit-details-marker {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity, 1));
 }
+.hover\:underline:hover {
+  text-decoration-line: underline;
+}
 .hover\:file\:bg-blue-100::file-selector-button:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1));
@@ -4670,6 +4683,10 @@ details.collapse summary::-webkit-details-marker {
 
   .md\:ml-\[200px\] {
     margin-left: 200px;
+  }
+
+  .md\:mt-1 {
+    margin-top: 0.25rem;
   }
 
   .md\:mt-5 {

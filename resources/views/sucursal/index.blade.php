@@ -37,10 +37,20 @@
                             <p class="uppercase text-lg font-bold text-black">{{$sucursal->nombre}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-circle-user"></i> {{$sucursal->encargado}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-location-dot"></i> {{$sucursal->ubicacion}}</p>
+                            <a href="{{$sucursal->google_maps_link}}"
+                                class="text-blue-600 hover:underline flex items-center"
+                                target="_blank"
+                                >
+                                <i class="fa-solid fa-map-location-dot mr-2"></i> Ver en Google Maps
+                            </a>
+
+                            <a href="https://wa.me/?text={{ urlencode('Ubicación de ' . $sucursal->nombre . ': ' . $sucursal->google_maps_link) }}"
+                                target="_blank"
+                                class="inline-block mt-2 px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600">
+                                 <i class="fab fa-whatsapp mr-2"></i> Compartir
+                             </a>
                             <p class="text-lg text-black"><i class="fa-solid fa-phone"></i> {{$sucursal->telefono}}</p>
                             <p class="text-lg text-black"><i class="fa-solid fa-envelope"></i> {{$sucursal->email}}</p>
-
-
                         </div>
                         <div class="lg:grid lg:grid-cols-2 lg:mt-4 lg:gap-2 px-5 lg:justify-between ">
                             <div class="m-1">
