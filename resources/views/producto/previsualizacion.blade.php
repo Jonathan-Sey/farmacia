@@ -140,8 +140,8 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 
-     // Resaltar todas las celdas con cambios
-     document.querySelectorAll('input, select').forEach(element => {
+    // Resaltar todas las celdas con cambios
+    document.querySelectorAll('input, select').forEach(element => {
         if (element.classList.contains('border-blue-400')) {
             element.parentNode.classList.add('bg-blue-50');
         }
@@ -206,7 +206,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+
     // Eliminar fila
     document.querySelectorAll('.remove-row').forEach(button => {
         button.addEventListener('click', function() {
@@ -229,6 +229,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+
+}); // <- este es el cierre correcto del DOMContentLoaded
 </script>
 @endsection
