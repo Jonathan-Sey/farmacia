@@ -26,7 +26,7 @@ class AlmacenController extends Controller
      */
     public function index()
     {
-        //$traslados = Traslado::with(['producto', 'sucursalOrigen', 'sucursalDestino'])->get();
+
         //comprobar que no exista producto vencido en el almacen
         $productosVencidos = Lote::where('fecha_vencimiento', '<', Carbon::now())->get();
 
@@ -44,7 +44,7 @@ class AlmacenController extends Controller
                     $requisicion->delete();
                 }
 
-                // Insertar en la tabla correcta (revisa que el nombre esté bien escrito)
+                // Insertar en la tabla correcta
                 DB::table('producto__vecidos')->insert([
                     "id_producto" => $producto->id_producto,
                     'fecha_vencimiento' => $producto->fecha_vencimiento,
@@ -64,7 +64,7 @@ class AlmacenController extends Controller
 
             foreach ($almacenVencido as $almacen) {
 
-                // Insertar en la tabla correcta (revisa que el nombre esté bien escrito)
+                // Insertar en la tabla correcta
                 DB::table('almacen_vencidos')->insert([
                     'id_sucursal' => $almacen->id_sucursal,
                     "id_producto" => $almacen->id_producto,
@@ -113,29 +113,6 @@ class AlmacenController extends Controller
         return view('almacen.create', compact('productos', 'sucursales'));
     }
 
-    //     public function getProductosPorSucursal($idSucursal)
-    // {
-    //     $almacenes = Almacen::activos()
-    //         ->where('id_sucursal', $idSucursal)
-    //         ->with('producto') // Relación con el modelo Producto
-    //         ->get();
-
-    //     $productos = $almacenes->map(function ($almacen) {
-    //         return [
-    //             'id' => $almacen->producto->id,
-    //             'nombre' => $almacen->producto->nombre,
-    //             'precio_venta' => $almacen->producto->precio_venta,
-    //             'tipo' => $almacen->producto->tipo,
-    //             'stock' => $almacen->cantidad,
-    //         ];
-    //     });
-
-    //     return response()->json([
-    //         'success' => true,
-    //         'productos' => $productos,
-    //     ]);
-    // }
-
 
     /**
      * Store a newly created resource in storage.
@@ -145,6 +122,7 @@ class AlmacenController extends Controller
      */
     public function store(Request $request)
     {
+        /*  */
         $this->validate($request, [
             'id_sucursal' => ['required'],
             'id_producto' => [
@@ -170,15 +148,17 @@ class AlmacenController extends Controller
             'id_user' => 1,
         ]);
 
-        $usuario = User::find($request->idUsuario);
-        Bitacora::create([
-            'id_usuario' => $request->idUsuario,
-            'name_usuario' => $usuario->name,
-            'accion' => 'Creación',
-            'tabla_afectada' => 'Almacenes',
-            'detalles' => "Se creó el almacen: {$request->id_sucursal}", //detalles especificos
-            'fecha_hora' => now(),
-        ]);
+        $usuario=User::find($request->idUsuario);
+        $producto = Producto::find($request->id_producto); // Obtener el producto por su ID
+        $sucursal = Sucursal::find($request->id_sucursal); // Obtener la sucursal por su ID
+           Bitacora::create([
+                   'id_usuario' => $request->idUsuario,
+                   'name_usuario' =>$usuario->name,
+                   'accion' => 'Creación',
+                   'tabla_afectada' => 'Almacenes',
+                    'detalles' => "Se asignó el producto: {$producto->nombre} a la sucursal: {$sucursal->nombre}", //detalles especificos
+                   'fecha_hora' => now(),
+           ]);
 
         return redirect()->route('almacenes.index')->with('success', '¡Registro exitoso!');
     }
@@ -277,6 +257,7 @@ class AlmacenController extends Controller
         return response()->json(['success' => false]);
     }
 
+    // permite cambiar el estado del almacen, este puede pasar de activo a inactivo
     public function cambiarEstado($id)
     {
         $almacen = Almacen::find($id);

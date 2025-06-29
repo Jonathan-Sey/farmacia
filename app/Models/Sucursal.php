@@ -17,6 +17,9 @@ class Sucursal extends Model
         'telefono',
         'email',
         'encargado',
+        'latitud',
+        'longitud',
+        'google_maps_link',
         'estado',
 
 

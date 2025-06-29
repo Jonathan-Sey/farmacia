@@ -16,7 +16,7 @@ class DetalleDevolucion extends Model
         'precio',
         'subtotal',
         'estado',
-        'devolucion_id ',
+        'devolucion_id',
         'fecha_caducidad',
 
     ];

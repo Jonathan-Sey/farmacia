@@ -24,6 +24,7 @@ class CreateSolicitudDevolucionsTable extends Migration
             $table->text('observaciones')->nullable();
             $table->json('detalles'); // guarda los productos como JSON
             $table->date('fecha_solicitud')->default(now());
+            $table->date('fecha_vencimiento')->nullable();
             $table->timestamps();
         });
     }

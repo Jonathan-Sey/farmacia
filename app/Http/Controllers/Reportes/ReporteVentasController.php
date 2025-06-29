@@ -276,10 +276,13 @@ class ReporteVentasController extends Controller
         $query = DB::table('almacen')
             ->join('producto', 'almacen.id_producto', '=', 'producto.id')
             ->join('sucursal', 'almacen.id_sucursal', '=', 'sucursal.id')
+            
             ->select(
                 'sucursal.nombre as sucursal',
                 'producto.nombre as producto',
+               
                 DB::raw('WEEK(almacen.created_at, 3) as semana'),
+                DB::raw('SUM(almacen.cantidad) as cantidad_total'),
                 DB::raw('SUM(almacen.cantidad * producto.precio_venta) as valor_total_producto')
             );
 
