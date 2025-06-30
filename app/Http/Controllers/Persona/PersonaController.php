@@ -34,6 +34,7 @@ class PersonaController extends Controller
          $this->validate($request, [
              'nombre' => 'required|string|max:45|unique:persona,nombre',
              'nit' => 'max:10|unique:persona,nit',
+             'dpi' => ['required', new Dpi()],
              'telefono' => 'max:20',
          ]);
          $rol = $request->input('rol') == 2 ? 2 : 1;
@@ -190,15 +191,33 @@ class PersonaController extends Controller
     {
         $persona = $this->crearPersona($request);
 
+        // Si es paciente, crear ficha médica con valores por defecto
+        // if ($persona->rol == 2) {
+        //     FichaMedica::create([
+        //         'persona_id' => $persona->id,
+        //         'nombre' => $persona->nombre,
+        //         'apellido_paterno' => 'Por Definir',
+        //         'apellido_materno' => 'Por Definir',
+        //         'sexo' => 'Hombre',
+        //         'fecha_nacimiento' => $persona->fecha_nacimiento ?? '',
+        //         'DPI' => $persona->DPI, // Usar el mismo campo que se guardó en persona
+        //         'habla_lengua' => 'No',
+        //         'tipo_sangre' => 'N/A',
+        //         'direccion' => 'Por Definir',
+        //         'telefono' => $persona->telefono ?? '',
+        //     ]);
+        // }
+
         return response()->json([
             'success' => true,
             'persona' => [
                 'id' => $persona->id,
                 'nombre' => $persona->nombre,
+                'dpi' => $persona->DPI, // Enviar el DPI en la respuesta
                 'nit' => $persona->nit,
                 'rol' => $persona->rol,
             ],
-            'personas' => Persona::where('estado', '!=', '0')->get(['id', 'nombre', 'nit', 'rol']),
+            'personas' => Persona::where('estado', '!=', '0')->get(['id', 'nombre', 'nit', 'DPI', 'rol']),
         ]);
     }
 

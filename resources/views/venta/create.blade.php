@@ -527,6 +527,14 @@
                             </div>
                             @enderror
                         </div>
+
+                        <div class="form-control">
+                            <label class="label" for="dpi">
+                                <span class="label-text">DPI <span class="text-red-500">*</span></span>
+                            </label>
+                            <input type="text" name="dpi" id="dpi" class="input input-bordered" required>
+                        </div>
+
                         <div class="form-control">
                             <label class="label" for="nit">
                                 <span class="label-text">NIT</span>
@@ -543,7 +551,7 @@
                             </label>
                             <select name="rol" id="rol" class="input input-bordered" required>
                                 <option value="1" {{ old('rol') == 1 ? 'selected' : '' }}>Cliente</option>
-                                <option value="2" {{ old('rol') == 2 ? 'selected' : '' }}>Paciente</option>
+                                {{-- <option value="2" {{ old('rol') == 2 ? 'selected' : '' }}>Paciente</option> --}}
                             </select>
 
                         </div>
@@ -620,9 +628,9 @@
         }
 
         // llamado de la función cuando presentemos algun cambio
-        document.getElementById('id_sucursal').addEventListener('change', verificarEstadoFormulario);
-        document.getElementById('id_persona').addEventListener('change', verificarEstadoFormulario);
-        document.getElementById('es_prescrito').addEventListener('change', verificarEstadoFormulario);
+        // document.getElementById('id_sucursal').addEventListener('change', verificarEstadoFormulario);
+        // document.getElementById('id_persona').addEventListener('change', verificarEstadoFormulario);
+        // document.getElementById('es_prescrito').addEventListener('change', verificarEstadoFormulario);
 
 
 
@@ -1034,7 +1042,7 @@ function agregarProducto() {
 
 
     // Función para editar producto (integrando cantidad, precio y justificación)
-    function editarProducto(index) {
+function editarProducto(index) {
     let idSucursal = $('#id_sucursal').val();
     let fila = $(`#fila${index}`);
     let cantidadActual = fila.find('input[name="arraycantidad[]"]').val();
@@ -1242,7 +1250,7 @@ function recalcularTotales() {
         });
     }
 
-    function generarResumenVenta() {
+function generarResumenVenta() {
     let mensaje = `
     <div class="w-full max-w-[100vw]">
         <h5 class="text-md font-semibold mb-4 text-center">Resumen de la Venta</h5>
@@ -1441,6 +1449,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData(this);
         // Depuración: Verifica el valor de "rol"
         console.log('Valor de rol:', formData.get('rol'));
+        console.log('DPI enviado:', formData.get('dpi'));
 
 
         fetch(this.action, {
@@ -1697,63 +1706,48 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
      <script>
         // Validación del formulario antes de enviar
         document.getElementById('formVenta').addEventListener('submit', function(e) {
-        e.preventDefault();
+            e.preventDefault();
 
-        // Validar detalle de venta
-        const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
-        if (filasProductos.length === 0) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Debe agregar al menos un producto al detalle de venta',
-                confirmButtonText: 'Entendido'
-            });
-            return;
-        }
-
-        // Validar campos obligatorios
-        const sucursal = document.getElementById('id_sucursal').value;
-        const persona = document.getElementById('id_persona').value;
-
-        if (!sucursal || !persona) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Debe seleccionar una sucursal y una persona',
-                confirmButtonText: 'Entendido'
-            });
-            return;
-        }
-
-        // Validar receta médica si es prescrito
-        const esPrescrito = document.getElementById('es_prescrito').checked;
-        const imagenReceta = document.getElementById('imagen_receta').value;
-
-        if (esPrescrito && !imagenReceta) {
-            Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Para ventas prescritas es obligatorio subir la receta médica',
-                confirmButtonText: 'Entendido'
-            });
-            my_modal_2.showModal();
-            return;
-        }
-
-        // Si todo está bien, mostrar confirmación
-        Swal.fire({
-            title: 'Confirmar Venta',
-            html: generarResumenVenta(),
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: 'Confirmar',
-            cancelButtonText: 'Cancelar'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                this.submit();
+            // Validar detalle de venta
+            const filasProductos = document.querySelectorAll('#tabla-productos tbody tr');
+            if (filasProductos.length === 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Debe agregar al menos un producto al detalle de venta',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
             }
-        });
-    });
+
+            // Validar campos obligatorios
+            const sucursal = document.getElementById('id_sucursal').value;
+            const persona = document.getElementById('id_persona').value;
+
+            if (!sucursal || !persona) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Debe seleccionar una sucursal y una persona',
+                    confirmButtonText: 'Entendido'
+                });
+                return;
+            }
+
+            // Validar receta médica si es prescrito
+            const esPrescrito = document.getElementById('es_prescrito').checked;
+            const imagenReceta = document.getElementById('imagen_receta').value;
+
+            if (esPrescrito && !imagenReceta) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Para ventas prescritas es obligatorio subir la receta médica',
+                    confirmButtonText: 'Entendido'
+                });
+                my_modal_2.showModal();
+                return;
+            }
 
             // Verificar stock para productos físicos
             let stockValido = true;
@@ -1769,7 +1763,6 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
             });
 
             if (!stockValido) {
-                e.preventDefault();
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
@@ -1779,10 +1772,24 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
                 return;
             }
 
-            // Marcar el formulario como enviado para evitar pérdida de datos
+            // Si todo está bien, mostrar confirmación
+            Swal.fire({
+                title: 'Confirmar Venta',
+                html: generarResumenVenta(),
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Confirmar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    this.submit();
+                }
+            });
+
             this.submitted = true;
         });
-     </script>
+    </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
