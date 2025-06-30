@@ -204,7 +204,8 @@
                                 <option value="">Seleccionar una sucursal</option>
                                 @foreach ($sucursales as $sucursal)
                                     <option value="{{ $sucursal->id }}" data-nombre-completo="{{ $sucursal->nombre }}" data-ubicacion-completa="{{ $sucursal->ubicacion }}">
-                                        {{ $sucursal->nombre }} - {{ $sucursal->ubicacion }}
+                                        {{-- {{ $sucursal->nombre }} - {{ $sucursal->ubicacion }} --}}
+                                        {{ $sucursal->nombre }}
                                     </option>
                                 @endforeach
                             </select>
@@ -228,11 +229,15 @@
                                         required>
                                         <option value="">Seleccionar persona</option>
                                         @foreach ($personas as $persona)
-                                            <option value="{{ $persona->id }}" data-nombre-completo="{{ $persona->nit }}"
+                                        <option value="{{ $persona->id }}"
+                                                data-nombre-completo="{{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') - {{ $persona->nit }} @endif"
+                                                data-dpi="{{ $persona->dpi }}"
+                                                data-nit="{{ $persona->nit }}"
                                                 @if(isset($personaPre) && $personaPre->id == $persona->id) selected @endif>
-                                                {{ $persona->nit }} - {{ $persona->nombre }}
-                                            </option>
-                                        @endforeach
+                                            {{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') - {{ $persona->nit }} @endif - {{ $persona->nombre }}
+                                            @if($persona->nit == '0') (Consumidor Final) @endif
+                                        </option>
+                                    @endforeach
                                     </select>
                                         @error('id_persona')
                                             <div role="alert" class="alert alert-error mt-4 p-2">
@@ -619,19 +624,22 @@
             const btnGuardar = document.getElementById('btn-guardar');
 
             // Validar condiciones
-            const condicionesBasicas = filasProductos.length > 0 && sucursal && persona;
+            const tieneProductos = filasProductos.length > 0;
+            const tieneSucursal = sucursal !== '';
+            const tienePersona = persona !== '';
 
             // Validar condición especial para prescripciones
-            const condicionPrescripcion = !esPrescrito || (esPrescrito && imagenReceta);
+            const prescripcionValida = !esPrescrito || (esPrescrito && imagenReceta);
 
-            btnGuardar.disabled = !(condicionesBasicas && condicionPrescripcion);
+            btnGuardar.disabled = !(tieneProductos && tieneSucursal && tienePersona && prescripcionValida);
         }
 
         // llamado de la función cuando presentemos algun cambio
-        // document.getElementById('id_sucursal').addEventListener('change', verificarEstadoFormulario);
-        // document.getElementById('id_persona').addEventListener('change', verificarEstadoFormulario);
-        // document.getElementById('es_prescrito').addEventListener('change', verificarEstadoFormulario);
-
+        //$('#id_sucursal').on('change', verificarEstadoFormularioVenta);
+        $('#id_persona').on('change', verificarEstadoFormularioVenta);
+        document.getElementById('es_prescrito').addEventListener('change', verificarEstadoFormularioVenta);
+         // También cuando se agregan o eliminan productos
+        //document.getElementById('btn-agregar').addEventListener('click', verificarEstadoFormularioVenta);
 
 
 
@@ -655,6 +663,8 @@
         document.querySelector('.select2-search__field').focus();
         });
     });
+
+    //verificarEstadoFormularioVenta();
     </script>
 
     <script>
@@ -686,6 +696,7 @@
                     var nombreCompleto = $(option.element).data('nombre-completo');
                     var ubicacionCompleta = $(option.element).data('ubicacion-completa') || ''; // Opcional para sucursales
                     return $('<div>' + nombreCompleto + (ubicacionCompleta ? ' - ' + ubicacionCompleta : '') + '</div>');
+
                 }
 
                 // Función para formatear cómo se muestra la selección en el select
@@ -707,9 +718,11 @@
                         : ubicacionCompleta;
 
                     // Devolver el nombre y la ubicación truncados
-                    return nombreTruncado + (ubicacionTruncada ? ' - ' + ubicacionTruncada : '');
+                    //return nombreTruncado + (ubicacionTruncada ? ' - ' + ubicacionTruncada : '');
+                    return nombreTruncado + (ubicacionTruncada ?  : '');
                 }
         });
+        verificarEstadoFormularioVenta();
     </script>
 
     <script>
@@ -809,6 +822,7 @@
         $(document).ready(function(){
 
 
+
              // Evento para el toggle de IVA (debe estar aquí, no dentro de otro evento)
              $('#impuesto-checkbox').change(function() {
                 recalcularTotales();
@@ -853,6 +867,7 @@
             $('#porcentaje').on('input', function() {
                 mostrarValores();
             });
+
 
 
         })
@@ -1192,7 +1207,7 @@ function recalcularTotales() {
     $('#inputTotal').val(total.toFixed(2));
 }
 
-        function eliminarProducto(index){
+    function eliminarProducto(index){
 
             let fila = $(`#fila${index}`);
             let tipo = fila.find('input[name="arraytipo[]"]').val() || '1';
@@ -1229,7 +1244,7 @@ function recalcularTotales() {
                 $('#suma, #iva, #total, #impuesto, #inputTotal').text('0.00');
             }
 
-            verificarEstadoFormularioVenta();
+              verificarEstadoFormularioVenta();
         }
 
 
@@ -1309,7 +1324,7 @@ function generarResumenVenta() {
 }
 
     // Modificar el evento submit del formulario
-    document.getElementById('formVenta').addEventListener('submit', function(e) {
+document.getElementById('formVenta').addEventListener('submit', function(e) {
     e.preventDefault();
 
     // Validaciones básicas
@@ -1392,14 +1407,14 @@ function generarResumenVenta() {
         </div>
         @endif
 
-        <script>
+        {{-- <script>
         document.addEventListener("DOMContentLoaded", function() {
             const errorMessage = document.querySelector('.alert-message span').textContent;
             if (errorMessage) {
                 alert(errorMessage);
             }
         });
-        </script>
+        </script> --}}
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
@@ -1443,14 +1458,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // manejo del modal de crear cliente
     document.getElementById('formPersona').addEventListener('submit', function (e) {
-        e.preventDefault(); // Evitar el envío tradicional del formulario
+        e.preventDefault();
         e.stopPropagation();
 
         const formData = new FormData(this);
-        // Depuración: Verifica el valor de "rol"
-        console.log('Valor de rol:', formData.get('rol'));
-        console.log('DPI enviado:', formData.get('dpi'));
-
 
         fetch(this.action, {
             method: 'POST',
@@ -1468,36 +1479,40 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(data => {
             if (data.success) {
-                  my_modal_1.close();
+                my_modal_1.close();
+                this.reset();
 
-                    // Limpiar formulario
-                    this.reset();
+                const selectPersona = $('#id_persona');
 
-                    // Actualizar select2
-                    const selectPersona = $('#id_persona');
-
-                    // Crear nueva opción con todos los atributos necesarios
-                    const newOption = new Option(
-                        `${data.persona.nit} - ${data.persona.nombre}`, // Texto visible
-                        data.persona.id, // Valor
-                        false, // selected por defecto?
-                        true // selected ahora?
-                    );
-
-                    // Añadir atributos de datos
-                    $(newOption).attr('data-nombre-completo', data.persona.nit);
-                    selectPersona.append(newOption);
-
-                    // Seleccionar la nueva persona
-                    selectPersona.val(data.persona.id).trigger('change');
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Éxito',
-                        text: 'Persona registrada correctamente',
-                    });
+                // Crear texto para mostrar: DPI - NIT (si existe) - Nombre
+                let displayText = data.persona.dpi;
+                if (data.persona.nit) {
+                    displayText += ' - ' + data.persona.nit;
                 }
-            })
+                displayText += ' - ' + data.persona.nombre;
+
+                const newOption = new Option(
+                    displayText,
+                    data.persona.id,
+                    false,
+                    true
+                );
+
+                // Añadir atributos de datos necesarios
+                $(newOption).attr('data-nombre-completo', data.persona.dpi + (data.persona.nit ? ' - ' + data.persona.nit : ''));
+                $(newOption).attr('data-dpi', data.persona.dpi);
+                $(newOption).attr('data-nit', data.persona.nit);
+
+                selectPersona.append(newOption);
+                selectPersona.val(data.persona.id).trigger('change');
+
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Éxito',
+                    text: 'Persona registrada correctamente',
+                });
+            }
+        })
         .catch(error => {
             if (error.errors) {
                 // Limpiar errores anteriores
@@ -1523,7 +1538,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    verificarEstadoFormulario();
+    //verificarEstadoFormularioVenta();
 });
      </script>
 
@@ -1686,6 +1701,7 @@ function guardarReceta() {
         title: 'Datos guardados',
         text: 'La información de la receta se ha guardado correctamente',
     });
+    verificarEstadoFormularioVenta();
 }
 
 // Al abrir el modal, cargar datos existentes
@@ -1798,9 +1814,28 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
             width: '100%',
             placeholder: "Buscar persona",
             allowClear: true,
-            templateResult: formatOption,
-            templateSelection: formatSelection
-        });
+            matcher: function(params, data) {
+            // Si el término de búsqueda está vacío, mostrar todos los resultados
+            if ($.trim(params.term) === '') {
+                return data;
+            }
+
+            // Normalizar términos
+            var term = params.term.toLowerCase();
+            var dpi = $(data.element).data('dpi')?.toString().toLowerCase() || '';
+            var nit = $(data.element).data('nit')?.toString().toLowerCase() || '';
+            var nombre = data.text.toLowerCase();
+
+            // Buscar coincidencias en DPI, NIT o nombre
+            if (dpi.includes(term) || nit.includes(term) || nombre.includes(term)) {
+                return data;
+            }
+
+            return null;
+        },
+        templateResult: formatPersonaOption,
+        templateSelection: formatPersonaSelection
+    });
 
         // Función para manejar las restricciones
         function manejarRestricciones(personaId) {
@@ -1849,16 +1884,47 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
     });
 
     // Funciones de formato para Select2
-    function formatOption(option) {
-        if (!option.id) return option.text;
-        const nit = $(option.element).data('nombre-completo');
-        return $('<div>' + option.text + '</div>');
+    function formatPersonaOption(option) {
+        if (!option.id) {
+            return option.text;
+        }
+
+        // Obtener datos directamente del elemento option
+        var dpi = $(option.element).data('dpi');
+        var nit = $(option.element).data('nit');
+        var nombre = option.text.split(' - ').slice(2).join(' - '); // Obtener el nombre del texto
+
+        var displayText = dpi || 'Sin DPI';
+        if (nit) {
+            displayText += ' - ' + nit;
+        }
+        displayText += ' - ' + nombre;
+
+        return $('<div>' + displayText + '</div>');
     }
 
-    function formatSelection(option) {
-        if (!option.id) return option.text;
-        const nit = $(option.element).data('nombre-completo');
-        return nit + ' - ' + option.text.substring(0, 20) + (option.text.length > 20 ? '...' : '');
+
+    function formatPersonaSelection(option) {
+        if (!option.id) {
+            return option.text;
+        }
+
+        // Obtener datos directamente del elemento option
+        var dpi = $(option.element).data('dpi');
+        var nit = $(option.element).data('nit');
+        var nombre = option.text.split(' - ').slice(2).join(' - '); // Obtener el nombre del texto
+
+        var displayText = dpi || 'Sin DPI';
+        if (nit) {
+            displayText += ' - ' + nit;
+        }
+
+        // Truncar el nombre si es muy largo
+        var nombreTruncado = nombre.length > 20
+            ? nombre.substring(0, 20) + '...'
+            : nombre;
+
+        return displayText + ' - ' + nombreTruncado;
     }
 </script>
 @endpush

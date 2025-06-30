@@ -34,7 +34,7 @@ class Dashboard extends Controller
             'persona:id,nombre',
             'productos:id,nombre',
             'sucursal:id,nombre,ubicacion',
-            ])->latest()->get();
+            ])->latest()->take(10)->get();
 
         // fitrar fechas por el campo fecha_venta
         $ventasFiltro = Venta::with([
