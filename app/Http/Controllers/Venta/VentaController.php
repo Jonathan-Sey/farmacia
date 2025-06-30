@@ -73,7 +73,10 @@ class VentaController extends Controller
 
         //        $productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
 
-        $personas = Persona::activos()->orderBy('nombre')->get();
+        $personas = Persona::activos()
+        ->orderByRaw("CASE WHEN nit = '0' THEN 0 ELSE 1 END") // Consumidor final primero
+        ->orderBy('nombre')
+        ->get(['id', 'nombre', 'nit', 'DPI as dpi', 'rol']);
 
         return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona'));
     }
