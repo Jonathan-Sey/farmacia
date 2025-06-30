@@ -55,8 +55,20 @@
 
 @push('js')
 
-
 <script>
+    // Función para calcular el número de semana ISO
+    function getISOWeekNumber(date) {
+        const target = new Date(date.valueOf());
+        const dayNumber = (date.getUTCDay() + 6) % 7;
+        target.setUTCDate(target.getUTCDate() - dayNumber + 3);
+        const firstThursday = target.valueOf();
+        target.setUTCMonth(0, 1);
+        if (target.getUTCDay() !== 4) {
+            target.setUTCMonth(0, 1 + ((4 - target.getUTCDay()) + 7) % 7);
+        }
+        return 1 + Math.ceil((firstThursday - target) / 604800000);
+    }
+
     const btnBuscar = document.getElementById('btn-buscar');
     const selectSucursal = document.getElementById('select-sucursal');
     const fechaInput = document.getElementById('fecha');
@@ -78,30 +90,34 @@
                 return response.json();
             })
             .then(data => {
-                const tbody = $('#tabla');
-                tbody.empty();
+                // Limpiar la tabla DataTable completamente
+                const table = $('#example').DataTable();
+                table.clear();
+                
                 if (data.length) {
+                    // Agregar las nuevas filas directamente a DataTable
                     data.forEach(item => {
-                        tbody.append(
-                            `<tr>
-                                    <td>${item.sucursal}</td>
-                                    <td>${item.producto}</td>
-                                    <td>${item.cantidad_total}</td>
-                                    <td>${item.semana}</td>
-                                    <td>${item.valor_economico}</td>
-                                </tr>`
-                        );
-
-
+                        table.row.add([
+                            item.sucursal,
+                            item.producto,
+                            item.cantidad_total,
+                            item.semana,
+                            item.valor_total_producto
+                        ]);
                     });
                 } else {
-                    tbody.append(
-                        `<tr><td colspan="5" class="text-center">No hay datos para mostrar</td></tr>`
-                    );
+                    // Agregar fila de "no hay datos"
+                    table.row.add([
+                        '<span colspan="5" class="text-center">No hay datos para mostrar</span>',
+                        '',
+                        '',
+                        '',
+                        ''
+                    ]);
                 }
-
-                // Insertar filas en la tabla
-                $('#example').DataTable().rows.add($(tbody).find('tr')).draw();
+                
+                // Redibujar la tabla
+                table.draw();
 
             })
             .catch(error => {
