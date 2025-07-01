@@ -189,6 +189,7 @@
             @csrf
 
             <div id="usuario"></div>
+            {{-- <input type="hidden" id="userSucursalId" name="userSucursalId"> --}}
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5 items-start">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
                     <legend class="text-blue-500 font-bold">Datos Generales</legend>
@@ -608,6 +609,9 @@
 
 @endsection
 @push('js')
+<script src="/js/obtenerUsuario.js"></script>
+{{-- <script src="/js/obtenerSucursalUsuario.js"></script> --}}
+<script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
@@ -678,6 +682,34 @@
                     templateSelection: formatSelection  // Truncar nombre y ubicación en la selección
                 });
 
+                  // Función para auto-seleccionar la sucursal del usuario
+    function autoSeleccionarSucursal() {
+        const token = localStorage.getItem('jwt_token');
+        if (!token) return;
+
+        try {
+            const decoded = jwt_decode(token);
+            const sucursalId = decoded.sucursal_id;
+
+            if (sucursalId) {
+                // Verificar si la sucursal existe en las opciones
+                if ($(`#id_sucursal option[value="${sucursalId}"]`).length > 0) {
+                    $('#id_sucursal').val(sucursalId).trigger('change');
+
+                    // Opcional: deshabilitar el select después de seleccionar
+                    // $('#id_sucursal').prop('disabled', true);
+                }
+            }
+        } catch (error) {
+            console.error('Error al auto-seleccionar sucursal:', error);
+        }
+    }
+
+    // Esperar a que Select2 se inicialice y luego auto-seleccionar
+    setTimeout(autoSeleccionarSucursal, 200);
+
+
+
                 // Configuración para el select de personas
                 $('#id_persona').select2({
                     width: '100%',
@@ -719,7 +751,8 @@
 
                     // Devolver el nombre y la ubicación truncados
                     //return nombreTruncado + (ubicacionTruncada ? ' - ' + ubicacionTruncada : '');
-                    return nombreTruncado + (ubicacionTruncada ?  : '');
+                    //return nombreTruncado + (ubicacionTruncada ?  : '');
+                    return nombreTruncado;
                 }
         });
         verificarEstadoFormularioVenta();

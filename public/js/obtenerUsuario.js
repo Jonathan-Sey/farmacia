@@ -24,13 +24,16 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
     const decodificarToken = jwt_decode(token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     const UserId = decodificarToken.id;
+    const sucursalId = decodificarToken.sucursal_id;
 
-     
+
     if (crearUsuario) {
-        crearUsuario.innerHTML = ` <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
+        crearUsuario.innerHTML = `
+        <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
         document.getElementById("idUsuario").style.display = "none";
+        console.log('Sucursal ID del usuario:', sucursalId);
     }
-    
+
 
 }
 

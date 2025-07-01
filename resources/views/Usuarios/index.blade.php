@@ -23,6 +23,7 @@
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nombre</th>
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Email</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Rol</th>
+                <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Sucursal</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Estado</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Acciones</th>
             </tr>
@@ -37,7 +38,11 @@
                 <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->email }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->rol->nombre ?? 'Sin rol asignado' }} <!-- Mostrar el nombre del rol --></td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    {{ $usuario->sucursal->nombre ?? 'Sin sucursal asignada' }}
+                </td>
                 <td class="px-6 py-4 whitespace-nowrap text-center">
+
                     <a class="estado" data-id="{{ $usuario->id }}" data-estado="{{ $usuario->estado }}">
                         @if ($usuario->estado == 1)
                             <span class="text-green-500 font-bold">Activo</span>
