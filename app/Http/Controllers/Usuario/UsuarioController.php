@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use App\Models\Rol;
+use App\Models\Sucursal;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UsuarioController extends Controller
@@ -22,7 +23,7 @@ class UsuarioController extends Controller
 
         $roles = Rol::where('estado', '!=', 2)->get();
         // Filtrar solo usuarios activos y cargar el rol relacionado con las columnas específicas
-        $usuarios = User::whereIn('estado', [1, 2])->with('rol:id,nombre')->get();
+        $usuarios = User::whereIn('estado', [1, 2])->with('rol:id,nombre', 'sucursal:id,nombre')->get();
         // Pasar los usuarios y roles a la vista
         return view('Usuarios.index', compact('roles', 'usuarios'));
         }
@@ -35,7 +36,8 @@ class UsuarioController extends Controller
      */
     public function create(){
         $roles = Rol::where('estado', '!=', 2)->get();
-        return view('Usuarios.create',compact('roles'));
+        $sucursales = Sucursal::where('estado', 1)->get();
+        return view('Usuarios.create',compact('roles','sucursales'));
      }
 
     public function edit($id)
@@ -43,7 +45,8 @@ class UsuarioController extends Controller
         // Obtén al usuario por ID
         $user = User::findOrFail($id);
         $roles = Rol::where('estado', '!=', 2)->get();
-        return view('Usuarios.edit', compact('user', 'roles'));
+        $sucursales = Sucursal::where('estado', 1)->get();
+        return view('Usuarios.edit', compact('user', 'roles','sucursales'));
         }
 
     public function update(Request $request, $id)
@@ -62,6 +65,7 @@ class UsuarioController extends Controller
                 'email' => $emailValidationRule, // Validación condicional del email
                 'password' => 'nullable|string|min:6|max:12',
                 'id_rol' => 'required|exists:rol,id',
+                'sucursal_id' => 'nullable|exists:sucursal,id',
             ]);
 
             // Si la validación falla, redirigir con errores
@@ -73,6 +77,7 @@ class UsuarioController extends Controller
             $user->name = $request->name;
             $user->email = $request->email;
             $user->id_rol = $request->id_rol;
+            $user->sucursal_id = $request->sucursal_id;
 
             // Si se proporciona una nueva contraseña, actualizarla
             if ($request->filled('password')) {
@@ -114,6 +119,7 @@ class UsuarioController extends Controller
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6|max:12',
             'id_rol' => 'required|exists:rol,id',
+            'sucursal_id' => 'nullable|exists:sucursal,id',
         ]);
 
         if ($validator->fails()) {
@@ -127,6 +133,7 @@ class UsuarioController extends Controller
             'email' => $request->input('email'),
             'password' => bcrypt($request->input('password')),
             'id_rol' => $request->input('id_rol'),
+            'sucursal_id' => $request->input('sucursal_id'),
         ]);
 
              // Bitacora

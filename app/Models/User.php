@@ -25,6 +25,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'id_rol',
         'estado',
+        'sucursal_id',
 
     ];
 
@@ -37,7 +38,7 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
-    
+
     public function getJWTIdentifier() {
         return $this->getKey();
     }
@@ -57,6 +58,7 @@ class User extends Authenticatable implements JWTSubject
         'rol' => $rol ? $rol->id : null,  // Devolver el nombre del rol si existe
         'name' => $this->name,
         'email' => $this->email,
+        'sucursal_id' => $this->sucursal_id,
         'pestanas' => $pestanas,  // Asignar las pestañas
 
     ];
@@ -110,17 +112,21 @@ class User extends Authenticatable implements JWTSubject
     {
         return $query->where('estado', [1,2]);
     }
+     public function sucursal()
+     {
+         return $this->belongsTo(Sucursal::class, 'sucursal_id');
+     }
 
-    public function sucursal()
-    {
-        return $this->hasOne(Sucursal::class, 'id_usuario', 'id');
-    }
+    //  public function sucursal()
+    //  {
+    //      return $this->hasOne(Sucursal::class, 'id_usuario', 'id');
+    //  }
 
-    public function sucursales()
-    {
-        return $this->belongsToMany(Sucursal::class, 'sucursal_user', 'user_id', 'sucursal_id');
-    }
-    
+    //  public function sucursales()
+    //  {
+    //      return $this->belongsToMany(Sucursal::class, 'sucursal_user', 'user_id', 'sucursal_id');
+    //  }
+
 
 
 }

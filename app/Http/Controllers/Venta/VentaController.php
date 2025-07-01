@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Log;
 use Exception;
 use App\Models\User;
 
+
 class VentaController extends Controller
 {
     /**
@@ -60,6 +61,7 @@ class VentaController extends Controller
      */
     public function create()
     {
+
         $persona = request()->has('id_persona') ? Persona::find(request('id_persona')) : null;
 
         //   $productos = collect();
