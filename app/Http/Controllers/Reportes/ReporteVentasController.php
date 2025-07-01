@@ -258,6 +258,8 @@ class ReporteVentasController extends Controller
         return response()->json($ventas);
     }
 
+
+    
     public function filtrarProducto()
     {
         $sucursales = Sucursal::all();
@@ -280,6 +282,7 @@ class ReporteVentasController extends Controller
                 'sucursal.nombre as sucursal',
                 'producto.nombre as producto',
                 DB::raw('WEEK(almacen.created_at, 3) as semana'),
+                DB::raw('SUM(almacen.cantidad) as cantidad_disponible'),
                 DB::raw('SUM(almacen.cantidad * producto.precio_venta) as valor_total_producto')
             );
 
@@ -297,5 +300,46 @@ class ReporteVentasController extends Controller
             ->get();
 
         return response()->json($resultado);
+    }
+
+    
+
+
+        public function filtrarTraslado()
+    {
+        $sucursales = Sucursal::all();
+        return view('reportes.reporteTraslados', compact('sucursales'));
+    }
+
+        public function generarReporteTraslado(Request $request)
+    {
+        $sucursalId = $request->get('sucursal_id');
+        $semana = $request->get('semana');
+
+        $query = DB::table('traslado')
+            ->join('producto', 'traslado.id_producto', '=', 'producto.id')
+            ->join('sucursal as origen', 'traslado.id_sucursal_origen', '=', 'origen.id')
+            ->join('sucursal as destino', 'traslado.id_sucursal_destino', '=', 'destino.id')
+            ->select(
+                'origen.nombre as sucursal_origen',
+                'destino.nombre as sucursal_destino',
+                'producto.nombre as nombre_producto',
+                'traslado.cantidad',
+                DB::raw("WEEK(traslado.created_at, 1) as semana")
+            )
+            ->where('traslado.estado', 1);
+
+        if ($sucursalId) {
+            $query->where(function ($q) use ($sucursalId) {
+                $q->where('traslado.id_sucursal_origen', $sucursalId)
+                ->orWhere('traslado.id_sucursal_destino', $sucursalId);
+            });
+        }
+
+        if ($semana) {
+            $query->where(DB::raw("WEEK(traslado.created_at, 1)"), $semana);
+        }
+
+        return response()->json($query->orderBy('traslado.created_at', 'desc')->get());
     }
 }

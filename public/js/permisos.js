@@ -23,7 +23,9 @@ const rutasMapeadas = {
     'notificaciones': '/notificaciones',
     'Devoluciones': '/devoluciones',
     'reporte-productos': '/reporte-productos',
+    'reporte-traslado': '/reporte-traslado',
     'especialidades': '/especialidades'
+
 
 };
 
