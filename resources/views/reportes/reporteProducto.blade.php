@@ -56,6 +56,7 @@
                             <th>Producto</th>
                             <th>Semana</th>
                             <th>Valor económico del producto</th>
+                            <th>Cantidad</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -117,6 +118,7 @@
                                     <th>Producto</th>
                                     <th>Semana</th>
                                     <th>Valor económico del producto</th>
+                                    <th>Cantidad</th>
                                 </tr>
                             </thead>
                             <tbody>`;
@@ -130,6 +132,7 @@
                                 <td>${fila.producto}</td>
                                 <td>Semana ${fila.semana}</td>
                                 <td>Q ${parseFloat(fila.valor_total_producto).toFixed(2)}</td>
+                                <td>${fila.cantidad_disponible}</td>
                             </tr>`;
                         });
                     }
