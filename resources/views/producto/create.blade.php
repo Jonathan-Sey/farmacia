@@ -174,12 +174,12 @@
 
                 <div class="mt-2 mb-5">
                         <div >
-                            <label for="precio_venta" class="uppercase block text-sm font-medium text-gray-900">Precio venta</label>
+                            <label for="precio_venta" class="uppercase block text-sm font-medium text-gray-900">Precio Costo</label>
                             <input
                                 type="text"
                                 name="precio_venta"
                                 id="precio_venta"
-                                placeholder="Precio venta"
+                                placeholder="Precio Costo"
                                 min="1"
                                 step="any"
                                 class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"

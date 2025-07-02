@@ -26,7 +26,7 @@
 
     <a href="{{ route('productos.importar') }}">
         <button class="btn  bg-red-500 hover:bg-red-600 text-white font-bold uppercase">
-            Importar desde Excel
+            Cargar Productos
         </button>
     </a>
 

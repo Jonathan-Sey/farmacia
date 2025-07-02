@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'Reporte de ventas')
+@section('titulo', 'Reportes')
 @push('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 @endpush
@@ -56,6 +56,14 @@
             <div class="flex flex-col items-center">
                 <i class='fa-solid fa-bag-shopping text-5xl sm:text-6xl lg:text-7xl text-gray-700'></i>
                 <p class="uppercase text-sm sm:text-base lg:text-lg font-bold mt-2">reporte productos vencidos</p>
+            </div>
+        </div>
+    </a>
+    <a href="{{ route('reporte.pacientes') }}" class="block">
+        <div class="h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center p-3 hover:shadow-xl transition-shadow duration-300">
+            <div class="flex flex-col items-center">
+                <i class='fa-solid fa-bag-shopping text-5xl sm:text-6xl lg:text-7xl text-gray-700'></i>
+                <p class="uppercase text-sm sm:text-base lg:text-lg font-bold mt-2">reporte Pacientes y Medicos</p>
             </div>
         </div>
     </a>
