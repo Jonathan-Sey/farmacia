@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Reportes;
 
 use App\Http\Controllers\Controller;
 use App\Models\Compra;
+use App\Models\FichaMedica;
 use App\Models\Inventario;
+use App\Models\Persona;
 use App\Models\Producto;
 use App\Models\ReporteKardex;
 use App\Models\Sucursal;
@@ -70,7 +72,7 @@ class ReporteVentasController extends Controller
     {
         $reporte = ReporteKardex::with([
             'producto',
-           
+
             'usuario'
         ])->get();
         return view('reportes.Kardex', compact('reporte'));
@@ -198,7 +200,7 @@ class ReporteVentasController extends Controller
             $query->whereBetween('v.fecha_venta', [$request->fechaInicio, $request->fechaFin]);
         }
 
-      
+
 
         if ($request->has('sucursal')) {
             $query->where('v.id_sucursal', $request->sucursal);
@@ -276,11 +278,11 @@ class ReporteVentasController extends Controller
         $query = DB::table('almacen')
             ->join('producto', 'almacen.id_producto', '=', 'producto.id')
             ->join('sucursal', 'almacen.id_sucursal', '=', 'sucursal.id')
-            
+
             ->select(
                 'sucursal.nombre as sucursal',
                 'producto.nombre as producto',
-               
+
                 DB::raw('WEEK(almacen.created_at, 3) as semana'),
                 DB::raw('SUM(almacen.cantidad) as cantidad_total'),
                 DB::raw('SUM(almacen.cantidad * producto.precio_venta) as valor_total_producto')
@@ -301,4 +303,18 @@ class ReporteVentasController extends Controller
 
         return response()->json($resultado);
     }
+
+    // public function filtrarPacientes()
+    // {
+    //     $personas = FichaMedica::with(['detalleMedico.usuario', 'persona'])->get();
+    //     return view('reportes.pacientes', compact('personas'));
+    // }
+    public function filtrarPacientes()
+    {
+        $fichasAgrupadas  = Persona::with(['fichasMedicas.detalleMedico.usuario'])->get();
+        return view('reportes.pacientes', compact('fichasAgrupadas'));
+    }
+
+
+
 }

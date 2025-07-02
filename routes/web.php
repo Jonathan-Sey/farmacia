@@ -219,6 +219,7 @@ Route::delete('/fichas/{ficha}', [FichaMedicaController::class, 'destroy'])->nam
 
 //reporte productos
 Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProducto'])->name('reporte.productos');
+Route::get('/reporte-pacientes', [ReporteVentasController::class, 'filtrarPacientes'])->name('reporte.pacientes');
 
 Route::get('/reporte-inventario', [ReporteVentasController::class, 'generateReportProducto'])->name('inventario.reporte');
 
