@@ -187,6 +187,30 @@
                                 value="{{ old('direccion') }}">
                         </div>
                     </div>
+                    {{-- Select de los departamentos y municipios. --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+                        <div>
+                            <label for="departamento_id" class="uppercase block text-sm font-medium text-gray-900">Departamento</label>
+                            <select name="departamento_id" id="departamento_id"
+                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                                <option value="">Seleccione un departamento</option>
+                                @foreach($departamentos as $departamento)
+                                    <option value="{{ $departamento->id }}" {{ old('departamento_id') == $departamento->id ? 'selected' : '' }}>
+                                        {{ $departamento->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="municipio_id" class="uppercase block text-sm font-medium text-gray-900">Municipio</label>
+                            <select name="municipio_id" id="municipio_id"
+                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                                <option value="">Seleccione un municipio</option>
+                             
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -207,6 +231,20 @@
 <script src="/js/obtenerUsuario.js"></script>
 <script>
     $(document).ready(function() {
+        //Para que muestre las opciones en un select2(esto ayuda a motrar las opciones hacia abajo ya que en la forma en la que esta la pagina por el overflow lo hace hacia arriba).
+            $('#departamento_id').select2({
+            dropdownAutoWidth: true,
+            width: '100%',
+            placeholder: 'Seleccione un departamento',
+            allowClear: true
+    });
+
+        $('#municipio_id').select2({
+            dropdownAutoWidth: true,
+            width: '100%',
+            placeholder: 'Seleccione un municipio',
+            allowClear: true
+    });
         // Manejar cambio de rol
         $('#rol').change(function() {
             if ($(this).val() == 2) {
@@ -233,6 +271,28 @@
 });
 
     });
+    //Para obtener los municipios cuando se selecciona un departamento.
+        $('#departamento_id').on('change', function() {
+        var departamentoId = $(this).val();
+        $('#municipio_id').html('<option value="">Cargando...</option>');
+
+        if (departamentoId) {
+            $.ajax({
+                url: '/api/municipios/' + departamentoId,
+                type: 'GET',
+                success: function(data) {
+                    var options = '<option value="">Seleccione un municipio</option>';
+                    data.forEach(function(municipio) {
+                        options += '<option value="' + municipio.id + '">' + municipio.nombre + '</option>';
+                    });
+                    $('#municipio_id').html(options);
+                }
+            });
+        } else {
+            $('#municipio_id').html('<option value="">Seleccione un municipio</option>');
+        }
+        });
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if ($errors->has('dpi'))

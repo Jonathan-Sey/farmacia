@@ -23,11 +23,23 @@ class FichaMedica extends Model
         'direccion',
         'telefono',
         'foto',
+        'departamento_id',
+        'municipio_id',
         'diagnostico',
         'consulta_programada',
         'receta_foto',
     ];
+    // Relación con Departamento
+    public function departamento()
+    {
+        return $this->belongsTo(Departamento::class);
+    }
 
+    // Relación con Municipio
+    public function municipio()
+    {
+        return $this->belongsTo(Municipio::class);
+    }
     // Relación con el modelo Persona
     public function persona()
     {
