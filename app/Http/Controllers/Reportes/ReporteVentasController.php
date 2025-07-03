@@ -15,6 +15,8 @@ use App\Models\Venta;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
+use function Ramsey\Uuid\v1;
+
 class ReporteVentasController extends Controller
 {
     public function index()
@@ -316,6 +318,18 @@ class ReporteVentasController extends Controller
         return view('reportes.pacientes', compact('fichasAgrupadas'));
     }
 
+    public function filtrarDetallePaciente($id){
+
+        //dd('hola desde el controlador' );
+
+        $persona = Persona::findOrFail($id);
+
+        // Obtener fichas médicas paginadas (5 por página)
+        $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->get();
 
 
+        //dd($fichas);
+       //dd($personas);
+        return view('reportes.DetallePaciente', compact('persona','fichas'));
+    }
 }

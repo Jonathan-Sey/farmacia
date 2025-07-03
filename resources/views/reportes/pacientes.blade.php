@@ -69,7 +69,7 @@
                 {{-- <td class="px-6 py-4 whitespace-nowrap">{{ $persona->fichasmedicas->detalleMedico->consultas}}</td> --}}
 
                 {{-- Diagnósticos agrupados --}}
-                <td class="px-6 py-4 whitespace-nowrap">
+                {{-- <td class="px-6 py-4 whitespace-nowrap">
                     <ul class="list-disc pl-4">
                         @foreach ($persona->fichasMedicas as $ficha)
                             <li>{{ $ficha->diagnostico ?? 'Sin diagnóstico' }}
@@ -77,9 +77,22 @@
                             </li>
                         @endforeach
                     </ul>
+                </td> --}}
+
+                <td class="flex gap-2 justify-center">
+
+                    {{-- <form action="{{route('reporte.DetallePaciente')}}" method="GET"> --}}
+                     <form action="{{route('reporte.DetallePaciente', $persona->id)}}" method="GET">
+                        @csrf
+                        <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                            ver
+                        </button>
+                    </form>
                 </td>
             </tr>
             @endforeach
+
+
 
         </tbody>
     </x-slot>
