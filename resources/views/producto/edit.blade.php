@@ -207,16 +207,36 @@
                     </div>
                     @enderror
                 </div>
+
                 <div class="mt-2 mb-5">
-                    <label for="precio_porcentaje" class="uppercase block text-sm font-medium text-gray-900">Precio</label>
+                    <div >
+                        <label for="precio_venta" class="uppercase block text-sm font-medium text-gray-900">Precio Costo</label>
+                        <input
+                            type="text"
+                            name="precio_venta"
+                            id="precio_venta"
+                            placeholder="Precio Costo"
+                            min="1"
+                            step="any"
+                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                            value="{{ old('precio_venta', $producto->precio_venta) }}">
+
+                        @error('precio_venta')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message }}</span>
+                        </div>
+                        @enderror
+                    </div>
+            </div>
+
+            <div class="mt-2 mb-5" id="inputAntigueno">
+                <div >
+                    <label for="precio_porcentaje" class="uppercase block text-sm font-medium text-gray-900">Precio Antigueño</label>
                     <input
-                        type="number"
+                        type="numeric"
                         name="precio_porcentaje"
                         id="precio_porcentaje"
-                        autocomplete="given-name"
-                        placeholder="Precio"
-                        min="1"
-                        step="any"
+                        placeholder="Precio Antigueño"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('precio_porcentaje', $producto->precio_porcentaje) }}">
 
@@ -225,7 +245,7 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
-                </div>
+            </div>
                 {{-- <div class="mt-2 mb-5" id="fecha_caducidad_container">
                     <label for="fecha_caducidad" class="uppercase block text-sm font-medium text-gray-900">Fecha caducidad</label>
                     <input
@@ -303,5 +323,33 @@
         document.querySelector('.select2-search__field').focus();
         });
     </script>
+
+@push('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('tipo'); // manejo de ltoogle
+      //  const inputMargen = document.getElementById('inputMargen'); // control de margen
+        const inputAntigueno = document.getElementById('inputAntigueno'); // del antigueño
+
+        function actualizarVisibilidad() {
+            if (toggle.checked) {
+            //    inputMargen.classList.add('hidden');
+                inputAntigueno.classList.remove('hidden');
+            } else {
+             //   inputMargen.classList.remove('hidden');
+                inputAntigueno.classList.add('hidden');
+            }
+        }
+
+        // Ejecutar al cargar la página
+        actualizarVisibilidad();
+
+        // Ejecutar cuando se cambia el toggle
+        toggle.addEventListener('change', actualizarVisibilidad);
+    });
+</script>
+
+@endpush
+
 @endpush
 

@@ -71,10 +71,10 @@ class PersonaController extends Controller
     //     ]);
     // }
 
-    public function fichasMedicas()
-    {
-        return $this->hasMany(FichaMedica::class);
-    }
+    // public function fichasMedicas()
+    // {
+    //     return $this->hasMany(FichaMedica::class);
+    // }
 
     public function store(Request $request)
     {
@@ -223,7 +223,11 @@ class PersonaController extends Controller
 
     public function show($id)
     {
-        $persona = Persona::with('fichasMedicas')->findOrFail($id);
+        $persona = Persona::findOrFail($id);
+
+        // Obtener fichas médicas paginadas (5 por página)
+        $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->paginate(2);
+
 
         // Si es paciente pero no tiene ficha médica, crearla con datos mínimos
         if ($persona->rol == 2 && $persona->fichasMedicas->isEmpty()) {
@@ -242,16 +246,18 @@ class PersonaController extends Controller
             ]);
 
             // Recargar la relación para que ya contenga la ficha creada
-            $persona->load('fichasMedicas');
+            //$persona->load('fichasMedicas');
+            // Recargar las fichas médicas paginadas
+        $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->paginate(5);
         }
 
-        return view('persona.show', compact('persona'));
+        return view('persona.show', compact('persona', 'fichas'));
     }
 
 
     public function edit(Persona $persona)
     {
-        $fichaMedica = $persona->fichasMedicas()->first(); // Obtener ficha médica si existe
+        $fichaMedica = $persona->fichasMedicas()->paginate(2); // Obtener ficha médica si existe
         return view('persona.edit', compact('persona', 'fichaMedica'));
     }
     public function update(Request $request, Persona $persona)

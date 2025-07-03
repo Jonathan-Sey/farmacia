@@ -6,6 +6,7 @@ use App\Models\Persona;
 use App\Models\FichaMedica;
 use Illuminate\Http\Request;
 use App\Models\DetalleMedico;
+use App\Models\Sucursal;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 class FichaMedicaController extends Controller
@@ -14,10 +15,11 @@ class FichaMedicaController extends Controller
     public function create($persona_id)
     {
         $persona = Persona::findOrFail($persona_id);
+        $sucursales = Sucursal::all();
         $medicos = DetalleMedico::with('medico')
                     ->activos()
                     ->get(); // Encontrar la persona por ID
-        return view('fichas.create', compact('persona' , 'medicos'));
+        return view('fichas.create', compact('persona' , 'medicos','sucursales'));
     }
 
     // Almacenar la nueva ficha médica
@@ -27,6 +29,7 @@ class FichaMedicaController extends Controller
         $data = $request->validate([
             'detalle_medico_id'   => 'required|exists:detalle_medico,id',
             'diagnostico'         => 'required|string',
+            'sucursal_id' => 'nullable|exists:sucursal,id',
             'consulta_programada' => 'required|date',
             'receta_foto'         => 'nullable|string',
         ]);
@@ -55,8 +58,10 @@ class FichaMedicaController extends Controller
     {
         $persona = Persona::findOrFail($persona_id);
         $medicos = DetalleMedico::with('medico')->activos()->get();
+        $sucursales = Sucursal::with('fichasMedicas')->activos()->get();
 
-        return view('fichas.edit', compact('ficha', 'persona', 'medicos'));
+
+        return view('fichas.edit', compact('ficha', 'persona', 'medicos', 'sucursales'));
     }
 
 // Actualizar ficha médica
@@ -66,6 +71,7 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
             'detalle_medico_id'   => 'required|exists:detalle_medico,id',
             'diagnostico'         => 'required|string',
             'consulta_programada' => 'required|date',
+            'sucursal_id' => 'nullable|exists:sucursal,id',
             'receta_foto'         => 'nullable|string',
         ]);
 

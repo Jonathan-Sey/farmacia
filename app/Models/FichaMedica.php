@@ -26,6 +26,7 @@ class FichaMedica extends Model
         'diagnostico',
         'consulta_programada',
         'receta_foto',
+        'sucursal_id',
     ];
 
     // Relación con el modelo Persona
@@ -43,5 +44,11 @@ class FichaMedica extends Model
     //   {
     //       return $this->receta_foto ? asset('storage/' . $this->receta_foto) : null;
     //   }
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'sucursal_id');
+    }
+
 
 }

@@ -95,12 +95,15 @@
                             </button>
                         </form>
                        {{-- Formulario para ir a la página de edición de porcentaje --}}
-                        <form action="{{ route('productos.precio', $producto->id) }}" method="GET">
+                       @if ($producto->tipo == 1)
+                       <form action="{{ route('productos.precio', $producto->id) }}" method="GET">
                             @csrf
                             <button type="submit" class="btn btn-success font-bold uppercase btn-sm">
                                 <i class='bx bx-dollar'></i>
                             </button>
                         </form>
+                       @endif
+
 
                           {{-- Botón Cambiar estado --}}
                           <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $producto->id }}" data-estado="{{ $producto->estado }}" data-info="{{ $producto->nombre }}">
