@@ -60,6 +60,14 @@
                     <p class="text-gray-800">{{ optional($persona->fichasMedicas->first())->habla_lengua ?? 'No especificado' }}</p>
                 </div>
                 <div class="flex items-center mb-4">
+                    <span class="font-medium text-gray-600 w-1/3">Departamento</span>
+                    <p class="text-gray-800">{{ optional($persona->fichasMedicas->first()->departamento)->nombre ?? 'No especificado' }}</p>
+                </div>
+                <div class="flex items-center mb-4">
+                    <span class="font-medium text-gray-600 w-1/3">Municipio</span>
+                    <p class="text-gray-800">{{ optional($persona->fichasMedicas->first()->municipio)->nombre ?? 'No especificado' }}</p>
+                </div>
+                <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">Dirección:</span>
                     <p class="text-gray-800">{{ optional($persona->fichasMedicas->first())->direccion ?? 'No especificado' }}</p>
                 </div>

@@ -25,7 +25,9 @@ class DatabaseSeeder extends Seeder
             productoSeeder::class,
             socursalesSeeder::class,
             ProductosProam::class,
-            BodegaSeeder::class
+            BodegaSeeder::class,
+            DepartamentosSeeder::class,
+            MunicipiosSeeder::class,
             // FarmaciaSeeder::class,
         ]);
     }
