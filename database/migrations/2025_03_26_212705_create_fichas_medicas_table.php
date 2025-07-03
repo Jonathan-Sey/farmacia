@@ -27,6 +27,9 @@ class CreateFichasMedicasTable extends Migration
             $table->string('direccion')->nullable();
             $table->string('telefono')->nullable();
             $table->string('foto')->nullable();
+            $table->foreignId('departamento_id')->constrained('departamentos');
+            $table->foreignId('municipio_id')->constrained('municipios');
+
             
             // Relación con la tabla 'personas'
             $table->foreign('persona_id')->references('id')->on('persona')->onDelete('cascade');
