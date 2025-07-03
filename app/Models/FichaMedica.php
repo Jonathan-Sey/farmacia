@@ -29,16 +29,15 @@ class FichaMedica extends Model
         'consulta_programada',
         'receta_foto',
     ];
-    // Relación con Departamento
+    
     public function departamento()
     {
-        return $this->belongsTo(Departamento::class);
+        return $this->belongsTo(Departamento::class, 'departamento_id');
     }
 
-    // Relación con Municipio
     public function municipio()
     {
-        return $this->belongsTo(Municipio::class);
+        return $this->belongsTo(Municipio::class, 'municipio_id');
     }
     // Relación con el modelo Persona
     public function persona()
