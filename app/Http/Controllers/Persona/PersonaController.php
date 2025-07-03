@@ -27,7 +27,7 @@ class PersonaController extends Controller
     public function create()
     {
         $medicos = DetalleMedico::all();
-        $departamentos = Departamento::orderBy('nombre')->get();
+        $departamentos = Departamento::all();
         return view('persona.create', compact('medicos','departamentos'));
     }
 
@@ -205,6 +205,8 @@ class PersonaController extends Controller
                 'habla_lengua' => 'No',
                 'tipo_sangre' => '',
                 'direccion' => '',
+                'departamento_id' => ' ',
+                'municipio_id' => '',
                 'telefono' => $persona->telefono,
             ]);
 
