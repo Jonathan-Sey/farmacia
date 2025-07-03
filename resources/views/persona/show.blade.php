@@ -90,6 +90,22 @@
                 @endif
             </div> --}}
 
+            <div class="join mb-4 flex justify-center">
+                    @if ($fichas->onFirstPage())
+                        <button class="join-item btn btn-disabled">«</button>
+                    @else
+                        <a href="{{ $fichas->previousPageUrl()}}" class="join-item btn">«</a>
+                    @endif
+                    <span class="join-item btn"> Página {{$fichas->currentPage()}} de {{$fichas->lastPage() }}</span>
+
+                    @if ($fichas->hasMorePages())
+                        <a href="{{ $fichas->nextPageUrl()}}" class="join-itm btn">»</a>
+                    @else
+                        <button class="join-item btn btn-disabled">»</button>
+                    @endif
+
+            </div>
+
             <ul class="space-y-4">
                 @foreach ($fichas as $ficha)
                     <li class="border-b pb-4 break-words">
