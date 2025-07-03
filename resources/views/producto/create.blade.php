@@ -193,9 +193,31 @@
                         </div>
                 </div>
 
+                <div class="mt-2 mb-5" id="inputAntigueno">
+                    <div >
+                        <label for="precio_porcentaje" class="uppercase block text-sm font-medium text-gray-900">Precio Antigueño</label>
+                        <input
+                            type="numeric"
+                            name="precio_porcentaje"
+                            id="precio_porcentaje"
+                            placeholder="Precio Antigueño"
+                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                            value="{{ old('precio_porcentaje') }}">
+
+                        @error('precio_porcentaje')
+                        <div role="alert" class="alert alert-error mt-4 p-2">
+                            <span class="text-white font-bold">{{ $message }}</span>
+                        </div>
+                        @enderror
+                </div>
+
+            </div>
 
 
-                <div class="mt-2 mb-5">
+
+
+
+                {{-- <div class="mt-2 mb-5" id="inputMargen">
                     <label for="precio_porcentaje" class="uppercase block text-sm font-medium text-gray-900">Margen de Ganancia (%)</label>
                     <input
                         type="number"
@@ -212,7 +234,7 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
-                </div>
+                </div> --}}
 
             {{--<div class="mt-2">
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
@@ -264,3 +286,29 @@
 <script src="/js/select2-global.js"></script>
 
 @endsection
+@push('js')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementById('tipo'); // manejo de ltoogle
+      //  const inputMargen = document.getElementById('inputMargen'); // control de margen
+        const inputAntigueno = document.getElementById('inputAntigueno'); // del antigueño
+
+        function actualizarVisibilidad() {
+            if (toggle.checked) {
+            //    inputMargen.classList.add('hidden');
+                inputAntigueno.classList.remove('hidden');
+            } else {
+             //   inputMargen.classList.remove('hidden');
+                inputAntigueno.classList.add('hidden');
+            }
+        }
+
+        // Ejecutar al cargar la página
+        actualizarVisibilidad();
+
+        // Ejecutar cuando se cambia el toggle
+        toggle.addEventListener('change', actualizarVisibilidad);
+    });
+</script>
+
+@endpush

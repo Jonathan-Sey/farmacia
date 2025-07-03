@@ -37,12 +37,36 @@
                 <td class="px-6 py-4 whitespace-nowrap">{{ $persona->telefono }}</td>
 
                 {{-- Médico: usamos el primer médico asignado si hay varios --}}
-                <td class="px-6 py-4 whitespace-nowrap">
+                {{-- <td class="px-6 py-4 whitespace-nowrap">
                     {{ optional(optional(optional($persona->fichasMedicas->first())->detalleMedico)->usuario)->name ?? 'Sin Médico' }}
 
+                </td> --}}
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <ul class="list-disc pl-4">
+                        @foreach ($persona->fichasMedicas as $ficha)
+                            <li>{{ $ficha->detalleMedico->usuario->name ?? 'Sin Medico' }}
+                                <small class="text-gray-500">({{ \Carbon\Carbon::parse($ficha->created_at)->format('d/m/Y') }})</small>
+                            </li>
+                        @endforeach
+                    </ul>
                 </td>
 
-                <td class="px-6 py-4 whitespace-nowrap">{{ $persona->direccion }}</td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <ul class="list-disc pl-4">
+                        @foreach ($persona->fichasMedicas as $ficha)
+                            <li>{{ $ficha->sucursal->nombre ?? 'Sin diagnóstico' }}
+                                <small class="text-gray-500">({{ \Carbon\Carbon::parse($ficha->created_at)->format('d/m/Y') }})</small>
+                            </li>
+                        @endforeach
+                    </ul>
+                </td>
+                 {{-- @foreach ($persona->fichasMedicas as $ficha )
+
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {{ $ficha->direccion ?? 'Sin direccion'}}
+                    </td>
+                @endforeach --}}
+                {{-- <td class="px-6 py-4 whitespace-nowrap">{{ $persona->fichasmedicas->detalleMedico->consultas}}</td> --}}
 
                 {{-- Diagnósticos agrupados --}}
                 <td class="px-6 py-4 whitespace-nowrap">

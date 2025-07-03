@@ -51,6 +51,11 @@ class Sucursal extends Model
         return $this->hasMany(User::class);
      }
 
+     public function fichasMedicas()
+     {
+        return $this->hasMany(FichaMedica::class);
+     }
+
 
 
 }

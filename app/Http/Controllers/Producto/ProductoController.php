@@ -68,7 +68,7 @@ class ProductoController extends Controller
             'nombre'=>['required','string','max:50'],
             'descripcion'=>['max:100','required','string'],
             'precio_venta'=>'numeric|required|min:0',
-
+            'precio_porcentaje' => 'nullable|numeric',
             'estado'=>'integer',
 
         ]);
@@ -88,17 +88,26 @@ class ProductoController extends Controller
         $ultimoId = Producto::max('id') ?? 0;
         $codigo = 'C-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
 
-        Producto::create([
+        $datosProducto = [
             'nombre' => $request->nombre,
             'imagen' => $request->imagen,
             'descripcion' => $request->descripcion,
             'precio_venta' => $request->precio_venta,
-            'precio_porcentaje' => $request->precio_venta,
             'id_categoria' => $request->id_categoria,
             'estado' => 1,
             'tipo' => $tipo,
-            'codigo' => $codigo, // asignamos el codigo generado
-        ]);
+            'codigo' => $codigo,
+        ];
+
+        // Asignar precio_porcentaje según el tipo
+        $datosProducto['precio_porcentaje'] = ($tipo == 1)
+            ? $request->precio_venta  // Para productos
+            : $request->precio_porcentaje;  // Para servicios
+
+        Producto::create($datosProducto);
+
+
+
             // Limpiar la imagen temporal de la sesión
             session()->forget('imagen_temp');
 
@@ -154,84 +163,75 @@ class ProductoController extends Controller
             'nombre' => ['required', 'string', 'max:50'],
             'imagen' => 'nullable',
             'descripcion' => ['required', 'string', 'max:100'],
-            'precio_porcentaje' => 'numeric|required|min:0',
+            'precio_venta' => 'numeric|required|min:0',
+            'precio_porcentaje' => 'nullable|numeric|min:0',
             'estado' => 'integer',
         ]);
 
-        // Datos a actualizar
-        $datosActualizados = $request->only([
-            'id_categoria',
-            'nombre',
-            'descripcion',
-            'precio_porcentaje',
-            'tipo',
-            'fecha_caducidad'
-        ]);
+        // Determinar el tipo de producto
+        $nuevoTipo = $request->has('tipo') ? 2 : 1;
 
-        // Obtener la imagen original del producto
+        // Preparar datos para actualización
+        $datosActualizados = [
+            'id_categoria' => $request->id_categoria,
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
+            'tipo' => $nuevoTipo,
+        ];
+
+        // Manejo de imagen
         $imagenOriginal = $producto->imagen;
-  // Manejo de eliminación de imagen
-  if ($request->has('eliminar_imagen') && $request->eliminar_imagen == '1') {
-        // Eliminar la imagen anterior si existe
-        if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
-            unlink(public_path('uploads/' . $imagenOriginal));
+
+        if ($request->has('eliminar_imagen') && $request->eliminar_imagen == '1') {
+            if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                unlink(public_path('uploads/' . $imagenOriginal));
+            }
+            $datosActualizados['imagen'] = null;
+        } elseif ($request->imagen && $request->imagen !== $imagenOriginal) {
+            $imagenController = new ImagenController();
+            $imagenMovida = $imagenController->moverDefinitiva($request->imagen);
+
+            if (!$imagenMovida) {
+                return back()->with('error', 'No se pudo guardar la nueva imagen');
+            }
+
+            if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                unlink(public_path('uploads/' . $imagenOriginal));
+            }
+
+            $datosActualizados['imagen'] = $request->imagen;
+        } else {
+            $datosActualizados['imagen'] = $imagenOriginal;
         }
-        $datosActualizados['imagen'] = null;
-    }
-    // Manejo de nueva imagen
-    elseif ($request->imagen && $request->imagen !== $imagenOriginal) {
-        $imagenController = new ImagenController();
-        $imagenMovida = $imagenController->moverDefinitiva($request->imagen);
 
-        if (!$imagenMovida) {
-            return back()->with('error', 'No se pudo guardar la nueva imagen');
+        // Lógica de precios según tipo de producto
+        if ($nuevoTipo == 1) {
+            // Producto normal: ambos precios iguales
+            $nuevoPrecio = round($request->precio_venta * 10) / 10;
+            $datosActualizados['precio_venta'] = $nuevoPrecio;
+            $datosActualizados['precio_porcentaje'] = $nuevoPrecio;
+        } else {
+            // Servicio: precios pueden ser diferentes
+            $datosActualizados['precio_venta'] = round($request->precio_venta * 10) / 10;
+            $datosActualizados['precio_porcentaje'] = $request->precio_porcentaje
+                ? round($request->precio_porcentaje * 10) / 10
+                : null;
         }
 
-        // Eliminar la imagen anterior si existe
-        if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
-            unlink(public_path('uploads/' . $imagenOriginal));
-        }
-
-        $datosActualizados['imagen'] = $request->imagen;
-    }
-    else {
-        $datosActualizados['imagen'] = $imagenOriginal;
-    }
-
-        // Manejo del historial de precios
-        if ($producto->precio_porcentaje != $request->precio_porcentaje) {
-            // Crear registro en el historial
+        // Registrar cambio de precio si hubo modificación
+        if ($producto->precio_porcentaje != $datosActualizados['precio_porcentaje']) {
             HistoricoPrecio::create([
                 'id_producto' => $producto->id,
                 'precio_anterior' => $producto->precio_porcentaje,
-                'precio_nuevo' => round($request->precio_porcentaje * 10) / 10,
+                'precio_nuevo' => $datosActualizados['precio_porcentaje'],
                 'fecha_cambio' => now(),
             ]);
-
-            // Actualizar ambos precios
-            $datosActualizados['precio_venta'] = $request->precio_porcentaje;
-            $datosActualizados['precio_porcentaje'] = round($request->precio_porcentaje * 10) / 10;
         }
 
-        // Validación del tipo de producto
-        $nuevotipo = $request->has('tipo') ? 2 : 1;
-        $datosActualizados['tipo'] = $nuevotipo;
+        // Actualizar el producto si hay cambios
+        if ($producto->fill($datosActualizados)->isDirty()) {
+            $producto->save();
 
-        // Comparar datos para determinar si hay cambios reales
-        $datosSinCambios = $producto->only([
-            'id_categoria',
-            'nombre',
-            'descripcion',
-            'precio_porcentaje',
-            'tipo',
-            'imagen'
-        ]);
-
-        if ($datosActualizados != $datosSinCambios) {
-            // Actualizar el producto
-            $producto->update($datosActualizados);
-
-            // Registrar en bitácora
             $usuario = User::find($request->idUsuario);
             Bitacora::create([
                 'id_usuario' => $request->idUsuario,
@@ -248,6 +248,8 @@ class ProductoController extends Controller
 
         return redirect()->route('productos.index');
     }
+
+
 
     /**
      * Remove the specified resource from storage.

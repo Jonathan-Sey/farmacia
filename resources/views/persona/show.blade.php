@@ -70,21 +70,34 @@
     <div class="bg-white p-6 rounded-xl shadow-md">
         <h2 class="text-xl font-semibold text-gray-700 mb-4">Fichas Médicas</h2>
 
-        @if ($persona->fichasMedicas->isEmpty())
+        @if ($fichas->isEmpty())
             <p>No hay fichas médicas registradas para esta persona.</p>
         @else
+            <!-- Paginación superior -->
+            {{-- <div class="join mb-4 flex justify-center">
+                @if ($fichas->onFirstPage())
+                    <button class="join-item btn btn-disabled">«</button>
+                @else
+                    <a href="{{ $fichas->previousPageUrl() }}" class="join-item btn">«</a>
+                @endif
+
+                <span class="join-item btn">Página {{ $fichas->currentPage() }} de {{ $fichas->lastPage() }}</span>
+
+                @if ($fichas->hasMorePages())
+                    <a href="{{ $fichas->nextPageUrl() }}" class="join-item btn">»</a>
+                @else
+                    <button class="join-item btn btn-disabled">»</button>
+                @endif
+            </div> --}}
+
             <ul class="space-y-4">
-                @foreach ($persona->fichasMedicas as $ficha)
+                @foreach ($fichas as $ficha)
                     <li class="border-b pb-4 break-words">
                         <p><strong class="text-gray-600">Diagnóstico:</strong> {{ $ficha->diagnostico }}</p>
                         <p><strong class="text-gray-600">Médico:</strong> {{ $ficha->detalleMedico->usuario->name ?? 'No asignado' }}</p>
+                        <p><strong class="text-gray-600">Sucursal:</strong> {{ $ficha->sucursal->nombre ?? 'No asignado' }}</p>
                         <p><strong class="text-gray-600">Consulta Programada:</strong> {{ $ficha->consulta_programada }}</p>
 
-                        {{-- @if ($ficha->receta_foto)
-                            <div class="mt-4">
-                                <img src="{{ asset('storage/' . $ficha->receta_foto) }}" alt="Receta Médica" class="w-32 h-32 object-cover cursor-pointer rounded-md" onclick="openModal('{{ asset('storage/' . $ficha->receta_foto) }}')">
-                            </div>
-                        @endif --}}
                         <div>
                             @if ($ficha->receta_foto)
                             <img src="{{ asset('uploads/' . $ficha->receta_foto) }}" alt="Receta Médica" class="w-32 h-32 object-cover cursor-pointer rounded-md" onclick="openModal('{{ asset('uploads/' . $ficha->receta_foto) }}')">
@@ -94,22 +107,34 @@
                         </div>
 
                         <div class="mt-3 space-x-2">
-                            {{-- Enlaces con parámetros completos para evitar error --}}
                             <a href="{{ route('fichas.edit', ['persona_id' => $persona->id, 'ficha' => $ficha->id]) }}"
                                 class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
                                  Editar
                              </a>
-{{--
-                             <button onclick="confirmarEliminacion({{ $ficha->id }}, {{ $persona->id }})"
-                                class="inline-block px-4 py-2 bg-red-600 text-white rounded-md text-sm hover:bg-red-700">
-                                Eliminar
-                            </button> --}}
                         </div>
                     </li>
                 @endforeach
             </ul>
+
+            <!-- Paginación inferior -->
+            <div class="join mt-4 flex justify-center">
+                @if ($fichas->onFirstPage())
+                    <button class="join-item btn btn-disabled">«</button>
+                @else
+                    <a href="{{ $fichas->previousPageUrl() }}" class="join-item btn">«</a>
+                @endif
+
+                <span class="join-item btn">Página {{ $fichas->currentPage() }} de {{ $fichas->lastPage() }}</span>
+
+                @if ($fichas->hasMorePages())
+                    <a href="{{ $fichas->nextPageUrl() }}" class="join-item btn">»</a>
+                @else
+                    <button class="join-item btn btn-disabled">»</button>
+                @endif
+            </div>
         @endif
 
+        <!-- Botones de acción (mantener igual) -->
         <a href="{{ route('fichas.create', ['persona_id' => $persona->id]) }}">
             <button type="button" class="w-full sm:w-auto text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 px-6 py-2 rounded-md text-sm font-semibold mt-4">
                 Agregar Ficha Médica
@@ -121,7 +146,6 @@
                 Volver al Índice de Personas
             </button>
         </a>
-
     </div>
 
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">

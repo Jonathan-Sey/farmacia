@@ -312,6 +312,7 @@ class ReporteVentasController extends Controller
     public function filtrarPacientes()
     {
         $fichasAgrupadas  = Persona::with(['fichasMedicas.detalleMedico.usuario'])->get();
+        //dd($fichasAgrupadas);
         return view('reportes.pacientes', compact('fichasAgrupadas'));
     }
 

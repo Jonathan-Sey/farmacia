@@ -118,6 +118,18 @@
                 </select>
             </div>
 
+            <div class="mt-4 mb-5">
+                <x-select2
+                    name="sucursal_id"
+                    label="Sucursal"
+                    :options="$sucursales->pluck('nombre', 'id')"
+                    :selected="old('sucursal_id')"
+                    placeholder="Seleccionar una Sucursal"
+                    class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                />
+            </div>
+
+
             <div class="mt-2 mb-5">
                 <label for="consulta_programada" class="uppercase block text-sm font-medium text-gray-900">Consulta Programada</label>
                 <input

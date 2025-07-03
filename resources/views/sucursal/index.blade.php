@@ -153,6 +153,7 @@ $(document).ready(function() {
                 { responsivePriority: 1, targets: 1 },
                 { responsivePriority: 2, targets: 7 },
             ],
+
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
                 setTimeout(function() {

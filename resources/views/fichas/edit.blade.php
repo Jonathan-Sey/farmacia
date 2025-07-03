@@ -3,6 +3,7 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @push('js')
@@ -147,6 +148,18 @@ document.addEventListener("DOMContentLoaded", function() {
             </div>
 
             <div class="mt-2 mb-5">
+                <x-select2
+                    name="sucursal_id"
+                    label="Sucursal"
+                    :options="$sucursales->pluck('nombre', 'id')"
+                    :selected="old('sucursal_id')"
+                    placeholder="Seleccionar una Sucursal"
+                    class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                    :selected="old('sucursal_id', $ficha->sucursal_id)"
+                    />
+            </div>
+
+            <div class="mt-2 mb-5">
                 <label for="consulta_programada" class="uppercase block text-sm font-medium text-gray-900">Consulta Programada</label>
                 <input
                     type="date"
@@ -178,3 +191,7 @@ document.addEventListener("DOMContentLoaded", function() {
     </div>
 </div>
 @endsection
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
+@endpush
