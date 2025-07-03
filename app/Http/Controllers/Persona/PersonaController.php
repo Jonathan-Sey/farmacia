@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bitacora;
 use App\Models\Persona;
 use App\Models\User;
+use App\Models\Departamento;
 use App\Models\FichaMedica;
 use Illuminate\Http\Request;
 use App\Models\DetalleMedico;
@@ -26,7 +27,8 @@ class PersonaController extends Controller
     public function create()
     {
         $medicos = DetalleMedico::all();
-        return view('persona.create', compact('medicos'));
+        $departamentos = Departamento::all();
+        return view('persona.create', compact('medicos','departamentos'));
     }
 
      protected function crearPersona(Request $request)
@@ -50,26 +52,6 @@ class PersonaController extends Controller
              'restriccion_activa' => false // Valor por defecto
          ]);
      }
-    // protected function crearPersona(Request $request)
-    // {
-    //     $this->validate($request, [
-    //         'nombre' => 'required|string|max:45|unique:persona,nombre',
-    //         'nit' => 'max:10|unique:persona,nit',
-    //         'dpi' => ['required', new Dpi()],
-    //         'telefono' => 'max:20',
-    //     ]);
-    //     $rol = $request->input('rol') == 2 ? 2 : 1;
-
-    //     return Persona::create([
-    //         'nombre' => $request->nombre,
-    //         'nit' => $request->nit,
-    //         'DPI' => $request->dpi,
-    //         'rol' => $rol,
-    //         'telefono' => $request->telefono,
-    //         'fecha_nacimiento' => $request->fecha_nacimiento,
-    //     ]);
-    // }
-
     public function fichasMedicas()
     {
         return $this->hasMany(FichaMedica::class);
@@ -89,7 +71,9 @@ class PersonaController extends Controller
         'dpi' => ['required', new Dpi()],
         'habla_lengua' => 'required_if:rol,2|in:Sí,No',
         'tipo_sangre' => 'nullable|string|max:5',
-        'direccion' => 'nullable|string|max:255'
+        'direccion' => 'nullable|string|max:255',
+        'departamento_id' => 'required_if:rol,2|exists:departamentos,id',
+        'municipio_id' => 'required_if:rol,2|exists:municipios,id'
     ]);
            $persona = $this->crearPersona($request);
         //   // Establecer valores por defecto
@@ -142,6 +126,8 @@ class PersonaController extends Controller
                 'direccion' => $request->direccion,
                 'telefono' => $request->telefono,
                 'foto' => $request->foto,
+                'departamento_id' => $request->departamento_id,
+                'municipio_id' => $request->municipio_id,
                 'diagnostico' => $request->diagnostico,
                 'consulta_programada' => $request->consulta_programada,
                 'receta_foto' => $request->receta_foto,
@@ -219,6 +205,8 @@ class PersonaController extends Controller
                 'habla_lengua' => 'No',
                 'tipo_sangre' => '',
                 'direccion' => '',
+                'departamento_id' => ' ',
+                'municipio_id' => '',
                 'telefono' => $persona->telefono,
             ]);
 

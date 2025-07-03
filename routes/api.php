@@ -41,3 +41,8 @@ Route::group([
     Route::post('login', 'App\Http\Controllers\AuthController@login');
     Route::post('register', 'App\Http\Controllers\UsuarioController@register');
 });
+
+Route::get('/municipios/{departamento}', function ($departamento) {
+    return \App\Models\Municipio::where('departamento_id', $departamento)->orderBy('nombre')->get();
+});
+

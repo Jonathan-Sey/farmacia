@@ -31,6 +31,16 @@ class FichaMedicaController extends Controller
             'receta_foto'         => 'nullable|string',
         ]);
 
+         // Recuperar la persona
+        $persona = \App\Models\Persona::findOrFail($persona_id);
+
+        // Verificar si la persona ya tiene una ficha médica previa
+        $fichaExistente = $persona->fichasMedicas()->first();
+
+        // Si no existe ficha previa y tampoco tienes valores, se le asigna null
+        $departamentoId = optional($fichaExistente)->departamento_id ?? NULL;
+        $municipioId = optional($fichaExistente)->municipio_id ?? NULL;
+
         // Mover la receta de temp a definitivo
         if (!empty($data['receta_foto'])) {
             $imagenController = new ImagenController();
@@ -42,6 +52,9 @@ class FichaMedicaController extends Controller
         }
 
         $data['persona_id'] = $persona_id;
+        $data['departamento_id'] = $departamentoId;
+        $data['municipio_id'] = $municipioId;
+
         FichaMedica::create($data);
 
         return redirect()
