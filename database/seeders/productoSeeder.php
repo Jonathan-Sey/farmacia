@@ -33,9 +33,10 @@ class productoSeeder extends Seeder
             [
                 'nombre' => 'CF',
                 'nit' => 00000,
-                'rol' => 2,
+                'rol' => 1,
                 'telefono' => '123456789',
                 'fecha_nacimiento' => '1990-01-01',
+                'dpi' => '',
                 'estado' => 1,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
