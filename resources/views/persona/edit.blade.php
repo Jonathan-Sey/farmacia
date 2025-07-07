@@ -3,6 +3,8 @@
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 @endpush
 
 @section('contenido')
@@ -101,6 +103,32 @@
                         <input type="text" name="direccion" value="{{ old('direccion', $fichaMedica->direccion ?? '') }}"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
                     </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Departamento</label>
+                            <select name="departamento_id" id="departamento_id" required class="select2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <option value="">Seleccione un departamento</option>
+                                @foreach($departamentos as $departamento)
+                                    <option value="{{ $departamento->id }}" {{ old('departamento_id', $fichaMedica->departamento_id ?? '') == $departamento->id ? 'selected' : '' }}>
+                                        {{ $departamento->nombre }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            @error('departamento_id')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <label class="text-sm font-medium text-gray-700">Municipio</label>
+                            <select name="municipio_id" id="municipio_id" required class="select2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <option value="">Seleccione un municipio</option>
+                                {{-- Este se rellenará con AJAX --}}
+                            </select>
+                            @error('municipio_id')
+                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -118,7 +146,61 @@
 @endsection
 
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    $(document).ready(function () {
+        // Inicializar select2
+        $('#departamento_id, #municipio_id').select2({
+            dropdownAutoWidth: true,
+            width: '100%',
+            placeholder: 'Seleccione una opción',
+            allowClear: true
+        });
+
+        // Cargar municipios cuando se selecciona un departamento
+        $('#departamento_id').on('change', function () {
+            const departamentoId = $(this).val();
+            $('#municipio_id').html('<option value="">Cargando...</option>');
+
+            if (departamentoId) {
+                $.ajax({
+                    url: '/api/municipios/' + departamentoId,
+                    type: 'GET',
+                    success: function (data) {
+                        let options = '<option value="">Seleccione un municipio</option>';
+                        data.forEach(function (municipio) {
+                            options += `<option value="${municipio.id}">${municipio.nombre}</option>`;
+                        });
+                        $('#municipio_id').html(options).val('').trigger('change');
+                    }
+                });
+            } else {
+                $('#municipio_id').html('<option value="">Seleccione un municipio</option>');
+            }
+        });
+
+        // Si ya hay un departamento cargado (por editar), se disparara el evento para cargar municipios
+        const selectedDepartamento = $('#departamento_id').val();
+        const selectedMunicipio = '{{ old('municipio_id', $fichaMedica->municipio_id ?? '') }}';
+
+        if (selectedDepartamento) {
+            $.ajax({
+                url: '/api/municipios/' + selectedDepartamento,
+                type: 'GET',
+                success: function (data) {
+                    let options = '<option value="">Seleccione un municipio</option>';
+                    data.forEach(function (municipio) {
+                        const selected = municipio.id == selectedMunicipio ? 'selected' : '';
+                        options += `<option value="${municipio.id}" ${selected}>${municipio.nombre}</option>`;
+                    });
+                    $('#municipio_id').html(options).trigger('change');
+                }
+            });
+        }
+    });
+</script>
 <script>
     $(document).ready(function () {
         function toggleFichaMedica() {
