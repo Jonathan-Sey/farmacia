@@ -25,7 +25,8 @@ const rutasMapeadas = {
     'reporte-productos': '/reporte-productos',
     'reporte-productos': '/reporte-productos',
     'reporte-pacientes': '/reporte-pacientes',
-    'especialidades': '/especialidades'
+    'especialidades': '/especialidades',
+    'Encuestas': '/encuestas',
 
 };
 

@@ -29,6 +29,7 @@ use App\Http\Controllers\solicitud\solicitudController;
 use App\Http\Controllers\FichaMedicaController;
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
+use App\Http\Controllers\encuesta\EncuestaController;
 use App\Imports\ProductosImport;
 use App\Mail\validacion;
 use App\Models\Devoluciones;
@@ -103,6 +104,9 @@ Route::get('/productos/importar', [ProductoImportController::class, 'mostrarImpo
 Route::post('/productos/importar', [ProductoImportController::class, 'procesarImportacion'])->name('productos.importar.procesar');
 Route::delete('/productos/importar/eliminar/{index}', [ProductoImportController::class, 'eliminarDeImportacion'])->name('productos.importar.eliminar');
 Route::post('/productos/guardar-importacion', [ProductoImportController::class, 'guardarImportacion'])->name('productos.importar.guardar');
+
+// rutas para las encuestas
+Route::resource('encuestas', EncuestaController::class)->parameters(['encuestas' => 'encuesta']);
 
 
 Route::get('/productos/historico', [ProductoController::class, 'verHistorico'])->name('historico.precios');
