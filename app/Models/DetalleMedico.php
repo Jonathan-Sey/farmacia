@@ -41,6 +41,7 @@ class DetalleMedico extends Model
     public function medico()
     {
         return $this->belongsTo(User::class, 'id_usuario');
+
     }
 
     public function especialidad()
@@ -62,5 +63,9 @@ class DetalleMedico extends Model
     public function horarios()
     {
         return $this->hasMany(Horario::class, 'medico_id', 'id');
+    }
+
+    public function getNameAttribute(){
+        return optional($this->usuario)->name . ' - '. optional($this->especialidad)->nombre;
     }
 }
