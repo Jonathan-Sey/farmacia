@@ -96,7 +96,8 @@ class VentaController extends Controller
                     'id' => $almacen->producto->id,
                     'imagen' => asset('uploads/' . $almacen->producto->imagen),
                     'nombre' => $almacen->producto->nombre,
-                    'precio_venta' => $almacen->producto->precio_porcentaje,
+                    'precio_venta' => $almacen->producto->precio_venta,
+                    'precio_porcentaje' => $almacen->producto->precio_porcentaje,
                     'tipo' => $almacen->producto->tipo,
                     'stock' => $almacen->cantidad,
                 ];
@@ -119,19 +120,18 @@ class VentaController extends Controller
 
         //dd($request->all());
         //dd($request);
-        $this->validate($request, [
-            'arrayprecio' => 'required|array',
-            'estado' => 'integer',
-            'arraycantidad.*' => 'integer|min:1',
-            'arrayprecio.*' => 'numeric|min:0',
-            'arrayPrecioOriginal.*' => 'numeric|min:0',
-            'arrayJustificacion.*' => 'nullable|string|max:255',
-            'imagen_receta' => 'nullable|string',
-            'numero_reserva' => 'nullable|string|max:50',
-            'observaciones_receta' => 'nullable|string|max:500'
+         $this->validate($request, [
+             'arrayprecio' => 'required|array',
+             'estado' => 'integer',
+             'arraycantidad.*' => 'integer|min:1',
+             'arrayprecio.*' => 'numeric|min:0',
+             'arrayPrecioOriginal.*' => 'numeric|min:0',
+             'arrayJustificacion.*' => 'nullable|string|max:255',
+             'imagen_receta' => 'nullable|string',
+             'numero_reserva' => 'nullable|string|max:50',
+             'observaciones_receta' => 'nullable|string|max:500'
 
-        ]);
-
+         ]);
         // validamos el control de compora por cliente
         $persona = Persona::find($request->id_persona);
 
