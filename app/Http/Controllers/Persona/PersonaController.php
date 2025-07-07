@@ -221,7 +221,8 @@ class PersonaController extends Controller
     public function edit(Persona $persona)
     {
         $fichaMedica = $persona->fichasMedicas()->first(); // Obtener ficha médica si existe
-        return view('persona.edit', compact('persona', 'fichaMedica'));
+        $departamentos = Departamento::all();
+        return view('persona.edit', compact('persona', 'fichaMedica','departamentos'));
     }
     public function update(Request $request, Persona $persona)
     {
@@ -243,7 +244,9 @@ class PersonaController extends Controller
                 'dpi' => ['required', new Dpi()],
                 'habla_lengua' => 'required|in:Sí,No',
                 'tipo_sangre' => 'nullable|string|max:5',
-                'direccion' => 'nullable|string|max:255'
+                'direccion' => 'nullable|string|max:255',
+                'departamento_id' => 'required|exists:departamentos,id',
+                'municipio_id' => 'required|exists:municipios,id',
             ];
         }
 
@@ -275,6 +278,8 @@ class PersonaController extends Controller
                         'habla_lengua' => $validatedData['habla_lengua'],
                         'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
                         'direccion' => $validatedData['direccion'] ?? null,
+                        'departamento_id' => $validatedData['departamento_id'],
+                        'municipio_id' => $validatedData['municipio_id'],
                         'telefono' => $persona->telefono,
                     ]);
                 } else {
@@ -289,6 +294,8 @@ class PersonaController extends Controller
                             'habla_lengua' => $validatedData['habla_lengua'],
                             'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
                             'direccion' => $validatedData['direccion'] ?? null,
+                            'departamento_id' => $validatedData['departamento_id'],
+                            'municipio_id' => $validatedData['municipio_id'],
                         ]
                     );
                 }
