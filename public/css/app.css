@@ -987,14 +987,6 @@ html {
   min-height: -moz-fit-content;
   min-height: fit-content;
 }
-.diff {
-  position: relative;
-  display: grid;
-  width: 100%;
-  overflow: hidden;
-  container-type: inline-size;
-  grid-template-columns: auto 1fr;
-}
 .dropdown {
   position: relative;
   display: inline-block;
@@ -1474,20 +1466,6 @@ html {
 :root:has(:is(.modal-open, .modal:target, .modal-toggle:checked + .modal, .modal[open])) {
   overflow: hidden;
   scrollbar-gutter: stable;
-}
-.radio {
-  flex-shrink: 0;
-  --chkbg: var(--bc);
-  height: 1.5rem;
-  width: 1.5rem;
-  cursor: pointer;
-  -webkit-appearance: none;
-     -moz-appearance: none;
-          appearance: none;
-  border-radius: 9999px;
-  border-width: 1px;
-  border-color: var(--fallback-bc,oklch(var(--bc)/var(--tw-border-opacity)));
-  --tw-border-opacity: 0.2;
 }
 .\!select {
   display: inline-flex !important;
@@ -2480,28 +2458,6 @@ details.collapse summary::-webkit-details-marker {
   50% {
     background-position-x: -115%;
   }
-}
-.radio:focus {
-  box-shadow: none;
-}
-.radio:focus-visible {
-  outline-style: solid;
-  outline-width: 2px;
-  outline-offset: 2px;
-  outline-color: var(--fallback-bc,oklch(var(--bc)/1));
-}
-.radio:checked,
-  .radio[aria-checked="true"] {
-  --tw-bg-opacity: 1;
-  background-color: var(--fallback-bc,oklch(var(--bc)/var(--tw-bg-opacity)));
-  background-image: none;
-  animation: radiomark var(--animation-input, 0.2s) ease-out;
-  box-shadow: 0 0 0 4px var(--fallback-b1,oklch(var(--b1)/1)) inset,
-      0 0 0 4px var(--fallback-b1,oklch(var(--b1)/1)) inset;
-}
-.radio:disabled {
-  cursor: not-allowed;
-  opacity: 0.2;
 }
 @keyframes radiomark {
 
@@ -3523,10 +3479,6 @@ details.collapse summary::-webkit-details-marker {
 .hidden {
   display: none;
 }
-.size-9 {
-  width: 2.25rem;
-  height: 2.25rem;
-}
 .h-12 {
   height: 3rem;
 }
@@ -3731,9 +3683,6 @@ details.collapse summary::-webkit-details-marker {
 }
 .grid-cols-2 {
   grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-.grid-cols-3 {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 .flex-row {
   flex-direction: row;
@@ -4045,12 +3994,12 @@ details.collapse summary::-webkit-details-marker {
 .bg-opacity-50 {
   --tw-bg-opacity: 0.5;
 }
-.stroke-current {
-  stroke: currentColor;
-}
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
+}
+.p-1 {
+  padding: 0.25rem;
 }
 .p-2 {
   padding: 0.5rem;
@@ -4066,12 +4015,6 @@ details.collapse summary::-webkit-details-marker {
 }
 .p-6 {
   padding: 1.5rem;
-}
-.p-1 {
-  padding: 0.25rem;
-}
-.p-0\.5 {
-  padding: 0.125rem;
 }
 .px-2 {
   padding-left: 0.5rem;
@@ -4121,10 +4064,6 @@ details.collapse summary::-webkit-details-marker {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
-.px-1 {
-  padding-left: 0.25rem;
-  padding-right: 0.25rem;
-}
 .pb-1 {
   padding-bottom: 0.25rem;
 }
@@ -4169,9 +4108,6 @@ details.collapse summary::-webkit-details-marker {
 }
 .text-right {
   text-align: right;
-}
-.text-end {
-  text-align: end;
 }
 .align-middle {
   vertical-align: middle;
@@ -4379,11 +4315,11 @@ details.collapse summary::-webkit-details-marker {
 .-outline-offset-1 {
   outline-offset: -1px;
 }
-.outline-gray-300 {
-  outline-color: #d1d5db;
-}
 .outline-gray-200 {
   outline-color: #e5e7eb;
+}
+.outline-gray-300 {
+  outline-color: #d1d5db;
 }
 .ring-2 {
   --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
@@ -4637,10 +4573,6 @@ details.collapse summary::-webkit-details-marker {
 .focus\:ring-indigo-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(99 102 241 / var(--tw-ring-opacity, 1));
-}
-.focus\:ring-green-300:focus {
-  --tw-ring-opacity: 1;
-  --tw-ring-color: rgb(134 239 172 / var(--tw-ring-opacity, 1));
 }
 .focus\:ring-opacity-50:focus {
   --tw-ring-opacity: 0.5;
