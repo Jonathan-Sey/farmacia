@@ -230,8 +230,15 @@ Route::get('encuestas/respuestas/{encuesta}', [EncuestaController::class, 'verRe
 
 //reporte productos
 Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProducto'])->name('reporte.productos');
+//reporte de pacientes y detalle medicos 
 Route::get('/reporte-pacientes', [ReporteVentasController::class, 'filtrarPacientes'])->name('reporte.pacientes');
 Route::get('/reporte-pacientes/detalle-paciente/{id}', [ReporteVentasController::class, 'filtrarDetallePaciente'])->name('reporte.DetallePaciente');
+
+
+//reporte para el cambio de precios
+Route::get('/reporte-cambioPrecio', [ReporteVentasController::class, 'filtrarCambioDePrecio'])->name('reporte.CambioPrecios');
+
+
 
 Route::get('/reporte-inventario', [ReporteVentasController::class, 'generateReportProducto'])->name('inventario.reporte');
 

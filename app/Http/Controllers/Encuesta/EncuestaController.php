@@ -188,7 +188,7 @@ class EncuestaController extends Controller
     {
         $medicos = DetalleMedico::with('usuario','especialidad')->get();
         $encuesta->load('preguntas');
-
+        //dd($encuesta);
         return view('Encuesta.edit', compact('encuesta', 'medicos'));
     }
 
@@ -199,9 +199,29 @@ class EncuestaController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
-    {
-        //
+    public function update(Request $request, Encuestas $encuesta)
+    {   
+                
+        $request->validate([
+            'detalle_medico_id' => 'required|exists:detalle_medico,id',
+            'titulo' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+             'preguntas' => 'required|array|min:1',
+             'preguntas.*.texto' => 'required|string',
+             'preguntas.*.tipo' => 'required|in:escala,cerrado,texto',            
+        ]);
+        dd($request);
+        
+        $encuesta->update([
+                'medico_id' => $request->detalle_medico_id,
+                'titulo' => $request->titulo,
+                'descripcion' => $request->descripcion,
+        ]);
+
+
+        
+
+        return redirect()->route('encuestas.index')->with('success', 'La encuesta fue actualizado');
     }
 
     /**
