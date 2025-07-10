@@ -208,6 +208,13 @@ Route::prefix('personas/{persona_id}')->group(function () {
 });
 Route::delete('/fichas/{ficha}', [FichaMedicaController::class, 'destroy'])->name('fichas.destroy');
 
+// rutas para las encuestas
+// routes/web.php
+Route::get('encuestas/responder/{encuesta}', [EncuestaController::class, 'showResponder'])->name('encuestas.responder');
+Route::post('encuestas/responder/{encuesta}', [EncuestaController::class, 'storeRespuesta'])->name('encuestas.storeRespuesta');
+Route::get('encuestas/respuestas/{encuesta}', [EncuestaController::class, 'verRespuestas'])->name('encuestas.respuestas');
+
+
 //Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
 //Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
 //Route::get('personas/{persona_id}/fichas/{id}/edit', [FichaMedicaController::class, 'edit'])->name('fichas.edit');
