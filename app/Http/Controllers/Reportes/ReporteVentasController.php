@@ -9,6 +9,7 @@ use App\Models\Inventario;
 use App\Models\Persona;
 use App\Models\Producto;
 use App\Models\ReporteKardex;
+use App\Models\HistoricoPrecio;
 use App\Models\Sucursal;
 use App\Models\User;
 use App\Models\Venta;
@@ -327,9 +328,16 @@ class ReporteVentasController extends Controller
         // Obtener fichas médicas paginadas (5 por página)
         $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->get();
 
-
-        //dd($fichas);
+       //dd($fichas);
        //dd($personas);
         return view('reportes.DetallePaciente', compact('persona','fichas'));
+    }
+
+    public function filtrarCambioDePrecio()
+    {
+         $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')->get();
+         
+        
+        return view('reportes.CambioPrecios', compact('historico'));
     }
 }
