@@ -237,6 +237,7 @@ Route::get('/reporte-pacientes/detalle-paciente/{id}', [ReporteVentasController:
 
 //reporte para el cambio de precios
 Route::get('/reporte-cambioPrecio', [ReporteVentasController::class, 'filtrarCambioDePrecio'])->name('reporte.CambioPrecios');
+Route::post('/reporte-cambioPrecio', [ReporteVentasController::class, 'filtrarFechaCambioDePrecio'])->name('reporte.fechaCambioPrecio');
 
 
 
