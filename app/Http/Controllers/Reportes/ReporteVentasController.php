@@ -333,11 +333,16 @@ class ReporteVentasController extends Controller
         return view('reportes.DetallePaciente', compact('persona','fichas'));
     }
 
-    public function filtrarCambioDePrecio()
+    public function filtrarCambioDePrecio(Request $request)
     {
          $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')->get();
-         
-        
+        return view('reportes.CambioPrecios', compact('historico'));
+    }
+
+    public function filtrarFechaCambioDePrecio(Request $request){
+        $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')
+        ->whereBetween('fecha_cambio',[$request->fechaInicio, $request->fechaFin])
+        ->get();
         return view('reportes.CambioPrecios', compact('historico'));
     }
 }
