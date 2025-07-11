@@ -210,7 +210,7 @@ class EncuestaController extends Controller
              'preguntas.*.texto' => 'required|string',
              'preguntas.*.tipo' => 'required|in:escala,cerrado,texto',            
         ]);
-        dd($request);
+        //dd($request);
         
         $encuesta->update([
                 'medico_id' => $request->detalle_medico_id,
@@ -218,11 +218,42 @@ class EncuestaController extends Controller
                 'descripcion' => $request->descripcion,
         ]);
 
-
+        //antes de procesar la info validamos que los campos existentes son nuevos o no
+        // para ello mandamos la info a una funcion para comprobar los datos 
         
-
+        $this->actualizarPreguntas($encuesta, $request->preguntas); 
         return redirect()->route('encuestas.index')->with('success', 'La encuesta fue actualizado');
+
     }
+    // recibimos 2 parametros las encuestas y lo que viene de request
+    protected function actualizarPreguntas($encuesta, $preguntasRequest)
+        {
+            $preguntasId = [];
+            foreach($preguntasRequest as $index => $preguntaData){
+            // buscamos alguna coincidencia entre los datos enviados
+                if(isset($preguntaData['id'])){
+                    $pregunta = Preguntas::find($preguntaData['id']);
+                    $pregunta->update([
+                        'texto_pregunta' => $preguntaData['texto'],
+                        'tipo' => $preguntaData['tipo'],
+                        'orden' => $index,
+                    ]);
+                    $preguntasId[] = $pregunta->id;
+                }else{
+                    $pregunta = new Preguntas([
+                        'texto_pregunta' => $preguntaData['texto'],
+                        'tipo' => $preguntaData['tipo'],
+                        'orden' => $index,
+                    ]);
+                    $encuesta->preguntas()->save($pregunta);
+                    $preguntasId[] = $pregunta->id;
+                }
+            }
+
+            $encuesta->preguntas()->whereNotIn('id', $preguntasId)->delete();
+        }
+
+    
 
     /**
      * Remove the specified resource from storage.

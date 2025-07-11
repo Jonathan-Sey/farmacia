@@ -60,20 +60,27 @@
                     @endphp --}}
                 <tr>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->codigo}}</td>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$producto->nombre}}</td>
+                    <td class=" px-6 py-4 whitespace-nowrap">{{ Str::limit($producto->nombre, 50)}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->ultimo_precio_compra}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_porcentaje}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        <a href="{{ $producto->imagen ? asset('uploads/' . $producto->imagen) : '#' }}">
+        
+                        {{-- <a href="{{ $producto->imagen ? asset('uploads/' . $producto->imagen) : '#' }}">
                             @if ($producto->imagen)
                                 <img src="{{ asset('uploads/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded">
                             @else
                                 <span class="text-gray-500">Sin imagen</span>
                             @endif
-                        </a>
-                        </td>
+                        </a>  --}}
+                         @if ($producto->imagen)
+                            <img src="{{ asset('uploads/' . $producto->imagen) }}" alt="Producto" class="w-16 h-16 object-cover rounded" onclick="openModal('{{ asset('uploads/' . $producto->imagen) }}')">
+                            @else
+                                <span class="text-gray-500">Sin imagen</span>
+                         @endif
+                         
 
+                        </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a class="estado" data-id="{{ $producto->id}}" data-estado="{{$producto->estado}}">
                             @if ($producto->estado == 1)
@@ -103,8 +110,6 @@
                             </button>
                         </form>
                        @endif
-
-
                           {{-- Botón Cambiar estado --}}
                           <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $producto->id }}" data-estado="{{ $producto->estado }}" data-info="{{ $producto->nombre }}">
                             <i class="fas fa-sync-alt"></i>
@@ -115,6 +120,20 @@
             </tbody>
         </x-slot>
     </x-data-table>
+    
+     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="modal-box max-w-5xl m-auto">
+            <span class="text-white text-2xl cursor-pointer absolute top-4 right-4" onclick="closeModal()">&times;</span>
+            <div class="">
+                <img id="modalImage" src="" alt="Receta Médica" class="w-full h-auto mt-4">
+            </div>
+            <div class="mt-4 text-center">
+                <button onclick="closeModal()" class="bg-red-600 text-white py-2 px-4 rounded-md text-sm font-semibold hover:bg-red-700 focus:outline-none">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @push('js')
@@ -183,6 +202,18 @@
             // },
         });
     });
+</script>
+
+{{-- modal para la imagen  --}}
+<script>
+    function openModal(imageSrc) {
+        document.getElementById('imageModal').classList.remove('hidden');
+        document.getElementById('modalImage').src = imageSrc;
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').classList.add('hidden');
+    }
 </script>
 
 
