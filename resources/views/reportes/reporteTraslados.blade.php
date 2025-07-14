@@ -118,9 +118,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const url = new URL('{{ route("reporte.traslado.datos") }}');
 
         if (sucursalId) url.searchParams.append('sucursal_id', sucursalId);
-        if (fecha) {
+       if (fecha) {
             const selectedDate = new Date(fecha);
             url.searchParams.append('semana', getISOWeekNumber(selectedDate));
+            url.searchParams.append('fecha', fecha); // <-- Esta línea es necesaria
         }
 
         fetch(url)
