@@ -4127,6 +4127,10 @@ details.collapse summary::-webkit-details-marker {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
+.py-3\.5 {
+  padding-top: 0.875rem;
+  padding-bottom: 0.875rem;
+}
 .pb-1 {
   padding-bottom: 0.25rem;
 }
@@ -4649,6 +4653,10 @@ details.collapse summary::-webkit-details-marker {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(99 102 241 / var(--tw-ring-opacity, 1));
 }
+.focus\:ring-green-300:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(134 239 172 / var(--tw-ring-opacity, 1));
+}
 .focus\:ring-opacity-50:focus {
   --tw-ring-opacity: 0.5;
 }
@@ -4877,6 +4885,10 @@ details.collapse summary::-webkit-details-marker {
     width: 20%;
   }
 
+  .md\:w-full {
+    width: 100%;
+  }
+
   .md\:max-w-none {
     max-width: none;
   }
@@ -4903,6 +4915,10 @@ details.collapse summary::-webkit-details-marker {
 
   .md\:gap-3 {
     gap: 0.75rem;
+  }
+
+  .md\:gap-6 {
+    gap: 1.5rem;
   }
 
   .md\:rounded-xl {

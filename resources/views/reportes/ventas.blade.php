@@ -76,6 +76,14 @@
             </div>
         </div>
     </a>
+    <a href="{{ route('reporte.traslado.vista') }}">
+        <div class="w-auto h-40 bg-slate-50 rounded-md shadow-lg flex justify-center items-center text-center sm:p-3">
+            <div class="flex flex-col items-center">
+                <i class="fa-solid fa-exchange-alt text-7xl lg:text-6xl sm:text-6xl"></i>
+                <p class="uppercase text-lg font-bold">reporte de Traslados</p>
+            </div>
+        </div>
+    </a>
 </div>
 
 
