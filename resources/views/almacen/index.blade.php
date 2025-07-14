@@ -108,7 +108,7 @@
                         </a>
                         @endif
 
-                        <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $almacen->id }}" data-estado="{{ $almacen->estado }}" data-info="{{ $almacen->nombre }}">
+                        <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $almacen->id }}" data-estado="{{ $almacen->estado }}" data-info="{{ $almacen->producto->nombre }} en {{$almacen->sucursal->nombre}}">
                             <i class="fas fa-sync-alt"></i>
                         </button>
                     </td>
@@ -201,6 +201,45 @@
                 }, 100); // Espera 100 ms antes de aplicar las clases
             },
         });
+
+
+         $('#example tbody').on('click', '.cambiar-estado-btn', function () {
+                const button = $(this);
+                const Id = button.data('id');
+                let estado = button.data('estado');
+                const nombre = button.data('info');
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "¡Deseas cambiar el estado de " + nombre + "!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, cambiar estado",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/almacen/' + Id + '/cambiar-estado',
+                        method: 'POST',
+                        data: {
+                        _token: '{{ csrf_token() }}',
+                        estado: estado == 1 ? 2 : 1,
+                        },
+                        success(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error al cambiar el estado');
+                        }
+                        },
+                        error() {
+                        alert('Ocurrió un error en la solicitud.');
+                        }
+                    });
+                    }
+                });
+            });
     });
 </script>
 
@@ -240,7 +279,7 @@
 </script>
 @endif
 {{-- cambio de estado --}}
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
 
@@ -298,5 +337,5 @@
             });
         });
     });
-</script>
+</script> --}}
 @endpush

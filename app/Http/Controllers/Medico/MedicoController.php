@@ -34,7 +34,7 @@ class MedicoController extends Controller
     {
         $usuarios = User::all();
         $sucursales = Sucursal::all(); // Asegúrate de que esta consulta está correcta
-        $especialidades = Especialidades::all(); // Si necesitas las especialidades, puedes obtenerlas aquí
+        $especialidades = Especialidades::activos()->get(); // Si necesitas las especialidades, puedes obtenerlas aquí
 
         // Puedes pasar las especialidades a la vista si es necesario
         return view('medico.create', compact('usuarios', 'sucursales', 'especialidades'));

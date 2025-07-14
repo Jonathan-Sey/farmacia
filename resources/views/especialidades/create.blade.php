@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo','Crear Categoría')
+@section('titulo','Crear especialidades')
 
 @push('css')
 
@@ -53,7 +53,7 @@
                     </div>
             </div>
             <div class="mt-6 flex items-center justify-end gap-x-6">
-                <a href="{{route('categorias.index')}}">
+                <a href="{{route('especialidades.index')}}">
                     <button type="button" class="text-sm/6 font-semibold text-gray-900">Cancelar</button>
                 </a>
                 <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Guardar</button>

@@ -22,7 +22,6 @@
     <x-slot name="thead">
         <thead class="text-white font-bold">
             <tr class="bg-slate-600">
-                <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Id</th>
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nombre</th>
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Descripción</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Estado</th>
@@ -35,7 +34,6 @@
         <tbody>
             @foreach ($roles as $rol)
             <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $rol->id }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $rol->nombre }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $rol->descripcion }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -118,7 +116,7 @@ $(document).ready(function() {
             columnDefs: [
                 { responsivePriority: 3, targets: 0 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 4 },
+                { responsivePriority: 2, targets: 3 },
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
@@ -129,8 +127,46 @@ $(document).ready(function() {
                     }, 100); // Espera 100 ms antes de aplicar las clases
                 },
             });
+
+                 $('#example tbody').on('click', '.cambiar-estado-btn', function () {
+                const button = $(this);
+                const Id = button.data('id');
+                let estado = button.data('estado');
+                const nombre = button.data('info');
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "¡Deseas cambiar el estado de " + nombre + "!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, cambiar estado",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/roles/' + Id + '/cambiar-estado',
+                        method: 'POST',
+                        data: {
+                        _token: '{{ csrf_token() }}',
+                        estado: estado == 1 ? 2 : 1,
+                        },
+                        success(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error al cambiar el estado');
+                        }
+                        },
+                        error() {
+                        alert('Ocurrió un error en la solicitud.');
+                        }
+                    });
+                    }
+                });
         });
-    </script>
+    });
+</script>
 
 @if (session('success'))
 <script>
@@ -153,7 +189,7 @@ $(document).ready(function() {
 @endif
 
 {{-- cambio de estado --}}
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
 
@@ -211,5 +247,5 @@ $(document).ready(function() {
             });
         });
     });
-</script>
+</script> --}}
 @endpush
