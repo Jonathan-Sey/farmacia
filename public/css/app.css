@@ -3328,9 +3328,6 @@ details.collapse summary::-webkit-details-marker {
 .inset-0 {
   inset: 0px;
 }
-.inset-10 {
-  inset: 2.5rem;
-}
 .bottom-0 {
   bottom: 0px;
 }
@@ -3358,17 +3355,11 @@ details.collapse summary::-webkit-details-marker {
 .top-4 {
   top: 1rem;
 }
-.right-10 {
-  right: 2.5rem;
-}
 .z-40 {
   z-index: 40;
 }
 .z-50 {
   z-index: 50;
-}
-.z-10 {
-  z-index: 10;
 }
 .m-1 {
   margin: 0.25rem;
@@ -3482,15 +3473,6 @@ details.collapse summary::-webkit-details-marker {
 }
 .mt-\[10px\] {
   margin-top: 10px;
-}
-.ml-5 {
-  margin-left: 1.25rem;
-}
-.ml-10 {
-  margin-left: 2.5rem;
-}
-.ml-11 {
-  margin-left: 2.75rem;
 }
 .block {
   display: block;
@@ -3956,10 +3938,6 @@ details.collapse summary::-webkit-details-marker {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
 }
-.bg-blue-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(96 165 250 / var(--tw-bg-opacity, 1));
-}
 .bg-blue-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1));
@@ -4003,10 +3981,6 @@ details.collapse summary::-webkit-details-marker {
 .bg-gray-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
-}
-.bg-green-400 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(74 222 128 / var(--tw-bg-opacity, 1));
 }
 .bg-green-500 {
   --tw-bg-opacity: 1;
@@ -4068,6 +4042,14 @@ details.collapse summary::-webkit-details-marker {
   --tw-bg-opacity: 1;
   background-color: rgb(254 252 232 / var(--tw-bg-opacity, 1));
 }
+.bg-blue-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(96 165 250 / var(--tw-bg-opacity, 1));
+}
+.bg-green-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(74 222 128 / var(--tw-bg-opacity, 1));
+}
 .bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity, 1));
@@ -4093,6 +4075,9 @@ details.collapse summary::-webkit-details-marker {
 }
 .p-6 {
   padding: 1.5rem;
+}
+.p-1 {
+  padding: 0.25rem;
 }
 .px-2 {
   padding-left: 0.5rem;
@@ -4914,10 +4899,6 @@ details.collapse summary::-webkit-details-marker {
 
   .md\:items-center {
     align-items: center;
-  }
-
-  .md\:justify-between {
-    justify-content: space-between;
   }
 
   .md\:gap-3 {
