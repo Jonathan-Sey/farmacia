@@ -362,7 +362,7 @@
                         <div class="mt-2 mb-5">
                                      <!-- Contenedor para mostrar la imagen -->
                                      <div id="imagen-producto" class="mt-4 hidden">
-                                        <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded" > 
+                                        <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded" >
                                     </div>
 
                         <div class="mt-2 mb-5">
@@ -541,6 +541,7 @@
                                 <span class="label-text">Nombre</span>
                             </label>
                             <input type="text" name="nombre" id="nombre" class="input input-bordered" required>
+                            <div id="error-nombre" class="text-red-500 hidden mt-1 text-sm"></div>
                             @error('nombre')
                             <div role="alert" class="alert alert-error mt-4 p-2">
                                 <span class="text-white font-bold">{{ $message}}</span>
@@ -553,13 +554,15 @@
                                 <span class="label-text">DPI <span class="text-red-500">*</span></span>
                             </label>
                             <input type="text" name="dpi" id="dpi" class="input input-bordered" required>
+                            <div id="error-dpi" class="text-red-500 hidden mt-1 text-sm"></div>
                         </div>
 
                         <div class="form-control">
                             <label class="label" for="nit">
                                 <span class="label-text">NIT</span>
                             </label>
-                            <input type="text" name="nit" id="nit" class="input input-bordered" required>
+                            <input type="text" name="nit" id="nit" class="input input-bordered" >
+                            <div id="error-nit" class="text-red-500 hidden mt-1 text-sm"></div>
                             @error('nit')
                             <div role="alert" class="alert alert-error mt-4 p-2">
                                 <span class="text-white font-bold">{{ $message}}</span>
@@ -731,11 +734,28 @@ document.getElementById('formPersona').addEventListener('submit', function(e) {
             'Accept': 'application/json'
         }
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
     .then(data => {
         if(data.success) {
             // Cerrar modal
             my_modal_1.close();
+
+            // Limpiar formulario
+             document.getElementById('formPersona').reset();
+
+              // Limpiar errores visuales si los hubiera
+            document.querySelectorAll('.error-message').forEach(el => el.remove());
+            document.querySelectorAll('.border-red-500').forEach(el => el.classList.remove('border-red-500'));
+
+            // Restaurar el texto del botón de submit
+            const submitButton = document.querySelector('#formPersona button[type="submit"]');
+            submitButton.disabled = false;
+            submitButton.innerHTML = 'Guardar';
 
             // Agregar nueva opción al select de personas
             const select = $('#id_persona');
@@ -761,14 +781,38 @@ document.getElementById('formPersona').addEventListener('submit', function(e) {
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        Swal.fire({
-            icon: 'error',
-            title: 'Error',
-            text: 'Ocurrió un error al registrar la persona'
-        });
+        if (error.errors) {
+            // Mostrar errores de validación en el modal
+            mostrarErroresValidacion(error.errors);
+        } else {
+            console.error('Error:', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Ocurrió un error al registrar la persona'
+            });
+        }
     });
 });
+
+function mostrarErroresValidacion(errors) {
+    // Limpiar errores anteriores
+    document.querySelectorAll('.error-message').forEach(el => el.remove());
+
+    // Mostrar nuevos errores
+    for (const [field, messages] of Object.entries(errors)) {
+        const input = document.querySelector(`[name="${field}"]`);
+        if (input) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.textContent = messages.join(', ');
+            input.parentNode.insertBefore(errorDiv, input.nextSibling);
+
+            // Resaltar campo con error
+            input.classList.add('border-red-500');
+        }
+    }
+}
 
 // Mostrar/ocultar botón de receta según checkbox
 document.getElementById('es_prescrito').addEventListener('change', function() {
@@ -1087,7 +1131,7 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
 
         // Función para agregar producto al detalle
        // Función para agregar producto - CORREGIDA
-       function agregarProducto() {
+function agregarProducto() {
     let idSucursal = $('#id_sucursal').val();
     let id_producto = $('#id_producto').val();
     let producto = nombreProducto;
@@ -1167,48 +1211,48 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
         }
 
         // Agregar fila a la tabla
-// En tu función agregarProducto(), asegúrate de incluir todos los campos:
-// En tu función agregarProducto(), asegúrate que cada fila tenga:
-$('#tabla-productos tbody').append(`
-    <tr id="fila${contador}">
-        <th>${contador}</th>
-        <input type="hidden" name="arraytipo[]" value="${tipo}">
-        <input type="hidden" name="arrayIdProducto[]" value="${id_producto}">
-        <input type="hidden" name="arrayStock[]" value="${stock}">
-        <input type="hidden" name="arrayPrecioOriginal[]" value="${precioOriginal}">
-        <input type="hidden" name="arrayJustificacion[]" value="${justificacionDescuento || ''}">
-        <td>${producto}</td>
-        <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
-        <td>
-            <input type="hidden" name="arrayprecio[]" value="${precio}">
-            ${displayPrecio}
-        </td>
-        <td>${subtotal[contador].toFixed(2)}</td>
-        <td>
-            <button type="button" onclick="editarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button>
-            <button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button>
-        </td>
-    </tr>
-`);
-        // Limpiar campos
-        limpiar();
-        $('#aplicar_descuento').prop('checked', false).trigger('change');
-        $('#campo-nuevo-precio').css('display', 'none').addClass('hidden');
-        $('#justificacion_descuento').val('');
-        $('#nuevo_precio').val('');
-        $('#precio_original').val('');
+        // En tu función agregarProducto(), asegúrate de incluir todos los campos:
+        // En tu función agregarProducto(), asegúrate que cada fila tenga:
+        $('#tabla-productos tbody').append(`
+            <tr id="fila${contador}">
+                <th>${contador}</th>
+                <input type="hidden" name="arraytipo[]" value="${tipo}">
+                <input type="hidden" name="arrayIdProducto[]" value="${id_producto}">
+                <input type="hidden" name="arrayStock[]" value="${stock}">
+                <input type="hidden" name="arrayPrecioOriginal[]" value="${precioOriginal}">
+                <input type="hidden" name="arrayJustificacion[]" value="${justificacionDescuento || ''}">
+                <td>${producto}</td>
+                <td><input type="hidden" name="arraycantidad[]" value="${cantidad}">${cantidad}</td>
+                <td>
+                    <input type="hidden" name="arrayprecio[]" value="${precio}">
+                    ${displayPrecio}
+                </td>
+                <td>${subtotal[contador].toFixed(2)}</td>
+                <td>
+                    <button type="button" onclick="editarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button>
+                    <button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button>
+                </td>
+            </tr>
+        `);
+                // Limpiar campos
+                limpiar();
+                $('#aplicar_descuento').prop('checked', false).trigger('change');
+                $('#campo-nuevo-precio').css('display', 'none').addClass('hidden');
+                $('#justificacion_descuento').val('');
+                $('#nuevo_precio').val('');
+                $('#precio_original').val('');
 
-        // Actualizar totales
-        $('#suma').html(suma.toFixed(2));
-        $('#iva').html(iva.toFixed(2));
-        $('#total').html(total.toFixed(2));
-        $('#impuesto').val(iva.toFixed(2));
-        $('#inputTotal').val(total.toFixed(2));
-    } else {
-        mensaje('Los campos están vacíos o son inválidos.');
-    }
+                // Actualizar totales
+                $('#suma').html(suma.toFixed(2));
+                $('#iva').html(iva.toFixed(2));
+                $('#total').html(total.toFixed(2));
+                $('#impuesto').val(iva.toFixed(2));
+                $('#inputTotal').val(total.toFixed(2));
+            } else {
+                mensaje('Los campos están vacíos o son inválidos.');
+            }
 
-    verificarEstadoFormularioVenta();
+            verificarEstadoFormularioVenta();
 }
 
 // Función para editar producto - MODIFICADA para restringir cambios de precio en servicios
