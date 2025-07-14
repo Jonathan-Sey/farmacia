@@ -45,11 +45,18 @@
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->codigo}}</td>
                     <td class=" text-left px-6 py-4 whitespace-nowrap">{{$almacen->producto->nombre}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        @if ($almacen->producto->imagen)
+                        {{-- @if ($almacen->producto->imagen)
                             <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
                         @else
                             <span class="text-gray-500">Sin imagen</span>
-                        @endif
+                        @endif  --}}
+
+                        @if ($almacen->producto->imagen)
+                            <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="Producto" 
+                            class="w-16 h-16 object-cover rounded" onclick="openModal('{{ asset('uploads/' . $almacen->producto->imagen) }}')">
+                        @else
+                                <span class="text-gray-500">Sin imagen</span>
+                        @endif 
                     </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a href="#" class="estado">
@@ -110,6 +117,24 @@
             </tbody>
         </x-slot>
     </x-data-table>
+
+
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="modal-box max-w-5xl m-auto">
+            <span class="text-white text-2xl cursor-pointer absolute top-4 right-4" onclick="closeModal()">&times;</span>
+            <div class="">
+                <img id="modalImage" src="" alt="Receta Médica" class="w-full h-auto mt-4">
+            </div>
+            <div class="mt-4 text-center">
+                <button onclick="closeModal()" class="bg-red-600 text-white py-2 px-4 rounded-md text-sm font-semibold hover:bg-red-700 focus:outline-none">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    
 @endsection
 
 @push('js')
@@ -179,6 +204,17 @@
     });
 </script>
 
+{{-- modal para la imagen  --}}
+<script>
+    function openModal(imageSrc) {
+        document.getElementById('imageModal').classList.remove('hidden');
+        document.getElementById('modalImage').src = imageSrc;
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').classList.add('hidden');
+    }
+</script>
 
 
 {{-- Alerta de registro exitoso --}}

@@ -362,7 +362,7 @@
                         <div class="mt-2 mb-5">
                                      <!-- Contenedor para mostrar la imagen -->
                                      <div id="imagen-producto" class="mt-4 hidden">
-                                        <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded">
+                                        <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded" > 
                                     </div>
 
                         <div class="mt-2 mb-5">
@@ -471,6 +471,20 @@
                     </div>
 
                 </fieldset>
+
+                 <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+                    <div class="modal-box max-w-5xl m-auto">
+                        <span class="text-white text-2xl cursor-pointer absolute top-4 right-4" onclick="closeModal()">&times;</span>
+                        <div class="">
+                            <img id="modalImage" src="" alt="Receta Médica" class="w-full h-auto mt-4">
+                        </div>
+                        <div class="mt-4 text-center">
+                            <button onclick="closeModal()" class="bg-red-600 text-white py-2 px-4 rounded-md text-sm font-semibold hover:bg-red-700 focus:outline-none">
+                                Cerrar
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
 
             </div>

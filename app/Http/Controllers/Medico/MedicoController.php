@@ -33,8 +33,8 @@ class MedicoController extends Controller
     public function create()
     {
         $usuarios = User::all();
-    $sucursales = Sucursal::all(); // Asegúrate de que esta consulta está correcta
-    $especialidades = Especialidades::all(); // Si necesitas las especialidades, puedes obtenerlas aquí
+        $sucursales = Sucursal::all(); // Asegúrate de que esta consulta está correcta
+        $especialidades = Especialidades::all(); // Si necesitas las especialidades, puedes obtenerlas aquí
 
         // Puedes pasar las especialidades a la vista si es necesario
         return view('medico.create', compact('usuarios', 'sucursales', 'especialidades'));
@@ -175,7 +175,6 @@ class MedicoController extends Controller
         'detalles' => "Se actualizo el médico: {$usuario->name}",
         'fecha_hora' => now(),
     ]);
-
            // Verificar que horarios es un array
     if (!is_array($validated['horarios'])) {
         return back()->with('error', 'Formato de horarios inválido');
@@ -192,6 +191,8 @@ class MedicoController extends Controller
     ->pluck('horario_id')
     ->filter()
     ->toArray();
+
+
 
     // Eliminar horarios que ya no están en el formulario
     Horario::where('medico_id', $medico->id)
@@ -217,13 +218,15 @@ class MedicoController extends Controller
                 'horarios' => $horarioData // Ya no usamos json_encode aquí
             ]);
         }
+
+        
     }
      // Forzar refresco de la relación
      $medico->load('horarios');
 
          // Alternativa: refrescar toda la instancia
     $medico->refresh();
-
+    //dd($medico);
     
 
     return redirect()->route('medicos.index')->with('success', 'Médico actualizado correctamente');

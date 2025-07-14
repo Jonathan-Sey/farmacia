@@ -79,8 +79,8 @@ class VentaController extends Controller
         ->orderByRaw("CASE WHEN nit = '0' THEN 0 ELSE 1 END") // Consumidor final primero
         ->orderBy('nombre')
         ->get(['id', 'nombre', 'nit', 'DPI as dpi', 'rol']);
-
         return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona'));
+
     }
 
     public function productosPorSucursal($id)
@@ -104,6 +104,7 @@ class VentaController extends Controller
             });
 
         return response()->json($productos);
+        
     }
 
 
