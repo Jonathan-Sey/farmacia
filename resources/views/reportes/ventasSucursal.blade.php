@@ -25,19 +25,20 @@
                     @endforeach
                 </select>
 
-                  <div class="flex flex-col sm:flex-row gap-4">
-            <div class="flex-1 m-2">
-                <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
-                <input type="date" id="fechaInicio" name="fechaInicio"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
+                <div class="flex flex-col sm:flex-row gap-4">
+                
+                    <div class="flex-1 m-2">
+                    <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
+                    <input type="date" id="fechaInicio" name="fechaInicio"
+                        class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                    </div>
 
-            <div class="flex-1 m-2">
-                <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
-                <input type="date" id="fechaFin" name="fechaFin"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-        </div>
+                    <div class="flex-1 m-2">
+                        <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
+                        <input type="date" id="fechaFin" name="fechaFin"
+                            class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                    </div>
+                </div>
 
             </div>
         </div>

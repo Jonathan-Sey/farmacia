@@ -196,13 +196,13 @@
                     <div class="border-b border-gray-900/10 ">
 
                         <div class="mt-2 mb-5">
-                            <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
+                            <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Farmaci</label>
                             <select
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal"
                                 id="id_sucursal"
                                 required>
-                                <option value="">Seleccionar una sucursal</option>
+                                <option value="">Seleccionar una Farmacia</option>
                                 @foreach ($sucursales as $sucursal)
                                     <option value="{{ $sucursal->id }}" data-nombre-completo="{{ $sucursal->nombre }}" data-ubicacion-completa="{{ $sucursal->ubicacion }}">
                                         {{-- {{ $sucursal->nombre }} - {{ $sucursal->ubicacion }} --}}
@@ -884,7 +884,7 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
             // Configuración para sucursales
             $('#id_sucursal').select2({
                 width: '100%',
-                placeholder: "Buscar sucursal",
+                placeholder: "Buscar farmacia",
                 allowClear: true,
                 templateResult: formatOption,
                 templateSelection: formatSelection

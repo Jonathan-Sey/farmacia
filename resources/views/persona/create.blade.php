@@ -26,11 +26,36 @@
                     <select name="rol" id="rol" required class="compact-select block rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
                         <option value="1" {{ old('rol') == 1 ? 'selected' : '' }}>Cliente</option>
                         <option value="2" {{ old('rol') == 2 ? 'selected' : '' }}>Paciente</option>
+                        <option value="3" {{ old('rol') == 3 ? 'selected' : '' }}>Menor de edad</option>
                     </select>
                 </div>
 
-                <!-- Datos Básicos -->
-                <div class="mt-2 mb-5 grid grid-cols-1 gap-5">
+                
+
+                {{-- datos del menor de edad  --}}
+                <div class="mt-2 mb-5 grid grid-cols-1 gap-5 ">
+                    <div id="datos-menor" class="hidden" >
+                        <fieldset class="border-2 border-gray-200 p-2 rounded-md">
+                            <legend class="text-blue-500 font-bold">Datos del menor </legend>
+                            <label for="nombreMenor" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
+                            <input
+                                type="text"
+                                name="nombreMenor"
+                                id="nombreMenor"
+                                required
+                                autocomplete="given-name"
+                                placeholder="Nombre completo"
+                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                value="{{ old('nombreMenor') }}">
+                            @error('nombreMenor')
+                            <div role="alert" class="alert alert-error mt-4 p-2">
+                                <span class="text-white font-bold">{{ $message }}</span>
+                            </div>
+                            @enderror
+                        </fieldset>                        
+                    </div>
+
+                 <!-- Datos Básicos -->    
                     <!-- Nombre -->
                     <div>
                         <label for="nombre" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
@@ -231,6 +256,11 @@
 <script src="/js/obtenerUsuario.js"></script>
 <script>
     $(document).ready(function() {
+        //  tomamos el valor de toggle 
+        const infoMenor = document.getElementById('datos-menor')
+
+
+
         //Para que muestre las opciones en un select2(esto ayuda a motrar las opciones hacia abajo ya que en la forma en la que esta la pagina por el overflow lo hace hacia arriba).
             $('#departamento_id').select2({
             dropdownAutoWidth: true,
@@ -248,12 +278,21 @@
         // Manejar cambio de rol
         $('#rol').change(function() {
             if ($(this).val() == 2) {
+                //ocultamos la info del menor de edad 
+                infoMenor.classList.add('hidden');
+
                 // Mostrar apellidos y ficha médica
                 $('#apellidos-section, #ficha_medica').removeClass('hidden');
                 // Hacer requeridos los campos adicionales
                 $('#apellido_paterno, #apellido_materno').prop('required', true);
                 $('#ficha_medica input, #ficha_medica select').prop('required', true);
-            } else {
+            } else if($(this).val() == 3){                
+                infoMenor.classList.remove('hidden');
+            }
+            
+            else {
+                //ocultamos la info del menor de edad 
+                infoMenor.classList.add('hidden');
                 // Ocultar secciones adicionales
                 $('#apellidos-section, #ficha_medica').addClass('hidden');
                 // Quitar requeridos
@@ -294,6 +333,18 @@
         });
 
 </script>
+
+{{-- <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const toggle = document.getElementId('tipo');
+        $('#rol').change(function() {
+            if ($(this).val() == 2) {
+                console.log("la opcion selecionado es la numero 2")
+            }
+        });
+        
+    });
+</script> --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if ($errors->has('dpi'))
 <script>

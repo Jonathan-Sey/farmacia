@@ -337,18 +337,39 @@ class ReporteVentasController extends Controller
 
     public function filtrarCambioDePrecio(Request $request)
     {
+        $productos = Producto::all();
          $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')->get();
-        return view('reportes.CambioPrecios', compact('historico'));
+        return view('reportes.CambioPrecios', compact('historico','productos'));
     }
 
     public function filtrarFechaCambioDePrecio(Request $request){
-        $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')
-        ->whereBetween('fecha_cambio',[$request->fechaInicio, $request->fechaFin])
-        ->get();
-        return view('reportes.CambioPrecios', compact('historico'));
+        //dd($request);
+            // primera parte           
+            // $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')
+            // ->whereBetween('fecha_cambio',[$request->fechaInicio, $request->fechaFin])
+            // ->get();
+
+
+            // segunda fase en prueba 
+            // esta sera la primera fase para evaluar solo productos 
+            $query = HistoricoPrecio::with('producto');
+            if($request->productos){
+                $historico->where('producto_id', $request->productos);    
+            }
+
+            $historico->whereBetween('fecha_cambio', [
+                // definimos un formato para las fechas de inicio y fecha de fin 
+                Carbon::parse($request->fechaInicio)->startOfDay(),
+                Carbon::parse($request->fechaFin)->endOfDay()
+            ]);
+
+            $historico = $query->ordenBy('fecha_cambio', 'desc')->get();
+            $html = view('reportes.CambioPrecios', compact('historico'))->render();
+            return response()->json(['html' => $html]);
+
+            // esta es de la primera fase
+        // return view('reportes.CambioPrecios', compact('historico'));
     }
-
-
 
         public function filtrarTraslado()
     {
@@ -357,42 +378,42 @@ class ReporteVentasController extends Controller
     }
 
      public function generarReporteTraslado(Request $request)
-{
-    $sucursalId = $request->get('sucursal_id');
-    $fecha = $request->get('fecha'); // Captura la fecha directamente
-    $semana = $request->get('semana');
+        {
+            $sucursalId = $request->get('sucursal_id');
+            $fecha = $request->get('fecha'); // Captura la fecha directamente
+            $semana = $request->get('semana');
 
-    $query = DB::table('traslado')
-        ->join('producto', 'traslado.id_producto', '=', 'producto.id')
-        ->join('sucursal as origen', 'traslado.id_sucursal_origen', '=', 'origen.id')
-        ->join('sucursal as destino', 'traslado.id_sucursal_destino', '=', 'destino.id')
-        ->select(
-            'origen.nombre as sucursal_origen',
-            'destino.nombre as sucursal_destino',
-            'producto.nombre as nombre_producto',
-            'traslado.cantidad',
-            DB::raw("WEEK(traslado.created_at, 1) as semana"),
-            'traslado.created_at'
-        )
-        ->where('traslado.estado', 1);
+            $query = DB::table('traslado')
+                ->join('producto', 'traslado.id_producto', '=', 'producto.id')
+                ->join('sucursal as origen', 'traslado.id_sucursal_origen', '=', 'origen.id')
+                ->join('sucursal as destino', 'traslado.id_sucursal_destino', '=', 'destino.id')
+                ->select(
+                    'origen.nombre as sucursal_origen',
+                    'destino.nombre as sucursal_destino',
+                    'producto.nombre as nombre_producto',
+                    'traslado.cantidad',
+                    DB::raw("WEEK(traslado.created_at, 1) as semana"),
+                    'traslado.created_at'
+                )
+                ->where('traslado.estado', 1);
 
-    // Filtrar por sucursal si se seleccionó una
-    if ($sucursalId) {
-        $query->where('traslado.id_sucursal_origen', $sucursalId);
-    }
+            // Filtrar por sucursal si se seleccionó una
+            if ($sucursalId) {
+                $query->where('traslado.id_sucursal_origen', $sucursalId);
+            }
 
-    // Filtrar por fecha si se seleccionó una
-    if ($fecha) {
-        $query->whereDate('traslado.created_at', $fecha);
-    }
+            // Filtrar por fecha si se seleccionó una
+            if ($fecha) {
+                $query->whereDate('traslado.created_at', $fecha);
+            }
 
-    $traslados = $query->orderBy('traslado.created_at', 'desc')->get();
+            $traslados = $query->orderBy('traslado.created_at', 'desc')->get();
 
-    // Si no hay resultados, devuelve un array vacío
-    if ($traslados->isEmpty()) {
-        return response()->json([]);
-    }
+            // Si no hay resultados, devuelve un array vacío
+            if ($traslados->isEmpty()) {
+                return response()->json([]);
+            }
 
-    return response()->json($traslados);
-}
+            return response()->json($traslados);
+        }
 }

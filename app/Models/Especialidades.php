@@ -14,4 +14,10 @@ class Especialidades extends Model
         'descripcion',
         'estado',
     ];
+
+
+        public function scopeActivos($query)
+    {
+       return $query->whereNotIn('estado', [0, 2]);
+    }
 }

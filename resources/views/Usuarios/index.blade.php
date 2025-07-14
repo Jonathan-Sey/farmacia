@@ -19,7 +19,7 @@
     <x-slot name="thead">
         <thead class="text-white font-bold">
             <tr class="bg-slate-600">
-                <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Id</th>
+                {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Id</th> --}}
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Nombre</th>
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Email</th>
                 <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Rol</th>
@@ -34,7 +34,7 @@
         <tbody>
             @foreach ($usuarios as $usuario)
             <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->id }}</td>
+                {{-- <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->id }}</td> --}}
                 <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->name }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->email }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $usuario->rol->nombre ?? 'Sin rol asignado' }} <!-- Mostrar el nombre del rol --></td>
@@ -60,11 +60,9 @@
                 </button>
             </form>
                   {{-- Botón Cambiar estado --}}
-                <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $usuario->id }}" data-estado="{{ $usuario->estado }}" data-info="{{ $usuario->nombre }}">
+                <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $usuario->id }}" data-estado="{{ $usuario->estado }}" data-info="{{ $usuario->name }}">
                     <i class="fas fa-sync-alt"></i>
                 </button>
-
-
                 </td>
             </tr>
             @endforeach
@@ -99,6 +97,7 @@
     $('#example').DataTable({
         responsive: true,
         order: [5,'desc'],
+        scrollx:true,
         language: {
                 url: '/js/i18n/Spanish.json',
                  paginate: {
@@ -122,8 +121,8 @@
                 }
             },
         columnDefs: [
-            { responsivePriority: 3, targets: 0 },
-            { responsivePriority: 1, targets: 1 },
+            { responsivePriority: 3, targets: 1 },
+            { responsivePriority: 1, targets: 0 },
             { responsivePriority: 2, targets: 5 },
         ],
         drawCallback: function() {
@@ -135,6 +134,45 @@
             }, 100); // Espera 100 ms antes de aplicar las clases
         },
     });
+
+    $('#example tbody').on('click', '.cambiar-estado-btn', function () {
+        const button = $(this);
+        const Id = button.data('id');
+        let estado = button.data('estado');
+        const nombre = button.data('info');
+        Swal.fire({
+            title: "¿Estás seguro?",
+            text: "¡Deseas cambiar el estado de " + nombre + "!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, cambiar estado",
+            cancelButtonText: "Cancelar"
+        }).then((result) => {
+            if (result.isConfirmed) {
+            $.ajax({
+                url: '/usuario/' + Id + '/cambiar-estado',
+                method: 'POST',
+                data: {
+                _token: '{{ csrf_token() }}',
+                estado: estado == 1 ? 2 : 1,
+                },
+                success(response) {
+                if (response.success) {
+                    location.reload();
+                } else {
+                    alert('Error al cambiar el estado');
+                }
+                },
+                error() {
+                alert('Ocurrió un error en la solicitud.');
+                }
+            });
+            }
+        });
+    });
+
 });
 
     </script>
@@ -160,7 +198,7 @@
 @endif
 
 {{-- cambio de estado --}}
-<script>
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
 
@@ -218,5 +256,5 @@
             });
         });
     });
-</script>
+</script> --}}
 @endpush

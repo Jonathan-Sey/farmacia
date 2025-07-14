@@ -8,10 +8,31 @@
 @section('contenido')
 <div class="container">
 
-     <form id="formReporte" action="{{route('reporte.fechaCambioPrecio')}}" class="space-y-4 sm:space-y-6 mb-5" method="POST">
+     <form id="formReporte" class="space-y-4 sm:space-y-6 mb-5" >
         @csrf       
         <div class="mb-5">
                <a href="{{route('Reporte_ventas.index')}}" class="bg-blue-700 text-white font-bold p-3 rounded-md inline-block" >Volver</a>
+        </div>
+
+        <!-- Toggle para alternar modo de búsqueda -->
+        <div class="flex flex-row gap-5">
+            <div class="flex flex-col gap-1">
+                <label for="tipo">Buscar Producto</label>
+                <input name="tipo" id="tipo" type="checkbox" class="toggle toggle-success"
+                {{ old('tipo') ? 'checked' : '' }}
+                     />
+            </div>
+        </div>
+
+        <div id="productos">
+            <label for="productos" class="block text-sm font-medium text-gray-600">Buscar producto:</label>
+                <select name="productos" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                    <option value="" disabled selected>Seleccione producto</option>
+                    @foreach($productos as $producto)
+                    <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
+                    @endforeach
+                </select>
+
         </div>
 
         <!-- Toggle para alternar modo de búsqueda -->
@@ -46,7 +67,7 @@
         </div>
     </form>
     
-    <x-data-table>
+    <x-data-table id="tabla-reporte">
         <x-slot name="thead">
             <thead class="text-white font-bold">
                 <tr class="bg-slate-600">
@@ -57,17 +78,19 @@
                 </tr>
             </thead>
         </x-slot>
-
         <x-slot name="tbody">
-            <tbody>
-                @foreach($historico as $registro)
+            <tbody id="tabla">
+                @forelse($historico as $registro)
                     <tr>
                         <td class="px-6 py-4">{{ $registro->producto->nombre }}</td>
                         <td class="px-6 py-4">{{ number_format($registro->precio_anterior, 2) }}</td>
                         <td class="px-6 py-4">{{ number_format($registro->precio_nuevo, 2) }}</td>
                         <td class="px-6 py-4">{{ $registro->fecha_cambio }}</td>
                     </tr>
-                @endforeach
+                    @empty
+                    <td class="px-6 py-4">No se encuentran registros</td>
+
+                @endforelse
             </tbody>
         </x-slot>
     </x-data-table>
@@ -118,6 +141,93 @@
                 }, 100);
             },
         });
+
+
+
+    });
+</script>
+
+<script>
+    $(document).ready(function (){
+        // asignamos un evneto de tipo submit al formulario
+        // al accionarse mandamos los datos de los inputs fecha, producto
+        $('#formReporte').on('submit', function(e){
+            e.preventDefault();
+            // obtenemos el valor de los inputs 
+            const formaData = {
+                producto: $('#productos').val(), 
+                fechaInicio: $('#fechaInicio').val(),
+                fechaFin: $('#fechaFin').val(),
+                _token: $('input[name="_token"]').val(),
+            };
+
+            $.ajax({
+                url: '{{ route("reporte.fechaCambioPrecio")}}',
+                method: 'POST',
+                data: formaData,
+                success: function (response){
+                    dataTable.destroy();
+                    $('#tabla').html(response.html);
+
+                    dataTable = $('#tabla-reporte').DataTable({
+                        responsive: true,
+                        order: [[3, 'desc']],
+                        language: {
+                            url: '/js/i18n/Spanish.json',
+                        },
+                        layout: {
+                            topStart: {
+
+                                buttons: [
+                                    {
+                                        extend: 'collection',
+                                    text: 'Export',
+                                    buttons: ['copy', 'pdf', 'excel', 'print']
+                                    },
+                                    'colvis'
+                                ]
+                            }
+                        },
+                        columnDefs: [
+                            { responsivePriority: 1, targets: 0 },
+                            { responsivePriority: 2, targets: 3 }
+                        ]
+
+                    })
+                },
+                error:function(){
+                    alerta('error al obtener los datos.')
+                }
+
+            });
+            
+        })
+
+
+    })
+</script>
+
+{{-- proceso para ocultar y mostrar los datos  --}}
+<script>
+    document.addEventListener('DOMContentLoaded', function (){
+        const toggle = document.getElementById('tipo'); // selecionamos el toggle
+        const inputProducto = document.getElementById('productos');
+        const campoRangos = document.getElementById('camposRango')
+
+        function mostrarInputs(){
+            if(toggle.checked){
+                campoRangos.classList.remove('hidden');
+                inputProducto.classList.remove('hidden');
+            }else{
+                inputProducto.classList.add('hidden');
+                campoRangos.classList.remove('hidden');
+            }
+        }
+
+        mostrarInputs();
+
+        toggle.addEventListener('change', mostrarInputs);
+        
     });
 </script>
 @endpush
