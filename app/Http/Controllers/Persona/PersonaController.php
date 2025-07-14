@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bitacora;
 use App\Models\Persona;
 use App\Models\User;
+use App\Models\Departamento;
 use App\Models\FichaMedica;
 use Illuminate\Http\Request;
 use App\Models\DetalleMedico;
@@ -26,7 +27,8 @@ class PersonaController extends Controller
     public function create()
     {
         $medicos = DetalleMedico::all();
-        return view('persona.create', compact('medicos'));
+        $departamentos = Departamento::all();
+        return view('persona.create', compact('medicos','departamentos'));
     }
 
      protected function crearPersona(Request $request)
@@ -75,6 +77,10 @@ class PersonaController extends Controller
     // {
     //     return $this->hasMany(FichaMedica::class);
     // }
+    public function fichasMedicas()
+    {
+        return $this->hasMany(FichaMedica::class);
+    }
 
     public function store(Request $request)
     {
@@ -90,7 +96,9 @@ class PersonaController extends Controller
         'dpi' => ['required', new Dpi()],
         'habla_lengua' => 'required_if:rol,2|in:Sí,No',
         'tipo_sangre' => 'nullable|string|max:5',
-        'direccion' => 'nullable|string|max:255'
+        'direccion' => 'nullable|string|max:255',
+        'departamento_id' => 'required_if:rol,2|exists:departamentos,id',
+        'municipio_id' => 'required_if:rol,2|exists:municipios,id'
     ]);
            $persona = $this->crearPersona($request);
         //   // Establecer valores por defecto
@@ -143,6 +151,8 @@ class PersonaController extends Controller
                 'direccion' => $request->direccion,
                 'telefono' => $request->telefono,
                 'foto' => $request->foto,
+                'departamento_id' => $request->departamento_id,
+                'municipio_id' => $request->municipio_id,
                 'diagnostico' => $request->diagnostico,
                 'consulta_programada' => $request->consulta_programada,
                 'receta_foto' => $request->receta_foto,
@@ -242,6 +252,8 @@ class PersonaController extends Controller
                 'habla_lengua' => 'No',
                 'tipo_sangre' => '',
                 'direccion' => '',
+                'departamento_id' => ' ',
+                'municipio_id' => '',
                 'telefono' => $persona->telefono,
             ]);
 
@@ -258,7 +270,8 @@ class PersonaController extends Controller
     public function edit(Persona $persona)
     {
         $fichaMedica = $persona->fichasMedicas()->paginate(2); // Obtener ficha médica si existe
-        return view('persona.edit', compact('persona', 'fichaMedica'));
+        $departamentos = Departamento::all();
+        return view('persona.edit', compact('persona', 'fichaMedica','departamentos'));
     }
     public function update(Request $request, Persona $persona)
     {
@@ -280,7 +293,9 @@ class PersonaController extends Controller
                 'dpi' => ['required', new Dpi()],
                 'habla_lengua' => 'required|in:Sí,No',
                 'tipo_sangre' => 'nullable|string|max:5',
-                'direccion' => 'nullable|string|max:255'
+                'direccion' => 'nullable|string|max:255',
+                'departamento_id' => 'required|exists:departamentos,id',
+                'municipio_id' => 'required|exists:municipios,id',
             ];
         }
 
@@ -312,6 +327,8 @@ class PersonaController extends Controller
                         'habla_lengua' => $validatedData['habla_lengua'],
                         'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
                         'direccion' => $validatedData['direccion'] ?? null,
+                        'departamento_id' => $validatedData['departamento_id'],
+                        'municipio_id' => $validatedData['municipio_id'],
                         'telefono' => $persona->telefono,
                     ]);
                 } else {
@@ -326,6 +343,8 @@ class PersonaController extends Controller
                             'habla_lengua' => $validatedData['habla_lengua'],
                             'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
                             'direccion' => $validatedData['direccion'] ?? null,
+                            'departamento_id' => $validatedData['departamento_id'],
+                            'municipio_id' => $validatedData['municipio_id'],
                         ]
                     );
                 }
