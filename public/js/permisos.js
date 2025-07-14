@@ -23,11 +23,15 @@ const rutasMapeadas = {
     'notificaciones': '/notificaciones',
     'Devoluciones': '/devoluciones',
     'reporte-productos': '/reporte-productos',
-    'reporte-productos': '/reporte-productos',
+    // 'reporte-productos': '/reporte-productos',
     'reporte-pacientes': '/reporte-pacientes',
-    'especialidades': '/especialidades',
+    // 'especialidades': '/especialidades',
     'Encuestas': '/encuestas',
     'reporte-cambioPrecio': '/reporte-cambioPrecio',
+    'reporte-traslado': '/reporte-traslado',
+    'especialidades': '/especialidades'
+
+
 };
 
 function tienePermiso(ruta) {

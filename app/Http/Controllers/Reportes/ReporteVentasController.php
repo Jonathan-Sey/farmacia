@@ -263,6 +263,8 @@ class ReporteVentasController extends Controller
         return response()->json($ventas);
     }
 
+
+
     public function filtrarProducto()
     {
         $sucursales = Sucursal::all();
@@ -345,4 +347,52 @@ class ReporteVentasController extends Controller
         ->get();
         return view('reportes.CambioPrecios', compact('historico'));
     }
+
+
+
+        public function filtrarTraslado()
+    {
+        $sucursales = Sucursal::all();
+        return view('reportes.reporteTraslados', compact('sucursales'));
+    }
+
+     public function generarReporteTraslado(Request $request)
+{
+    $sucursalId = $request->get('sucursal_id');
+    $fecha = $request->get('fecha'); // Captura la fecha directamente
+    $semana = $request->get('semana');
+
+    $query = DB::table('traslado')
+        ->join('producto', 'traslado.id_producto', '=', 'producto.id')
+        ->join('sucursal as origen', 'traslado.id_sucursal_origen', '=', 'origen.id')
+        ->join('sucursal as destino', 'traslado.id_sucursal_destino', '=', 'destino.id')
+        ->select(
+            'origen.nombre as sucursal_origen',
+            'destino.nombre as sucursal_destino',
+            'producto.nombre as nombre_producto',
+            'traslado.cantidad',
+            DB::raw("WEEK(traslado.created_at, 1) as semana"),
+            'traslado.created_at'
+        )
+        ->where('traslado.estado', 1);
+
+    // Filtrar por sucursal si se seleccionó una
+    if ($sucursalId) {
+        $query->where('traslado.id_sucursal_origen', $sucursalId);
+    }
+
+    // Filtrar por fecha si se seleccionó una
+    if ($fecha) {
+        $query->whereDate('traslado.created_at', $fecha);
+    }
+
+    $traslados = $query->orderBy('traslado.created_at', 'desc')->get();
+
+    // Si no hay resultados, devuelve un array vacío
+    if ($traslados->isEmpty()) {
+        return response()->json([]);
+    }
+
+    return response()->json($traslados);
+}
 }

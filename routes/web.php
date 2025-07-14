@@ -243,6 +243,13 @@ Route::post('/reporte-cambioPrecio', [ReporteVentasController::class, 'filtrarFe
 
 Route::get('/reporte-inventario', [ReporteVentasController::class, 'generateReportProducto'])->name('inventario.reporte');
 
+// Ruta para mostrar la vista
+Route::get('/reporte-traslado', [ReporteVentasController::class, 'filtrarTraslado'])->name('reporte.traslado.vista');
+
+// Ruta para obtener los datos (usada por JS/AJAX probablemente)
+Route::get('/reporte-traslado/datos', [ReporteVentasController::class, 'generarReporteTraslado'])->name('reporte.traslado.datos');
+
+
 
 
 
