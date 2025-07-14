@@ -27,7 +27,7 @@ const rutasMapeadas = {
     'reporte-pacientes': '/reporte-pacientes',
     'especialidades': '/especialidades',
     'Encuestas': '/encuestas',
-
+    'reporte-cambioPrecio': '/reporte-cambioPrecio',
 };
 
 function tienePermiso(ruta) {

@@ -5,28 +5,6 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
-<style>
-    .btn-responder {
-        background-color: #4CAF50;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-        transition: background-color 0.3s;
-    }
-    .btn-responder:hover {
-        background-color: #45a049;
-    }
-    .btn-ver-respuestas {
-        background-color: #2196F3;
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-        transition: background-color 0.3s;
-    }
-    .btn-ver-respuestas:hover {
-        background-color: #0b7dda;
-    }
-</style>
 @endpush
 
 @section('contenido')
@@ -71,19 +49,19 @@
                                    class="btn-responder"
                                    title="Responder encuesta">
                                    {{-- Responder --}}
-                                   <i class="fa-solid fa-house-medical-circle-check"></i>
+                                   <i class="bg-green-400 p-2 rounded-md fa-solid fa-house-medical-circle-check"></i>
                                 </a>
 
                                 <a href="{{ route('encuestas.respuestas', $encuesta) }}"
                                    class="btn-ver-respuestas"
                                    title="Ver respuestas">
-                                    <i class="fas fa-chart-bar"></i>
+                                    <i class=" bg-blue-400 p-2 rounded-md fas fa-chart-bar"></i>
                                 </a>
 
                                 <a href="{{ route('encuestas.edit', $encuesta) }}"
                                    class="text-yellow-600 hover:text-yellow-900"
                                    title="Editar">
-                                    <i class="fas fa-edit"></i>
+                                    <i class="p-2 bg-yellow-500 rounded-md fa-solid fa-pen"></i>
                                 </a>
 
                             </div>

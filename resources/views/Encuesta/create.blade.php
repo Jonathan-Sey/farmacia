@@ -45,7 +45,7 @@
 
                 <div class="mt-2 mb-5">
                     <label class="uppercase block text-sm font-medium text-gray-900">Preguntas</label>
-                    <div id="preguntas-container">
+                    <div id="preguntas-contenedor">
                         <!-- Las preguntas se agregarán aquí dinámicamente -->
                     </div>
                     <button type="button" onclick="agregarPregunta()"
@@ -74,7 +74,7 @@
     let contadorPreguntas = 0;
 
     function agregarPregunta() {
-        const container = document.getElementById('preguntas-container');
+        const contenedor = document.getElementById('preguntas-contenedor');
         const index = contadorPreguntas++;
 
         const div = document.createElement('div');
@@ -94,7 +94,7 @@
 
             <div class="mb-3">
                 <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de pregunta</label>
-                <select name="preguntas[${index}][tipo]" class="tipo-pregunta block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" onchange="cambiarTipoPregunta(this, ${index})" required>
+                <select name="preguntas[${index}][tipo]" class="tipo-pregunta block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" required>
                     <option value="escala">Escala de satisfacción (1-5)</option>
                     <option value="cerrado">Cerrado</option>
                     <option value="texto">Respuesta abierta</option>
@@ -102,15 +102,15 @@
             </div>
         `;
 
-        container.appendChild(div);
+        contenedor.appendChild(div);
     }
 
     // function cambiarTipoPregunta(select, index) {
-    //     const opcionesContainer = document.getElementById(`opciones-container-${index}`);
+    //     const opcionescontenedor = document.getElementById(`opciones-contenedor-${index}`);
     //     if (select.value === 'opcion_multiple') {
-    //         opcionesContainer.classList.remove('hidden');
+    //         opcionescontenedor.classList.remove('hidden');
     //     } else {
-    //         opcionesContainer.classList.add('hidden');
+    //         opcionescontenedor.classList.add('hidden');
     //     }
     // }
 
