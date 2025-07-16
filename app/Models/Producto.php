@@ -88,5 +88,13 @@ public function setPrecioVentaAttribute($value)
       return $this->hasMany(Inventario::class, 'id_producto');
   }
 
+  // Agrega esta relación al modelo Producto
+public function recetasMedicas()
+{
+    return $this->belongsToMany(FichaMedica::class, 'receta_producto')
+                ->withPivot('cantidad', 'instrucciones')
+                ->withTimestamps();
+}
+
 
 }

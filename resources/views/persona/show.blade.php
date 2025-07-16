@@ -2,17 +2,57 @@
 
 @section('contenido')
 <div class="container mx-auto py-6">
-    <h1 class="text-3xl font-bold text-gray-800 mb-6">Detalles de {{ $persona->nombre }}</h1>
+        <h1 class="text-3xl font-bold text-gray-800 mb-6">Detalles de {{ $persona->nombre }}</h1>
+    
+    
 
     <div class="bg-white p-6 rounded-xl shadow-md mb-6">
-        <h2 class="text-xl font-semibold text-gray-700 mb-4">Datos Personales</h2>
-
+        @if ($persona->rol == 3)
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Datos del niño</h2>
+        @else
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Datos Personales</h2>    
+        @endif
+        
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-                <div class="flex items-center mb-4">
+                @if($persona->rol == 3)
+                    <div class="flex items-center mb-4">
+                        <span class="font-medium text-gray-600 w-1/3">Nombre del niño:</span>
+                        <div class="flex flex-row gap-2">                        
+                            @if ($persona->nombre)
+                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->nombreMenor}}</p>
+                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_paterno_menor }}</p>
+                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_materno_menor}}</p>
+                            @else
+                                <p class="text-gray-800">No especificado</p>
+                            @endif
+                        </div>
+                    </div>
+                    <div class="flex items-center mb-4">
+                        <span class="font-medium text-gray-600 w-1/3">Nombre del adulto</span>
+                        {{-- <p class="text-gray-800">{{ $persona->nombre }}</p> --}}
+                        <div class="flex flex-row gap-1">                        
+                            @if ($persona->nombre)
+                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->nombre}}</p>
+                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_paterno}}</p>
+                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_materno}}</p>
+                            @else
+                                <p class="text-gray-800">No especificado</p>
+                            @endif
+                        </div>
+                    </div> 
+
+                @else 
+                    <div class="flex items-center mb-4">
+                        <span class="font-medium text-gray-600 w-1/3">Nombre:</span>
+                        <p class="text-gray-800">{{ $persona->nombre }}</p>
+                    </div>
+                @endif
+
+                {{-- <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">Nombre:</span>
                     <p class="text-gray-800">{{ $persona->nombre }}</p>
-                </div>
+                </div>  --}}
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">NIT:</span>
                     <p class="text-gray-800">{{ $persona->nit }}</p>
@@ -59,19 +99,19 @@
                     <span class="font-medium text-gray-600 w-1/3">Habla Lengua:</span>
                     <p class="text-gray-800">{{ optional($persona->fichasMedicas->first())->habla_lengua ?? 'No especificado' }}</p>
                 </div>
-                @if($persona->rol == 2)
+                @if($persona->rol == 2 || $persona->rol == 3)
                 <div class="flex items-center mb-4">
-                    <span class="font-medium text-gray-600 w-1/3">Departamento</span>
+                    <span class="font-medium text-gray-600 w-1/3 break-words ">Departamento</span>
                     <p class="text-gray-800">{{ optional($persona->fichasMedicas->first()->departamento)->nombre ?? 'No especificado' }}</p>
                 </div>
                 @else
                 <div class="flex items-center mb-4">
-                    <span class="font-medium text-gray-600 w-1/3">Departamento</span>
+                    <span class="font-medium text-gray-600 w-1/3 break-words ">Departamento</span>
                     <p class="text-gray-800">{{ optional($persona->departamento)->nombre ?? 'No especificado' }}</p>
                 </div>
                 @endif
 
-                @if($persona->rol == 2)
+                @if($persona->rol == 2 || $persona->rol == 3)
                 <div class="flex items-center mb-4">
                     <span class="font-medium text-gray-600 w-1/3">Municipio</span>
                     <p class="text-gray-800">{{ optional($persona->fichasMedicas->first()->municipio)->nombre ?? 'No especificado' }}</p>

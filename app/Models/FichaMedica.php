@@ -10,6 +10,10 @@ class FichaMedica extends Model
     use HasFactory;
     protected $table = 'fichas_medicas';
     protected $fillable = [
+        // datos de la persona menor 
+        'nombreMenor',
+        'apellido_paterno_menor',
+        'apellido_materno_menor',
         'persona_id',
         'detalle_medico_id',
         'nombre',
@@ -59,6 +63,14 @@ class FichaMedica extends Model
     public function sucursal()
     {
         return $this->belongsTo(Sucursal::class, 'sucursal_id');
+    }
+
+    // Agrega esta relación al modelo FichaMedica
+    public function productosRecetados()
+    {
+        return $this->belongsToMany(Producto::class, 'receta_producto')
+                    ->withPivot('cantidad', 'instrucciones')
+                    ->withTimestamps();
     }
 
 

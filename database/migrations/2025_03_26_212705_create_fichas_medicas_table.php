@@ -16,6 +16,10 @@ class CreateFichasMedicasTable extends Migration
         Schema::create('fichas_medicas', function (Blueprint $table) {
             $table->id(); // Campo ID para la tabla 'fichas_medicas'
             $table->unsignedBigInteger('persona_id'); // Clave foránea a la tabla 'personas'
+            //campos par el menor de edad
+            $table->string('nombreMenor')->nullable();
+            $table->string('apellido_paterno_menor')->nullable();
+            $table->string('apellido_materno_menor')->nullable();
             $table->string('nombre')->nullable();
             $table->string('apellido_paterno')->nullable();
             $table->string('apellido_materno')->nullable();

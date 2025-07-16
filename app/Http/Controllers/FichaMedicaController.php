@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Persona;
+use App\Models\Producto;
 use App\Models\FichaMedica;
 use Illuminate\Http\Request;
 use App\Models\DetalleMedico;
@@ -15,16 +16,19 @@ class FichaMedicaController extends Controller
     public function create($persona_id)
     {
         $persona = Persona::findOrFail($persona_id);
+        $productos = Producto::activos()->get();
         $sucursales = Sucursal::all();
         $medicos = DetalleMedico::with('medico')
                     ->activos()
                     ->get(); // Encontrar la persona por ID
-        return view('fichas.create', compact('persona' , 'medicos','sucursales'));
+        return view('fichas.create', compact('persona' , 'medicos','sucursales','productos'));
     }
 
     // Almacenar la nueva ficha médica
     public function store(Request $request, $persona_id)
     {
+
+        dd($request);
         // Validar los datos
         $data = $request->validate([
             'detalle_medico_id'   => 'required|exists:detalle_medico,id',
