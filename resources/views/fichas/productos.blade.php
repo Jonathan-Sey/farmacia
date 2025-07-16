@@ -105,67 +105,55 @@
                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('diagnostico') }}</textarea>
             </div>
 
+              <!-- Sección de Receta Médica -->
+              <div class="mt-6 border-t pt-4">
+                <h4 class="text-lg font-semibold mb-3">Receta Médica</h4>
 
-            {{-- seccion para registrar los productos en el detalle de ficha medica  --}}
-            <div class="grid grid-cols-1 gap-2 md:gap-2 md:grid-cols-2 items-center justify-center">
-                <div>
-                    <x-select2
-                        name="id_producto"
-                        label="Servicio"
-                        :options="$productos->pluck('nombre', 'id')"
-                        :selected="old('id_producto')"
-                        placeholder="Seleccionar producto o servicio"
-                        id="id_producto"
-                        class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm mt-0 mb-0"
-                    />
+                <!-- Selector de productos -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+                    <div class="md:col-span-2">
+                        <label for="producto_id" class="block text-sm font-medium text-gray-700">Producto/Medicamento</label>
+                        <select id="producto_id" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            <option value="">-- Seleccione un producto --</option>
+                            @foreach($productos as $producto)
+                                <option value="{{ $producto->id }}">{{ $producto->nombre }} ({{ $producto->codigo }})</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label for="cantidad" class="block text-sm font-medium text-gray-700">Cantidad</label>
+                        <input type="number" id="cantidad" min="1" value="1" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    </div>
+                    <div class="flex items-end">
+                        <button type="button" id="agregar-producto" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                            Agregar
+                        </button>
+                    </div>
                 </div>
-                <div >
-                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
-                    <input type="number" min="1" value="1" name="cantidad" id="cantidad" 
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
-                </div>
-            </div>
-            {{-- area para el detalle o instrucciones del input --}}
-            <div class="mb-4">
-                    <label for="instrucciones" class="block text-sm font-medium text-gray-700 uppercase">Instrucciones (opcional)</label>
-                    <textarea id="instrucciones" rows="2" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"></textarea>
-                </div>
-            <div class="flex flex-col items-end mb-2 mt-2 md:mt-2">
-                    <button type="button" id="agregar-producto" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">
-                        Agregar
-                    </button>
-            </div>
-            
-            {{-- seccion para la tabla  --}}
-            <div class="overflow-x-auto">
-                <table class="table table-sm table-pin-rows table-pin-cols">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <td>Nombre</td>
-                        <td>Cantidad</td>
-                        <td>Instrucciones</td>
-                        <td>Acciones</td>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody id="contenido-productos">
-                    {{-- <tr>
-                        <th>1</th>
-                        <td>VITAMINA K1 (FITOMENADIONA) 10 MG/1ML SOLUCION INYECTABLE</td>
-                        <td>Quality Control Specialist</td>
-                        <td>Littel, Schaden and Vandervort</td>
-                        <td><i class="fas fa-trash"></i></td>
-                    </tr> --}}
-                        {{-- formato de los arrays para mandar el detalle de productos --}}
-                        {{-- <input type="hidden" name="producto[][id]" value="">
-                        <input type="hidden" name="producto[][cantidad]" value="">
-                        <input type="hidden" name="producto[][instrucciones]" value=""> --}}
 
-                    </tbody>
-                </table>
+                <div class="mb-4">
+                    <label for="instrucciones" class="block text-sm font-medium text-gray-700">Instrucciones (opcional)</label>
+                    <textarea id="instrucciones" rows="2" class="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                </div>
+
+                <!-- Tabla de productos agregados -->
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border rounded-lg">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Producto</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Cantidad</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Instrucciones</th>
+                                <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="productos-container" class="divide-y divide-gray-200">
+                            <!-- Aquí se agregarán dinámicamente los productos -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
-          
+
             <div class="mt-2 mb-5">
                 <label for="detalle_medico_id" class="uppercase block text-sm font-medium text-gray-900">
                     Médico
@@ -229,122 +217,58 @@
 @endsection
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="/js/select2-global.js"></script>
 
-{{-- manejo del boton agregar --}}
 <script>
+ $(document).ready(function() {
+        // Manejar agregar productos a la receta
+        $('#agregar-producto').click(function() {
+            const productoSelect = document.getElementById('producto_id');
+            const productoId = productoSelect.value;
+            const productoNombre = productoSelect.options[productoSelect.selectedIndex].text;
+            const cantidad = $('#cantidad').val();
+            const instrucciones = $('#instrucciones').val();
 
-    $(document).ready(function(){
-        //agregamos evento al boton para agregar los productos
-        $('#agregar-producto').click(function(){
-            agregarProducto();
-        }); 
-    });
-
-    let contador = 0
-    function agregarProducto(){
-        const productoSelect = document.getElementById('id_producto');
-        const id_producto = $('#id_producto').val();
-        const nombre = productoSelect.options[productoSelect.selectedIndex].text;
-        const cantidad = $('#cantidad').val();
-        const instrucciones = $('#instrucciones').val();
-        
-        const datos = {
-            id:id_producto,
-            nombre: nombre,
-            cantidad: cantidad,
-            instrucciones: instrucciones
-        }
-
-        // validar si hay algun producto o cantidad 
-        if(!id_producto || !cantidad){
-            Swal.fire('Error', 'Debe de selecionar un producto y su cantidad','error')
-            return;
-        }
-        
-
-        // validar que solo admita numeros enteros positivos
-        if(parseInt(cantidad) <= 0 || !/^\d+$/.test(cantidad)){
-            Swal.fire('Error', 'La cantidad debe de ser un entero positivo','error')
-            return;
-        }
-
-        // validar si el producto ya fue agregado 
-
-        if($(`#contenido-productos tr[data-producto-id="${id_producto}"]`).length > 0){
-            Swal.fire('Error', 'El producto ya fue agregado al detalle de productos','error')
-            return;
-        }
-
-        console.log(datos);
-
-
-        // proceso para agregar los productos a la tabla 
-        contador ++;
-        const row = `
-        <tr data-producto-id="${id_producto}">
-                    <th>${contador}</th>
-                    <td>${nombre}</td>
-                    <td>${cantidad}</td>
-                    <td>${instrucciones || 'N/A'}</td>
-                    <td>
-                        <button type="button" class = "eliminar-producto">
-                            <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
-                        </button>
-
-                        <input type="hidden" name="producto[${id_producto}][id]" value="${id_producto}">
-                        <input type="hidden" name="producto[${id_producto}][cantidad]" value="${cantidad}">
-                        <input type="hidden" name="producto[${id_producto}][instrucciones]" value="${instrucciones}">
-
-
-
-                        
-                    </td>
-                    </tr>
-        `;
-        $('#contenido-productos').append(row);
-
-        limpiar();
-    }
-
-    function limpiar(){
-        $('#id_producto').val(null).trigger('change');
-        $('#cantidad').val(1);
-        $('#instrucciones').val('');
-    }
-
-    // proceso para eliminar el producto de la lista, primera forma     
-
-    $(document).on('click', '.eliminar-producto', function () {
-
-        Swal.fire({
-            title: "Eliminar?",
-            text: "¿Esta seguro de eliminar el producto ?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#3085d6",
-            cancelButtonColor: "#d33",
-            confirmButtonText: "Si, eliminar!"
-            }).then((result) => {
-            if (result.isConfirmed) {
-                //borramos el producto del detalle de productos 
-                $(this).closest('tr').remove();
-                
-                Swal.fire({
-                title: "Eliminado!",
-                text: "Producto Eliminado",
-                icon: "success"
-                });
+            if (!productoId || !cantidad) {
+                Swal.fire('Error', 'Debe seleccionar un producto y especificar la cantidad', 'error');
+                return;
             }
-            });
-        
+
+            // Verificar si el producto ya fue agregado
+            if ($(`#productos-container tr[data-producto-id="${productoId}"]`).length > 0) {
+                Swal.fire('Error', 'Este producto ya fue agregado a la receta', 'error');
+                return;
+            }
+
+            // Agregar fila a la tabla
+            const row = `
+                <tr data-producto-id="${productoId}">
+                    <td class="px-4 py-2">${productoNombre}</td>
+                    <td class="px-4 py-2">${cantidad}</td>
+                    <td class="px-4 py-2">${instrucciones || 'N/A'}</td>
+                    <td class="px-4 py-2">
+                        <button type="button" class="eliminar-producto text-red-600 hover:text-red-800">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <input type="hidden" name="productos[${productoId}][id]" value="${productoId}">
+                        <input type="hidden" name="productos[${productoId}][cantidad]" value="${cantidad}">
+                        <input type="hidden" name="productos[${productoId}][instrucciones]" value="${instrucciones}">
+                    </td>
+                </tr>
+            `;
+
+            $('#productos-container').append(row);
+
+            // Limpiar campos
+            $('#producto_id').val('');
+            $('#cantidad').val(1);
+            $('#instrucciones').val('');
+        });
+
+        // Eliminar producto de la receta
+        $(document).on('click', '.eliminar-producto', function() {
+            $(this).closest('tr').remove();
+        });
     });
-
-    // con funcion, segunda forrma 
-    
-    function eliminarProducto(){
-        alert("Hola desde el boton eliminar")
-    }
-
+</script>
 </script>
 @endpush

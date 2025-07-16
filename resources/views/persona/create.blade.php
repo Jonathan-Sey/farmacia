@@ -33,31 +33,59 @@
                 
 
                 {{-- datos del menor de edad  --}}
-                <div class="mt-2 mb-5 grid grid-cols-1 gap-5 ">
+                <div   div class="mt-2 mb-5 grid grid-cols-1 gap-5 ">
                     <div id="datos-menor" class="hidden" >
                         <fieldset class="border-2 border-gray-200 p-2 rounded-md">
                             <legend class="text-blue-500 font-bold">Datos del menor </legend>
-                            <label for="nombreMenor" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
-                            <input
-                                type="text"
-                                name="nombreMenor"
-                                id="nombreMenor"
-                                required
-                                autocomplete="given-name"
-                                placeholder="Nombre completo"
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                                value="{{ old('nombreMenor') }}">
-                            @error('nombreMenor')
-                            <div role="alert" class="alert alert-error mt-4 p-2">
-                                <span class="text-white font-bold">{{ $message }}</span>
+
+                            <div class="mb-5">
+                                <label for="nombreMenor" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
+                                <input
+                                    type="text"
+                                    name="nombreMenor"
+                                    id="nombreMenor"
+                                    autocomplete="given-name"
+                                    placeholder="Nombre del menor"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    value="{{ old('nombreMenor') }}">
+                                @error('nombreMenor')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                                @enderror
                             </div>
-                            @enderror
+                            <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
+
+                            
+                                <div>
+                                    <label for="apellido_paterno_menor" class="uppercase block text-sm font-medium text-gray-900">Apellido Paterno</label>
+                                    <input
+                                        type="text"
+                                        name="apellido_paterno_menor"
+                                        id="apellido_paterno_menor"
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                        value="{{ old('apellido_paterno_menor') }}">
+                                </div>
+
+                                <div>
+                                    <label for="apellido_materno_menor" class="uppercase block text-sm font-medium text-gray-900">Apellido Materno</label>
+                                    <input
+                                        type="text"
+                                        name="apellido_materno_menor"
+                                        id="apellido_materno_menor"
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                        value="{{ old('apellido_materno_menor') }}">
+                                </div>
+                            </div>
+                            
                         </fieldset>                        
                     </div>
 
                  <!-- Datos Básicos -->    
                     <!-- Nombre -->
+                
                     <div>
+                        <h3 id="TituloEncargado" class="text-lg font-semibold text-gray-900 mb-5 border-b pb-2">Datos de la persona encargada</h3>
                         <label for="nombre" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
                         <input
                             type="text"
@@ -143,9 +171,15 @@
                             @enderror
                         </div>
                     </div>
+                   
+                </div>
 
-                    <!-- Fecha de Nacimiento -->
-                    <div class="grid grid-cols-1">
+                <!-- Sección específica para Pacientes -->
+                <div id="ficha_medica" class="hidden mt-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-5 border-b pb-2">Información Médica</h3>
+                    
+                <!-- Fecha de Nacimiento -->
+                    <div class="grid grid-cols-1 w-full mb-5">
                         <div>
                             <label for="fecha_nacimiento" class="uppercase block text-sm font-medium text-gray-900">Fecha Nacimiento</label>
                             <input
@@ -162,11 +196,6 @@
                             @enderror
                         </div>
                     </div>
-                </div>
-
-                <!-- Sección específica para Pacientes -->
-                <div id="ficha_medica" class="hidden mt-6">
-                    <h3 class="text-lg font-semibold text-gray-900 mb-5 border-b pb-2">Información Médica</h3>
 
                     <div class="grid grid-cols-1 gap-5 md:grid-cols-3">
                         <div>
@@ -258,6 +287,7 @@
     $(document).ready(function() {
         //  tomamos el valor de toggle 
         const infoMenor = document.getElementById('datos-menor')
+        const seccionEncargado = document.getElementById('TituloEncargado')
 
 
 
@@ -280,24 +310,34 @@
             if ($(this).val() == 2) {
                 //ocultamos la info del menor de edad 
                 infoMenor.classList.add('hidden');
+                seccionEncargado.classList.add('hidden')
 
                 // Mostrar apellidos y ficha médica
                 $('#apellidos-section, #ficha_medica').removeClass('hidden');
                 // Hacer requeridos los campos adicionales
                 $('#apellido_paterno, #apellido_materno').prop('required', true);
                 $('#ficha_medica input, #ficha_medica select').prop('required', true);
-            } else if($(this).val() == 3){                
+                $('#nombreMenor, #apellido_paterno_menor, #apellido_materno_menor').prop('required', false);
+            } else if($(this).val() == 3){
                 infoMenor.classList.remove('hidden');
+                seccionEncargado.classList.remove('hidden');
+                // datos para el menor de edad
+                $('#nombreMenor, #apellido_paterno_menor, #apellido_materno_menor').prop('required', true);
+                $('#apellidos-section, #ficha_medica').removeClass('hidden');
             }
             
             else {
                 //ocultamos la info del menor de edad 
                 infoMenor.classList.add('hidden');
+                seccionEncargado.classList.add('hidden');
                 // Ocultar secciones adicionales
                 $('#apellidos-section, #ficha_medica').addClass('hidden');
                 // Quitar requeridos
                 $('#apellido_paterno, #apellido_materno').prop('required', false);
                 $('#ficha_medica input, #ficha_medica select').prop('required', false);
+                // quitar requridos para los datos del menor de edad 
+                $('#nombreMenor, #apellido_paterno_menor, #apellido_materno_menor').prop('required', false);
+
             }
         }).trigger('change');
 
@@ -305,7 +345,7 @@
         $('form').submit(function(e) {
         if ($('#rol').val() == 1) {
             // Deshabilitar todo excepto DPI
-            $('#apellidos-section, #ficha_medica').find('input, select').not('[name="dpi"]').prop('disabled', true);
+            $('#datos-menor,#apellidos-section, #ficha_medica').find('input, select').not('[name="dpi"]').prop('disabled', true);
         }
 });
 

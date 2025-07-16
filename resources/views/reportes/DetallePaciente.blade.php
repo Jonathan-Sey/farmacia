@@ -27,10 +27,10 @@
         <tbody>
             @foreach ($fichas as $ficha)
             <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->diagnostico}}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->detalleMedico->usuario->name}}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->diagnostico ?? 'Sin diagnosticos'}}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->detalleMedico->usuario->name ?? 'Medico no asignado'}}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->sucursal->nombre ?? 'No tiene sucursal'}}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->consulta_programada}}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->consulta_programada ?? 'Sin fecha programada'}}</td>
             </tr>
             @endforeach
         </tbody>

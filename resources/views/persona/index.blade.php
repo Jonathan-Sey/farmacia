@@ -19,7 +19,6 @@
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nit</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Rol</th>
@@ -34,15 +33,16 @@
             <tbody>
                 @foreach ($personas as $persona)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$persona->id}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$persona->nombre}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$persona->nit}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">
 
                         @if ($persona->rol == 1)
                             <span class="text-orange-600 font-bold">Cliente</span>
-                        @else
+                        @elseif ($persona->rol == 2)
                             <span class="text-blue-600 font-bold">Paciente</span>
+                        @else
+                            <span class="text-teal-600 font-bold">Menor de edad</span>
                         @endif
 
                     </td>
@@ -136,9 +136,9 @@
                 }
             },
             columnDefs: [
-                { responsivePriority: 3, targets: 0 },
-                { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 6 },
+                { responsivePriority: 3, targets: 1 },
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 5 },
 
             ],
             drawCallback: function() {
