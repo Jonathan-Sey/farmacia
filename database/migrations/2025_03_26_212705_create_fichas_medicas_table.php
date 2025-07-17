@@ -26,7 +26,8 @@ class CreateFichasMedicasTable extends Migration
             $table->enum('sexo', ['Hombre', 'Mujer'])->nullable();
             $table->date('fecha_nacimiento')->nullable();
             $table->string('DPI')->nullable();
-            $table->enum('habla_lengua', ['Sí', 'No'])->default('No')->nullable();
+            $table->tinyInteger('habla_lengua')->nullable();
+            $table->tinyInteger('antigueno')->nullable();
             $table->enum('tipo_sangre', ['O+', 'O-', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-'])->nullable();
             $table->string('direccion')->nullable();
             $table->string('telefono')->nullable();

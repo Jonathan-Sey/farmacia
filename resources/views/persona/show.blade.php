@@ -169,14 +169,30 @@
                     @endif
 
             </div>
-
+            
+                        
             <ul class="space-y-4">
                 @foreach ($fichas as $ficha)
                     <li class="border-b pb-4 break-words">
-                        <p><strong class="text-gray-600">Diagnóstico:</strong> {{ $ficha->diagnostico }}</p>
-                        <p><strong class="text-gray-600">Médico:</strong> {{ $ficha->detalleMedico->usuario->name ?? 'No asignado' }}</p>
-                        <p><strong class="text-gray-600">Sucursal:</strong> {{ $ficha->sucursal->nombre ?? 'No asignado' }}</p>
-                        <p><strong class="text-gray-600">Consulta Programada:</strong> {{ $ficha->consulta_programada }}</p>
+                        <div class="flex flex-row">
+                            <div>
+                            <p><strong class="text-gray-600">Diagnóstico:</strong> {{ $ficha->diagnostico }}</p>
+                            <p><strong class="text-gray-600">Médico:</strong> {{ $ficha->detalleMedico->usuario->name ?? 'No asignado' }}</p>
+                            <p><strong class="text-gray-600">Sucursal:</strong> {{ $ficha->sucursal->nombre ?? 'No asignado' }}</p>
+                            <p><strong class="text-gray-600">Consulta Programada:</strong> {{ $ficha->consulta_programada }}</p>
+                            </div>
+                            
+                            <div>
+                                
+                                @foreach ($ficha->productosRecetados as $item)
+                                    <p><strong class="text-gray-600">Productos:</strong> {{ $item->nombre}}</p>
+                                    <p><strong class="text-gray-600">instrucciones:</strong> {{ $item->pivot->instrucciones}}</p>
+                                    <p><strong class="text-gray-600">Cantidad:</strong> {{ $item->pivot->cantidad}}</p>
+                                @endforeach
+                            </div>
+                        </div>
+                        
+                         {{-- <p><strong class="text-gray-600">Productos:</strong> {{ $ficha->productosRecetados}}</p>  --}}
 
                         <div>
                             @if ($ficha->receta_foto)
@@ -185,7 +201,6 @@
                                 <span class="text-gray-500">Sin imagen</span>
                             @endif
                         </div>
-
                         <div class="mt-3 space-x-2">
                             <a href="{{ route('fichas.edit', ['persona_id' => $persona->id, 'ficha' => $ficha->id]) }}"
                                 class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
@@ -329,6 +344,22 @@
             }
         });
     }
+    </script>
+
+    <script>
+        let datos = @json($fichas);
+        console.log(datos);
+        console.log(datos.data);
+
+        mostrarRestricciones(1);
+
+        function mostrarRestricciones(idPersona) {
+            fetch(`/personas/${idPersona}/productos`)
+            .then(response => response.json())
+            .then(data => {
+            console.log(data.cantidad)
+            });
+        }
     </script>
 
 @endpush

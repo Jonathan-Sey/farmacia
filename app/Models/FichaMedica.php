@@ -23,6 +23,7 @@ class FichaMedica extends Model
         'fecha_nacimiento',
         'DPI',
         'habla_lengua',
+        'antigueno',
         'tipo_sangre',
         'direccion',
         'telefono',

@@ -169,6 +169,9 @@ Route::post('/upload-image', [ImagenController::class, 'upload'])->name('upload.
 Route::get('/personas/{persona}/restricciones', [PersonaController::class, 'obtenerRestricciones'])
      ->name('personas.restricciones');
 
+Route::get('/personas/{persona}/productos', [PersonaController::class, 'obtenerProductos'])
+     ->name('personas.productos');
+
 Route::post('/personas/actualizar-restricciones', [PersonaController::class, 'actualizarRestricciones'])
      ->name('personas.actualizar-restricciones');
 
