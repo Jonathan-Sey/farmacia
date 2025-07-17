@@ -7,6 +7,7 @@ use App\Models\Bitacora;
 use App\Models\Persona;
 use App\Models\User;
 use App\Models\Departamento;
+use App\Models\Receta_producto;
 use App\Models\FichaMedica;
 use Illuminate\Http\Request;
 use App\Models\DetalleMedico;
@@ -96,12 +97,15 @@ class PersonaController extends Controller
             'apellido_materno' => 'required_if:rol,2,3|string|max:100',
             'sexo' => 'required_if:rol,2,3|in:Hombre,Mujer',
             'dpi' => ['required', new Dpi()],
-            'habla_lengua' => 'required_if:rol,2,3|in:Sí,No',
+            'habla_lengua' => 'required_if:rol,2,3',
+            'antigueno' => 'required_if:rol,2,3',
             'tipo_sangre' => 'nullable|string|max:5',
             'direccion' => 'nullable|string|max:255',
             'departamento_id' => 'required_if:rol,2,3|exists:departamentos,id',
             'municipio_id' => 'required_if:rol,2,3|exists:municipios,id'
         ]);
+
+        //dd($request);
            $persona = $this->crearPersona($request);
         //   // Establecer valores por defecto
         //     $persona->update([
@@ -155,6 +159,7 @@ class PersonaController extends Controller
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'DPI' => $request->dpi,
                 'habla_lengua' => $request->habla_lengua,
+                'antigueno' => $request->antigueno,
                 'tipo_sangre' => $request->tipo_sangre,
                 'direccion' => $request->direccion,
                 'telefono' => $request->telefono,
@@ -169,6 +174,7 @@ class PersonaController extends Controller
         }
             
         if ($persona->rol == 2) {
+            //dd($request);
             FichaMedica::create([
                 'persona_id' => $persona->id,
                 'nombre' => $request->nombre,
@@ -178,6 +184,7 @@ class PersonaController extends Controller
                 'fecha_nacimiento' => $request->fecha_nacimiento,
                 'DPI' => $request->dpi,
                 'habla_lengua' => $request->habla_lengua,
+                'antigueno' => $request->antigueno,
                 'tipo_sangre' => $request->tipo_sangre,
                 'direccion' => $request->direccion,
                 'telefono' => $request->telefono,
@@ -202,6 +209,13 @@ class PersonaController extends Controller
             'restriccion_activa' => $persona->restriccion_activa,
             'compras_recientes' => $persona->comprasRecientes(),
             'tiene_restriccion' => $persona->tieneRestriccion()
+        ]);
+    }
+
+    public function obtenerProductos (Receta_producto $request){
+        return response()->json([
+            'ficha_medica_id' => $request->ficha_medica_id,
+            'cantidad' => $request->cantidad,
         ]);
     }
 
@@ -264,10 +278,11 @@ class PersonaController extends Controller
     public function show($id)
     {
         $persona = Persona::findOrFail($id);
-
+        dd($productos);
         // Obtener fichas médicas paginadas (5 por página)
         $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->paginate(2);
-
+        //dd($datos);
+        
 
         // Si es paciente pero no tiene ficha médica, crearla con datos mínimos
         if ($persona->rol == 2 && $persona->fichasMedicas->isEmpty()) {
@@ -323,7 +338,8 @@ class PersonaController extends Controller
                 'apellido_materno' => 'required|string|max:100',
                 'sexo' => 'required|in:Hombre,Mujer',
                 'dpi' => ['required', new Dpi()],
-                'habla_lengua' => 'required|in:Sí,No',
+                'habla_lengua' => 'required|in:1,2,3',
+                'antigueno' => 'required|in:1,2',
                 'tipo_sangre' => 'nullable|string|max:5',
                 'direccion' => 'nullable|string|max:255',
                 'departamento_id' => 'required|exists:departamentos,id',
@@ -340,7 +356,8 @@ class PersonaController extends Controller
                 'apellido_materno' => 'required|string|max:100',
                 'sexo' => 'required|in:Hombre,Mujer',
                 'dpi' => ['required', new Dpi()],
-                'habla_lengua' => 'required|in:Sí,No',
+                'habla_lengua' => 'required|in:1,2,3',
+                'antigueno' => 'required|in:1,2',
                 'tipo_sangre' => 'nullable|string|max:5',
                 'direccion' => 'nullable|string|max:255',
                 'departamento_id' => 'required|exists:departamentos,id',
@@ -374,6 +391,7 @@ class PersonaController extends Controller
                         'fecha_nacimiento' => $persona->fecha_nacimiento,
                         'DPI' => $validatedData['dpi'],
                         'habla_lengua' => $validatedData['habla_lengua'],
+                        'antigueno' => $validatedData['antigueno'],
                         'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
                         'direccion' => $validatedData['direccion'] ?? null,
                         'departamento_id' => $validatedData['departamento_id'],
@@ -390,6 +408,7 @@ class PersonaController extends Controller
                             'sexo' => $validatedData['sexo'],
                             'DPI' => $validatedData['dpi'],
                             'habla_lengua' => $validatedData['habla_lengua'],
+                            'antigueno' => $validatedData['antigueno'],
                             'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
                             'direccion' => $validatedData['direccion'] ?? null,
                             'departamento_id' => $validatedData['departamento_id'],
@@ -415,6 +434,7 @@ class PersonaController extends Controller
                         'fecha_nacimiento' => $persona->fecha_nacimiento,
                         'DPI' => $validatedData['dpi'],
                         'habla_lengua' => $validatedData['habla_lengua'],
+                        'antigueno' => $validatedData['antigueno'],
                         'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
                         'direccion' => $validatedData['direccion'] ?? null,
                         'departamento_id' => $validatedData['departamento_id'],
@@ -432,6 +452,7 @@ class PersonaController extends Controller
                             'sexo' => $validatedData['sexo'],
                             'DPI' => $validatedData['dpi'],
                             'habla_lengua' => $validatedData['habla_lengua'],
+                            'antigueno' => $validatedData['antigueno'],
                             'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
                             'direccion' => $validatedData['direccion'] ?? null,
                             'departamento_id' => $validatedData['departamento_id'],

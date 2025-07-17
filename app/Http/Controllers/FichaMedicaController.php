@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Persona;
 use App\Models\Producto;
 use App\Models\FichaMedica;
+use App\Models\Receta_producto;
 use Illuminate\Http\Request;
 use App\Models\DetalleMedico;
 use App\Models\Sucursal;
@@ -28,7 +29,7 @@ class FichaMedicaController extends Controller
     public function store(Request $request, $persona_id)
     {
 
-        dd($request);
+        //dd($request);
         // Validar los datos
         $data = $request->validate([
             'detalle_medico_id'   => 'required|exists:detalle_medico,id',
@@ -36,6 +37,10 @@ class FichaMedicaController extends Controller
             'sucursal_id' => 'nullable|exists:sucursal,id',
             'consulta_programada' => 'required|date',
             'receta_foto'         => 'nullable|string',
+            'producto' => 'array',
+            'producto.*.id' => 'nullable',
+            'producto.*.cantidad' => 'nullable',
+            'producto.*.instrucciones' => 'nullable',
         ]);
 
          // Recuperar la persona
@@ -61,8 +66,21 @@ class FichaMedicaController extends Controller
         $data['persona_id'] = $persona_id;
         $data['departamento_id'] = $departamentoId;
         $data['municipio_id'] = $municipioId;
+        
+        $fichasMedicas = FichaMedica::create($data);
 
-        FichaMedica::create($data);
+        
+        $recetas = [];
+        foreach($data['producto'] as $productosData) {
+            $recetas [$productosData['id']] = [
+                'cantidad' => $productosData['cantidad'],
+                'instrucciones' => $productosData['instrucciones'],
+            ];
+        }
+
+        $fichasMedicas->productosRecetados()->sync($recetas);
+
+
 
         return redirect()
             ->route('personas.show', $persona_id)

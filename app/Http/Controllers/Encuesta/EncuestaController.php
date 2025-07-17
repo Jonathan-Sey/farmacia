@@ -47,6 +47,7 @@ class EncuestaController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request);
         $request->validate([
             'detalle_medico_id' => 'required|exists:detalle_medico,id',
             'titulo' => 'required|string|max:255',

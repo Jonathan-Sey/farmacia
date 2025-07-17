@@ -193,7 +193,21 @@
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5 items-start">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
                     <legend class="text-blue-500 font-bold">Datos Generales</legend>
+                    
+                    
+
                     <div class="border-b border-gray-900/10 ">
+
+                        <x-select2
+                            name="productos_recetados"
+                            label="Buscar productos Recetados"
+                            :options="$productosRecetados->pluck('id')"
+                            :selected="old('productos_recetados')"
+                            placeholder="Buscar productos recetados"
+                            id="productos_recetados"
+                            class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                        />
+
 
                         <div class="mt-2 mb-5">
                             <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Farmaci</label>
@@ -632,6 +646,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+<script src="/js/select2-global.js"></script>
 <script>
 
 
@@ -1763,5 +1778,112 @@ function mensaje(message, icon = "error") {
         }
     });
 });
+
+
+    let productosRecetados = @json($productosRecetados);
+    console.log(productosRecetados);
+</script>
+
+
+{{--  proceso por adoptar --}}
+<script>
+    $(document).ready(function() {
+        const productoSelect = document.getElementById('productos_recetados');
+        const id_producto = $('#productos_recetados').val();
+        console.log(id_producto);
+
+        const nombre = productoSelect.options[productoSelect.selectedIndex].text;
+        console.log(nombre);
+
+        function recalcularTotales() {
+            let sumaTotal = 0;
+
+            tablaDetalles.find('tr').each(function() {
+                const row = $(this);
+                const precio = parseFloat(row.find('input[name$="[precio]"]').val());
+                const cantidadInput = row.find('input[name$="[cantidad]"]');
+                const cantidad = parseInt(cantidadInput.val()) || 0;
+                const max = parseInt(cantidadInput.attr('max'));
+
+                // Validación en tiempo real
+                if (cantidad <= 0 || cantidad > max || isNaN(cantidad)) {
+                    cantidadInput.addClass('border-red-500');
+                } else {
+                    cantidadInput.removeClass('border-red-500');
+                }
+
+                const subtotal = precio * cantidad;
+                row.find('td.subtotal').text(subtotal.toFixed(2));
+                sumaTotal += subtotal;
+            });
+
+            const ivaValor = sumaTotal * 0; // IVA en 0 por ahora
+            const totalConIVA = sumaTotal + ivaValor;
+
+            suma.text(sumaTotal.toFixed(2));
+            iva.text(ivaValor.toFixed(2));
+            total.text(totalConIVA.toFixed(2));
+            inputTotal.val(totalConIVA.toFixed(2));
+        }
+
+        ventas.change(function() {
+            const ventaId = $(this).val();
+
+            if (ventaId) {
+                $.ajax({
+                    url: `/ventas-devoluciones/${ventaId}`,
+                    method: "GET",
+                    success: function(response) {
+                        $('#persona_nombre').val(response.persona.nombre);
+                        $('#sucursal_nombre').val(response.sucursal.nombre);
+                        $('#id_persona').val(response.persona.id);
+                        $('#id_sucursal').val(response.sucursal.id);
+
+                        tablaDetalles.empty();
+
+                        response.detalles.forEach((detalle, index) => {
+                            const subtotal = detalle.precio * detalle.cantidad;
+
+                            const row = `
+                                <tr>
+                                    <td>${detalle.producto.nombre}</td>
+                                    <td>${detalle.cantidad}</td>
+                                    <td>${detalle.precio}</td>
+                                    <td class="cantidad-cell">
+                                        <input type="hidden" name="detalles[${index}][producto_id]" value="${detalle.producto.id}">
+                                        <input type="hidden" name="detalles[${index}][precio]" value="${detalle.precio}">
+                                        <input type="number" name="detalles[${index}][cantidad]" value="${detalle.cantidad}" min="1" max="${detalle.cantidad}" class="cantidad-input w-20 border rounded px-2 py-1">
+                                    </td>
+                                    <td class="subtotal">${subtotal.toFixed(2)}</td>
+                                    <td>
+                                        <button type="button" class="btn-eliminar text-red-600 hover:text-red-800 font-bold">
+                                            <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            `;
+                            tablaDetalles.append(row);
+                        });
+
+                        recalcularTotales();
+                    },
+                    error: function() {
+                        alert('Error al cargar los detalles de la venta');
+                    }
+                });
+            }
+        });
+
+        // Recalcular al cambiar cantidad
+        tablaDetalles.on('input', '.cantidad-input', function() {
+            recalcularTotales();
+        });
+
+        // Eliminar fila
+        tablaDetalles.on('click', '.btn-eliminar', function() {
+            $(this).closest('tr').remove();
+            recalcularTotales();
+        });
+    });
 </script>
 @endpush

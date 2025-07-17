@@ -9,6 +9,7 @@ use App\Models\Producto;
 use App\Models\Persona;
 use App\Models\Sucursal;
 use App\Models\Venta;
+use App\Models\Receta_producto;
 use App\Models\Almacen;
 use App\Models\Bitacora;
 use App\Models\ReporteKardex;
@@ -67,6 +68,8 @@ class VentaController extends Controller
         //   $productos = collect();
         $productos = Producto::activos()->get();
         $almacenesActivos = Almacen::activos()->get();
+        $productosRecetados = Receta_producto::all();
+        
 
         // Filtrar los productos disponibles en almacenes activos
         //$productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
@@ -79,7 +82,7 @@ class VentaController extends Controller
         ->orderByRaw("CASE WHEN nit = '0' THEN 0 ELSE 1 END") // Consumidor final primero
         ->orderBy('nombre')
         ->get(['id', 'nombre', 'nit', 'DPI as dpi', 'rol']);
-        return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona'));
+        return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona','productosRecetados'));
 
     }
 

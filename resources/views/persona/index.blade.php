@@ -280,6 +280,7 @@
 function mostrarRestricciones(idPersona) {
     fetch(`/personas/${idPersona}/restricciones`)
         .then(response => response.json())
+        
         .then(data => {
             const modal = `
                 <dialog id="modalRestricciones" class="modal">

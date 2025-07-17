@@ -224,8 +224,9 @@
                         <div>
                             <label for="habla_lengua" class="uppercase block text-sm font-medium text-gray-900">Habla Lengua</label>
                             <select name="habla_lengua" id="habla_lengua" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
-                                <option value="Sí" {{ old('habla_lengua', $fichaMedica->habla_lengua ?? '') == 'Sí' ? 'selected' : '' }}>Sí</option>
-                                <option value="No" {{ old('habla_lengua', $fichaMedica->habla_lengua ?? '') == 'No' ? 'selected' : '' }}>No</option>
+                                <option value="1" {{ old('habla_lengua', $fichaMedica->habla_lengua ?? '') == 1 ? 'selected' : '' }}>Español</option>
+                                <option value="2" {{ old('habla_lengua', $fichaMedica->habla_lengua ?? '') == 2 ? 'selected' : '' }}>Maya</option>
+                                <option value="3" {{ old('habla_lengua', $fichaMedica->habla_lengua ?? '') == 3 ? 'selected' : '' }}>Extranjero</option>
                             </select>
                         </div>
                     </div>
@@ -241,6 +242,15 @@
                                 value="{{ old('direccion', $fichaMedica->direccion ?? '') }}">
                         </div>
                     </div>
+
+                    <div>
+                            <label for="antigueno" class="uppercase block text-sm font-medium text-gray-900">Es antigueño?</label>
+                            <select name="antigueno" id="antigueno" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                                <option value="1" {{ old('antigueno', $fichaMedica->antigueno ?? '') == 1 ? 'selected' : '' }}>Sí</option>
+                                <option value="2" {{ old('antigueno', $fichaMedica->antigueno ?? '') == 2 ? 'selected' : '' }}>No</option>
+                            </select>
+                        </div>
+
                     {{-- Select de los departamentos y municipios. --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
                         <div>
