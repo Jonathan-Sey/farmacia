@@ -180,6 +180,9 @@ Route::post('/personas/actualizar-restricciones', [PersonaController::class, 'ac
 Route::get('/devoluciones/autorizar/{id}/{idNot}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
 Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVenta']);
 
+// prueba por ahora para obtener las recetas en ventas
+Route::get('/productos-consultas/{id}', [ventaController::class, 'getProductosRecetados']);
+
 //productos vencidos
 Route::get('/productos-vencidos', [productosVencidosController::class, 'index'])->name('productos.vencidos');
 
