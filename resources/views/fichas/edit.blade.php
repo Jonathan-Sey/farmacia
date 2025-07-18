@@ -12,7 +12,7 @@
     Dropzone.autoDiscover = false;
     const dropzone = new Dropzone("#dropzone-receta", {
         url: "{{ route('upload.image.temp') }}",
-        dictDefaultMessage: "y suelta la receta médica o haz clic aquí para subirla",
+        dictDefaultMessage: "Arrastra y suelta la receta médica o haz clic aquí para subirla",
         acceptedFiles: ".png,.jpg,.jpeg,.pdf",
         addRemoveLinks: true,
         dictRemoveFile: "Borrar archivo",
@@ -41,44 +41,43 @@
     });
 
     dropzone.on("removedfile", function(file) {
-    const imagenNombre = document.querySelector('[name="receta_foto"]').value;
-    const imagenOriginal = "{{ $ficha->receta_foto ? basename($ficha->receta_foto) : '' }}";
+        const imagenNombre = document.querySelector('[name="receta_foto"]').value;
+        const imagenOriginal = "{{ $ficha->receta_foto ? basename($ficha->receta_foto) : '' }}";
 
-    if (imagenNombre === imagenOriginal) {
-        if (!document.querySelector('[name="eliminar_receta"]')) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = 'eliminar_receta';
-            input.value = '1';
-            document.querySelector('form').appendChild(input);
+        if (imagenNombre === imagenOriginal) {
+            if (!document.querySelector('[name="eliminar_receta"]')) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'eliminar_receta';
+                input.value = '1';
+                document.querySelector('form').appendChild(input);
+            }
         }
-    }
-    else if (imagenNombre && imagenNombre !== imagenOriginal) {
-        fetch("{{ route('eliminar.imagen.temp') }}", {
-            method: "POST",
-            headers: {
-                "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ imagen: imagenNombre }),
-        });
-    }
+        else if (imagenNombre && imagenNombre !== imagenOriginal) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
 
-    document.querySelector('[name="receta_foto"]').value = "";
-});
+        document.querySelector('[name="receta_foto"]').value = "";
+    });
 
-// Precargar la receta existente
-document.addEventListener("DOMContentLoaded", function() {
-    const recetaNombre = document.querySelector('[name="receta_foto"]').value;
-    if (recetaNombre) {
-        const nombreArchivo = recetaNombre.includes('/') ? recetaNombre.split('/').pop() : recetaNombre;
-        const mockFile = { name: nombreArchivo, size: 12345 };
-        dropzone.emit("addedfile", mockFile);
-        dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + nombreArchivo);
-        dropzone.emit("complete", mockFile);
-    }
-});
-
+    // Precargar la receta existente
+    document.addEventListener("DOMContentLoaded", function() {
+        const recetaNombre = document.querySelector('[name="receta_foto"]').value;
+        if (recetaNombre) {
+            const nombreArchivo = recetaNombre.includes('/') ? recetaNombre.split('/').pop() : recetaNombre;
+            const mockFile = { name: nombreArchivo, size: 12345 };
+            dropzone.emit("addedfile", mockFile);
+            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + nombreArchivo);
+            dropzone.emit("complete", mockFile);
+        }
+    });
 
     // Eliminar archivo temporal al cerrar la página si no se guardó
     window.addEventListener("beforeunload", function() {
@@ -105,24 +104,25 @@ document.addEventListener("DOMContentLoaded", function() {
 </script>
 @endpush
 
+
+
 @section('contenido')
 <div class="flex justify-center items-center mx-3">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         @if ($errors->any())
-        <div class="mb-4 text-red-600">
-            <ul>
-                @foreach ($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
+    <div class="mb-4 text-red-600">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+    @endif
 
-        <form action="{{ route('fichas.update', ['persona_id' => $persona->id, 'ficha' => $ficha->id]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('fichas.store', $persona->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
-            @method('PUT')
 
-            <h3 class="text-xl font-semibold mb-4">Editar Ficha Médica para {{ $persona->nombre }}</h3>
+            <h3 class="text-xl font-semibold mb-4">Crear Ficha Médica para {{ $persona->nombre }}</h3>
 
             <div class="mt-2 mb-5">
                 <label for="diagnostico" class="uppercase block text-sm font-medium text-gray-900">Diagnóstico</label>
@@ -132,6 +132,74 @@ document.addEventListener("DOMContentLoaded", function() {
                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('diagnostico', $ficha->diagnostico) }}</textarea>
             </div>
 
+
+            {{-- seccion para registrar los productos en el detalle de ficha medica  --}}
+            <div class="grid grid-cols-1 gap-2 md:gap-2 md:grid-cols-2 items-center justify-center">
+                <div>
+                    <x-select2
+                        name="id_producto"
+                        label="Servicio"
+                        :options="$productos->pluck('nombre', 'id')"
+                        :selected="old('id_producto')"
+                        placeholder="Seleccionar producto o servicio"
+                        id="id_producto"
+                        class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm mt-0 mb-0"
+                    />
+                </div>
+                <div >
+                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
+                    <input type="number" min="1" value="1" name="cantidad" id="cantidad" 
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                </div>
+            </div>
+            {{-- area para el detalle o instrucciones del input --}}
+            <div class="mb-4">
+                    <label for="instrucciones" class="block text-sm font-medium text-gray-700 uppercase">Instrucciones (opcional)</label>
+                    <textarea id="instrucciones" rows="2" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"></textarea>
+                </div>
+            <div class="flex flex-col items-end mb-2 mt-2 md:mt-2">
+                    <button type="button" id="agregar-producto" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">
+                        Agregar
+                    </button>
+            </div>
+            
+            {{-- seccion para la tabla  --}}
+            <div class="overflow-x-auto">
+                <table class="table table-sm table-pin-rows table-pin-cols">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <td>Nombre</td>
+                        <td>Cantidad</td>
+                        <td>Instrucciones</td>
+                        <td>Acciones</td>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody id="contenido-productos">
+                        {{-- obtenemos los datos de la ficha medica  --}}
+                        @foreach ($ficha->productosRecetados as $index => $producto)
+                        <tr data-producto-id="{{ $producto->id}}" >
+                        <td>{{$index+1}}</td>
+                        <td>{{$producto->nombre}}</td>
+                        <td>{{$producto->pivot->cantidad}}</td>
+                        <td>{{$producto->pivot->instrucciones ?? 'N/A'}}</td>
+                        <td>
+                                <button type="button" class="eliminar-producto">
+                                    <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
+                                </button>
+                                <input type="hidden" name="producto[{{ $producto->id }}][id]" value="{{ $producto->id }}">
+                                <input type="hidden" name="producto[{{ $producto->id }}][cantidad]" value="{{ $producto->pivot->cantidad }}">
+                                <input type="hidden" name="producto[{{ $producto->id }}][instrucciones]" value="{{ $producto->pivot->instrucciones }}">
+                        </td>
+                        <th></th>
+                            
+                        @endforeach
+                    
+                    </tbody>
+                </table>
+            </div>
+          
             <div class="mt-2 mb-5">
                 <label for="detalle_medico_id" class="uppercase block text-sm font-medium text-gray-900">
                     Médico
@@ -140,24 +208,24 @@ document.addEventListener("DOMContentLoaded", function() {
                     <option value="" disabled>-- Seleccione un médico --</option>
                     @foreach($medicos as $detalle)
                     <option value="{{ $detalle->id }}"
-                        {{ old('detalle_medico_id', $ficha->detalle_medico_id) == $detalle->id ? 'selected' : '' }}>
+                        {{ old('detalle_medico_id',$ficha->detalle_medico_id) == $detalle->id ? 'selected' : ''}}>
                         {{ $detalle->usuario->name }} - {{ $detalle->especialidad->nombre ?? ''}}
                     </option>
                     @endforeach
                 </select>
             </div>
 
-            <div class="mt-2 mb-5">
+            <div class="mt-4 mb-5">
                 <x-select2
                     name="sucursal_id"
                     label="Sucursal"
                     :options="$sucursales->pluck('nombre', 'id')"
-                    :selected="old('sucursal_id')"
+                    :selected="old('sucursal_id', $ficha->sucursal_id)"
                     placeholder="Seleccionar una Sucursal"
                     class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                    :selected="old('sucursal_id', $ficha->sucursal_id)"
-                    />
+                />
             </div>
+
 
             <div class="mt-2 mb-5">
                 <label for="consulta_programada" class="uppercase block text-sm font-medium text-gray-900">Consulta Programada</label>
@@ -165,13 +233,13 @@ document.addEventListener("DOMContentLoaded", function() {
                     type="date"
                     name="consulta_programada"
                     id="consulta_programada"
-                    value="{{ old('consulta_programada', $ficha->consulta_programada) }}"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                    value="{{ old('consulta_programada', $ficha->consulta_programada) }}">
             </div>
 
             <div class="mt-4">
                 <label class="block text-sm font-medium text-gray-700">Foto/PDF de la Receta</label>
-                <div id="dropzone-receta" class="dropzone border-2 border-dashed rounded w-full h-40">
+                <div id="dropzone-receta" class="dropzone border-2 border-dashed rounded w-full h-50">
                     <input type="hidden" name="receta_foto" value="{{ old('receta_foto', $ficha->receta_foto) }}">
                 </div>
                 @error('receta_foto')
@@ -185,8 +253,10 @@ document.addEventListener("DOMContentLoaded", function() {
                 <a href="{{ route('personas.show', $persona->id) }}">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
                 </a>
-                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Actualizar</button>
+                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
             </div>
+
+
         </form>
     </div>
 </div>
@@ -194,4 +264,119 @@ document.addEventListener("DOMContentLoaded", function() {
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/select2-global.js"></script>
+
+{{-- manejo del boton agregar --}}
+<script>
+
+    $(document).ready(function(){
+        //agregamos evento al boton para agregar los productos
+        $('#agregar-producto').click(function(){
+            agregarProducto();
+        }); 
+    });
+
+    let contador = 0
+    function agregarProducto(){
+        const productoSelect = document.getElementById('id_producto');
+        const id_producto = $('#id_producto').val();
+        const nombre = productoSelect.options[productoSelect.selectedIndex].text;
+        const cantidad = $('#cantidad').val();
+        const instrucciones = $('#instrucciones').val();
+        
+        const datos = {
+            id:id_producto,
+            nombre: nombre,
+            cantidad: cantidad,
+            instrucciones: instrucciones
+        }
+
+        // validar si hay algun producto o cantidad 
+        if(!id_producto || !cantidad){
+            Swal.fire('Error', 'Debe de selecionar un producto y su cantidad','error')
+            return;
+        }
+        
+
+        // validar que solo admita numeros enteros positivos
+        if(parseInt(cantidad) <= 0 || !/^\d+$/.test(cantidad)){
+            Swal.fire('Error', 'La cantidad debe de ser un entero positivo','error')
+            return;
+        }
+
+        // validar si el producto ya fue agregado 
+
+        if($(`#contenido-productos tr[data-producto-id="${id_producto}"]`).length > 0){
+            Swal.fire('Error', 'El producto ya fue agregado al detalle de productos','error')
+            return;
+        }
+
+        console.log(datos);
+
+
+        // proceso para agregar los productos a la tabla 
+        contador ++;
+        const row = `
+        <tr data-producto-id="${id_producto}">
+                    <th>${contador}</th>
+                    <td>${nombre}</td>
+                    <td>${cantidad}</td>
+                    <td>${instrucciones || 'N/A'}</td>
+                    <td>
+                        <button type="button" class = "eliminar-producto">
+                            <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
+                        </button>
+                        <input type="hidden" name="producto[${id_producto}][id]" value="${id_producto}">
+                        <input type="hidden" name="producto[${id_producto}][cantidad]" value="${cantidad}">
+                        <input type="hidden" name="producto[${id_producto}][instrucciones]" value="${instrucciones}">
+                    </td>
+                    </tr>
+        `;
+        $('#contenido-productos').append(row);
+
+        limpiar();
+    }
+
+    function limpiar(){
+        $('#id_producto').val(null).trigger('change');
+        $('#cantidad').val(1);
+        $('#instrucciones').val('');
+    }
+
+    // proceso para eliminar el producto de la lista, primera forma     
+
+    $(document).on('click', '.eliminar-producto', function () {
+
+        Swal.fire({
+            title: "Eliminar?",
+            text: "¿Esta seguro de eliminar el producto ?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, eliminar!"
+            }).then((result) => {
+            if (result.isConfirmed) {
+                //borramos el producto del detalle de productos 
+                $(this).closest('tr').remove();
+                $('#contenido-productos tr').each(function(index){
+                    $(this).find('th').text(index + 1);
+                });
+                contador = $('#contenido-productos tr').length;
+                Swal.fire({
+                title: "Eliminado!",
+                text: "Producto Eliminado",
+                icon: "success"
+                });
+            }
+            });
+        
+    });
+
+    // con funcion, segunda forrma 
+    
+    function eliminarProducto(){
+        alert("Hola desde el boton eliminar")
+    }
+
+</script>
 @endpush

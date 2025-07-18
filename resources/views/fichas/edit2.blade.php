@@ -1,144 +1,252 @@
 @extends('template')
-@section('titulo', 'Editar Persona')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+@endpush
 
+@push('js')
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script>
+    Dropzone.autoDiscover = false;
+    const dropzone = new Dropzone("#dropzone-receta", {
+        url: "{{ route('upload.image.temp') }}",
+        dictDefaultMessage: "Arrastra y suelta la receta médica o haz clic aquí para subirla",
+        acceptedFiles: ".png,.jpg,.jpeg,.pdf",
+        addRemoveLinks: true,
+        dictRemoveFile: "Borrar archivo",
+        maxFiles: 1,
+        uploadMultiple: false,
+        headers: {
+            'X-CSRF-TOKEN': "{{ csrf_token() }}"
+        }
+    });
+
+    dropzone.on("addedfile", function(file) {
+        if (this.files.length > 1) {
+            this.removeFile(this.files[0]);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Solo se permite subir un archivo.',
+                confirmButtonText: 'Aceptar',
+            });
+        }
+    });
+
+    dropzone.on("success", function(file, response) {
+        console.log("Archivo subido temporalmente:", response.imagen);
+        document.querySelector('[name="receta_foto"]').value = response.imagen;
+    });
+
+    dropzone.on("removedfile", function(file) {
+        const imagenNombre = document.querySelector('[name="receta_foto"]').value;
+        const imagenOriginal = "{{ $ficha->receta_foto ? basename($ficha->receta_foto) : '' }}";
+
+        if (imagenNombre === imagenOriginal) {
+            if (!document.querySelector('[name="eliminar_receta"]')) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'eliminar_receta';
+                input.value = '1';
+                document.querySelector('form').appendChild(input);
+            }
+        }
+        else if (imagenNombre && imagenNombre !== imagenOriginal) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+
+        document.querySelector('[name="receta_foto"]').value = "";
+    });
+
+    // Precargar la receta existente
+    document.addEventListener("DOMContentLoaded", function() {
+        const recetaNombre = document.querySelector('[name="receta_foto"]').value;
+        if (recetaNombre) {
+            const nombreArchivo = recetaNombre.includes('/') ? recetaNombre.split('/').pop() : recetaNombre;
+            const mockFile = { name: nombreArchivo, size: 12345 };
+            dropzone.emit("addedfile", mockFile);
+            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + nombreArchivo);
+            dropzone.emit("complete", mockFile);
+        }
+    });
+
+    // Eliminar archivo temporal al cerrar la página si no se guardó
+    window.addEventListener("beforeunload", function() {
+        const imagenNombre = document.querySelector('[name="receta_foto"]').value;
+        const imagenOriginal = "{{ $ficha->receta_foto }}";
+        const formSubmitted = document.querySelector('form').submitted;
+
+        if (imagenNombre && !formSubmitted && imagenNombre !== imagenOriginal) {
+            fetch("{{ route('eliminar.imagen.temp') }}", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ imagen: imagenNombre }),
+            });
+        }
+    });
+
+    // Marcar el formulario como enviado al hacer submit
+    document.querySelector('form').addEventListener('submit', function() {
+        this.submitted = true;
+    });
+</script>
 @endpush
 
 @section('contenido')
 <div class="flex justify-center items-center mx-3">
-    <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-3xl mb-10">
-        <form action="{{ route('personas.update', $persona->id) }}" method="POST">
+    <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
+        @if ($errors->any())
+        <div class="mb-4 text-red-600">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
+
+        <form action="{{ route('fichas.update', ['persona_id' => $persona->id, 'ficha' => $ficha->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
-            <!-- Datos Básicos -->
-            <h2 class="text-lg font-semibold text-gray-900 mb-4">Datos Básicos</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                    <label for="nombre" class="text-sm font-medium text-gray-700">Nombre *</label>
-                    <input type="text" name="nombre" id="nombre" value="{{ old('nombre', $persona->nombre) }}"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
-                </div>
+            <h3 class="text-xl font-semibold mb-4">Editar Ficha Médica para {{ $persona->nombre }}</h3>
 
+            <div class="mt-2 mb-5">
+                <label for="diagnostico" class="uppercase block text-sm font-medium text-gray-900">Diagnóstico</label>
+                <textarea
+                    name="diagnostico"
+                    id="diagnostico"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('diagnostico', $ficha->diagnostico) }}</textarea>
+            </div>
+
+            {{-- Sección para productos recetados --}}
+            <div class="grid grid-cols-1 gap-2 md:gap-2 md:grid-cols-2 items-center justify-center">
                 <div>
-                    <label for="rol" class="text-sm font-medium text-gray-700">Tipo de Persona *</label>
-                    <select name="rol" id="rol"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                        <option value="1" {{ $persona->rol == 1 ? 'selected' : '' }}>Cliente</option>
-                        <option value="2" {{ $persona->rol == 2 ? 'selected' : '' }}>Paciente</option>
-                    </select>
+                    <x-select2
+                        name="id_producto"
+                        label="Servicio"
+                        :options="$productos->pluck('nombre', 'id')"
+                        placeholder="Seleccionar producto o servicio"
+                        id="id_producto"
+                        class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm mt-0 mb-0"
+                    />
+                </div>
+                <div>
+                    <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
+                    <input type="number" min="1" value="1" name="cantidad" id="cantidad"
+                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
                 </div>
             </div>
 
-            <!-- Datos Generales -->
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div>
-                    <label for="nit" class="text-sm font-medium text-gray-700">NIT</label>
-                    <input type="text" name="nit" id="nit" value="{{ old('nit', $persona->nit) }}"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-
-                <div>
-                    <label for="telefono" class="text-sm font-medium text-gray-700">Teléfono</label>
-                    <input type="text" name="telefono" id="telefono" value="{{ old('telefono', $persona->telefono) }}"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
-
-                <div>
-                    <label for="fecha_nacimiento" class="text-sm font-medium text-gray-700">Fecha Nacimiento</label>
-                    <input type="date" name="fecha_nacimiento" id="fecha_nacimiento"
-                          value="{{ old('fecha_nacimiento', $persona->fecha_nacimiento ? $persona->fecha_nacimiento->format('Y-m-d') : '') }}"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                </div>
+            <div class="mb-4">
+                <label for="instrucciones" class="block text-sm font-medium text-gray-700 uppercase">Instrucciones (opcional)</label>
+                <textarea id="instrucciones" rows="2" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"></textarea>
             </div>
 
-            <!-- Ficha Médica -->
-            @php $fichaMedica = $persona->fichasMedicas->first(); @endphp
-            <div id="ficha_medica" class="mt-8 {{ $persona->rol == 2 ? '' : 'hidden' }}">
-                <h2 class="text-lg font-semibold text-gray-900 mb-4">Ficha Médica</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Apellido Paterno *</label>
-                        <input type="text" name="apellido_paterno"
-                            value="{{ old('apellido_paterno', $fichaMedica->apellido_paterno ?? '') }}"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Apellido Materno *</label>
-                        <input type="text" name="apellido_materno"
-                            value="{{ old('apellido_materno', $fichaMedica->apellido_materno ?? '') }}"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Sexo *</label>
-                        <select name="sexo"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            <option value="Hombre" {{ old('sexo', $fichaMedica->sexo ?? '') == 'Hombre' ? 'selected' : '' }}>Hombre</option>
-                            <option value="Mujer" {{ old('sexo', $fichaMedica->sexo ?? '') == 'Mujer' ? 'selected' : '' }}>Mujer</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">DPI *</label>
-                        <input type="text" name="dpi" value="{{ old('dpi', $fichaMedica->DPI ?? '') }}"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">¿Habla lengua?</label>
-                        <select name="habla_lengua"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                            <option value="Sí" {{ old('habla_lengua', $fichaMedica->habla_lengua ?? '') == 'Sí' ? 'selected' : '' }}>Sí</option>
-                            <option value="No" {{ old('habla_lengua', $fichaMedica->habla_lengua ?? '') == 'No' ? 'selected' : '' }}>No</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="text-sm font-medium text-gray-700">Tipo de Sangre</label>
-                        <input type="text" name="tipo_sangre" value="{{ old('tipo_sangre', $fichaMedica->tipo_sangre ?? '') }}"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                    </div>
-                    <div class="md:col-span-2">
-                        <label class="text-sm font-medium text-gray-700">Dirección</label>
-                        <input type="text" name="direccion" value="{{ old('direccion', $fichaMedica->direccion ?? '') }}"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mt-5">
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">Departamento</label>
-                            <select name="departamento_id" id="departamento_id" required class="select2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                <option value="">Seleccione un departamento</option>
-                                @foreach($departamentos as $departamento)
-                                    <option value="{{ $departamento->id }}" {{ old('departamento_id', $fichaMedica->departamento_id ?? '') == $departamento->id ? 'selected' : '' }}>
-                                        {{ $departamento->nombre }}
-                                    </option>
-                                @endforeach
-                            </select>
-                            @error('departamento_id')
-                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        <div>
-                            <label class="text-sm font-medium text-gray-700">Municipio</label>
-                            <select name="municipio_id" id="municipio_id" required class="select2 mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
-                                <option value="">Seleccione un municipio</option>
-                                {{-- Este se rellenará con AJAX --}}
-                            </select>
-                            @error('municipio_id')
-                                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
-                            @enderror
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Botones -->
-            <div class="mt-6 flex items-center justify-end gap-x-4">
-                <a href="{{ route('personas.index') }}" class="text-sm font-semibold text-gray-900">Cancelar</a>
-                <button type="submit"
-                    class="px-4 py-2 bg-indigo-600 text-white rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    Actualizar
+            <div class="flex flex-col items-end mb-2 mt-2 md:mt-2">
+                <button type="button" id="agregar-producto" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">
+                    Agregar
                 </button>
+            </div>
+
+            {{-- Tabla de productos --}}
+            <div class="overflow-x-auto">
+                <table class="table table-sm table-pin-rows table-pin-cols">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <td>Nombre</td>
+                            <td>Cantidad</td>
+                            <td>Instrucciones</td>
+                            <td>Acciones</td>
+                        </tr>
+                    </thead>
+                    <tbody id="contenido-productos">
+                        @foreach($ficha->productosRecetados as $index => $producto)
+                        <tr data-producto-id="{{ $producto->id }}">
+                            <th>{{ $index + 1 }}</th>
+                            <td>{{ $producto->nombre }}</td>
+                            <td>{{ $producto->pivot->cantidad }}</td>
+                            <td>{{ $producto->pivot->instrucciones ?? 'N/A' }}</td>
+                            <td>
+                                <button type="button" class="eliminar-producto">
+                                    <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
+                                </button>
+                                <input type="hidden" name="producto[{{ $producto->id }}][id]" value="{{ $producto->id }}">
+                                <input type="hidden" name="producto[{{ $producto->id }}][cantidad]" value="{{ $producto->pivot->cantidad }}">
+                                <input type="hidden" name="producto[{{ $producto->id }}][instrucciones]" value="{{ $producto->pivot->instrucciones }}">
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-2 mb-5">
+                <label for="detalle_medico_id" class="uppercase block text-sm font-medium text-gray-900">
+                    Médico
+                </label>
+                <select name="detalle_medico_id" id="detalle_medico_id" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm" required>
+                    <option value="" disabled>-- Seleccione un médico --</option>
+                    @foreach($medicos as $detalle)
+                    <option value="{{ $detalle->id }}"
+                        {{ old('detalle_medico_id', $ficha->detalle_medico_id) == $detalle->id ? 'selected' : '' }}>
+                        {{ $detalle->usuario->name }} - {{ $detalle->especialidad->nombre ?? ''}}
+                    </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mt-2 mb-5">
+                <x-select2
+                    name="sucursal_id"
+                    label="Sucursal"
+                    :options="$sucursales->pluck('nombre', 'id')"
+                    :selected="old('sucursal_id', $ficha->sucursal_id)"
+                    placeholder="Seleccionar una Sucursal"
+                    class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                />
+            </div>
+
+            <div class="mt-2 mb-5">
+                <label for="consulta_programada" class="uppercase block text-sm font-medium text-gray-900">Consulta Programada</label>
+                <input
+                    type="date"
+                    name="consulta_programada"
+                    id="consulta_programada"
+                    value="{{ old('consulta_programada', $ficha->consulta_programada) }}"
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+            </div>
+
+            <div class="mt-4">
+                <label class="block text-sm font-medium text-gray-700">Foto/PDF de la Receta</label>
+                <div id="dropzone-receta" class="dropzone border-2 border-dashed rounded w-full h-40">
+                    <input type="hidden" name="receta_foto" value="{{ old('receta_foto', $ficha->receta_foto) }}">
+                </div>
+                @error('receta_foto')
+                    <div role="alert" class="alert alert-error mt-4 p-2">
+                        <span class="text-white font-bold">{{ $message }}</span>
+                    </div>
+                @enderror
+            </div>
+
+            <div class="mt-6 flex items-center justify-end gap-x-6">
+                <a href="{{ route('personas.show', $persona->id) }}">
+                    <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
+                </a>
+                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Actualizar</button>
             </div>
         </form>
     </div>
@@ -146,109 +254,88 @@
 @endsection
 
 @push('js')
-<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/select2-global.js"></script>
+
 <script>
-    $(document).ready(function () {
-        // Inicializar select2
-        $('#departamento_id, #municipio_id').select2({
-            dropdownAutoWidth: true,
-            width: '100%',
-            placeholder: 'Seleccione una opción',
-            allowClear: true
-        });
+$(document).ready(function(){
+    // Inicializar contador basado en los productos existentes
+    let contador = {{ $ficha->productosRecetados->count() }};
 
-        // Cargar municipios cuando se selecciona un departamento
-        $('#departamento_id').on('change', function () {
-            const departamentoId = $(this).val();
-            $('#municipio_id').html('<option value="">Cargando...</option>');
+    // Agregar producto
+    $('#agregar-producto').click(function(){
+        const productoSelect = document.getElementById('id_producto');
+        const id_producto = $('#id_producto').val();
+        const nombre = productoSelect.options[productoSelect.selectedIndex].text;
+        const cantidad = $('#cantidad').val();
+        const instrucciones = $('#instrucciones').val();
 
-            if (departamentoId) {
-                $.ajax({
-                    url: '/api/municipios/' + departamentoId,
-                    type: 'GET',
-                    success: function (data) {
-                        let options = '<option value="">Seleccione un municipio</option>';
-                        data.forEach(function (municipio) {
-                            options += `<option value="${municipio.id}">${municipio.nombre}</option>`;
-                        });
-                        $('#municipio_id').html(options).val('').trigger('change');
-                    }
-                });
-            } else {
-                $('#municipio_id').html('<option value="">Seleccione un municipio</option>');
-            }
-        });
-
-        // Si ya hay un departamento cargado (por editar), se disparara el evento para cargar municipios
-        const selectedDepartamento = $('#departamento_id').val();
-        const selectedMunicipio = '{{ old('municipio_id', $fichaMedica->municipio_id ?? '') }}';
-
-        if (selectedDepartamento) {
-            $.ajax({
-                url: '/api/municipios/' + selectedDepartamento,
-                type: 'GET',
-                success: function (data) {
-                    let options = '<option value="">Seleccione un municipio</option>';
-                    data.forEach(function (municipio) {
-                        const selected = municipio.id == selectedMunicipio ? 'selected' : '';
-                        options += `<option value="${municipio.id}" ${selected}>${municipio.nombre}</option>`;
-                    });
-                    $('#municipio_id').html(options).trigger('change');
-                }
-            });
-        }
-    });
-</script>
-<script>
-    $(document).ready(function () {
-        function toggleFichaMedica() {
-            const isPaciente = $('#rol').val() == '2';
-            if (isPaciente) {
-                $('#ficha_medica').show();
-                $('#ficha_medica input, #ficha_medica select').prop('disabled', false);
-            } else {
-                $('#ficha_medica').hide();
-                $('#ficha_medica input, #ficha_medica select').prop('disabled', true);
-            }
+        // Validaciones
+        if(!id_producto || !cantidad){
+            Swal.fire('Error', 'Debe seleccionar un producto y su cantidad','error');
+            return;
         }
 
-        $('#rol').change(function () {
-            const oldValue = $(this).data('old-value');
-            const newValue = $(this).val();
+        if(parseInt(cantidad) <= 0 || !/^\d+$/.test(cantidad)){
+            Swal.fire('Error', 'La cantidad debe ser un entero positivo','error');
+            return;
+        }
 
-            if (oldValue != newValue) {
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: 'Cambiar el tipo de persona modificará los campos requeridos.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, cambiar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (!result.isConfirmed) {
-                        $(this).val(oldValue);
-                    }
-                    toggleFichaMedica();
+        if($(`#contenido-productos tr[data-producto-id="${id_producto}"]`).length > 0){
+            Swal.fire('Error', 'El producto ya fue agregado al detalle','error');
+            return;
+        }
+
+        // Agregar fila
+        contador++;
+        const row = `
+        <tr data-producto-id="${id_producto}">
+            <th>${contador}</th>
+            <td>${nombre}</td>
+            <td>${cantidad}</td>
+            <td>${instrucciones || 'N/A'}</td>
+            <td>
+                <button type="button" class="eliminar-producto">
+                    <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
+                </button>
+                <input type="hidden" name="producto[${id_producto}][id]" value="${id_producto}">
+                <input type="hidden" name="producto[${id_producto}][cantidad]" value="${cantidad}">
+                <input type="hidden" name="producto[${id_producto}][instrucciones]" value="${instrucciones}">
+            </td>
+        </tr>
+        `;
+        $('#contenido-productos').append(row);
+        limpiar();
+    });
+
+    // Eliminar producto
+    $(document).on('click', '.eliminar-producto', function() {
+        Swal.fire({
+            title: "¿Eliminar?",
+            text: "¿Está seguro de eliminar el producto?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Sí, eliminar!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $(this).closest('tr').remove();
+                // Reordenar los números
+                $('#contenido-productos tr').each(function(index) {
+                    $(this).find('th').text(index + 1);
                 });
-            } else {
-                toggleFichaMedica();
+                contador = $('#contenido-productos tr').length;
+                Swal.fire("Eliminado!", "Producto eliminado", "success");
             }
         });
-
-        $('#rol').data('old-value', $('#rol').val());
-        toggleFichaMedica();
     });
+
+    function limpiar(){
+        $('#id_producto').val(null).trigger('change');
+        $('#cantidad').val(1);
+        $('#instrucciones').val('');
+    }
+});
 </script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-@if ($errors->has('dpi'))
-<script>
-  Swal.fire({
-    icon: 'error',
-    title: 'Error',
-    text: '{{ $errors->first('dpi') }}',
-  });
-</script>
-@endif
 @endpush

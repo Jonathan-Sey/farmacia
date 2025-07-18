@@ -184,11 +184,11 @@
                             
                             <div>
                                 
-                                @foreach ($ficha->productosRecetados as $item)
+                                {{-- @foreach ($ficha->productosRecetados as $item)
                                     <p><strong class="text-gray-600">Productos:</strong> {{ $item->nombre}}</p>
                                     <p><strong class="text-gray-600">instrucciones:</strong> {{ $item->pivot->instrucciones}}</p>
                                     <p><strong class="text-gray-600">Cantidad:</strong> {{ $item->pivot->cantidad}}</p>
-                                @endforeach
+                                @endforeach --}}
                             </div>
                         </div>
                         

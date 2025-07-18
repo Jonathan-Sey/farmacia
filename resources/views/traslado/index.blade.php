@@ -60,9 +60,9 @@
                 <td class="px-6 py-4 whitespace-nowrap text-center">
                     <a class="estado" data-id="{{ $traslado->id }}" data-estado="{{ $traslado->estado }}">
                         @if ($traslado->estado == 1)
-                        <span class="text-green-500 font-bold">Activo</span>
+                        <span class="text-red-500 font-bold">Por Confirmar</span>
                         @else
-                        <span class="text-red-500 font-bold">Inactivo</span>
+                        <span class="text-green-500 font-bold">Aprobado</span>
                         @endif
                     </a>
                 </td>
@@ -76,7 +76,7 @@
                     </form>
 
                      {{-- Botón Cambiar estado --}}
-                     <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $traslado->id }}" data-estado="{{ $traslado->estado }}" data-info="{{ $traslado->nombre }}">
+                     <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $traslado->id }}" data-estado="{{ $traslado->estado }}" data-info="{{ $traslado->producto->nombre }}">
                         <i class="fas fa-sync-alt"></i>
                     </button>
                 </td>
@@ -177,7 +177,7 @@
                 const nombre = button.data('info');
                 Swal.fire({
                     title: "¿Estás seguro?",
-                    text: "¡Deseas cambiar el estado de " + nombre + "!",
+                    text: "¡Deseas cambiar el estado del  " + nombre + " en traslado!",
                     icon: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#3085d6",
@@ -235,7 +235,8 @@
 </script>
 @endif
 {{-- cambio de estado --}}
-<script>
+
+{{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
         const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
 
@@ -293,5 +294,5 @@
             });
         });
     });
-</script>
+</script> --}}
 @endpush

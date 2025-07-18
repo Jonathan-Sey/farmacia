@@ -278,7 +278,7 @@ class PersonaController extends Controller
     public function show($id)
     {
         $persona = Persona::findOrFail($id);
-        dd($productos);
+        //dd($productos);
         // Obtener fichas médicas paginadas (5 por página)
         $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->paginate(2);
         //dd($datos);
@@ -312,6 +312,80 @@ class PersonaController extends Controller
         return view('persona.show', compact('persona', 'fichas'));
     }
 
+      public function ProductoFichas(Request $request, $persona_id, FichaMedica $ficha)
+{
+    $data = $request->validate([
+        'detalle_medico_id'   => 'required|exists:detalle_medico,id',
+        'diagnostico'         => 'required|string',
+        'consulta_programada' => 'required|date',
+        'sucursal_id' => 'nullable|exists:sucursal,id',
+        'receta_foto'         => 'nullable|string',
+        'producto' => 'array',
+        'producto.*.id' => 'nullable',
+        'producto.*.cantidad' => 'nullable',
+        'producto.*.instrucciones' => 'nullable',
+    ]);
+
+    DB::beginTransaction();
+    try {
+        $imagenOriginal = $ficha->receta_foto ? basename($ficha->receta_foto) : null;
+        $nuevaImagen = $request->receta_foto;
+
+        // Manejo de eliminación de receta
+        if ($request->has('eliminar_receta') && $request->eliminar_receta == '1') {
+            if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                unlink(public_path('uploads/' . $imagenOriginal));
+            }
+            $data['receta_foto'] = null;
+        }
+        // Manejo de nueva receta
+        elseif ($nuevaImagen && $nuevaImagen !== $imagenOriginal) {
+            $imagenController = new ImagenController();
+            $imagenMovida = $imagenController->moverDefinitiva($nuevaImagen);
+
+            if (!$imagenMovida) {
+                throw new \Exception('No se pudo guardar la nueva receta');
+            }
+
+            // Eliminar la receta anterior si existe
+            if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                unlink(public_path('uploads/' . $imagenOriginal));
+            }
+
+            $data['receta_foto'] = $nuevaImagen;
+        }
+        else {
+            $data['receta_foto'] = $ficha->receta_foto;
+        }
+
+        // Actualizar la ficha médica
+        $ficha->update($data);
+
+        // Sincronizar productos recetados
+        $recetas = [];
+        if (isset($data['producto'])) {
+            foreach($data['producto'] as $productosData) {
+                if (!empty($productosData['id'])) {
+                    $recetas[$productosData['id']] = [
+                        'cantidad' => $productosData['cantidad'],
+                        'instrucciones' => $productosData['instrucciones'],
+                    ];
+                }
+            }
+        }
+        $ficha->productosRecetados()->sync($recetas);
+
+        DB::commit();
+
+        return redirect()
+            ->route('personas.show', $persona_id)
+            ->with('success', 'Ficha médica actualizada correctamente.');
+
+    } catch (\Exception $e) {
+        DB::rollBack();
+        return back()->with('error', 'Error al actualizar la ficha: ' . $e->getMessage());
+    }
+}
 
     public function edit(Persona $persona)
     {

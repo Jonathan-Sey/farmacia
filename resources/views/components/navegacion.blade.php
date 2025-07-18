@@ -65,7 +65,7 @@
                 </li>
                 <li data-pestana="Encuestas" style="display:none;">
                     <a href="{{ route('encuestas.index') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-briefcase-medical"></i></span>
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-square-poll-vertical"></i></span>
                         <span class="text-sm font-medium">Encuestas</span>
                     </a>
                 </li>
@@ -103,7 +103,7 @@
                 </li>
                 <li data-pestana="Historico" style="display:none;">
                     <a href="{{ route('historico.precios') }}" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
-                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-book"></i>
+                        <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="fa-solid fa-hand-holding-dollar"></i>
                         </span>
                         <span class="text-sm font-medium">HistoricoPrecios</span>
                     </a>
@@ -161,71 +161,74 @@
     </div>
 </div>
 <!-- Menú desplegable móvil -->
-     <ul id="menu" class="hidden bg-white shadow-md flex-col fixed top-16 left-0 w-full z-40">
-
+<div >
+     <ul id="menu" class="hidden bg-white shadow-md flex-col fixed top-16 left-0 w-full z-40 overflow-y-auto max-h-[calc(100vh-4rem)]">
             <li data-pestanal="Dashboard" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
-                <a href="/dashboard"><i class="bx bx-home"></i> Dashboard</a>
+                <a href="/dashboard" class="block w-full"><i class="bx bx-home"></i> Dashboard</a>
             </li>
             <li data-pestanal="Sucursales" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('sucursales.index') }}"><i class="bx bxs-building"></i> Farmacias</a>
+                <a href="{{ route('sucursales.index') }}" class="block w-full"><i class="bx bxs-building"></i> Farmacias</a>
             </li>
             <li data-pestanal="Productos" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('productos.index') }}"><i class="bx bxs-package"></i> Productos</a>
+                <a href="{{ route('productos.index') }}" class="block w-full"><i class="bx bxs-package"></i> Productos</a>
             </li>
             <li data-pestanal="Almacenes" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('almacenes.index') }}"><i class="fa-solid fa-store"></i> Inventario Farmacias</a>
+                <a href="{{ route('almacenes.index') }}" class="block w-full" ><i class="fa-solid fa-store"></i> Inventario Farmacias</a>
             </li>
-            <li data-pestanal="Comptas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('compras.index') }}"><i class="fa-solid fa-cart-shopping"></i> Compras</a>
+            <li data-pestanal="Compras" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+                <a href="{{ route('compras.index') }}" class="block w-full" ><i class="fa-solid fa-cart-shopping"></i> Compras</a>
             </li>
             <li data-pestanal="Ventas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('ventas.index') }}"><i class="fa-solid fa-chart-simple"></i> Ventas</a>
+                <a href="{{ route('ventas.index') }}" class="block w-full" ><i class="fa-solid fa-chart-simple"></i> Ventas</a>
             </li>
             <li data-pestanal="Reporte_ventas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('Reporte_ventas.index') }}"><i class="fa-solid fa-bag-shopping"></i> Reporte ventas</a>
+                <a href="{{ route('Reporte_ventas.index') }}" class="block w-full" ><i class="fa-solid fa-bag-shopping"></i> Reporte ventas</a>
             </li>
             <li data-pestanal="Personas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('personas.index') }}"><i class="fa-solid fa-person"></i> Personas</a>
+                <a href="{{ route('personas.index') }}" class="block w-full" ><i class="fa-solid fa-person"></i> Personas</a>
             </li>
             <li data-pestanal="Medicos" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-               <a href="{{ route('medicos.index') }}"><i class="fa-solid fa-briefcase-medical"></i> Medicos</a>
+               <a href="{{ route('medicos.index') }}" class="block w-full" ><i class="fa-solid fa-briefcase-medical"></i> Medicos</a>
+            </li>
+            <li data-pestanal="Encuestas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
+               <a href="{{ route('encuestas.index') }}" class="block w-full" ><i class="fa-solid fa-square-poll-vertical"></i> Encuestas</a>
             </li>
             <li data-pestanal="Consultas" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('consultas.index') }}"><i class="fa-solid fa-stethoscope"></i> Consultas</a>
+                <a href="{{ route('consultas.index') }}" class="block w-full" ><i class="fa-solid fa-stethoscope"></i> Consultas</a>
             </li>
             <li data-pestanal="Inventario" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('inventario.index') }}"><i class="fa-solid fa-shopping-basket"></i> Inventario</a>
+                <a href="{{ route('inventario.index') }}" class="block w-full" ><i class="fa-solid fa-shopping-basket"></i> Inventario</a>
             </li>
             <li data-pestanal="Requisiciones" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('requisiciones.index') }}"><i class="fa-solid fa-shipping-fast"></i> Requisiciones</a>
+                <a href="{{ route('requisiciones.index') }}" class="block w-full" ><i class="fa-solid fa-shipping-fast"></i> Requisiciones</a>
             </li>
             <li data-pestanal="Traslado" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('traslado.index') }}"><i class="fa-solid fa-book-medical"></i>Traslado</a>
+                <a href="{{ route('traslado.index') }}" class="block w-full" ><i class="fa-solid fa-exchange-alt"></i>Traslado</a>
             </li>
             <li data-pestanal="bitacora" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('bitacora.index') }}"><i class="fa-solid fa-book"></i> Bitacora</a>
+                <a href="{{ route('bitacora.index') }}" class="block w-full" ><i class="fa-solid fa-book"></i> Bitacora</a>
             </li>
             <li data-pestanal="Historico" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
-                <a href="{{ route('historico.precios') }}"><i class="fa-solid fa-book"></i> HistoricoPrecios</a>
+                <a href="{{ route('historico.precios') }}" class="block w-full"><i class="fa-solid fa-hand-holding-dollar"></i> HistoricoPrecios</a>
             </li>
             <li data-pestanal="Categorias" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('categorias.index') }}"><i class="bx bx-category"></i> Categorias</a>
+                <a href="{{ route('categorias.index') }}" class="block w-full" ><i class="bx bx-category"></i> Categorias</a>
             </li>
             <li data-pestanal="Proveedores" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('proveedores.index') }}"><i class="bx bxs-package"></i> Proveedores</a>
+                <a href="{{ route('proveedores.index') }}" class="block w-full" ><i class="bx bxs-package"></i> Proveedores</a>
             </li>
             <li data-pestanal="Usuarios" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('usuarios.index') }}"><i class='bx bxs-user'></i> Usuarios</a>
+                <a href="{{ route('usuarios.index') }}" class="block w-full" ><i class='bx bxs-user'></i> Usuarios</a>
             </li>
             <li data-pestanal="Rol" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('roles.index') }}"><i class="bx bx-briefcase-alt"></i> Roles</a>
+                <a href="{{ route('roles.index') }}" class="block w-full" ><i class="bx bx-briefcase-alt"></i> Roles</a>
             </li>
             <li data-pestanal="Devoluciones" class="px-6 py-2 hover:bg-gray-100" style="display:none;">
-                <a href="{{ route('devoluciones.index') }}"><i class="fa-solid fa-rotate-left"></i> Devoluciones</a>
+                <a href="{{ route('devoluciones.index') }}" class="block w-full" ><i class="fa-solid fa-rotate-left"></i> Devoluciones</a>
             </li>
-            <li>
-                <button id="logout-btn-mobile" type="submit" class="block py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white">
-                    <i class="bx bx-log-out mr-2"></i>Cerrar Sesión
+            <li class="flex flex-row justify-start items-start">
+                <button id="logout-btn-mobile" type="submit" class="py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white w-full">
+                        <i class="bx bx-log-out mr-2 items-start"></i>Cerrar Sesión
                 </button>
             </li>
         </ul>

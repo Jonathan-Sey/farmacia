@@ -205,7 +205,7 @@
 
             <div class="mt-4">
                 <label class="block text-sm font-medium text-gray-700">Foto/PDF de la Receta</label>
-                <div id="dropzone-receta" class="dropzone border-2 border-dashed rounded w-full h-40">
+                <div id="dropzone-receta" class="dropzone border-2 border-dashed rounded w-full h-50">
                     <input type="hidden" name="receta_foto" value="{{ old('receta_foto') }}">
                 </div>
                 @error('receta_foto')

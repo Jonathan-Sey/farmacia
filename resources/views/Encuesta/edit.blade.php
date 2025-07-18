@@ -108,8 +108,8 @@
                 <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de pregunta</label>
                 <select name="preguntas[${index}][tipo]" class="tipo-pregunta block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" onchange="cambiarTipoPregunta(this, ${index})" required>
                     <option value="escala" ${pregunta.tipo == 'escala' ? 'selected' : '' } >Escala de satisfacción (1-5)</option>
-                    <option value="escala" ${pregunta.tipo == 'cerrado' ? 'selected' : '' } >Cerrado</option>
-                    <option value="escala" ${pregunta.tipo == 'texto' ? 'selected' : '' } >Escala</option>
+                    <option value="cerrado" ${pregunta.tipo == 'cerrado' ? 'selected' : '' } >Cerrado</option>
+                    <option value="texto" ${pregunta.tipo == 'texto' ? 'selected' : '' } >Respuesta abierta</option>
                 </select>
             </div>
         `;

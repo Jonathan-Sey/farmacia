@@ -71,12 +71,17 @@ class FichaMedicaController extends Controller
 
         
         $recetas = [];
-        foreach($data['producto'] as $productosData) {
-            $recetas [$productosData['id']] = [
-                'cantidad' => $productosData['cantidad'],
-                'instrucciones' => $productosData['instrucciones'],
-            ];
+        if (isset($data['producto'])) {
+            foreach($data['producto'] as $productosData) {
+                if (!empty($productosData['id'])) {
+                    $recetas[$productosData['id']] = [
+                        'cantidad' => $productosData['cantidad'],
+                        'instrucciones' => $productosData['instrucciones'],
+                    ];
+                }
+            }
         }
+        
 
         $fichasMedicas->productosRecetados()->sync($recetas);
 
@@ -94,9 +99,10 @@ class FichaMedicaController extends Controller
         $persona = Persona::findOrFail($persona_id);
         $medicos = DetalleMedico::with('medico')->activos()->get();
         $sucursales = Sucursal::with('fichasMedicas')->activos()->get();
+        $productos = Producto::activos()->get();
+        //dd($sucursales);
 
-
-        return view('fichas.edit', compact('ficha', 'persona', 'medicos', 'sucursales'));
+        return view('fichas.edit', compact('ficha', 'persona', 'medicos', 'sucursales','productos'));
     }
 
 // Actualizar ficha médica
@@ -108,6 +114,10 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
             'consulta_programada' => 'required|date',
             'sucursal_id' => 'nullable|exists:sucursal,id',
             'receta_foto'         => 'nullable|string',
+            'producto' => 'array',
+            'producto.*.id' => 'nullable',
+            'producto.*.cantidad' => 'nullable',
+            'producto.*.instrucciones' => 'nullable',
         ]);
 
         DB::beginTransaction();
@@ -144,6 +154,24 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
             }
 
             $ficha->update($data);
+
+            // validacion de nuevos productos recetados 
+            //utilizamos un arreglo para almacena
+            $productos = [];
+            if(isset($data['producto'])){
+                //comprobamos lo que viene de producto
+                foreach($data['producto'] as $productosData){
+                    // validamos nuevamente si los datos viene vacios 
+                    if(!empty($productosData['id'])){
+                        $productos = [$productosData['id']] = [
+                            'cantidad' => $productosData['cantidad'],
+                            'instrucciones' => $productosData['instrucciones'],
+                        ];
+                    }
+                }
+            }
+
+            $ficha->productosRecetados()->sync($productos);
             DB::commit();
 
             return redirect()
@@ -156,6 +184,7 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
         }
     }
 
+ 
 // // // Mostrar vista para confirmar eliminación
 //  public function destroyConfirm($id)
 //      {
