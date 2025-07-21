@@ -183,6 +183,9 @@ Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVent
 // prueba por ahora para obtener las recetas en ventas
 Route::get('/productos-consultas/{id}', [ventaController::class, 'getProductosRecetados']);
 
+// ruta para obtener a la persona como antigueño
+Route::get('/persona-antiguenia/{id}', [ventaController::class, 'getantiguenio']);
+
 //productos vencidos
 Route::get('/productos-vencidos', [productosVencidosController::class, 'index'])->name('productos.vencidos');
 
