@@ -201,7 +201,7 @@
                         <x-select2
                             name="productos_recetados"
                             label="Buscar productos Recetados"
-                            :options="$productosRecetados->pluck('id')"
+                            :options="$fichasMedicas->pluck('id')"
                             :selected="old('productos_recetados')"
                             placeholder="Buscar productos recetados"
                             id="productos_recetados"
@@ -638,33 +638,43 @@
                 </div>
             </dialog>
 
-            <div class="overflow-x-auto">
-                <table class="table table-sm table-pin-rows table-pin-cols" id="tabla-detalles">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <td>Nombre</td>
-                        <td>Cantidad</td>
-                        <td>Instrucciones</td>
-                        <td>Acciones</td>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th>1</th>
-                        <td>VITAMINA K1 (FITOMENADIONA) 10 MG/1ML SOLUCION INYECTABLE</td>
-                        <td>Quality Control Specialist</td>
-                        <td>Littel, Schaden and Vandervort</td>
-                        <td><i class="fas fa-trash"></i></td>
-                    </tr>
-                        {{-- formato de los arrays para mandar el detalle de productos --}}
-                        {{-- <input type="hidden" name="producto[][id]" value="">
-                        <input type="hidden" name="producto[][cantidad]" value="">
-                        <input type="hidden" name="producto[][instrucciones]" value=""> --}}
 
-                    </tbody>
-                </table>
+            {{-- tabla para mostrar los productos recetados  --}}
+       <!-- En tu vista de creación de ventas -->
+
+            <!-- Campo para buscar fichas médicas -->
+            <div class="mt-3 mb-5">
+                <label for="ficha_medica_id" class="uppercase block text-sm font-medium text-gray-900">Buscar Consulta Médica</label>
+                <select
+                    name="ficha_medica_id"
+                    id="ficha_medica_id"
+                    class="select2-consulta block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                    <option value="">Seleccione una consulta</option>
+                    @foreach($fichasMedicas as $ficha)
+                    <option value="{{ $ficha->id }}">Consulta #{{ $ficha->id }} - {{ $ficha->persona->nombre }} ({{ $ficha->created_at->format('d/m/Y') }})</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <!-- Tabla para productos recetados -->
+            <div class="mt-5">
+                <h3 class="text-lg font-medium mb-3">Productos Recetados</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200" id="tabla-productos-recetados">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Producto</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cantidad</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Precio</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Instrucciones</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                            <!-- Se llenará dinámicamente con JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
             </div>
     </div>
 </div>
@@ -1812,84 +1822,75 @@ function mensaje(message, icon = "error") {
 });
 
 
-    let productosRecetados = @json($productosRecetados);
+    let productosRecetados = @json($fichasMedicas);
     console.log(productosRecetados);
 </script>
 
 
 <script>
+$(document).ready(function() {
+    // Inicializar Select2 para las consultas médicas
+    $('.select2-consulta').select2({
+        width: '100%',
+        placeholder: "Buscar consulta médica",
+        allowClear: true
+    });
 
-    $(document).ready(function(){
-        const productoRecetado = $('#productos_recetados');
+    // Manejar el cambio en la selección de consulta médica
+    $('#ficha_medica_id').change(function() {
+        const fichaId = $(this).val();
+        const tablaProductos = $('#tabla-productos-recetados tbody');
 
-        productoRecetado.change(function(){
-            // obtenemos el valor del producto recetados
-            const Selectproducto = $(this).val();
-            console.log(Selectproducto);
+        if (fichaId) {
+            $.ajax({
+                url: `/productos-consultas/${fichaId}`,
+                method: "GET",
+                success: function(response) {
+                    console.log('Respuesta del servidor:',response);
+                    tablaProductos.empty();
 
-            if(SelectProducto){
-                //evento ajax
-                $.ajax({
-                    url: `/productos-consultas/${Selectproducto}`,
-                    method: "GET",
-                    success: function(response){
-                        //console.log(response);
-                        //$('#cantidad').val(response.id);
-                    }
-                })
-            }
-
-            //if()
-
-        });
-
+                    response.forEach((producto, index) => {
+                        const precioNumerico = parseFloat(producto.precio);
+                        const row = `
+                            <tr data-producto-id="${producto.id}">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    ${producto.nombre}
+                                    <input type="hidden" name="productos_recetados[${index}][id]" value="${producto.id}">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <input type="number" name="productos_recetados[${index}][cantidad]"
+                                           value="${producto.cantidad}" min="1" max="${producto.cantidad}"
+                                           class="w-20 border rounded px-2 py-1 cantidad-producto">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                  ${precioNumerico.toFixed(2)} <!-- Ahora sí funciona -->
+                                    <input type="hidden" name="productos_recetados[${index}][precio]" value="${producto.precio}">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    ${producto.instrucciones}
+                                    <input type="hidden" name="productos_recetados[${index}][instrucciones]" value="${producto.instrucciones}">
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <button type="button" class="btn-agregar-producto text-green-600 hover:text-green-800 font-bold">
+                                        <i class="fas fa-plus-circle"></i> Agregar a venta
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
+                        tablaProductos.append(row);
+                    });
+                },
+                error: function() {
+                    alert('Error al cargar los productos recetados');
+                }
+            });
+        } else {
+            tablaProductos.empty();
+        }
     });
 
 
-    // let contador = 0
-    // function agregarProducto(){
-    //     const productoSelect = document.getElementById('id_producto');
-    //     const id_producto = $('#id_producto').val();
-    //     const nombre = productoSelect.options[productoSelect.selectedIndex].text;
-    //     const cantidad = $('#cantidad').val();
-    //     const instrucciones = $('#instrucciones').val();
-
-
-    //     // proceso para agregar los productos a la tabla
-    //     contador ++;
-    //     const row = `
-    //     <tr data-producto-id="${id_producto}">
-    //                 <th>${contador}</th>
-    //                 <td>${nombre}</td>
-    //                 <td>${cantidad}</td>
-    //                 <td>${instrucciones || 'N/A'}</td>
-    //                 <td>
-    //                     <button type="button" class = "eliminar-producto">
-    //                         <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
-    //                     </button>
-
-    //                     <input type="hidden" name="producto[${id_producto}][id]" value="${id_producto}">
-    //                     <input type="hidden" name="producto[${id_producto}][cantidad]" value="${cantidad}">
-    //                     <input type="hidden" name="producto[${id_producto}][instrucciones]" value="${instrucciones}">
-
-
-
-
-    //                 </td>
-    //                 </tr>
-    //     `;
-    //     $('#contenido-productos').append(row);
-
-    //     limpiar();
-    // }
-
-    // function limpiar(){
-    //     $('#id_producto').val(null).trigger('change');
-    //     $('#cantidad').val(1);
-    //     $('#instrucciones').val('');
-    // }
-
-
+});
 
 </script>
 @endpush
