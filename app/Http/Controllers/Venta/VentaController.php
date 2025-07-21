@@ -69,6 +69,7 @@ class VentaController extends Controller
         $productos = Producto::activos()->get();
         $almacenesActivos = Almacen::activos()->get();
         $productosRecetados = Receta_producto::all();
+        //dd($productosRecetados);
         
 
         // Filtrar los productos disponibles en almacenes activos
@@ -84,6 +85,12 @@ class VentaController extends Controller
         ->get(['id', 'nombre', 'nit', 'DPI as dpi', 'rol']);
         return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona','productosRecetados'));
 
+    }
+
+    public function getProductosRecetados($id)
+    {
+        $detalleProducto = Receta_producto::where('id', $id)->with('producto')->get();
+        return response()->json($detalleProducto);
     }
 
     public function productosPorSucursal($id)

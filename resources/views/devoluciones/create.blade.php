@@ -99,7 +99,6 @@
                             <option value="{{ $venta->id }}">{{ $venta->id }}</option>
                             @endforeach
                         </select>
-
                         @error('id_venta')
                         <div role="alert" class="alert alert-error mt-4 p-2">
                             <span class="text-white font-bold">{{ $message}}</span>
@@ -331,6 +330,7 @@
                     url: `/ventas-devoluciones/${ventaId}`,
                     method: "GET",
                     success: function(response) {
+                        console.log(response);
                         $('#persona_nombre').val(response.persona.nombre);
                         $('#sucursal_nombre').val(response.sucursal.nombre);
                         $('#id_persona').val(response.persona.id);

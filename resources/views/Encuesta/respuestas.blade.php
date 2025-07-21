@@ -15,7 +15,7 @@
                 @if($pregunta->tipo === 'escala')
                 <div class="grafico-container mb-4">
                     <h4 class="font-medium mb-2">Promedio: {{ number_format($estadisticas[$pregunta->id]['promedio'], 1) }}/5</h4>
-                    <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div class="w-full bg-gray-200 rounded-full h-4 max-w-60">
                         <div class="bg-indigo-600 h-4 rounded-full"
                              style="width: {{ ($estadisticas[$pregunta->id]['promedio']/5)*100 }}%"></div>
                     </div>
@@ -73,7 +73,7 @@
                     </table>
                 </div>
                 @elseif ($pregunta->tipo === 'cerrado')
-                <div class="distribucion grid grid-cols-5 gap-2 text-center">
+                <div class="distribucion grid grid-cols-2 gap-2 text-center w-auto max-w-40">
                     @for($i = 1; $i <= 2; $i++)
                     @php
                         $count = $pregunta->respuestas->where('respuesta', $i)->count();
@@ -81,7 +81,7 @@
                     @endphp
                     <div>
                         <div class="text-sm">{{ $i }}</div>
-                        <div class="h-32 bg-gray-200 relative">
+                        <div class="h-20 bg-gray-200 relative">
                             <div class="bg-indigo-400 absolute bottom-0 w-full"
                                  style="height: {{ $percentage }}%"></div>
                         </div>

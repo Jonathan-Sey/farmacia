@@ -197,7 +197,7 @@
                     
 
                     <div class="border-b border-gray-900/10 ">
-
+ 
                         <x-select2
                             name="productos_recetados"
                             label="Buscar productos Recetados"
@@ -206,8 +206,11 @@
                             placeholder="Buscar productos recetados"
                             id="productos_recetados"
                             class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        />
+                        /> 
 
+                        <button type="button" id="agregar-producto" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">
+                            Agregar
+                        </button>
 
                         <div class="mt-2 mb-5">
                             <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Farmaci</label>
@@ -634,6 +637,35 @@
                     </form>
                 </div>
             </dialog>
+
+            <div class="overflow-x-auto">
+                <table class="table table-sm table-pin-rows table-pin-cols" id="tabla-detalles">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <td>Nombre</td>
+                        <td>Cantidad</td>
+                        <td>Instrucciones</td>
+                        <td>Acciones</td>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th>1</th>
+                        <td>VITAMINA K1 (FITOMENADIONA) 10 MG/1ML SOLUCION INYECTABLE</td>
+                        <td>Quality Control Specialist</td>
+                        <td>Littel, Schaden and Vandervort</td>
+                        <td><i class="fas fa-trash"></i></td>
+                    </tr>
+                        {{-- formato de los arrays para mandar el detalle de productos --}}
+                        {{-- <input type="hidden" name="producto[][id]" value="">
+                        <input type="hidden" name="producto[][cantidad]" value="">
+                        <input type="hidden" name="producto[][instrucciones]" value=""> --}}
+
+                    </tbody>
+                </table>
+            </div>
     </div>
 </div>
 
@@ -1785,105 +1817,79 @@ function mensaje(message, icon = "error") {
 </script>
 
 
-{{--  proceso por adoptar --}}
 <script>
-    $(document).ready(function() {
-        const productoSelect = document.getElementById('productos_recetados');
-        const id_producto = $('#productos_recetados').val();
-        console.log(id_producto);
 
-        const nombre = productoSelect.options[productoSelect.selectedIndex].text;
-        console.log(nombre);
+    $(document).ready(function(){
+        const productoRecetado = $('#productos_recetados');
 
-        function recalcularTotales() {
-            let sumaTotal = 0;
+        productoRecetado.change(function(){
+            // obtenemos el valor del producto recetados 
+            const Selectproducto = $(this).val();
+            console.log(Selectproducto);
 
-            tablaDetalles.find('tr').each(function() {
-                const row = $(this);
-                const precio = parseFloat(row.find('input[name$="[precio]"]').val());
-                const cantidadInput = row.find('input[name$="[cantidad]"]');
-                const cantidad = parseInt(cantidadInput.val()) || 0;
-                const max = parseInt(cantidadInput.attr('max'));
-
-                // Validación en tiempo real
-                if (cantidad <= 0 || cantidad > max || isNaN(cantidad)) {
-                    cantidadInput.addClass('border-red-500');
-                } else {
-                    cantidadInput.removeClass('border-red-500');
-                }
-
-                const subtotal = precio * cantidad;
-                row.find('td.subtotal').text(subtotal.toFixed(2));
-                sumaTotal += subtotal;
-            });
-
-            const ivaValor = sumaTotal * 0; // IVA en 0 por ahora
-            const totalConIVA = sumaTotal + ivaValor;
-
-            suma.text(sumaTotal.toFixed(2));
-            iva.text(ivaValor.toFixed(2));
-            total.text(totalConIVA.toFixed(2));
-            inputTotal.val(totalConIVA.toFixed(2));
-        }
-
-        ventas.change(function() {
-            const ventaId = $(this).val();
-
-            if (ventaId) {
+            if(SelectProducto){
+                //evento ajax 
                 $.ajax({
-                    url: `/ventas-devoluciones/${ventaId}`,
+                    url: `/productos-consultas/${Selectproducto}`,
                     method: "GET",
-                    success: function(response) {
-                        $('#persona_nombre').val(response.persona.nombre);
-                        $('#sucursal_nombre').val(response.sucursal.nombre);
-                        $('#id_persona').val(response.persona.id);
-                        $('#id_sucursal').val(response.sucursal.id);
-
-                        tablaDetalles.empty();
-
-                        response.detalles.forEach((detalle, index) => {
-                            const subtotal = detalle.precio * detalle.cantidad;
-
-                            const row = `
-                                <tr>
-                                    <td>${detalle.producto.nombre}</td>
-                                    <td>${detalle.cantidad}</td>
-                                    <td>${detalle.precio}</td>
-                                    <td class="cantidad-cell">
-                                        <input type="hidden" name="detalles[${index}][producto_id]" value="${detalle.producto.id}">
-                                        <input type="hidden" name="detalles[${index}][precio]" value="${detalle.precio}">
-                                        <input type="number" name="detalles[${index}][cantidad]" value="${detalle.cantidad}" min="1" max="${detalle.cantidad}" class="cantidad-input w-20 border rounded px-2 py-1">
-                                    </td>
-                                    <td class="subtotal">${subtotal.toFixed(2)}</td>
-                                    <td>
-                                        <button type="button" class="btn-eliminar text-red-600 hover:text-red-800 font-bold">
-                                            <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
-                                        </button>
-                                    </td>
-                                </tr>
-                            `;
-                            tablaDetalles.append(row);
-                        });
-
-                        recalcularTotales();
-                    },
-                    error: function() {
-                        alert('Error al cargar los detalles de la venta');
+                    success: function(response){
+                        //console.log(response);
+                        //$('#cantidad').val(response.id);
                     }
-                });
+                })
             }
-        });
 
-        // Recalcular al cambiar cantidad
-        tablaDetalles.on('input', '.cantidad-input', function() {
-            recalcularTotales();
-        });
+            //if()
 
-        // Eliminar fila
-        tablaDetalles.on('click', '.btn-eliminar', function() {
-            $(this).closest('tr').remove();
-            recalcularTotales();
         });
+        
     });
+
+
+    // let contador = 0
+    // function agregarProducto(){
+    //     const productoSelect = document.getElementById('id_producto');
+    //     const id_producto = $('#id_producto').val();
+    //     const nombre = productoSelect.options[productoSelect.selectedIndex].text;
+    //     const cantidad = $('#cantidad').val();
+    //     const instrucciones = $('#instrucciones').val();
+             
+
+    //     // proceso para agregar los productos a la tabla 
+    //     contador ++;
+    //     const row = `
+    //     <tr data-producto-id="${id_producto}">
+    //                 <th>${contador}</th>
+    //                 <td>${nombre}</td>
+    //                 <td>${cantidad}</td>
+    //                 <td>${instrucciones || 'N/A'}</td>
+    //                 <td>
+    //                     <button type="button" class = "eliminar-producto">
+    //                         <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
+    //                     </button>
+
+    //                     <input type="hidden" name="producto[${id_producto}][id]" value="${id_producto}">
+    //                     <input type="hidden" name="producto[${id_producto}][cantidad]" value="${cantidad}">
+    //                     <input type="hidden" name="producto[${id_producto}][instrucciones]" value="${instrucciones}">
+
+
+
+                        
+    //                 </td>
+    //                 </tr>
+    //     `;
+    //     $('#contenido-productos').append(row);
+
+    //     limpiar();
+    // }
+
+    // function limpiar(){
+    //     $('#id_producto').val(null).trigger('change');
+    //     $('#cantidad').val(1);
+    //     $('#instrucciones').val('');
+    // }
+
+    
+
 </script>
 @endpush

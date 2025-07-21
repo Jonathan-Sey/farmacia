@@ -20,8 +20,8 @@
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Nombre</th>
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >DPI</th>
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Telefono</th>
-                <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Medico</th>
-                <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Direccion</th>
+                {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Medico</th> --}}
+                {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Direccion</th> --}}
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Diagnostico</th>
             </tr>
         </thead>
@@ -41,7 +41,7 @@
                     {{ optional(optional(optional($persona->fichasMedicas->first())->detalleMedico)->usuario)->name ?? 'Sin Médico' }}
 
                 </td> --}}
-                <td class="px-6 py-4 whitespace-nowrap">
+                {{-- <td class="px-6 py-4 whitespace-nowrap">
                     <ul class="list-disc pl-4">
                         @foreach ($persona->fichasMedicas as $ficha)
                             <li>{{ $ficha->detalleMedico->usuario->name ?? 'Sin Medico' }}
@@ -49,8 +49,8 @@
                             </li>
                         @endforeach
                     </ul>
-                </td>
-
+                </td> --}}
+{{-- 
                 <td class="px-6 py-4 whitespace-nowrap">
                     <ul class="list-disc pl-4">
                         @foreach ($persona->fichasMedicas as $ficha)
@@ -59,7 +59,7 @@
                             </li>
                         @endforeach
                     </ul>
-                </td>
+                </td> --}}
                  {{-- @foreach ($persona->fichasMedicas as $ficha )
 
                     <td class="px-6 py-4 whitespace-nowrap">
