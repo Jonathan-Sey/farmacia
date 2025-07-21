@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Persona;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\ImagenController;
 use App\Models\Bitacora;
 use App\Models\Persona;
 use App\Models\User;
@@ -86,7 +87,7 @@ class PersonaController extends Controller
 
     public function store(Request $request)
     {
-        
+
         $request->validate([
             'nombre' => 'required|string|max:255',
             'nit' => 'nullable|string|max:10|unique:persona,nit',
@@ -147,11 +148,11 @@ class PersonaController extends Controller
             //dd($request);
             FichaMedica::create([
                 'persona_id' => $persona->id,
-                // datos para el menor de edad 
+                // datos para el menor de edad
                 'nombreMenor' => $request->nombreMenor,
                 'apellido_paterno_menor' => $request->apellido_paterno_menor,
                 'apellido_materno_menor' => $request->apellido_materno_menor,
-                //otros datos 
+                //otros datos
                 'nombre' => $request->nombre,
                 'apellido_paterno' => $request->apellido_paterno,
                 'apellido_materno' => $request->apellido_materno,
@@ -172,7 +173,7 @@ class PersonaController extends Controller
                 'detalle_medico_id' => $request->detalle_medico_id,
             ]);
         }
-            
+
         if ($persona->rol == 2) {
             //dd($request);
             FichaMedica::create([
@@ -282,7 +283,7 @@ class PersonaController extends Controller
         // Obtener fichas médicas paginadas (5 por página)
         $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->paginate(2);
         //dd($datos);
-        
+
 
         // Si es paciente pero no tiene ficha médica, crearla con datos mínimos
         if ($persona->rol == 2 && $persona->fichasMedicas->isEmpty()) {
@@ -301,7 +302,7 @@ class PersonaController extends Controller
                 'municipio_id' => '',
                 'telefono' => $persona->telefono,
             ]);
-            
+
 
             // Recargar la relación para que ya contenga la ficha creada
             //$persona->load('fichasMedicas');
@@ -497,7 +498,7 @@ class PersonaController extends Controller
                 if (!$persona->fichasMedicas()->exists()) {
                     FichaMedica::create([
                         'persona_id' => $persona->id,
-                        // datos para el menor de edad 
+                        // datos para el menor de edad
                         'nombreMenor' => $persona->nombreMenor,
                         'apellido_paterno_menor' => $validatedData['apellido_paterno_menor'],
                         'apellido_materno_menor' => $validatedData['apellido_materno_menor'],
@@ -536,7 +537,7 @@ class PersonaController extends Controller
                 }
 
                 Log::info('Ficha médica actualizada o creada para paciente');
-                
+
             }
             else {
                 // Opcional: si cambió a cliente, puedes borrar la ficha médica o dejarla intacta
