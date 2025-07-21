@@ -12,6 +12,7 @@ use App\Models\Venta;
 use App\Models\Receta_producto;
 use App\Models\Almacen;
 use App\Models\Bitacora;
+use App\Models\FichaMedica;
 use App\Models\ReporteKardex;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -69,8 +70,9 @@ class VentaController extends Controller
         $productos = Producto::activos()->get();
         $almacenesActivos = Almacen::activos()->get();
         $productosRecetados = Receta_producto::all();
+        $fichasMedicas = FichaMedica::all();
         //dd($productosRecetados);
-        
+
 
         // Filtrar los productos disponibles en almacenes activos
         //$productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
@@ -83,7 +85,7 @@ class VentaController extends Controller
         ->orderByRaw("CASE WHEN nit = '0' THEN 0 ELSE 1 END") // Consumidor final primero
         ->orderBy('nombre')
         ->get(['id', 'nombre', 'nit', 'DPI as dpi', 'rol']);
-        return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona','productosRecetados'));
+        return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona','productosRecetados','fichasMedicas'));
 
     }
 
@@ -91,6 +93,30 @@ class VentaController extends Controller
     {
         $detalleProducto = Receta_producto::where('id', $id)->with('producto')->get();
         return response()->json($detalleProducto);
+    }
+
+
+
+
+    public function getProductosRecetados2($id)
+    {
+    // Obtener la ficha médica con los productos recetados
+    $fichaMedica = FichaMedica::with(['productosRecetados' => function($query) {
+        $query->select('producto.id', 'producto.nombre', 'producto.precio_venta');
+    }])->findOrFail($id);
+
+    // Formatear la respuesta
+    $productos = $fichaMedica->productosRecetados->map(function($producto) {
+        return [
+            'id' => $producto->id,
+            'nombre' => $producto->nombre,
+            'precio' => $producto->precio_venta,
+            'cantidad' => $producto->pivot->cantidad,
+            'instrucciones' => $producto->pivot->instrucciones
+        ];
+    });
+
+        return response()->json($productos);
     }
 
     public function productosPorSucursal($id)
@@ -114,7 +140,7 @@ class VentaController extends Controller
             });
 
         return response()->json($productos);
-        
+
     }
 
 
