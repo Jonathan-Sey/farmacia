@@ -69,10 +69,8 @@ class VentaController extends Controller
         //   $productos = collect();
         $productos = Producto::activos()->get();
         $almacenesActivos = Almacen::activos()->get();
-        $productosRecetados = Receta_producto::all();
         $fichasMedicas = FichaMedica::all();
         //dd($productosRecetados);
-
 
         // Filtrar los productos disponibles en almacenes activos
         //$productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
@@ -85,38 +83,64 @@ class VentaController extends Controller
         ->orderByRaw("CASE WHEN nit = '0' THEN 0 ELSE 1 END") // Consumidor final primero
         ->orderBy('nombre')
         ->get(['id', 'nombre', 'nit', 'DPI as dpi', 'rol']);
-        return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona','productosRecetados','fichasMedicas'));
+        return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona','fichasMedicas','productos'));
 
     }
 
     public function getProductosRecetados($id)
     {
-        $detalleProducto = Receta_producto::where('id', $id)->with('producto')->get();
-        return response()->json($detalleProducto);
+        //Productos recetados desde las fichas medicas
+        $fichasMedicas = FichaMedica::with(['productosRecetados' => function($query){
+            // definimos los campos que vamos a obtenert
+            $query->select('producto.id','producto.nombre', 'producto.precio_porcentaje');
+        }])->findOrFail($id);
+
+        // accedemos a los productos recetados y retornamos lo necesario
+         $productos = $fichasMedicas->productosRecetados->map(function($producto){
+             return [
+                 'id' => $producto->id,
+                 'nombre' => $producto->nombre,
+                 'precio' => $producto->precio_porcentaje,
+                  'cantidad' => $producto->pivot->cantidad,
+                  'instrucciones' => $producto->pivot->instrucciones
+             ];
+         });
+        return response()->json($productos);
     }
 
 
 
 
-    public function getProductosRecetados2($id)
+    public function getantiguenio($id)
     {
     // Obtener la ficha médica con los productos recetados
-    $fichaMedica = FichaMedica::with(['productosRecetados' => function($query) {
-        $query->select('producto.id', 'producto.nombre', 'producto.precio_venta');
-    }])->findOrFail($id);
-
-    // Formatear la respuesta
-    $productos = $fichaMedica->productosRecetados->map(function($producto) {
+    //$fichaMedica = FichaMedica::select('antigueno','consulta_programada')->findOrFail($id);
+    $persona = Persona::findOrFail($id);
+    $ficha = $persona->fichasMedicas()->paginate(1);
+    
+    $valor = $ficha->map(function($dato){
         return [
-            'id' => $producto->id,
-            'nombre' => $producto->nombre,
-            'precio' => $producto->precio_venta,
-            'cantidad' => $producto->pivot->cantidad,
-            'instrucciones' => $producto->pivot->instrucciones
+            'antigueno' =>$dato->antigueno,
         ];
     });
+    
+    
 
-        return response()->json($productos);
+    // Formatear la respuesta
+    // $productos = $fichaMedica->productosRecetados->map(function($producto) {
+    //     return [
+    //         'id' => $producto->id,
+    //         'nombre' => $producto->nombre,
+    //         'precio' => $producto->precio_venta,
+    //         'cantidad' => $producto->pivot->cantidad,
+    //         'instrucciones' => $producto->pivot->instrucciones
+    //     ];
+    // });
+
+    //$personaAntiguena = $fichaMedica () 
+
+
+        return response()->json($valor);
     }
 
     public function productosPorSucursal($id)

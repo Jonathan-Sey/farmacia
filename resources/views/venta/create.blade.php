@@ -194,26 +194,9 @@
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
                     <legend class="text-blue-500 font-bold">Datos Generales</legend>
 
-
-
                     <div class="border-b border-gray-900/10 ">
-
-                        <x-select2
-                            name="productos_recetados"
-                            label="Buscar productos Recetados"
-                            :options="$productosRecetados->pluck('id')"
-                            :selected="old('productos_recetados')"
-                            placeholder="Buscar productos recetados"
-                            id="productos_recetados"
-                            class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        />
-
-                        <button type="button" id="agregar-producto" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">
-                            Agregar
-                        </button>
-
                         <div class="mt-2 mb-5">
-                            <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Farmaci</label>
+                            <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Farmacia</label>
                             <select
                                 class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                 name="id_sucursal"
@@ -259,11 +242,20 @@
                                     </select>
                                         @error('id_persona')
                                             <div role="alert" class="alert alert-error mt-4 p-2">
-                                                <span class="text-white font-bold">{{ $message }}</span>
+                                                <span class="text-white font-media">{{ $message }}</span>
                                             </div>
                                         @enderror
-                                </div>
+
+                                     
+                            </div>
                         </div>
+
+                        {{-- alerta para ver si es antigueño o no la person --}}
+                           <div class="mt-5 bg-green-200 hidden" id="alerta-antigueno">
+                                <p class="p-2 text-green-600 font-bold">Persona Antigueña</p>
+                            </div>
+
+
                         {{-- Advertencia para las restricciones  --}}
                         <!-- Contenedor para alerta dinámica -->
                         <div id="restriccion-alert" class="hidden"></div>
@@ -275,7 +267,6 @@
                                     <label class="flex justify-between items-center flex-col cursor-pointer md:flex md:flex-row  gap-2">
                                         <span class="label-text mr-2  font-medium">¿Es prescrito?</span>
                                         <input type="checkbox" name="es_prescrito" id="es_prescrito" class="toggle toggle-primary">
-
                                     </label>
 
                                   <!-- id de la imagen y campo observacion-->
@@ -360,6 +351,34 @@
 
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl self-start">
                     <legend class="text-blue-500 font-bold">Venta</legend>
+                    <!-- Toggle para alternar modo de búsqueda -->
+                    <div class="flex flex-row gap-5">
+                        <div class="flex flex-col gap-1">
+                            <label for="tipo" class="font-me">Buscar Consulta medica</label>
+                            <input name="tipo" id="tipo" type="checkbox" class="toggle toggle-success"
+                            {{ old('tipo') ? 'checked' : '' }}
+                                />
+                        </div>
+                    </div>
+
+
+                    <div class="mt-2 mb-5 select-medico" id="select-consulta">
+                            <select
+                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                name="ficha_medica_id"
+                                id="ficha_medica_id">
+                                <option value="">Selecionar una consulta</option>
+                                @foreach ($fichasMedicas as $ficha )
+                                    <option value="{{ $ficha->id}}">Consulta # {{$ficha->id}} - {{ $ficha->persona->nombre}}</option>
+                                @endforeach
+                            </select>
+                            @error('ficha_medica_id')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                            @enderror
+                    </div> 
+
                     <div class="border-b border-gray-900/10  lg:pb-0 lg:mb-0">
                         {{-- producto --}}
                         <div class="mt-2 mb-5">
@@ -506,8 +525,38 @@
 
             </div>
 
+            
+            <div class="mt-5" id="tabla-detalles" >
+                <div class="overflow-x-auto">
+                    <h3 class=" text-center text-lg font-bold mb-3">Productos Recetados</h3>
+                <table class="table table-sm table-pin-rows table-pin-cols" id="tabla-productos-recetados">
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <td>Nombre</td>
+                        <td>Precio</td>
+                        <td>Cantidad</td>
+                        <td>Instrucciones</td>
+                        <td>Acciones</td>
+                        <th></th>
+                    </tr>
+                    </thead>
+                        <tbody>
+                            {{-- proceso creado en js  --}}
+                        {{-- <tr>
+                            <th>1</th>
+                            <td>VITAMINA K1 (FITOMENADIONA) 10 MG/1ML SOLUCION INYECTABLE</td>
+                            <td>Quality Control Specialist</td>
+                            <td>Littel, Schaden and Vandervort</td>
+                            <td><i class="fas fa-trash"></i></td>
+                        </tr> --}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
             {{-- tabla detalle --}}
-            <div class="mt-5">
+            <div class="mt-8">
                 <h2 class="text-center m-5 font-bold text-lg">Detalle Venta</h2>
                 <div class="overflow-x-auto">
                     <table id="tabla-productos" class="table  table-md table-pin-rows table-pin-cols">
@@ -637,35 +686,6 @@
                     </form>
                 </div>
             </dialog>
-
-            <div class="overflow-x-auto">
-                <table class="table table-sm table-pin-rows table-pin-cols" id="tabla-detalles">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <td>Nombre</td>
-                        <td>Cantidad</td>
-                        <td>Instrucciones</td>
-                        <td>Acciones</td>
-                        <th></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <th>1</th>
-                        <td>VITAMINA K1 (FITOMENADIONA) 10 MG/1ML SOLUCION INYECTABLE</td>
-                        <td>Quality Control Specialist</td>
-                        <td>Littel, Schaden and Vandervort</td>
-                        <td><i class="fas fa-trash"></i></td>
-                    </tr>
-                        {{-- formato de los arrays para mandar el detalle de productos --}}
-                        {{-- <input type="hidden" name="producto[][id]" value="">
-                        <input type="hidden" name="producto[][cantidad]" value="">
-                        <input type="hidden" name="producto[][instrucciones]" value=""> --}}
-
-                    </tbody>
-                </table>
-            </div>
     </div>
 </div>
 
@@ -1092,6 +1112,7 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
                     url: '/api/personas/' + personaId + '/es-antiguo',
                     method: 'GET',
                     success: function(response) {
+                        console.log(response);
                         if (response.es_antiguo) {
                             precioOriginal = precioPorcentaje;
                             $('#precio').addClass('text-green-600');
@@ -1656,63 +1677,6 @@ function editarProducto(index) {
                 my_modal_2.showModal();
             });
 
-
-          // Asegúrate que esta función esté disponible globalmente
-// window.generarResumenVenta = function() {
-//     let mensaje = `
-//     <div class="w-full max-w-[100vw]">
-//         <h5 class="text-md font-semibold mb-4 text-center">Resumen de la Venta</h5>
-//         <div class="overflow-x-auto">
-//             <table class="table table-zebra table-sm md:table-md w-full">
-//                 <thead>
-//                     <tr class="bg-base-200">
-//                         <th class="w-[50%] min-w-[150px]">Producto</th>
-//                         <th class="text-center w-[15%]">Cantidad</th>
-//                         <th class="text-right w-[20%]">Precio</th>
-//                         <th class="text-right w-[15%]">Subtotal</th>
-//                     </tr>
-//                 </thead>
-//                 <tbody>`;
-
-//     $('#tabla-productos tbody tr').each(function() {
-//         const producto = $(this).find('td:eq(0)').text().trim();
-//         const cantidad = $(this).find('td:eq(1)').text().trim();
-//         const precio = $(this).find('td:eq(2)').html().trim();
-//         const subtotal = $(this).find('td:eq(3)').text().trim();
-
-//         mensaje += `
-//                     <tr>
-//                         <td class="break-words max-w-[150px] md:max-w-none" title="${producto}">${producto}</td>
-//                         <td class="text-center">${cantidad}</td>
-//                         <td class="text-right">${precio}</td>
-//                         <td class="text-right">${subtotal}</td>
-//                     </tr>`;
-//     });
-
-//     mensaje += `
-//                 </tbody>
-//             </table>
-//         </div>
-//         <div class="mt-4 grid grid-cols-1 gap-1 text-sm md:text-base">
-//             <div class="flex justify-between border-b pb-1">
-//                 <span class="font-medium">SUMA:</span>
-//                 <span>${$('#suma').text().trim()}</span>
-//             </div>
-//             <div class="flex justify-between border-b pb-1">
-//                 <span class="font-medium">IVA %:</span>
-//                 <span>${$('#iva').text().trim()}</span>
-//             </div>
-//             <div class="flex justify-between font-bold text-lg mt-2">
-//                 <span>TOTAL:</span>
-//                 <span>${$('#total').text().trim()}</span>
-//             </div>
-//         </div>
-//     </div>`;
-
-//     return mensaje;
-// }
-
-
 // Función para mostrar mensajes
 function mensaje(message, icon = "error") {
     const Toast = Swal.mixin({
@@ -1812,84 +1776,135 @@ function mensaje(message, icon = "error") {
 });
 
 
-    let productosRecetados = @json($productosRecetados);
-    console.log(productosRecetados);
+    
+
+    // proceso para maneajr el toggle 
+     const toggle = document.getElementById('tipo');
+     const select = document.getElementById('ficha_medica_id')
+     const contenedorTabla = document.getElementById('tabla-detalles')
+     const tabla = document.getElementById('tabla-productos-recetados')
+
+     function mostrarDatos () {
+         if(toggle.checked){
+            $('#select-consulta').show();
+             select.classList.remove('hidden');
+             contenedorTabla.classList.remove('hidden');
+         }else{
+            $('#select-consulta').hide();
+             select.classList.add('hidden');
+            contenedorTabla.classList.add('hidden')
+         }
+
+     }
+
+     mostrarDatos();
+
+     toggle.addEventListener('change', mostrarDatos);
+
 </script>
 
 
 <script>
 
     $(document).ready(function(){
-        const productoRecetado = $('#productos_recetados');
 
-        productoRecetado.change(function(){
-            // obtenemos el valor del producto recetados
-            const Selectproducto = $(this).val();
-            console.log(Selectproducto);
+         //aplicamos el select2 en nuestro input actual
+           $('#ficha_medica_id').select2({
+               width: '100%',
+               placeholder: "Buscar consulta medica",
+               allowClear: true,
+               selected : true,
+           });
+           // para que el selec aparesca en el buscador 
+           $(document).on('select2:open', () => {
+            document.querySelector('.select2-search__field').focus();
+            });
 
-            if(SelectProducto){
-                //evento ajax
+
+        // agregamos una venta a la fucha media 
+        $('#ficha_medica_id').change(function(){
+            const valorSelect = $(this).val();
+            console.log(valorSelect);
+            const tabla = $('#tabla-productos-recetados tbody');
+
+            // obtenemos los datos con ajax 
+            if(valorSelect){
                 $.ajax({
-                    url: `/productos-consultas/${Selectproducto}`,
+                    url: `/productos-consultas/${valorSelect}`,
                     method: "GET",
                     success: function(response){
-                        //console.log(response);
-                        //$('#cantidad').val(response.id);
+                        console.log('respuesta desde el server ', response);
+                        tabla.empty();
+
+                         response.forEach((producto, index) => {
+                             const precio = parseFloat(producto.precio);
+                            
+                             const contenedor = `
+                             <tr >
+                            <th>${index+1}</th>
+                             <td>${producto.nombre}</td>
+                             <td>${precio.toFixed(2)}</td>
+                             <td>${producto.cantidad}</td>
+                             <td>${producto.instrucciones}</td>
+                             </tr>
+                             `;
+                             tabla.append(contenedor);
+                         })
+                          // si el contenedor esta vacio poner un aviso
+                          if(response.length == 0){
+                              const contenedor = `
+                              <tr data-productos-id="">
+                              <th>1</th>
+                              <td class="text-center">Consulta sin productos recetados</td>
+                              </tr>
+                              `;
+                              tabla.append(contenedor);
+                          }
+                    },
+                    error: function() {
+                            Swal.fire('Error', 'No fue posible obtener los datos de la consulta medica','error')
+                            return;
                     }
-                })
+
+                });
+            }//cierre if 
+            else{
+                tabla.empty();
             }
 
-            //if()
-
         });
+    });
+</script>
+
+<script>
+
+    $('#id_persona').change(function(){
+        const selectPersona = $(this).val();
+        const selectPersonaAntigueno = document.getElementById('alerta-antigueno')
+        console.log(selectPersona);
+
+        if(selectPersona){
+            $.ajax({
+                url:`/persona-antiguenia/${selectPersona}`,
+                method: "GET",
+                success: function(response){
+                    console.log('respuesta en el server', response);
+                    response.forEach((data, index) => {
+                        console.log(data.antigueno);
+                        if(data.antigueno == 1){
+                            
+                            $('#alerta-antigueno').show();
+                        }
+                        if(data.antigueno.length == 0)
+                            selectPersonaAntigueno.classList.add('hidden');
+                        
+                    })
+                }
+
+            });
+        }
 
     });
-
-
-    // let contador = 0
-    // function agregarProducto(){
-    //     const productoSelect = document.getElementById('id_producto');
-    //     const id_producto = $('#id_producto').val();
-    //     const nombre = productoSelect.options[productoSelect.selectedIndex].text;
-    //     const cantidad = $('#cantidad').val();
-    //     const instrucciones = $('#instrucciones').val();
-
-
-    //     // proceso para agregar los productos a la tabla
-    //     contador ++;
-    //     const row = `
-    //     <tr data-producto-id="${id_producto}">
-    //                 <th>${contador}</th>
-    //                 <td>${nombre}</td>
-    //                 <td>${cantidad}</td>
-    //                 <td>${instrucciones || 'N/A'}</td>
-    //                 <td>
-    //                     <button type="button" class = "eliminar-producto">
-    //                         <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
-    //                     </button>
-
-    //                     <input type="hidden" name="producto[${id_producto}][id]" value="${id_producto}">
-    //                     <input type="hidden" name="producto[${id_producto}][cantidad]" value="${cantidad}">
-    //                     <input type="hidden" name="producto[${id_producto}][instrucciones]" value="${instrucciones}">
-
-
-
-
-    //                 </td>
-    //                 </tr>
-    //     `;
-    //     $('#contenido-productos').append(row);
-
-    //     limpiar();
-    // }
-
-    // function limpiar(){
-    //     $('#id_producto').val(null).trigger('change');
-    //     $('#cantidad').val(1);
-    //     $('#instrucciones').val('');
-    // }
-
-
 
 </script>
 @endpush
