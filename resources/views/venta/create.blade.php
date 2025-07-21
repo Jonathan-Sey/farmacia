@@ -193,11 +193,11 @@
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5 items-start">
                 <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
                     <legend class="text-blue-500 font-bold">Datos Generales</legend>
-                    
-                    
+
+
 
                     <div class="border-b border-gray-900/10 ">
- 
+
                         <x-select2
                             name="productos_recetados"
                             label="Buscar productos Recetados"
@@ -206,7 +206,7 @@
                             placeholder="Buscar productos recetados"
                             id="productos_recetados"
                             class="select2-producto block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-                        /> 
+                        />
 
                         <button type="button" id="agregar-producto" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">
                             Agregar
@@ -638,6 +638,8 @@
                 </div>
             </dialog>
 
+
+            {{-- tabla para mostrar los productos recetados  --}}
             <div class="overflow-x-auto">
                 <table class="table table-sm table-pin-rows table-pin-cols" id="tabla-detalles">
                     <thead>
@@ -1823,12 +1825,12 @@ function mensaje(message, icon = "error") {
         const productoRecetado = $('#productos_recetados');
 
         productoRecetado.change(function(){
-            // obtenemos el valor del producto recetados 
+            // obtenemos el valor del producto recetados
             const Selectproducto = $(this).val();
             console.log(Selectproducto);
 
             if(SelectProducto){
-                //evento ajax 
+                //evento ajax
                 $.ajax({
                     url: `/productos-consultas/${Selectproducto}`,
                     method: "GET",
@@ -1842,7 +1844,7 @@ function mensaje(message, icon = "error") {
             //if()
 
         });
-        
+
     });
 
 
@@ -1853,9 +1855,9 @@ function mensaje(message, icon = "error") {
     //     const nombre = productoSelect.options[productoSelect.selectedIndex].text;
     //     const cantidad = $('#cantidad').val();
     //     const instrucciones = $('#instrucciones').val();
-             
 
-    //     // proceso para agregar los productos a la tabla 
+
+    //     // proceso para agregar los productos a la tabla
     //     contador ++;
     //     const row = `
     //     <tr data-producto-id="${id_producto}">
@@ -1874,7 +1876,7 @@ function mensaje(message, icon = "error") {
 
 
 
-                        
+
     //                 </td>
     //                 </tr>
     //     `;
@@ -1889,7 +1891,7 @@ function mensaje(message, icon = "error") {
     //     $('#instrucciones').val('');
     // }
 
-    
+
 
 </script>
 @endpush

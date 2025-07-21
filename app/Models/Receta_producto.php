@@ -20,7 +20,7 @@ class Receta_producto extends Model
 
     public function fichasMedicas()
     {
-        return $this->belongsTo(fichasMedicas::class, 'fichas_medica_id');
+        return $this->belongsTo(FichaMedica::class, 'fichas_medica_id');
     }
 
     public function producto()
