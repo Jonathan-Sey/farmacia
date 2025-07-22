@@ -148,7 +148,7 @@
                 </div>
                 <div >
                     <label for="cantidad" class="uppercase block text-sm font-medium text-gray-900">Cantidad</label>
-                    <input type="number" min="1" value="1" name="cantidad" id="cantidad" 
+                    <input type="number" min="1" value="1" name="cantidad" id="cantidad"
                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
                 </div>
             </div>
@@ -162,7 +162,7 @@
                         Agregar
                     </button>
             </div>
-            
+
             {{-- seccion para la tabla  --}}
             <div class="overflow-x-auto">
                 <table class="table table-sm table-pin-rows table-pin-cols">
@@ -193,13 +193,13 @@
                                 <input type="hidden" name="producto[{{ $producto->id }}][instrucciones]" value="{{ $producto->pivot->instrucciones }}">
                         </td>
                         <th></th>
-                            
+
                         @endforeach
-                    
+
                     </tbody>
                 </table>
             </div>
-          
+
             <div class="mt-2 mb-5">
                 <label for="detalle_medico_id" class="uppercase block text-sm font-medium text-gray-900">
                     Médico
@@ -272,7 +272,7 @@
         //agregamos evento al boton para agregar los productos
         $('#agregar-producto').click(function(){
             agregarProducto();
-        }); 
+        });
     });
 
     let contador = 0
@@ -282,7 +282,7 @@
         const nombre = productoSelect.options[productoSelect.selectedIndex].text;
         const cantidad = $('#cantidad').val();
         const instrucciones = $('#instrucciones').val();
-        
+
         const datos = {
             id:id_producto,
             nombre: nombre,
@@ -290,12 +290,12 @@
             instrucciones: instrucciones
         }
 
-        // validar si hay algun producto o cantidad 
+        // validar si hay algun producto o cantidad
         if(!id_producto || !cantidad){
             Swal.fire('Error', 'Debe de selecionar un producto y su cantidad','error')
             return;
         }
-        
+
 
         // validar que solo admita numeros enteros positivos
         if(parseInt(cantidad) <= 0 || !/^\d+$/.test(cantidad)){
@@ -303,7 +303,7 @@
             return;
         }
 
-        // validar si el producto ya fue agregado 
+        // validar si el producto ya fue agregado
 
         if($(`#contenido-productos tr[data-producto-id="${id_producto}"]`).length > 0){
             Swal.fire('Error', 'El producto ya fue agregado al detalle de productos','error')
@@ -313,7 +313,7 @@
         console.log(datos);
 
 
-        // proceso para agregar los productos a la tabla 
+        // proceso para agregar los productos a la tabla
         contador ++;
         const row = `
         <tr data-producto-id="${id_producto}">
@@ -342,7 +342,7 @@
         $('#instrucciones').val('');
     }
 
-    // proceso para eliminar el producto de la lista, primera forma     
+    // proceso para eliminar el producto de la lista, primera forma
 
     $(document).on('click', '.eliminar-producto', function () {
 
@@ -356,7 +356,7 @@
             confirmButtonText: "Si, eliminar!"
             }).then((result) => {
             if (result.isConfirmed) {
-                //borramos el producto del detalle de productos 
+                //borramos el producto del detalle de productos
                 $(this).closest('tr').remove();
                 $('#contenido-productos tr').each(function(index){
                     $(this).find('th').text(index + 1);
@@ -369,11 +369,11 @@
                 });
             }
             });
-        
+
     });
 
-    // con funcion, segunda forrma 
-    
+    // con funcion, segunda forrma
+
     function eliminarProducto(){
         alert("Hola desde el boton eliminar")
     }

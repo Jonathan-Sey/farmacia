@@ -239,7 +239,7 @@ Route::get('encuestas/respuestas/{encuesta}', [EncuestaController::class, 'verRe
 
 //reporte productos
 Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProducto'])->name('reporte.productos');
-//reporte de pacientes y detalle medicos 
+//reporte de pacientes y detalle medicos
 Route::get('/reporte-pacientes', [ReporteVentasController::class, 'filtrarPacientes'])->name('reporte.pacientes');
 Route::get('/reporte-pacientes/detalle-paciente/{id}', [ReporteVentasController::class, 'filtrarDetallePaciente'])->name('reporte.DetallePaciente');
 
