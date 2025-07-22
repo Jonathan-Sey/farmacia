@@ -1889,19 +1889,16 @@ function mensaje(message, icon = "error") {
                 method: "GET",
                 success: function(response){
                     console.log('respuesta en el server', response);
-                    response.forEach((data, index) => {
-                        console.log(data.antigueno);
-                        if(data.antigueno == 1){
-
-                            $('#alerta-antigueno').show();
-                        }
-                        if(data.antigueno.length == 0)
-                            selectPersonaAntigueno.classList.add('hidden');
-
-                    })
+                    if(response.length > 0 && response[0].antigueno === 1){
+                            $('#alerta-antigueno').removeClass('hidden').show();
+                    }else{
+                        $('#alerta-antigueno').addClass('hidden').hide();
+                    }
                 }
 
             });
+        }else{
+            $('#alerta-antigueno').addClass('hidden').hide();
         }
 
     });
