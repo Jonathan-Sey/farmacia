@@ -9,7 +9,7 @@
 <div class="container">
 
      <form id="formReporte" class="space-y-4 sm:space-y-6 mb-5" >
-        @csrf       
+        @csrf
         <div class="mb-5">
                <a href="{{route('Reporte_ventas.index')}}" class="bg-blue-700 text-white font-bold p-3 rounded-md inline-block" >Volver</a>
         </div>
@@ -66,7 +66,7 @@
             </button>
         </div>
     </form>
-    
+
     <x-data-table id="tabla-reporte">
         <x-slot name="thead">
             <thead class="text-white font-bold">
@@ -153,9 +153,9 @@
         // al accionarse mandamos los datos de los inputs fecha, producto
         $('#formReporte').on('submit', function(e){
             e.preventDefault();
-            // obtenemos el valor de los inputs 
+            // obtenemos el valor de los inputs
             const formaData = {
-                producto: $('#productos').val(), 
+                producto: $('#productos').val(),
                 fechaInicio: $('#fechaInicio').val(),
                 fechaFin: $('#fechaFin').val(),
                 _token: $('input[name="_token"]').val(),
@@ -200,7 +200,7 @@
                 }
 
             });
-            
+
         })
 
 
@@ -227,7 +227,7 @@
         mostrarInputs();
 
         toggle.addEventListener('change', mostrarInputs);
-        
+
     });
 </script>
 @endpush

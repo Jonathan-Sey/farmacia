@@ -1893,4 +1893,36 @@ $(document).ready(function() {
 });
 
 </script>
+
+<script>
+
+    $('#id_persona').change(function(){
+        const selectPersona = $(this).val();
+        const selectPersonaAntigueno = document.getElementById('alerta-antigueno')
+        console.log(selectPersona);
+
+        if(selectPersona){
+            $.ajax({
+                url:`/persona-antiguenia/${selectPersona}`,
+                method: "GET",
+                success: function(response){
+                    console.log('respuesta en el server', response);
+                     // Asumiendo que response es un array con al menos un elemento
+                if(response.length > 0 && response[0].antigueno === 1) {
+                    $('#alerta-antigueno').removeClass('hidden').show();
+                } else {
+                    $('#alerta-antigueno').addClass('hidden').hide();
+                }
+
+                }
+
+            });
+        }else{
+            $('#alerta-antigueno').addClass('hidden').hide();
+        }
+
+    });
+
+</script>
+
 @endpush

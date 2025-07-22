@@ -66,10 +66,10 @@ class FichaMedicaController extends Controller
         $data['persona_id'] = $persona_id;
         $data['departamento_id'] = $departamentoId;
         $data['municipio_id'] = $municipioId;
-        
+
         $fichasMedicas = FichaMedica::create($data);
 
-        
+
         $recetas = [];
         if (isset($data['producto'])) {
             foreach($data['producto'] as $productosData) {
@@ -81,7 +81,7 @@ class FichaMedicaController extends Controller
                 }
             }
         }
-        
+
 
         $fichasMedicas->productosRecetados()->sync($recetas);
 
@@ -155,13 +155,13 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
 
             $ficha->update($data);
 
-            // validacion de nuevos productos recetados 
+            // validacion de nuevos productos recetados
             //utilizamos un arreglo para almacena
             $productos = [];
             if(isset($data['producto'])){
                 //comprobamos lo que viene de producto
                 foreach($data['producto'] as $productosData){
-                    // validamos nuevamente si los datos viene vacios 
+                    // validamos nuevamente si los datos viene vacios
                     if(!empty($productosData['id'])){
                         $productos = [$productosData['id']] = [
                             'cantidad' => $productosData['cantidad'],
@@ -184,7 +184,7 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
         }
     }
 
- 
+
 // // // Mostrar vista para confirmar eliminación
 //  public function destroyConfirm($id)
 //      {
