@@ -206,9 +206,59 @@
                                 class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
                                  Editar
                              </a>
+
+                             <button onclick="productosModal{{ $ficha->id }}.showModal()"
+                                class="inline-block px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700">
+                                Ver Productos
+                            </button>
                         </div>
                     </li>
                 @endforeach
+
+                @foreach ($fichas as $ficha)
+    <!-- Modal para productos recetados -->
+    <dialog id="productosModal{{ $ficha->id }}" class="modal">
+        <div class="modal-box w-11/12 max-w-5xl">
+            <h3 class="text-lg font-bold">Productos Recetados</h3>
+            <p class="py-2 text-gray-600">Diagnóstico: {{ $ficha->diagnostico }}</p>
+            <p class="py-2 text-gray-600">Fecha: {{ $ficha->created_at->format('d/m/Y') }}</p>
+
+            <div class="overflow-x-auto mt-4">
+                <table class="table w-full">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                            <th>Instrucciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($ficha->productosRecetados as $index => $producto)
+                        <tr>
+                            <td>{{ $index + 1 }}</td>
+                            <td>{{ $producto->nombre }}</td>
+                            <td>{{ $producto->pivot->cantidad }}</td>
+                            <td>{{ $producto->pivot->instrucciones ?? 'N/A' }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="modal-action">
+                <form method="dialog">
+                    <button class="btn">Cerrar</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Para cerrar haciendo clic fuera del modal -->
+        <form method="dialog" class="modal-backdrop">
+            <button>close</button>
+        </form>
+    </dialog>
+@endforeach
             </ul>
 
             <!-- Paginación inferior -->

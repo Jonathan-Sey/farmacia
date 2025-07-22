@@ -246,7 +246,7 @@
                                             </div>
                                         @enderror
 
-                                     
+
                             </div>
                         </div>
 
@@ -377,7 +377,7 @@
                                     <span class="text-white font-bold">{{ $message }}</span>
                                 </div>
                             @enderror
-                    </div> 
+                    </div>
 
                     <div class="border-b border-gray-900/10  lg:pb-0 lg:mb-0">
                         {{-- producto --}}
@@ -525,7 +525,7 @@
 
             </div>
 
-            
+
             <div class="mt-5" id="tabla-detalles" >
                 <div class="overflow-x-auto">
                     <h3 class=" text-center text-lg font-bold mb-3">Productos Recetados</h3>
@@ -1776,9 +1776,9 @@ function mensaje(message, icon = "error") {
 });
 
 
-    
 
-    // proceso para maneajr el toggle 
+
+    // proceso para maneajr el toggle
      const toggle = document.getElementById('tipo');
      const select = document.getElementById('ficha_medica_id')
      const contenedorTabla = document.getElementById('tabla-detalles')
@@ -1815,19 +1815,19 @@ function mensaje(message, icon = "error") {
                allowClear: true,
                selected : true,
            });
-           // para que el selec aparesca en el buscador 
+           // para que el selec aparesca en el buscador
            $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
             });
 
 
-        // agregamos una venta a la fucha media 
+        // agregamos una venta a la fucha media
         $('#ficha_medica_id').change(function(){
             const valorSelect = $(this).val();
             console.log(valorSelect);
             const tabla = $('#tabla-productos-recetados tbody');
 
-            // obtenemos los datos con ajax 
+            // obtenemos los datos con ajax
             if(valorSelect){
                 $.ajax({
                     url: `/productos-consultas/${valorSelect}`,
@@ -1838,7 +1838,7 @@ function mensaje(message, icon = "error") {
 
                          response.forEach((producto, index) => {
                              const precio = parseFloat(producto.precio);
-                            
+
                              const contenedor = `
                              <tr >
                             <th>${index+1}</th>
@@ -1867,7 +1867,7 @@ function mensaje(message, icon = "error") {
                     }
 
                 });
-            }//cierre if 
+            }//cierre if
             else{
                 tabla.empty();
             }
@@ -1892,12 +1892,12 @@ function mensaje(message, icon = "error") {
                     response.forEach((data, index) => {
                         console.log(data.antigueno);
                         if(data.antigueno == 1){
-                            
+
                             $('#alerta-antigueno').show();
                         }
                         if(data.antigueno.length == 0)
                             selectPersonaAntigueno.classList.add('hidden');
-                        
+
                     })
                 }
 
