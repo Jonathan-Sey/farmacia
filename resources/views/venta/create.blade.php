@@ -246,13 +246,13 @@
                                             </div>
                                         @enderror
 
-                                     
+
                             </div>
                         </div>
 
                         {{-- alerta para ver si es antigueño o no la person --}}
-                           <div class="mt-5 bg-green-200 hidden" id="alerta-antigueno">
-                                <p class="p-2 text-green-600 font-bold">Persona Antigueña</p>
+                           <div class="mt-5 bg-green-200 hidden rounded-md" id="alerta-antigueno">
+                                <p class="text-green-600 font-bold text-[0.8rem]">Persona Antigueña</p>
                             </div>
 
 
@@ -377,7 +377,7 @@
                                     <span class="text-white font-bold">{{ $message }}</span>
                                 </div>
                             @enderror
-                    </div> 
+                    </div>
 
                     <div class="border-b border-gray-900/10  lg:pb-0 lg:mb-0">
                         {{-- producto --}}
@@ -525,7 +525,7 @@
 
             </div>
 
-            
+
             <div class="mt-5" id="tabla-detalles" >
                 <div class="overflow-x-auto">
                     <h3 class=" text-center text-lg font-bold mb-3">Productos Recetados</h3>
@@ -1561,7 +1561,7 @@ function editarProducto(index) {
             var nit = $(option.element).data('nit');
             var nombre = option.text.split(' - ').slice(2).join(' - ');
             var displayText = (dpi || 'Sin DPI') + (nit ? ' - ' + nit : '');
-            var nombreTruncado = nombre.length > 20 ? nombre.substring(0, 20) + '...' : nombre;
+            var nombreTruncado = nombre.length > 10 ? nombre.substring(0, 10) + '...' : nombre;
             return displayText + ' - ' + nombreTruncado;
         }
 
@@ -1776,9 +1776,9 @@ function mensaje(message, icon = "error") {
 });
 
 
-    
 
-    // proceso para maneajr el toggle 
+
+    // proceso para maneajr el toggle
      const toggle = document.getElementById('tipo');
      const select = document.getElementById('ficha_medica_id')
      const contenedorTabla = document.getElementById('tabla-detalles')
@@ -1815,19 +1815,19 @@ function mensaje(message, icon = "error") {
                allowClear: true,
                selected : true,
            });
-           // para que el selec aparesca en el buscador 
+           // para que el selec aparesca en el buscador
            $(document).on('select2:open', () => {
             document.querySelector('.select2-search__field').focus();
             });
 
 
-        // agregamos una venta a la fucha media 
+        // agregamos una venta a la fucha media
         $('#ficha_medica_id').change(function(){
             const valorSelect = $(this).val();
             console.log(valorSelect);
             const tabla = $('#tabla-productos-recetados tbody');
 
-            // obtenemos los datos con ajax 
+            // obtenemos los datos con ajax
             if(valorSelect){
                 $.ajax({
                     url: `/productos-consultas/${valorSelect}`,
@@ -1838,7 +1838,7 @@ function mensaje(message, icon = "error") {
 
                          response.forEach((producto, index) => {
                              const precio = parseFloat(producto.precio);
-                            
+
                              const contenedor = `
                              <tr >
                             <th>${index+1}</th>
@@ -1867,7 +1867,7 @@ function mensaje(message, icon = "error") {
                     }
 
                 });
-            }//cierre if 
+            }//cierre if
             else{
                 tabla.empty();
             }
@@ -1889,16 +1889,12 @@ function mensaje(message, icon = "error") {
                 method: "GET",
                 success: function(response){
                     console.log('respuesta en el server', response);
-                    response.forEach((data, index) => {
-                        console.log(data.antigueno);
-                        if(data.antigueno == 1){
-                            
-                            $('#alerta-antigueno').show();
-                        }
-                        if(data.antigueno.length == 0)
-                            selectPersonaAntigueno.classList.add('hidden');
-                        
-                    })
+                    // validamos al usuario antigueño
+                    if(response.length > 0 && response[0].antigueno === 1){
+                        $('#alerta-antigueno').removeClass('hidden').show();
+                    }else{
+                        $('#alerta-antigueno').addClass('hidden').hide();
+                    }
                 }
 
             });
@@ -1906,5 +1902,61 @@ function mensaje(message, icon = "error") {
 
     });
 
+</script>
+
+<script>
+//proceso para el manejo de las restricciones 
+    document.addEventListener('DOMContentLoaded', function() {
+        // Configuración inicial de Select2 para personas
+        
+
+        // Función para manejar las restricciones
+        function manejarRestricciones(personaId) {
+            const alertContainer = document.getElementById('restriccion-alert');
+            alertContainer.classList.add('hidden');
+            alertContainer.innerHTML = '';
+
+            if (!personaId) return;
+
+            fetch(`/personas/${personaId}/restricciones`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                    if (data.tiene_restriccion) {
+                        let mensaje = 'ADVERTENCIA: ';
+                        mensaje += data.restriccion_activa
+                            ? 'Restricción manual activada para este cliente'
+                            : `Este cliente ha excedido su límite de compras (${data.compras_recientes}/${data.limite_compras})`;
+
+                        alertContainer.innerHTML = `
+                            <div class="alert alert-error shadow-lg mb-4">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                                    </svg>
+                                    <span>${mensaje}</span>
+                                </div>
+                            </div>
+                        `;
+                        alertContainer.classList.remove('hidden');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Evento change para Select2
+        $('#id_persona').on('change', function() {
+            manejarRestricciones(this.value);
+        });
+
+        // Si hay persona pre-seleccionada, cargar sus restricciones después de un breve retraso
+        @if(isset($persona) && $persona)
+            setTimeout(() => {
+                $('#id_persona').val('{{ $persona->id }}').trigger('change');
+            }, 300);
+        @endif
+    });
+
+    
 </script>
 @endpush

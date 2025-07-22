@@ -344,21 +344,21 @@ class ReporteVentasController extends Controller
 
     public function filtrarFechaCambioDePrecio(Request $request){
         //dd($request);
-            // primera parte           
+            // primera parte
             // $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')
             // ->whereBetween('fecha_cambio',[$request->fechaInicio, $request->fechaFin])
             // ->get();
 
 
-            // segunda fase en prueba 
-            // esta sera la primera fase para evaluar solo productos 
+            // segunda fase en prueba
+            // esta sera la primera fase para evaluar solo productos
             $query = HistoricoPrecio::with('producto');
             if($request->productos){
-                $historico->where('producto_id', $request->productos);    
+                $historico->where('producto_id', $request->productos);
             }
 
             $historico->whereBetween('fecha_cambio', [
-                // definimos un formato para las fechas de inicio y fecha de fin 
+                // definimos un formato para las fechas de inicio y fecha de fin
                 Carbon::parse($request->fechaInicio)->startOfDay(),
                 Carbon::parse($request->fechaFin)->endOfDay()
             ]);
