@@ -224,9 +224,9 @@
                         <div>
                             <label for="habla_lengua" class="uppercase block text-sm font-medium text-gray-900">Habla Lengua</label>
                             <select name="habla_lengua" id="habla_lengua" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
-                                <option value="1" {{ old('habla_lengua') == 1 ? 'selected' : '' }}>Español</option>
+                                <option value="1" {{ old('habla_lengua') == 1 ? 'selected' : '' }}>Ladino</option>
                                 <option value="2" {{ old('habla_lengua') == 2 ? 'selected' : '' }}>Maya</option>
-                                <option value="3" {{ old('habla_lengua') == 3 ? 'selected' : '' }}>Extranjero</option>
+                                <option value="3" {{ old('habla_lengua') == 3 ? 'selected' : '' }}>Otro</option>
                             </select>
                         </div>
                     </div>

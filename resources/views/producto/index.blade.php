@@ -106,7 +106,7 @@
                        <form action="{{ route('productos.precio', $producto->id) }}" method="GET">
                             @csrf
                             <button type="submit" class="btn btn-success font-bold uppercase btn-sm">
-                                <i class='bx bx-dollar'></i>
+                                <i class="fa-solid fa-money-bill-wave"></i>
                             </button>
                         </form>
                        @endif
@@ -280,65 +280,5 @@
             });
 </script>
 @endif
-{{-- cambio de estado --}}
 
-{{-- <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const changeStateButtons = document.querySelectorAll('.cambiar-estado-btn');
-
-        changeStateButtons.forEach(button => {
-            button.addEventListener('click', function () {
-                const Id = this.getAttribute('data-id');
-                let estado = this.getAttribute('data-estado'); // Tomamos el estado actual del data-estado
-                const nombre = this.getAttribute('data-info'); // Este es informacion
-
-                Swal.fire({
-                    title: "¿Estás seguro?",
-                    text: "¡Deseas cambiar el estado de " + nombre + "!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Sí, cambiar estado",
-                    cancelButtonText: "Cancelar"
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        // Realizar la solicitud Ajax para cambiar el estado
-                        $.ajax({
-                            url: '/producto/' + Id + '/cambiar-estado',
-                            method: 'POST',
-                            data: {
-                                _token: '{{ csrf_token() }}',
-                                estado: estado == 1 ? 2 : 1, // Cambiar entre activo (1) y inactivo (2)
-                            },
-                            success: function (response) {
-                                if (response.success) {
-                                    // Después de cambiar el estado en la base de datos, actualizamos el frontend
-                                    estado = estado == 1 ? 2: 1; // Actualizamos la variable de estado
-                                    const estadoText = estado == 1 ? 'Activo' : 'Inactivo';
-                                    const estadoColor = estado == 1 ? 'text-green-500' : 'text-red-500';
-
-                                    // Actualizamos la columna de estado en el frontend
-                                    const estadoElement = $('a[data-id="' + Id + '"]');
-                                    estadoElement.html('<span class="' + estadoColor + ' font-bold">' + estadoText + '</span>');
-
-                                    // Actualizamos el valor del estado en el data-estado para el siguiente clic
-                                    estadoElement.data('estado', estado);
-
-                                    // Recargamos la página después de actualizar el estado
-                                    location.reload();
-                                } else {
-                                    alert('Error al cambiar el estado');
-                                }
-                            },
-                            error: function () {
-                                alert('Ocurrió un error en la solicitud.');
-                            }
-                        });
-                    }
-                });
-            });
-        });
-    });
-</script> --}}
 @endpush

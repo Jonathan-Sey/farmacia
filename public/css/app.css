@@ -3512,6 +3512,18 @@ details.collapse summary::-webkit-details-marker {
 .hidden {
   display: none;
 }
+.size-9 {
+  width: 2.25rem;
+  height: 2.25rem;
+}
+.size-2 {
+  width: 0.5rem;
+  height: 0.5rem;
+}
+.size-5 {
+  width: 1.25rem;
+  height: 1.25rem;
+}
 .h-12 {
   height: 3rem;
 }
@@ -3880,6 +3892,9 @@ details.collapse summary::-webkit-details-marker {
 .rounded-xl {
   border-radius: 0.75rem;
 }
+.rounded-sm {
+  border-radius: 0.125rem;
+}
 .rounded-t-xl {
   border-top-left-radius: 0.75rem;
   border-top-right-radius: 0.75rem;
@@ -3898,6 +3913,9 @@ details.collapse summary::-webkit-details-marker {
 }
 .border-t {
   border-top-width: 1px;
+}
+.border-l {
+  border-left-width: 1px;
 }
 .border-dashed {
   border-style: dashed;
@@ -4012,10 +4030,6 @@ details.collapse summary::-webkit-details-marker {
   --tw-bg-opacity: 1;
   background-color: rgb(31 41 55 / var(--tw-bg-opacity, 1));
 }
-.bg-green-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(187 247 208 / var(--tw-bg-opacity, 1));
-}
 .bg-green-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(74 222 128 / var(--tw-bg-opacity, 1));
@@ -4088,8 +4102,23 @@ details.collapse summary::-webkit-details-marker {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity, 1));
 }
+.bg-green-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(22 163 74 / var(--tw-bg-opacity, 1));
+}
+.bg-green-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(134 239 172 / var(--tw-bg-opacity, 1));
+}
+.bg-green-200 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(187 247 208 / var(--tw-bg-opacity, 1));
+}
 .bg-opacity-50 {
   --tw-bg-opacity: 0.5;
+}
+.stroke-current {
+  stroke: currentColor;
 }
 .object-cover {
   -o-object-fit: cover;
@@ -4112,6 +4141,9 @@ details.collapse summary::-webkit-details-marker {
 }
 .p-6 {
   padding: 1.5rem;
+}
+.p-12 {
+  padding: 3rem;
 }
 .px-2 {
   padding-left: 0.5rem;
@@ -4209,6 +4241,9 @@ details.collapse summary::-webkit-details-marker {
 .text-right {
   text-align: right;
 }
+.text-end {
+  text-align: end;
+}
 .align-middle {
   vertical-align: middle;
 }
@@ -4254,6 +4289,15 @@ details.collapse summary::-webkit-details-marker {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+.text-\[1\.5rem\] {
+  font-size: 1.5rem;
+}
+.text-\[0\.2rem\] {
+  font-size: 0.2rem;
+}
+.text-\[0\.8rem\] {
+  font-size: 0.8rem;
 }
 .font-black {
   font-weight: 900;
@@ -4697,6 +4741,10 @@ details.collapse summary::-webkit-details-marker {
 .focus\:ring-indigo-500:focus {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(99 102 241 / var(--tw-ring-opacity, 1));
+}
+.focus\:ring-green-300:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(134 239 172 / var(--tw-ring-opacity, 1));
 }
 .focus\:ring-opacity-50:focus {
   --tw-ring-opacity: 0.5;

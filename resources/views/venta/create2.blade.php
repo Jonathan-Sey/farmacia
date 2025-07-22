@@ -1612,8 +1612,6 @@ function editarProducto(index) {
 
             // Un solo manejador de submit bien estructurado
 
-
-
             // Mostrar/ocultar receta médica
             document.getElementById('es_prescrito').addEventListener('change', function() {
                 const btnReceta = document.getElementById('btn-subir-receta');
@@ -1665,64 +1663,7 @@ function editarProducto(index) {
                 }
                 my_modal_2.showModal();
             });
-
-
-          // Asegúrate que esta función esté disponible globalmente
-// window.generarResumenVenta = function() {
-//     let mensaje = `
-//     <div class="w-full max-w-[100vw]">
-//         <h5 class="text-md font-semibold mb-4 text-center">Resumen de la Venta</h5>
-//         <div class="overflow-x-auto">
-//             <table class="table table-zebra table-sm md:table-md w-full">
-//                 <thead>
-//                     <tr class="bg-base-200">
-//                         <th class="w-[50%] min-w-[150px]">Producto</th>
-//                         <th class="text-center w-[15%]">Cantidad</th>
-//                         <th class="text-right w-[20%]">Precio</th>
-//                         <th class="text-right w-[15%]">Subtotal</th>
-//                     </tr>
-//                 </thead>
-//                 <tbody>`;
-
-//     $('#tabla-productos tbody tr').each(function() {
-//         const producto = $(this).find('td:eq(0)').text().trim();
-//         const cantidad = $(this).find('td:eq(1)').text().trim();
-//         const precio = $(this).find('td:eq(2)').html().trim();
-//         const subtotal = $(this).find('td:eq(3)').text().trim();
-
-//         mensaje += `
-//                     <tr>
-//                         <td class="break-words max-w-[150px] md:max-w-none" title="${producto}">${producto}</td>
-//                         <td class="text-center">${cantidad}</td>
-//                         <td class="text-right">${precio}</td>
-//                         <td class="text-right">${subtotal}</td>
-//                     </tr>`;
-//     });
-
-//     mensaje += `
-//                 </tbody>
-//             </table>
-//         </div>
-//         <div class="mt-4 grid grid-cols-1 gap-1 text-sm md:text-base">
-//             <div class="flex justify-between border-b pb-1">
-//                 <span class="font-medium">SUMA:</span>
-//                 <span>${$('#suma').text().trim()}</span>
-//             </div>
-//             <div class="flex justify-between border-b pb-1">
-//                 <span class="font-medium">IVA %:</span>
-//                 <span>${$('#iva').text().trim()}</span>
-//             </div>
-//             <div class="flex justify-between font-bold text-lg mt-2">
-//                 <span>TOTAL:</span>
-//                 <span>${$('#total').text().trim()}</span>
-//             </div>
-//         </div>
-//     </div>`;
-
-//     return mensaje;
-// }
-
-
+   
 // Función para mostrar mensajes
 function mensaje(message, icon = "error") {
     const Toast = Swal.mixin({
@@ -1741,20 +1682,6 @@ function mensaje(message, icon = "error") {
         title: message
     });
 }
-
-// // Función para redondear números
-// function round(num, decimales = 2) {
-//     var signo = (num >= 0 ? 1 : -1);
-//     num = num * signo;
-//     if (decimales === 0) return signo * Math.round(num);
-//     num = num.toString().split('e');
-//     num = Math.round(+(num[0] + 'e' + (num[1] ? (+num[1] + decimales) : decimales)));
-//     num = num.toString().split('e');
-//     return signo * (num[0] + 'e' + (num[1] ? (+num[1] - decimales) : -decimales));
-// }
-
-
-
 
 });
     </script>
@@ -1888,7 +1815,6 @@ $(document).ready(function() {
             tablaProductos.empty();
         }
     });
-
 
 });
 

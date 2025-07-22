@@ -34,12 +34,12 @@
                     <td>{{ $lote->precio_compra }}</td>
                     {{-- <td>{{ $lote->fecha_vencimiento }}</td> --}}
                     <td class="px-6 py-4 whitespace-nowrap">
-                        @if($diferenciaDias < 0)
+                        @if($diferenciaDias <= 30)
                             <span class="text-red-500 font-bold">
                                 {{ $fechaCaducidad->format('d/m/Y') }}
-                                     (Caducado)
+                                     (Muy Próximo a caducar)
                             </span>
-                        @elseif($diferenciaDias <= 30)
+                        @elseif($diferenciaDias <= 60)
                             <span class= "text-yellow-500 font-bold">
                                 {{ $fechaCaducidad->format('d/m/Y') }}
                                     (Próximo a caducar)
@@ -89,12 +89,12 @@
                     <td>{{ $inventario->lote->precio_compra }}</td>
                     {{-- <td>{{ $inventario->lote->fecha_vencimiento }}</td> --}}
                     <td class="px-6 py-4 whitespace-nowrap">
-                        @if($diferenciaDias < 0)
+                        @if($diferenciaDias <= 30)
                             <span class="text-red-500 font-bold">
                                 {{ $fechaCaducidad->format('d/m/Y') }}
-                                     (Caducado)
+                                     (Muy Próximo a caducar)
                             </span>
-                        @elseif($diferenciaDias <= 30)
+                        @elseif($diferenciaDias <= 60)
                             <span class= "text-yellow-500 font-bold">
                                 {{ $fechaCaducidad->format('d/m/Y') }}
                                     (Próximo a caducar)
