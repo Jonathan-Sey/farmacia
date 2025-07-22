@@ -184,11 +184,11 @@
 
                             <div>
 
-                                {{-- @foreach ($ficha->productosRecetados as $item)
+                                 {{-- @foreach ($ficha->productosRecetados as $item)
                                     <p><strong class="text-gray-600">Productos:</strong> {{ $item->nombre}}</p>
                                     <p><strong class="text-gray-600">instrucciones:</strong> {{ $item->pivot->instrucciones}}</p>
                                     <p><strong class="text-gray-600">Cantidad:</strong> {{ $item->pivot->cantidad}}</p>
-                                @endforeach --}}
+                                @endforeach  --}}
                             </div>
                         </div>
 
@@ -206,8 +206,53 @@
                                 class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
                                  Editar
                              </a>
+                            
+                             <button onclick="productosModal{{$ficha->id}}.showModal()"
+                             class="p-2 bg-red-500 text-white rounded-lg ">
+                                Ver Productos
+                             </button>
+
                         </div>
                     </li>
+                @endforeach
+                
+                
+                @foreach ($fichas as $ficha)
+                <dialog id="productosModal{{$ficha->id}}" class="modal">
+                    <div class="modal-box w-11/12 max-w-5xl">
+                        {{-- mostramos los datos generales de la consulta --}}
+                        <h3 class="text-lg font-bold">Productos Recetados</h3>
+                        <p class="py-2">Fecha: {{$ficha->created_at->format('d/m/Y')}}</p>
+                        <p class="py-2">Diagnosticos: {{$ficha->diagnostico}}</p>
+                             <div class="overflow-x-auto mt-2">
+                                <table class="table w-full">
+                                    <thead>
+                                        <tr>
+                                        <th>#</th>
+                                        <th>Producto</th>
+                                        <th>Cantidad</th>
+                                        <th>Instrucciones</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($ficha->productosRecetados as $index => $producto )
+                                            <tr>
+                                            <td>1</td>
+                                            <td>{{$producto->nombre}}</td>
+                                            <td>{{$producto->pivot->cantidad}}</td>
+                                            <td>{{$producto->pivot->instrucciones ?? 'N/A'}}</td>
+                                        </tr>    
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="modal-action">
+                            <form method="dialog">
+                                <button class="btn">Cerrar</button>
+                            </form>
+                        </div>
+                    </div>
+                </dialog>
                 @endforeach
             </ul>
 

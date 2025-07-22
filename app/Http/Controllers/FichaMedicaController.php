@@ -163,7 +163,7 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
                 foreach($data['producto'] as $productosData){
                     // validamos nuevamente si los datos viene vacios
                     if(!empty($productosData['id'])){
-                        $productos = [$productosData['id']] = [
+                        $productos[$productosData['id']] = [
                             'cantidad' => $productosData['cantidad'],
                             'instrucciones' => $productosData['instrucciones'],
                         ];
