@@ -12,6 +12,9 @@
         <form action="{{ route('encuestas.update', $encuesta) }}" method="POST" id="encuesta-form">
             @csrf
             @method('PUT')
+            <div id="usuario">
+            
+            </div>
 
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="mt-2 mb-5">
@@ -71,6 +74,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/select2-global.js"></script>
+<script src="/js/obtenerUsuario.js"></script>
 <script>
     let contadorPreguntas = 0;
     // obtenemos las preguntas de la encuesta a editar
@@ -118,8 +122,7 @@
          }); 
        
     }
-
-
+    
     function agregarPregunta() {
         const contenedor = document.getElementById('preguntas-contenedor');
         const index = contadorPreguntas++;

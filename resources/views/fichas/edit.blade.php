@@ -107,6 +107,22 @@
 
 
 @section('contenido')
+{{-- Obtenemos el dato completo de la persona --}}
+@php
+        // nombe del adulto 
+        $nombre = $persona->fichasMedicas->first()->nombre;
+        $apellido_paterno = $persona->fichasMedicas->first()->apellido_paterno;
+        $apellido_materno = $persona->fichasMedicas->first()->apellido_materno;
+        $nombreCompleto = $nombre . " ".$apellido_paterno . " ".$apellido_materno;
+
+        //nombre del niño
+        $nombre2 = $persona->fichasMedicas->first()->nombreMenor;
+        $apellido_paterno2 = $persona->fichasMedicas->first()->apellido_paterno_menor;
+        $apellido_materno2 = $persona->fichasMedicas->first()->apellido_materno_menor;
+        $nombreMenor = $nombre2 . " ".$apellido_paterno2 . " ".$apellido_materno2;
+        //dd($nombreMenor);
+@endphp
+
 <div class="flex justify-center items-center mx-3">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         @if ($errors->any())
@@ -119,10 +135,19 @@
     </div>
     @endif
 
-        <form action="{{ route('fichas.store', $persona->id) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('fichas.update', [$persona->id, $ficha->id]) }}" method="POST" enctype="multipart/form-data">
             @csrf
+            @method('PUT')
+            <div id="usuario">
+            </div>
 
-            <h3 class="text-xl font-semibold mb-4">Crear Ficha Médica para {{ $persona->nombre }}</h3>
+            @if ($persona->fichasMedicas->first()->nombreMenor)
+                <h3 class="text-xl font-semibold mb-4">Crear Ficha Médica para {{$nombreMenor}}</h3>
+                <input type="hidden" name="nombrePersona"  value="{{$nombreMenor}}">
+            @else 
+                <h3 class="text-xl font-semibold mb-4">Crear Ficha Médica para {{ $nombreCompleto }}</h3>
+                <input type="hidden" name="nombrePersona" value="{{$nombreCompleto}}">
+            @endif
 
             <div class="mt-2 mb-5">
                 <label for="diagnostico" class="uppercase block text-sm font-medium text-gray-900">Diagnóstico</label>
@@ -182,8 +207,17 @@
                         <tr data-producto-id="{{ $producto->id}}" >
                         <td>{{$index+1}}</td>
                         <td>{{$producto->nombre}}</td>
-                        <td>{{$producto->pivot->cantidad}}</td>
-                        <td>{{$producto->pivot->instrucciones ?? 'N/A'}}</td>
+                        <td>
+                            <input type="number"
+                            min="1"
+                            class="editable-cantidad w-full px-2 py-1 border rounded"
+                            value="{{$producto->pivot->cantidad}}"
+                            >
+                        </td>
+                        <td>
+                            <textarea class="w-full px-2 py-1 border rounded">{{$producto->pivot->instrucciones ?? 'N/A'}}</textarea>
+                            
+                        </td>
                         <td>
                                 <button type="button" class="eliminar-producto">
                                     <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
@@ -264,6 +298,7 @@
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/select2-global.js"></script>
+<script src="/js/obtenerUsuario.js"></script>
 
 {{-- manejo del boton agregar --}}
 <script>
@@ -319,8 +354,16 @@
         <tr data-producto-id="${id_producto}">
                     <th>${contador}</th>
                     <td>${nombre}</td>
-                    <td>${cantidad}</td>
-                    <td>${instrucciones || 'N/A'}</td>
+                    <td>
+                    <input type="number" 
+                    min="1"
+                    class="editable-cantidad w-full px-2 py-1 border rounded"
+                    value="${cantidad}"
+                    > 
+                    </td>
+                    <td>
+                        <textarea class="editable-instrucciones w-full px-2 py-1 border rounded">${instrucciones ?? 'N/A'}</textarea>
+                    </td>
                     <td>
                         <button type="button" class = "eliminar-producto">
                             <i class="p-3 cursor-pointer fa-solid fa-trash"></i>
@@ -336,6 +379,19 @@
         limpiar();
     }
 
+    // proceso para editar los arrays de los productos 
+    function actualizarProductos(){
+        $('#contenido-productos tr').each(function(){
+            const productoId = $(this).data('producto-id');
+            const cantidad = $(this).find('.editable-cantidad').val();//buscamos el nuevo valor ingresado
+            $(this).find('input[name="producto['+productoId+'][cantidad]"]'),val(cantidad);//actualizamos con el nuevo valor
+        });
+    }
+
+    $('form').on('submit', function(e){
+        actualizarProductos();
+    });
+
     function limpiar(){
         $('#id_producto').val(null).trigger('change');
         $('#cantidad').val(1);
@@ -345,10 +401,11 @@
     // proceso para eliminar el producto de la lista, primera forma
 
     $(document).on('click', '.eliminar-producto', function () {
-
+        const button = $(this);
+        const nombre = button.data('nombre');
         Swal.fire({
             title: "Eliminar?",
-            text: "¿Esta seguro de eliminar el producto ?",
+            text: "¿Esta seguro de eliminar el producto?",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
