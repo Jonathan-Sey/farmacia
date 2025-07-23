@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Sucursal;
 use App\Models\Especialidades;
+use App\Models\Bitacora;
 use App\Models\DetalleMedico;
 use App\Models\Encuestas;
 use App\Models\Preguntas;
@@ -77,6 +78,16 @@ class EncuestaController extends Controller
             // }
 
             $encuesta->preguntas()->save($pregunta);
+
+            $usuario=User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Encuesta',
+                'detalles' => "Se creo la encuesta: {$request->titulo}", //detalles especificos
+                'fecha_hora' => now(),
+            ]);
         }
 
         return redirect()->route('encuestas.index')->with('success', 'Encuesta creada exitosamente');
@@ -223,6 +234,17 @@ class EncuestaController extends Controller
 
     // Actualizar preguntas existentes y agregar nuevas
     $this->actualizarPreguntas($encuesta, $request->preguntas);
+
+    $usuario=User::find($request->idUsuario);
+    Bitacora::create([
+        'id_usuario' => $request->idUsuario,
+        'name_usuario' => $usuario->name,
+        'accion' => 'Actialización',
+        'tabla_afectada' => 'Encuesta',
+        'detalles' => "Se actualizo la encuesta: {$request->titulo}",
+    ]);
+
+
 
     return redirect()->route('encuestas.index')
         ->with('success', 'Encuesta actualizada exitosamente');

@@ -2,13 +2,37 @@
 
 @section('contenido')
 <div class="container mx-auto py-6">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6">Detalles de {{ $persona->nombre }}</h1>
+    @php
+        
+        
+        if ($persona->rol == 1) {
+            $nombre = $persona->nombre;
+            $nombreCompleto = $nombre;
+        }else {
+            $nombre = $persona->fichasMedicas->first()->nombre;
+            $apellido_paterno = $persona->fichasMedicas->first()->apellido_paterno;
+            $apellido_materno = $persona->fichasMedicas->first()->apellido_materno;
+            $nombreCompleto = $nombre . " ".$apellido_paterno . " ".$apellido_materno;
+        }
+        
+        //dd($nombreCompleto);
+    @endphp
+
+        @if ($persona->nombre)
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Detalles de {{$nombreCompleto}} 
+                
+                
+            </h1>
+        @else
+                <p class="text-gray-800">No especificado</p>
+        @endif
+        {{-- <h1 class="text-3xl font-bold text-gray-800 mb-6">Detalles de {{ $persona->nombre }}</h1> --}}
 
 
 
     <div class="bg-white p-6 rounded-xl shadow-md mb-6">
         @if ($persona->rol == 3)
-            <h2 class="text-xl font-semibold text-gray-700 mb-4">Datos del niño</h2>
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Datos del niñ@</h2>
         @else
             <h2 class="text-xl font-semibold text-gray-700 mb-4">Datos Personales</h2>
         @endif
@@ -17,12 +41,12 @@
             <div>
                 @if($persona->rol == 3)
                     <div class="flex items-center mb-4">
-                        <span class="font-medium text-gray-600 w-1/3">Nombre del niño:</span>
+                        <span class="font-medium text-gray-600 w-1/3">Nombre del niñ@:</span>
                         <div class="flex flex-row gap-2">
                             @if ($persona->nombre)
-                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->nombreMenor}}</p>
-                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_paterno_menor }}</p>
-                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_materno_menor}}</p>
+                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->nombreMenor ?? ' '}}</p>
+                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_paterno_menor ?? ' '}}</p>
+                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_materno_menor ?? ' '}} </p>
                             @else
                                 <p class="text-gray-800">No especificado</p>
                             @endif
@@ -33,9 +57,7 @@
                         {{-- <p class="text-gray-800">{{ $persona->nombre }}</p> --}}
                         <div class="flex flex-row gap-1">
                             @if ($persona->nombre)
-                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->nombre}}</p>
-                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_paterno}}</p>
-                                <p class="text-gray-800">{{optional($persona->fichasMedicas->first())->apellido_materno}}</p>
+                                <p class="text-gray-800">{{$nombreCompleto}} </p>
                             @else
                                 <p class="text-gray-800">No especificado</p>
                             @endif
@@ -45,7 +67,7 @@
                 @else
                     <div class="flex items-center mb-4">
                         <span class="font-medium text-gray-600 w-1/3">Nombre:</span>
-                        <p class="text-gray-800">{{ $persona->nombre }}</p>
+                        <p class="text-gray-800">{{$nombreCompleto}} </p>
                     </div>
                 @endif
 
@@ -137,23 +159,7 @@
         @if ($fichas->isEmpty())
             <p>No hay fichas médicas registradas para esta persona.</p>
         @else
-            <!-- Paginación superior -->
-            {{-- <div class="join mb-4 flex justify-center">
-                @if ($fichas->onFirstPage())
-                    <button class="join-item btn btn-disabled">«</button>
-                @else
-                    <a href="{{ $fichas->previousPageUrl() }}" class="join-item btn">«</a>
-                @endif
-
-                <span class="join-item btn">Página {{ $fichas->currentPage() }} de {{ $fichas->lastPage() }}</span>
-
-                @if ($fichas->hasMorePages())
-                    <a href="{{ $fichas->nextPageUrl() }}" class="join-item btn">»</a>
-                @else
-                    <button class="join-item btn btn-disabled">»</button>
-                @endif
-            </div> --}}
-
+            <!-- Paginacion superior -->
             <div class="join mb-4 flex justify-center">
                     @if ($fichas->onFirstPage())
                         <button class="join-item btn btn-disabled">«</button>
@@ -171,12 +177,13 @@
             </div>
 
 
-            <ul class="space-y-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 sm:gap-3">
+                {{-- detalles generales de las fichas medicas --}}
                 @foreach ($fichas as $ficha)
-                    <li class="border-b pb-4 break-words">
+                    <div class="border-b pb-4 break-words">
                         <div class="flex flex-row">
                             <div>
-                            <p><strong class="text-gray-600">Diagnóstico:</strong> {{ $ficha->diagnostico }}</p>
+                            {{-- <p><strong class="text-gray-600">Diagnóstico:</strong> {{ $ficha->diagnostico }}</p> --}}
                             <p><strong class="text-gray-600">Médico:</strong> {{ $ficha->detalleMedico->usuario->name ?? 'No asignado' }}</p>
                             <p><strong class="text-gray-600">Sucursal:</strong> {{ $ficha->sucursal->nombre ?? 'No asignado' }}</p>
                             <p><strong class="text-gray-600">Consulta Programada:</strong> {{ $ficha->consulta_programada }}</p>
@@ -201,29 +208,30 @@
                                 <span class="text-gray-500">Sin imagen</span>
                             @endif
                         </div>
-                        <div class="mt-3 space-x-2">
+                        <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:w-auto">
                             <a href="{{ route('fichas.edit', ['persona_id' => $persona->id, 'ficha' => $ficha->id]) }}"
-                                class="inline-block px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700">
+                                class=" w-full bg-blue-600 text-white rounded-md p-2 pt-1 text-center sm:inline-block text-sm hover:bg-blue-700 sm:w-auto sm:p-3 font-medium">
                                  Editar
                              </a>
                             
                              <button onclick="productosModal{{$ficha->id}}.showModal()"
-                             class="p-2 bg-red-500 text-white rounded-lg ">
-                                Ver Productos
+                              class="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium sm:p-3">
+                               Ver  <i class="fa-solid fa-notes-medical"></i>
                              </button>
 
                         </div>
-                    </li>
+                    </div>
                 @endforeach
                 
-                
+                {{-- modal para ver el detalle de la vista --}}
                 @foreach ($fichas as $ficha)
                 <dialog id="productosModal{{$ficha->id}}" class="modal">
                     <div class="modal-box w-11/12 max-w-5xl">
                         {{-- mostramos los datos generales de la consulta --}}
                         <h3 class="text-lg font-bold">Productos Recetados</h3>
-                        <p class="py-2">Fecha: {{$ficha->created_at->format('d/m/Y')}}</p>
-                        <p class="py-2">Diagnosticos: {{$ficha->diagnostico}}</p>
+                        <p class="py-2 font-bold">Fecha: {{$ficha->created_at->format('d/m/Y')}}</p>
+                        <p class="py-2 font-bold">Diagnosticos:</p>
+                        <p class="py-2 break-words">{{$ficha->diagnostico}}</p>
                              <div class="overflow-x-auto mt-2">
                                 <table class="table w-full">
                                     <thead>
@@ -235,14 +243,15 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($ficha->productosRecetados as $index => $producto )
-                                            <tr>
-                                            <td>1</td>
-                                            <td>{{$producto->nombre}}</td>
-                                            <td>{{$producto->pivot->cantidad}}</td>
-                                            <td>{{$producto->pivot->instrucciones ?? 'N/A'}}</td>
-                                        </tr>    
-                                        @endforeach
+                                        
+                                            @foreach ($ficha->productosRecetados as $index => $producto )
+                                                <tr>
+                                                <td>{{$index + 1}}</td>
+                                                <td>{{$producto->nombre}}</td>
+                                                <td>{{$producto->pivot->cantidad}}</td>
+                                                <td>{{$producto->pivot->instrucciones ?? 'N/A'}}</td>
+                                                </tr>            
+                                            @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -254,7 +263,7 @@
                     </div>
                 </dialog>
                 @endforeach
-            </ul>
+            </div>
 
             <!-- Paginación inferior -->
             <div class="join mt-4 flex justify-center">

@@ -281,7 +281,7 @@ class PersonaController extends Controller
         $persona = Persona::findOrFail($id);
         //dd($productos);
         // Obtener fichas médicas paginadas (5 por página)
-        $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->paginate(2);
+        $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->paginate(4);
         //dd($datos);
 
 
@@ -313,7 +313,7 @@ class PersonaController extends Controller
         return view('persona.show', compact('persona', 'fichas'));
     }
 
-      public function ProductoFichas(Request $request, $persona_id, FichaMedica $ficha)
+    public function ProductoFichas(Request $request, $persona_id, FichaMedica $ficha)
 {
     $data = $request->validate([
         'detalle_medico_id'   => 'required|exists:detalle_medico,id',
@@ -375,6 +375,15 @@ class PersonaController extends Controller
             }
         }
         $ficha->productosRecetados()->sync($recetas);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+            'id_usuario' => $request->idUsuario,
+            'name_usuario' => $usuario->name,
+            'accion' => 'Actialización',
+            'tabla_afectada' => 'Persona',
+            'detalles' => "Se actualizo la ficha medica de {$persona->nombre}",
+        ]);
 
         DB::commit();
 

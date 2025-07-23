@@ -8,7 +8,9 @@ use App\Models\FichaMedica;
 use App\Models\Receta_producto;
 use Illuminate\Http\Request;
 use App\Models\DetalleMedico;
+use App\Models\Bitacora;
 use App\Models\Sucursal;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 class FichaMedicaController extends Controller
@@ -85,6 +87,17 @@ class FichaMedicaController extends Controller
 
         $fichasMedicas->productosRecetados()->sync($recetas);
 
+            $usuario=User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Actialización',
+                'tabla_afectada' => 'Fichas_medicas',
+                'detalles' => "Se creo el diagnostico de : {$request->nombrePersona}",
+                'fecha_hora' => now(),
+            ]);
+
+
 
 
         return redirect()
@@ -108,6 +121,7 @@ class FichaMedicaController extends Controller
 // Actualizar ficha médica
 public function update(Request $request, $persona_id, FichaMedica $ficha)
     {
+        //dd($request);
         $data = $request->validate([
             'detalle_medico_id'   => 'required|exists:detalle_medico,id',
             'diagnostico'         => 'required|string',
@@ -172,6 +186,17 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
             }
 
             $ficha->productosRecetados()->sync($productos);
+
+            $usuario=User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Actialización',
+                'tabla_afectada' => 'Fichas_medicas',
+                'detalles' => "Se actualizo el diagnostico de : {$request->nombrePersona}",
+                'fecha_hora' => now(),
+            ]);
+
             DB::commit();
 
             return redirect()

@@ -106,8 +106,6 @@ class ProductoController extends Controller
 
         Producto::create($datosProducto);
 
-
-
             // Limpiar la imagen temporal de la sesión
             session()->forget('imagen_temp');
 
@@ -319,7 +317,7 @@ class ProductoController extends Controller
         $producto->update(['precio_venta' => $producto->precio_porcentaje]);
         //actualiza el campo de nuevo_precio con el nuevo precio generado y lo redondea.
         $producto->update(['precio_porcentaje' => round($request->nuevo_precio * 10) / 10]);
-        /*
+        
         $usuario=User::find($request->idUsuario);
         Bitacora::create([
             'id_usuario' => $request->idUsuario,
@@ -328,7 +326,7 @@ class ProductoController extends Controller
             'tabla_afectada' => 'Productos',
             'detalles' => "Se actualizó el campo precio_porcentaje del producto: {$producto->nombre}",
             'fecha_hora' => now(),
-        ]);*/
+        ]);
 
         return redirect()->route('productos.index')->with('success', '¡Precio porcentaje actualizado exitosamente!');
     }
@@ -339,6 +337,5 @@ class ProductoController extends Controller
 
         return view('producto.historico', compact('historico'));
     }
-
 
 }

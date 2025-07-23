@@ -10,6 +10,7 @@
 @endpush
 
 @section('contenido')
+
     <a href="{{ route('personas.create') }}">
         <button class="btn btn-success text-white font-bold uppercase">
             Crear
@@ -33,7 +34,20 @@
             <tbody>
                 @foreach ($personas as $persona)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$persona->nombre}}</td>
+                    @if ($persona->rol == 3)
+                        <td class=" px-6 py-4 whitespace-nowrap">
+                            {{$persona->fichasMedicas->first()->nombreMenor ?? ' '}}
+                            {{$persona->fichasMedicas->first()->apellido_paterno_menor ?? ' '}}
+                            {{$persona->fichasMedicas->first()->apellido_materno_menor ?? ' '}}
+                        </td>
+                    @else
+                        <td class=" px-6 py-4 whitespace-nowrap">
+                            {{$persona->nombre ?? 'N/A'}}
+                            {{$persona->fichasMedicas->first()->apellido_paterno ?? ' '}}
+                            {{$persona->fichasMedicas->first()->apellido_materno ?? ' '}}
+                        </td>    
+                    @endif
+                    
                     <td class=" px-6 py-4 whitespace-nowrap">{{$persona->nit}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">
 
