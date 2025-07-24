@@ -24,7 +24,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">sucursal de destino</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">producto</th>
                         <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">cantidad transferida</th>
-                        <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Mensaje</th>
+                        {{-- <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Mensaje</th> --}}
                         <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">Fecha</th>
                         <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">activo</th>
                         <th scope="col" class="px-6 py-3 text-center font-medium uppercase tracking-wider">confirmar solicitud</th>
@@ -35,13 +35,16 @@
         <x-slot name="tbody">
             <tbody>
                 @foreach ($solicitudes as $solicitud)
+                {{-- @php
+                    dd($solicitud);
+                @endphp --}}
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->sucursal1->nombre}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->sucursal2->nombre}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->producto->nombre}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->cantidad }}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->descripcion }}</td>
+                    {{-- <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->descripcion }}</td>  --}}
                     <td class="px-6 py-4 whitespace-nowrap">{{ $solicitud->created_at }}</td>
 
                     <td class="px-6 py-4 whitespace-nowrap text-center">
@@ -55,15 +58,17 @@
                     </td>
                     <td class="flex gap-2 justify-center">
 
-                        <form action="{{ route('solicitud.destroy', $solicitud->id) }}" method="POST" id="form-eliminar{{ $solicitud->id }}">
+                        {{-- <form action="{{ route('solicitud.destroy', $solicitud->id) }}" method="POST" id="form-eliminar{{ $solicitud->id }}">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="eliminar-btn btn btn-danger text-white font-bold " >
+                            <button type="submit" class="eliminar-btn btn btn-danger bg-green-600 text-white font-bold  hover:bg-green-700  " >
                                 <i class="fa-solid fa-check"></i>
                             </button>
-                        </form>
+                        </form> --}}
 
-
+                        <button type="button" class="btn btn-warning font-bold uppercase cambiar-estado-btn btn-sm bg-green-600 text-white hover:bg-green-700" data-id="{{ $solicitud->id }}" data-estado="{{ $solicitud->estado }}" data-info="{{ $solicitud->producto->nombre }}">
+                            <i class="fa-solid fa-check"></i>
+                        </button>
                         </td>
                 </tr>
                 @endforeach
@@ -73,7 +78,7 @@
     </x-data-table>
 @endsection
 
-@push('js')
+
 @push('js')
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -123,7 +128,7 @@ $(document).ready(function() {
                 }
             },
             columnDefs: [
-                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 1, targets: 3 },
                 { responsivePriority: 2, targets: 1 },
                 { responsivePriority: 3, targets: 2 },
             ],
@@ -136,6 +141,48 @@ $(document).ready(function() {
                     }, 100); // Espera 100 ms antes de aplicar las clases
                 },
             });
+
+                $('#example tbody').on('click', '.cambiar-estado-btn', function () {
+                const button = $(this);
+                const Id = button.data('id');
+                let estado = button.data('estado');
+                const nombre = button.data('info');
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: "¡Deseas cambiar el estado de " + nombre + "!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Sí, cambiar estado",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                    $.ajax({
+                        url: '/solicitud/' + Id + '/cambiar-estado',
+                        method: 'POST',
+                        data: {
+                        _token: '{{ csrf_token() }}',
+                        estado: estado == 1 ? 2 : 1,
+                        },
+                        success(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert('Error al cambiar el estado');
+                        }
+                        },
+                        error() {
+                        alert('Ocurrió un error en la solicitud.');
+                        }
+                    });
+                    }
+                });
+        });
+
+
+
+
         });
     </script>
 
@@ -162,7 +209,7 @@ $(document).ready(function() {
 @endif
 
 {{-- Cambio de estado --}}
-<script>
+{{-- <script>
 $(document).ready(function(){
     $('.estado').click(function(e){
         e.preventDefault();
@@ -187,10 +234,10 @@ $(document).ready(function(){
         });
     });
 });
-</script>
+</script> --}}
 
 {{-- Modal para eliminar  --}}
-<script>
+{{-- <script>
 document.addEventListener('DOMContentLoaded', function() {
     const deleteButtons = document.querySelectorAll('.eliminar-btn');
 
@@ -215,6 +262,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
-</script>
+</script> --}}
 @endpush
 

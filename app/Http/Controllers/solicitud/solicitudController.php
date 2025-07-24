@@ -16,8 +16,9 @@ class solicitudController extends Controller
 
     public function index()
     {
-        $solicitudes = detalleSolicitud::all()->where('estado', 1);
-
+        $solicitudes = detalleSolicitud::all()->where('estado', '=', 1);
+        //$solicitudPrincipal = solicitud::with(['detalles'])->where('estado', '=', 1)->get();
+        //dd($solicitudPrincipal);
         return view('solicitud.index', compact('solicitudes'));
     }
 
@@ -125,4 +126,19 @@ class solicitudController extends Controller
 
         return redirect()->route('solicitud.index')->with('success', 'Solicitud eliminada exitosamente');
     }
+
+      public function cambiarEstado($id)
+    {
+        $solicitud = detalleSolicitud::find($id);
+
+        if ($solicitud) {
+            $solicitud->estado =  0; // Cambiar el estado (activo <-> inactivo)
+            $solicitud->save();
+
+            return response()->json(['success' => true]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
 }

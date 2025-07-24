@@ -183,7 +183,7 @@
                     <div class="border-b pb-4 break-words">
                         <div class="flex flex-row">
                             <div>
-                            {{-- <p><strong class="text-gray-600">Diagnóstico:</strong> {{ $ficha->diagnostico }}</p> --}}
+                            <p><strong class="text-gray-600">Diagnóstico:</strong> {{ $ficha->id }}</p>
                             <p><strong class="text-gray-600">Médico:</strong> {{ $ficha->detalleMedico->usuario->name ?? 'No asignado' }}</p>
                             <p><strong class="text-gray-600">Sucursal:</strong> {{ $ficha->sucursal->nombre ?? 'No asignado' }}</p>
                             <p><strong class="text-gray-600">Consulta Programada:</strong> {{ $ficha->consulta_programada }}</p>
@@ -228,10 +228,17 @@
                 <dialog id="productosModal{{$ficha->id}}" class="modal">
                     <div class="modal-box w-11/12 max-w-5xl">
                         {{-- mostramos los datos generales de la consulta --}}
-                        <h3 class="text-lg font-bold">Productos Recetados</h3>
-                        <p class="py-2 font-bold">Fecha: {{$ficha->created_at->format('d/m/Y')}}</p>
+                        <div class="flex flex-row justify-between">
+                            <h3 class="text-lg font-bold">Productos Recetados</h3>
+                            <h3 class="text-lg font-bold">Consulta # {{$ficha->id}}</h3>
+                        </div>
+                        <p class="py-2"><strong>Fecha:</strong> {{$ficha->created_at->format('d/m/Y')}}</p>
+                        <p class="py-2 "><strong>Medico:</strong> {{$ficha->detalleMedico->name ?? 'N/A'}}</p>
+
                         <p class="py-2 font-bold">Diagnosticos:</p>
-                        <p class="py-2 break-words">{{$ficha->diagnostico}}</p>
+                        <div class="border-gray-400 border-solid">
+                            <p class="py-2 break-words text-justify">{{$ficha->diagnostico}}</p>
+                        </div>
                              <div class="overflow-x-auto mt-2">
                                 <table class="table w-full">
                                     <thead>

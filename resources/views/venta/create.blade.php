@@ -204,7 +204,8 @@
                                 required>
                                 <option value="">Seleccionar una Farmacia</option>
                                 @foreach ($sucursales as $sucursal)
-                                    <option value="{{ $sucursal->id }}" data-nombre-completo="{{ $sucursal->nombre }}" data-ubicacion-completa="{{ $sucursal->ubicacion }}">
+                                    <option value="{{ $sucursal->id }}" data-nombre-completo="{{ $sucursal->nombre }}">
+                                    {{-- <option value="{{ $sucursal->id }}" data-nombre-completo="{{ $sucursal->nombre }}" data-ubicacion-completa="{{ $sucursal->ubicacion }}"> --}}
                                         {{-- {{ $sucursal->nombre }} - {{ $sucursal->ubicacion }} --}}
                                         {{ $sucursal->nombre }}
                                     </option>
@@ -231,11 +232,13 @@
                                         <option value="">Seleccionar persona</option>
                                         @foreach ($personas as $persona)
                                         <option value="{{ $persona->id }}"
-                                                data-nombre-completo="{{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') - {{ $persona->nit }} @endif"
+                                                {{-- data-nombre-completo="{{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') - {{ $persona->nit }} @endif" --}}
+                                                data-nombre-completo="{{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') @endif"
                                                 data-dpi="{{ $persona->dpi }}"
                                                 data-nit="{{ $persona->nit }}"
                                                 @if(isset($personaPre) && $personaPre->id == $persona->id) selected @endif>
-                                            {{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') - {{ $persona->nit }} @endif - {{ $persona->nombre }}
+                                            {{-- {{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') - {{ $persona->nit }} @endif - {{ $persona->nombre }} --}}
+                                            {{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') @endif
                                             @if($persona->nit == '0') (Consumidor Final) @endif
                                         </option>
                                     @endforeach
@@ -378,6 +381,30 @@
                                 </div>
                             @enderror
                     </div>
+
+                    
+                    <div class="mt-5" id="tabla-detalles" >
+                        <div class="overflow-x-auto">
+                            <h3 class="text-center text-lg font-bold mb-3">Productos Recetados</h3>
+                            <table class="table table-xs table-pin-rows table-pin-cols" id="tabla-productos-recetados">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <td>Nombre</td>
+                                    {{-- <td>Precio</td> --}}
+                                    <td>Cantidad</td>
+                                    {{-- <td>Instrucciones</td>
+                                    <td>Acciones</td> --}}
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                    <tbody>
+                                            {{-- contenido generado en js --}}
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
+
 
                     <div class="border-b border-gray-900/10  lg:pb-0 lg:mb-0">
                         {{-- producto --}}
@@ -525,41 +552,33 @@
 
             </div>
 
-
-            <div class="mt-5" id="tabla-detalles" >
-                <div class="overflow-x-auto">
-                    <h3 class=" text-center text-lg font-bold mb-3">Productos Recetados</h3>
-                <table class="table table-sm table-pin-rows table-pin-cols" id="tabla-productos-recetados">
-                    <thead>
-                    <tr>
-                        <th></th>
-                        <td>Nombre</td>
-                        <td>Precio</td>
-                        <td>Cantidad</td>
-                        <td>Instrucciones</td>
-                        <td>Acciones</td>
-                        <th></th>
-                    </tr>
-                    </thead>
-                        <tbody>
-                            {{-- proceso creado en js  --}}
-                        {{-- <tr>
-                            <th>1</th>
-                            <td>VITAMINA K1 (FITOMENADIONA) 10 MG/1ML SOLUCION INYECTABLE</td>
-                            <td>Quality Control Specialist</td>
-                            <td>Littel, Schaden and Vandervort</td>
-                            <td><i class="fas fa-trash"></i></td>
-                        </tr> --}}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                    <div class="mt-5" id="tabla-detalles" >
+                        <div class="overflow-x-auto">
+                            <h3 class="text-center text-lg font-bold mb-3">Productos Recetados</h3>
+                            <table class="table table-md table-pin-rows table-pin-cols" id="tabla-productos-recetados">
+                                <thead>
+                                <tr>
+                                    <th></th>
+                                    <td>Nombre</td>
+                                    {{-- <td>Precio</td> --}}
+                                    <td>Cantidad</td>
+                                    {{-- <td>Instrucciones</td>
+                                    <td>Acciones</td> --}}
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                    <tbody>
+                                            {{-- contenido generado en js --}}
+                                    </tbody>
+                                </table>
+                        </div>
+                    </div>
 
             {{-- tabla detalle --}}
             <div class="mt-8">
-                <h2 class="text-center m-5 font-bold text-lg">Detalle Venta</h2>
                 <div class="overflow-x-auto">
-                    <table id="tabla-productos" class="table  table-md table-pin-rows table-pin-cols">
+                    <h2 class="text-center m-5 font-bold text-lg">Detalle Venta</h2>
+                    <table id="tabla-productos" class="table table-md table-pin-rows table-pin-cols">
                       <thead>
                         <tr>
                           <th></th>
@@ -737,21 +756,21 @@ window.generarResumenVenta = function() {
                 </tbody>
             </table>
         </div>
-        <div class="mt-4 grid grid-cols-1 gap-1 text-sm md:text-base">
-            <div class="flex justify-between border-b pb-1">
-                <span class="font-medium">SUMA:</span>
-                <span>${$('#suma').text().trim()}</span>
+            <div class="mt-4 grid grid-cols-1 gap-1 text-sm md:text-base">
+                <div class="flex justify-between border-b pb-1">
+                    <span class="font-medium">SUMA:</span>
+                    <span>${$('#suma').text().trim()}</span>
+                </div>
+                <div class="flex justify-between border-b pb-1">
+                    <span class="font-medium">IVA %:</span>
+                    <span>${$('#iva').text().trim()}</span>
+                </div>
+                <div class="flex justify-between font-bold text-lg mt-2">
+                    <span>TOTAL:</span>
+                    <span>${$('#total').text().trim()}</span>
+                </div>
             </div>
-            <div class="flex justify-between border-b pb-1">
-                <span class="font-medium">IVA %:</span>
-                <span>${$('#iva').text().trim()}</span>
-            </div>
-            <div class="flex justify-between font-bold text-lg mt-2">
-                <span>TOTAL:</span>
-                <span>${$('#total').text().trim()}</span>
-            </div>
-        </div>
-    </div>`;
+        </div>`;
 
     return mensaje;
 };
@@ -1843,9 +1862,9 @@ function mensaje(message, icon = "error") {
                              <tr >
                             <th>${index+1}</th>
                              <td>${producto.nombre}</td>
-                             <td>${precio.toFixed(2)}</td>
+                             
                              <td>${producto.cantidad}</td>
-                             <td>${producto.instrucciones}</td>
+                             
                              </tr>
                              `;
                              tabla.append(contenedor);

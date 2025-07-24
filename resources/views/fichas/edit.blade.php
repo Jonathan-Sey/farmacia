@@ -215,7 +215,7 @@
                             >
                         </td>
                         <td>
-                            <textarea class="w-full px-2 py-1 border rounded">{{$producto->pivot->instrucciones ?? 'N/A'}}</textarea>
+                            <textarea class="editable-instrucciones w-full px-2 py-1 border rounded">{{$producto->pivot->instrucciones ?? 'N/A'}}</textarea>
                             
                         </td>
                         <td>
@@ -287,7 +287,7 @@
                 <a href="{{ route('personas.show', $persona->id) }}">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
                 </a>
-                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
+                <button type="submit" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Actualizar</button>
             </div>
 
 
@@ -375,7 +375,6 @@
                     </tr>
         `;
         $('#contenido-productos').append(row);
-
         limpiar();
     }
 
@@ -384,7 +383,12 @@
         $('#contenido-productos tr').each(function(){
             const productoId = $(this).data('producto-id');
             const cantidad = $(this).find('.editable-cantidad').val();//buscamos el nuevo valor ingresado
-            $(this).find('input[name="producto['+productoId+'][cantidad]"]'),val(cantidad);//actualizamos con el nuevo valor
+            const instruccion = $(this).find('.editable-instrucciones').val();
+
+            //asignamos valores nuevos al array
+            $(this).find('input[name="producto['+productoId+'][cantidad]"]').val(cantidad);
+            $(this).find('input[name="producto['+productoId+'][instrucciones]"]').val(instruccion);
+            
         });
     }
 
