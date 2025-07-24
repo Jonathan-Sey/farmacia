@@ -27,6 +27,16 @@
                         required
                     />
                 </div>
+                {{-- select para buscar sucursal  --}}
+                <x-select2
+                        id="sucursal_id"
+                        name="sucursal_id"
+                        label="Sucursal"
+                        :options="$sucursales->pluck('nombre', 'id')"
+                        :selected="old('sucursal_id')"
+                        placeholder="Buscar sucursal"
+                        required
+                />
 
                 <div class="mt-2 mb-5">
                     <label for="titulo" class="uppercase block text-sm font-medium text-gray-900">Título</label>

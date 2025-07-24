@@ -12,6 +12,10 @@
         <form action="{{ route('productos.actualizarprecio', $producto->id) }}" method="POST" id="precioForm">
             @csrf
             @method('PATCH')
+
+            <div id="usuario">
+
+            </div>
             <div class="border-b border-gray-900/10 pb-12">
                 <div id="producto">
                     <p>Producto: {{ $producto->nombre }}</p>
@@ -62,6 +66,7 @@
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="/js/obtenerUsuario.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const precioCosto = parseFloat("{{ $producto->precio_venta }}");
