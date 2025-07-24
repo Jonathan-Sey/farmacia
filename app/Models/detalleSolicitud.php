@@ -42,4 +42,9 @@ class detalleSolicitud extends Model
     {
         return $this->belongsTo(User::class, 'Id_usuario');
     }
+
+    public function solicitud()
+    {
+        return $this->belongsTo(Solicitud::class, 'id_solicitud');
+    }
 }

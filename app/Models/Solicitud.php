@@ -40,6 +40,12 @@ class Solicitud extends Model
         return $this->belongsTo(Producto::class, 'id_producto');
     }
 
+    public function detalles()
+    {
+        return $this->hasMany(detalleSolicitud::class, 'id_solicitud', 'id');
+    }
+
+
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user');

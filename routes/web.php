@@ -79,7 +79,8 @@ Route::post('/persona/{id}/cambiar-estado', [PersonaController::class, 'cambiarE
 Route::post('/medico/{id}/cambiar-estado', [MedicoController::class, 'cambiarEstado']);
 Route::post('/consulta/{id}/cambiar-estado', [consultaController::class, 'cambiarEstado']);
 Route::post('/traslado/{id}/cambiar-estado', [trasladoController::class, 'cambiarEstado']);
-Route::post('/especialidades/{id}/cambiar-estado', [especialidadesController::class, 'cambiarEstado']);
+Route::post('/solicitud/{id}/cambiar-estado', [solicitudController::class, 'cambiarEstado']);
+// Route::post('/solicitud/{id}/cambiar-estado', [solicitudController::class, 'cambiarEstado']);
 
 
 // rutas para el manejo de imagenes
