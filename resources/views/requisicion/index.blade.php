@@ -16,7 +16,6 @@
         <x-slot name="thead">
             <thead class="text-white font-bold">
                 <tr class="bg-slate-600">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">ID</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Producto</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Bodega Origen</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider">Sucursal Destino</th>
@@ -30,7 +29,6 @@
             <tbody>
                 @foreach ($requisiciones as $traslado)
                     <tr>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->id_traslado }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->producto->nombre }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->bodegaOrigen->nombre }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ $traslado->sucursalDestino->nombre }}</td>
@@ -92,7 +90,9 @@
                 }
             },
             columnDefs: [
-                { responsivePriority: 3, targets: 0 },
+                { responsivePriority: 3, targets: 2 },
+                { responsivePriority: 1, targets: 0 },
+                { responsivePriority: 2, targets: 3 },
 
             ],
             drawCallback: function() {
