@@ -13,6 +13,7 @@ use App\Models\HistoricoPrecio;
 use App\Models\Sucursal;
 use App\Models\User;
 use App\Models\Venta;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -345,9 +346,9 @@ class ReporteVentasController extends Controller
     public function filtrarFechaCambioDePrecio(Request $request){
         //dd($request);
             // primera parte
-            // $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')
-            // ->whereBetween('fecha_cambio',[$request->fechaInicio, $request->fechaFin])
-            // ->get();
+             $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')
+             ->whereBetween('fecha_cambio',[$request->fechaInicio, $request->fechaFin])
+             ->get();
 
 
             // segunda fase en prueba
@@ -370,6 +371,45 @@ class ReporteVentasController extends Controller
             // esta es de la primera fase
         // return view('reportes.CambioPrecios', compact('historico'));
     }
+
+    public function filtrarCambioDePrecio2(Request $request)
+    {
+        $productos = Producto::all();
+        $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')->get();
+
+        // Si es una petición AJAX, devolvemos solo los datos
+        if ($request->ajax()) {
+            return response()->json([
+                'data' => $historico
+            ]);
+        }
+
+        return view('reportes.CambioPrecios', compact('historico', 'productos'));
+    }
+    public function filtrarFechaCambioDePrecio2(Request $request)
+{
+    $query = HistoricoPrecio::with('producto');
+
+    // Filtro por producto si está presente
+    if ($request->filled('productos')) {
+        $query->where('producto_id', $request->productos);
+    }
+
+    // Filtro por rango de fechas si están presentes
+    if ($request->filled('fechaInicio') && $request->filled('fechaFin')) {
+        $query->whereBetween('fecha_cambio', [
+            Carbon::parse($request->fechaInicio)->startOfDay(),
+            Carbon::parse($request->fechaFin)->endOfDay()
+        ]);
+    }
+
+    $historico = $query->orderBy('fecha_cambio', 'desc')->get();
+
+    return response()->json([
+        'data' => $historico
+    ]);
+}
+
 
         public function filtrarTraslado()
     {
