@@ -85,7 +85,7 @@ class EncuestaController extends Controller
                 'name_usuario' =>$usuario->name,
                 'accion' => 'Creación',
                 'tabla_afectada' => 'Encuesta',
-                'detalles' => "Se creo la encuesta: {$request->titulo}", //detalles especificos
+                'detalles' => "Se creo la encuesta con título: {$request->titulo}", //detalles especificos
                 'fecha_hora' => now(),
             ]);
         }
@@ -123,7 +123,10 @@ class EncuestaController extends Controller
                 'paciente_id' => 1,
                 'respuesta' => $respuesta,
             ]);
-        }
+        }    
+
+
+
 
         return redirect()->route('encuestas.index')->with('success', '¡Gracias por completar la encuesta!');
     }

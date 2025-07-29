@@ -16,6 +16,9 @@
             Crear
         </button>
     </a>
+    
+    <div id="usuario"></div>
+
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
@@ -102,7 +105,7 @@
 @endsection
 
 @push('js')
-
+<script src="/js/obtenerUsuario.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.js"></script>
@@ -380,6 +383,7 @@ function eliminarRestricciones(idPersona) {
     function guardarRestricciones(idPersona) {
         const data = {
             id_persona: idPersona,
+            // persona: document.getElementById('usuario').value || null,
             limite_compras: document.getElementById('limiteCompras').value || null,
             periodo_control: document.getElementById('periodoControl').value || null,
             restriccion_activa: document.getElementById('restriccionActiva').checked

@@ -96,7 +96,7 @@
             <div class="border-b border-gray-900/10 pb-12">
                 {{-- input para la imagen --}}
                 <div class="mt-2 mb-5">
-                    <label class="uppercase block text-sm font-medium text-gray-900">Imagen del producto</label>
+                    <label class="uppercase block text-sm font-medium text-gray-900">Imagen de Referencia</label>
                     <div id="dropzone" class="dropzone border-2 border-dashed rounded w-full h-60">
                         <input type="hidden" name="imagen" value="{{ old('imagen')}}" >
 

@@ -222,13 +222,14 @@ class PersonaController extends Controller
 
     public function actualizarRestricciones(Request $request)
     {
+        
         $request->validate([
             'id_persona' => 'required|exists:persona,id',
             'limite_compras' => 'nullable|integer|min:0',
             'periodo_control' => 'nullable|integer|min:1',
             'restriccion_activa' => 'boolean'
         ]);
-
+        
         $persona = Persona::findOrFail($request->id_persona);
         $persona->limite_compras = $request->limite_compras;
         $persona->periodo_control = $request->periodo_control;
@@ -273,7 +274,7 @@ class PersonaController extends Controller
                 'rol' => $persona->rol,
             ],
             'personas' => Persona::where('estado', '!=', '0')->get(['id', 'nombre', 'nit', 'DPI', 'rol']),
-        ]);
+        ]);    
     }
 
     public function show($id)
@@ -553,7 +554,17 @@ class PersonaController extends Controller
                 // $persona->fichasMedicas()->delete();
             }
 
+            $usuario=User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Actialización',
+                'tabla_afectada' => 'Persona',
+                'detalles' => "Se actualizo la ficha medica de {$persona->nombre} Nit: {$persona->nit} y DPI: {$persona->DPI} ",
+            ]);
+
             DB::commit();
+
             Log::info('Fin del proceso de actualización OK');
 
             return redirect()->route('personas.index')->with('success', 'Datos actualizados correctamente');

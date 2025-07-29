@@ -310,7 +310,7 @@ class VentaController extends Controller
                 'name_usuario' => $usuario->name,
                 'accion' => 'Creación',
                 'tabla_afectada' => 'Venta',
-                'detalles' => "Se creó la venta: {$usuario->id}", //detalles especificos
+                'detalles' => "Se creó la venta en la farmacia: {$venta->sucursal->nombre}, para la persona {$venta->persona->nombre} - {$venta->persona->DPI}", //detalles especificos
                 'fecha_hora' => now(),
             ]);
 

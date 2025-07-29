@@ -235,7 +235,7 @@
                         <p class="py-2"><strong>Fecha:</strong> {{$ficha->created_at->format('d/m/Y')}}</p>
                         <p class="py-2 "><strong>Medico:</strong> {{$ficha->detalleMedico->name ?? 'N/A'}}</p>
 
-                        <p class="py-2 font-bold">Diagnosticos:</p>
+                        <p class="py-2 font-bold">Diagnostico:</p>
                         <div class="border-gray-400 border-solid">
                             <p class="py-2 break-words text-justify">{{$ficha->diagnostico}}</p>
                         </div>
@@ -290,7 +290,23 @@
             </div>
         @endif
 
-        <!-- Botones de acción (mantener igual) -->
+        <!-- validamos si que cliente debe de completar su registro como paciente -->
+        @if ($persona->rol == 1)
+        <div class="flex flex-col md:flex-row gap-2">
+            <form action="{{route('personas.edit',['persona'=>$persona->id])}}" method="GET">
+                        @csrf
+                    <button type="submit" class="w-full sm:w-auto text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 px-6 py-2 rounded-md text-sm font-semibold mt-4" id="validarPersona">
+                            Agregar Ficha medica
+                    </button>
+            </form>
+            
+            <a href="{{ route('personas.index') }}">
+            <button type="button" class="w-full sm:w-auto text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 px-6 py-2 rounded-md text-sm font-semibold mt-4">
+                Volver al Índice de Personas
+            </button>
+            </a>
+        </div>
+        @else
         <a href="{{ route('fichas.create', ['persona_id' => $persona->id]) }}">
             <button type="button" class="w-full sm:w-auto text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-50 px-6 py-2 rounded-md text-sm font-semibold mt-4">
                 Agregar Ficha Médica
@@ -302,6 +318,8 @@
                 Volver al Índice de Personas
             </button>
         </a>
+        @endif
+
     </div>
 
     <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
@@ -421,6 +439,37 @@
             console.log(data.cantidad)
             });
         }
+    </script>
+    {{-- Mensaje de alerta --}}
+    <script>
+        $(document).ready(function() {
+            $('#validarPersona').click(function(){
+                validarCliente();
+            });
+        });
+
+        function validarCliente(){
+            Swal.fire({
+                title: "Esta seguro de esto?",
+                text: "Para el cliente, primero es necesario completar sus datos como paciente!",
+                icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: 'Sí, cambiar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                if (!result.isConfirmed) {
+                    resut.preventDefault();
+
+                     this.submit();
+                    // Swal.fire({
+                    // title: "Deleted!",
+                    // text: "Your file has been deleted.",
+                    // icon: "success"
+                    // });
+                }
+            });
+        }
+        
     </script>
 
 @endpush

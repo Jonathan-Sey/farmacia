@@ -83,7 +83,7 @@
 
 @php
         // nombe del adulto 
-        $nombre = $persona->fichasMedicas->first()->nombre;
+        $nombre = $persona->fichasMedicas->first()->nombre ?? ' ';
         $apellido_paterno = $persona->fichasMedicas->first()->apellido_paterno ?? ' ';
         $apellido_materno = $persona->fichasMedicas->first()->apellido_materno ?? ' ';
         $nombreCompleto = $nombre . " ".$apellido_paterno . " ".$apellido_materno ?? ' ';
@@ -113,7 +113,7 @@
             <div id="usuario">
             </div>
 
-            @if ($persona->fichasMedicas->first()->nombreMenor)
+            @if ($persona->rol == 3)
                 <h3 class="text-xl font-semibold mb-4">Crear Ficha Médica para {{$nombreMenor}}</h3>
                 <input type="hidden" name="nombrePersona"  value="{{$nombreMenor}}">
             @else 
@@ -190,7 +190,7 @@
                 </table>
             </div>
           
-            <div class="mt-2 mb-5">
+            {{-- <div class="mt-2 mb-5">
                 <label for="detalle_medico_id" class="uppercase block text-sm font-medium text-gray-900">
                     Médico
                 </label>
@@ -203,7 +203,16 @@
                     </option>
                     @endforeach
                 </select>
-            </div>
+            </div> --}}
+
+            <x-select2
+                name="detalle_medico_id"
+                label="Medico"
+                :options="$medicos->pluck('name','id')"
+                :selected="old('detalle_medico_id')"
+                placeholder="Seleccionar un medico"
+                class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+            />
 
             <div class="mt-4 mb-5">
                 <x-select2

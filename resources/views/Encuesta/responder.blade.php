@@ -9,6 +9,7 @@
         <form action="{{ route('encuestas.storeRespuesta', $encuesta) }}" method="POST">
             @csrf
 
+            <div id="usuario"></div>
             <div class="space-y-6">
                 @foreach($encuesta->preguntas as $pregunta)
                 <div class="pregunta border-b pb-4">
@@ -82,4 +83,9 @@
         border-radius: 0.5rem;
     }
 </style>
+@endpush
+
+@push('js')
+<script src="/js/obtenerUsuario.js"></script>
+    
 @endpush

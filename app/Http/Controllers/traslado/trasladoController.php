@@ -141,7 +141,7 @@ class trasladoController extends Controller
             'name_usuario' => $usuario->name,
             'accion' => 'Creación',
             'tabla_afectada' => 'Traslado',
-           'detalles' => "Traslado actualizado: {$producto->nombre}, de {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
+           'detalles' => "Se creo el traslado de: {$producto->nombre}, para {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
             'fecha_hora' => now(),
         ]);
 
@@ -216,7 +216,7 @@ public function update(Request $request, traslado $traslado)
             "id_user" => $request->idUsuario
         ]);
 
-           $usuario = User::find($request->idUsuario);
+        $usuario = User::find($request->idUsuario);
         $producto = Producto::find($request->id_producto);
         $sucursalOrigen = Sucursal::find($request->id_sucursal_1);
         $sucursalDestino = Sucursal::find($request->id_sucursal_2);
