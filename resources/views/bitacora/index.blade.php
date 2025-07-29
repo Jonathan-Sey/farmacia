@@ -72,7 +72,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//copiar</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js">//excel</script>
 
-<script src=""></script>
 
 <script>
     $(document).ready(function() {
@@ -97,7 +96,10 @@
                         text: 'Export',
                         buttons: ['copy', 'pdf', 'excel', 'print']
                         },
-                        'colvis'
+                        {
+                        extend:'colvis',
+                        }
+                        
                     ]
                 }
             },
@@ -115,88 +117,5 @@
             },
         });
     });
-</script>
-
-
-
-{{-- Alerta de registro exitoso --}}
-@if (session('success'))
-<script>
-    const Toast = Swal.mixin({
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 1600,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-            toast.onmouseenter = Swal.stopTimer;
-            toast.onmouseleave = Swal.resumeTimer;
-            }
-        });
-            document.addEventListener('DOMContentLoaded', function() {
-                console.log("Evento DOMContentLoaded disparado");
-                Toast.fire({ icon: "success",
-                title: "{{ session('success')}}"
-                });
-        });
-</script>
-@endif
-
-{{-- Cambio de estado --}}
-<script>
-    $(document).ready(function(){
-        $('.estado').click(function(e){
-            e.preventDefault();
-            var Id = $(this).data('id')
-            var estado = $(this).data('estado')
-
-            $.ajax({
-                url: '/almacenes/' + Id,
-                method: 'POST',
-                data: {
-                    _token: '{{ csrf_token()}}',
-                    _method: 'DELETE',
-                    status: estado == 1 ? 2 : 1
-                },
-                success: function(response){
-                    if(response.success){
-                        location.reload()
-                    }else{
-                        alert('Error al cambiar el estado')
-                    }
-                }
-            })
-        })
-    });
-</script>
-
-
-
-{{-- Modal para eliminar  --}}
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const deleteButtons = document.querySelectorAll('.eliminar-btn');
-
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const Id = this.getAttribute('data-id');
-            const nombre = this.getAttribute('data-info');
-            Swal.fire({
-                title: "¿Estás seguro?",
-                text: "¡Deseas eliminar! " + nombre,
-                icon: "warning",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Sí, ¡elimínalo!",
-                cancelButtonText: "Cancelar"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    document.getElementById('form-eliminar' + Id).submit();
-                }
-            });
-        });
-    });
-});
 </script>
 @endpush

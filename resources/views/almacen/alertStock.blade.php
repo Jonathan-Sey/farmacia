@@ -33,6 +33,8 @@
                             <span class="text-white font-bold">{{ $message }}</span>
                         </div>
                     @enderror
+
+                    {{-- <input type="hidden" name="almacen" value="{{$almecen->producto->nombre}}"> --}}
                 </div>
             </div>
         

@@ -234,7 +234,7 @@
                 </table>
             </div>
 
-            <div class="mt-2 mb-5">
+            {{-- <div class="mt-2 mb-5">
                 <label for="detalle_medico_id" class="uppercase block text-sm font-medium text-gray-900">
                     Médico
                 </label>
@@ -247,6 +247,18 @@
                     </option>
                     @endforeach
                 </select>
+            </div> --}}
+
+
+             <div class="mt-4 mb-5">
+                <x-select2
+                    name="detalle_medico_id"
+                    label="Médico"
+                    :options="$medicos->pluck('name', 'id')"
+                    :selected="old('detalle_medico_id', $ficha->detalle_medico_id)"
+                    placeholder="Seleccionar un Médico"
+                    class="select2-sucursal block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                />
             </div>
 
             <div class="mt-4 mb-5">

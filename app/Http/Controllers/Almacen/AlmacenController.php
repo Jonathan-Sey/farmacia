@@ -156,7 +156,7 @@ class AlmacenController extends Controller
                    'name_usuario' =>$usuario->name,
                    'accion' => 'Creación',
                    'tabla_afectada' => 'Almacenes',
-                    'detalles' => "Se asignó el producto: {$producto->nombre} a la sucursal: {$sucursal->nombre}", //detalles especificos
+                    'detalles' => "Se asignó el servicio: {$producto->nombre} a la sucursal: {$sucursal->nombre}", //detalles especificos
                    'fecha_hora' => now(),
            ]);
 
@@ -230,7 +230,7 @@ class AlmacenController extends Controller
             'name_usuario' => $usuario->name,
             'accion' => 'Actualización',
             'tabla_afectada' => 'Almacenes',
-            'detalles' => "Se actualizo el almacen: {$request->id_sucursal}", //detalles especificos
+            'detalles' => "Se actualizo el inventario de la farmacia {$almacen->sucursal->nombre} con el servicio: {$almacen->producto->nombre}", //detalles especificos
             'fecha_hora' => now(),
         ]);
         return redirect()->route('almacenes.index')->with('success', '¡Almacen actualizado!');
@@ -278,6 +278,8 @@ class AlmacenController extends Controller
         $almacen = Almacen::findOrFail($id);
         $productos = Producto::activos()->where('tipo', 2)->get();
         $sucursales = Sucursal::activos()->get();
+       
+
 
         return view('almacen.alertStock', compact('almacen', 'productos', 'sucursales'));
     }
@@ -293,6 +295,17 @@ class AlmacenController extends Controller
         // Actualizar el campo alerta_stock
         $almacen->alerta_stock = $request->input('alerta_stock');
         $almacen->save();
+
+         
+         $usuario=User::find($request->idUsuario);
+         Bitacora::create([
+             'id_usuario' => $request->idUsuario,
+             'name_usuario' => $usuario->name,
+             'accion' => 'Actualización',
+             'tabla_afectada' => 'Almacen',
+             'detalles' => "Se actualizo la alerta del producto: {$almacen->producto->nombre} con el minimo de {$request->alerta_stock} en la sucursal: {$almacen->sucursal->nombre}",
+             'ficha_hora' => now(),
+         ]);
 
         return redirect()->route('almacenes.index')->with('success', '¡Alerta de stock actualizada!');
     }

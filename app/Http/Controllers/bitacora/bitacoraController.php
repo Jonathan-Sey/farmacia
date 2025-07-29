@@ -10,7 +10,7 @@ class bitacoraController extends Controller
 {
     // mostramos las ultimas acciones del usuario en bitacora
    public function index()  {
-    $bitacora = Bitacora::with('usuario')->orderBy('created_at', 'desc')->paginate(10);
+    $bitacora = Bitacora::with('usuario')->orderBy('created_at', 'desc')->paginate(50);
 
     return view('bitacora.index', compact('bitacora'));
    }

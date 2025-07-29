@@ -621,6 +621,8 @@
                     <h3 class="font-bold text-lg">Registrar nueva persona</h3>
                     <form id="formPersona" method="POST" action="{{ route('personas.storeFromVentas') }}">
                         @csrf
+
+                        <div id="usuario"></div>
                         <div class="form-control">
                             <label class="label" for="nombre">
                                 <span class="label-text">Nombre</span>

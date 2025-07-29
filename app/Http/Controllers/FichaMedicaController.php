@@ -170,12 +170,12 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
             $ficha->update($data);
 
             // validacion de nuevos productos recetados
-            //utilizamos un arreglo para almacena
+            //utilizamos un arreglo para almacenar
             $productos = [];
             if(isset($data['producto'])){
                 //comprobamos lo que viene de producto
                 foreach($data['producto'] as $productosData){
-                    // validamos nuevamente si los datos viene vacios
+                    // validamos si los datos viene vacios
                     if(!empty($productosData['id'])){
                         $productos[$productosData['id']] = [
                             'cantidad' => $productosData['cantidad'],

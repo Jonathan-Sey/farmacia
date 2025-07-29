@@ -111,7 +111,7 @@ class RequisicionController extends Controller
              'name_usuario' => $usuario->name,
              'accion' => 'Creación',
              'tabla_afectada' => 'Traslado',
-             'detalles' => "Se creo la solicitud de: {$producto->nombre} con la cantidad de: {$request->cantidad} hacia la sucursal: {$sucursal->nombre}", 
+             'detalles' => "Se creo la requisición de {$producto->nombre} con la cantidad de {$request->cantidad} hacia la sucursal {$sucursal->nombre}", 
              'fecha_hora' => now(),
          ]);
 
