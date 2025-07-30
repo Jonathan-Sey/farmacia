@@ -26,7 +26,7 @@
                         $diferenciaDias = $fechaActual->diffInDays($fechaCaducidad, false); // Diferencia en días (negativo si ya caducó)
                 @endphp
                 @php $iteracion++; @endphp
-                <tr>
+                <tr class="bg-white">
                     <th>{{ $iteracion }}</th>
                     <td>{{ $lote->numero_lote }}</td>
                     <td>{{ $lote->producto->nombre }}</td>
@@ -59,7 +59,7 @@
 
     <h2 class="text-xl font-bold mt-8 mb-4">Lotes Disponibles en Inventario</h2>
     <div class="overflow-x-auto max-h-[500px]">
-        <table class="table table-md table-pin-rows table-pin-cols">
+        <table class="table table-md table-pin-rows table-pin-cols min-w-full">
             <thead>
                 <tr>
                     <th>#</th>
@@ -80,7 +80,7 @@
                         $diferenciaDias = $fechaActual->diffInDays($fechaCaducidad, false); // Diferencia en días (negativo si ya caducó)
                 @endphp
                 @php $iteracion++; @endphp
-                <tr>
+                <tr class="bg-white">
                     <th>{{ $iteracion }}</th>
                     <td>{{ $inventario->lote->numero_lote }}</td>
                     <td>{{ $inventario->producto->nombre }}</td>

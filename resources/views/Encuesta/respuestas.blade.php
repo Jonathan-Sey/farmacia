@@ -5,7 +5,8 @@
 <div class="container mx-auto px-4 py-8">
     <div class="bg-white rounded-lg shadow-md p-6">
         <h1 class="text-2xl font-bold mb-2">Resultados de la encuesta: {{ $encuesta->titulo }}</h1>
-        <p class="text-gray-950 mb-6">Médico evaluado: {{ $encuesta->medico->usuario->name }}</p>
+        <p class="text-gray-950"><span class="font-bold">Médico evaluado:</span> {{ $encuesta->medico->usuario->name }}</p>
+        <p class="text-gray-950 mb-6"><span class="font-bold">Encuesta realizado en:</span> {{ $encuesta->sucursal->nombre }}</p>
 
         <div class="space-y-8">
             @foreach($encuesta->preguntas as $pregunta)
@@ -20,23 +21,6 @@
                              style="width: {{ ($estadisticas[$pregunta->id]['promedio']/5)*100 }}%"></div>
                     </div>
                 </div>
-
-                {{-- <div class="distribucion grid grid-cols-5 gap-2 text-center">
-                    @for($i = 1; $i <= 5; $i++)
-                    @php
-                        $count = $pregunta->respuestas->where('respuesta', $i)->count();
-                        $percentage = $estadisticas[$pregunta->id]['total'] > 0 ? ($count/$estadisticas[$pregunta->id]['total'])*100 : 0;
-                    @endphp
-                    <div>
-                        <div class="text-sm">{{ $i }}</div>
-                        <div class="h-32 bg-gray-200 relative">
-                            <div class="bg-indigo-400 absolute bottom-0 w-full"
-                                 style="height: {{ $percentage }}%"></div>
-                        </div>
-                        <div class="text-xs mt-1">{{ $count }} ({{ number_format($percentage, 1) }}%)</div>
-                    </div>
-                    @endfor
-                </div> --}}
 
                 @elseif($pregunta->tipo === 'opcion_multiple')
                 <div class="opciones-resultado">
@@ -80,7 +64,12 @@
                         $percentage = $estadisticas[$pregunta->id]['total'] > 0 ? ($count/$estadisticas[$pregunta->id]['total'])*100 : 0;
                     @endphp
                     <div>
-                        <div class="text-sm">{{ $i }}</div>
+                        @if ($i == 1 )
+                        <div class="text-sm">Si</div>    
+                        @else
+                        <div class="text-sm">No</div>    
+                        @endif
+                        {{-- <div class="text-sm">{{ $i }}</div> --}}
                         <div class="h-20 bg-gray-200 relative">
                             <div class="bg-indigo-400 absolute bottom-0 w-full"
                                  style="height: {{ $percentage }}%"></div>

@@ -163,7 +163,7 @@
                 <div>
                     <x-select2
                         name="id_producto"
-                        label="Servicio"
+                        label="Productos y Servicios"
                         :options="$productos->pluck('nombre', 'id')"
                         :selected="old('id_producto')"
                         placeholder="Seleccionar producto o servicio"

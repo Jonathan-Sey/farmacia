@@ -18,7 +18,8 @@
                     </label>
 
                     @if($pregunta->tipo === 'escala')
-                    <div class=" m-auto w-[400px] flex justify-between">
+                    {{-- <div class=" m-auto w-[400px] flex justify-between ">  original --}} 
+                        <div class=" grid grid-cols-5 gap-5 m-auto align-middle justify-center items-center  md:m-auto md:w-[400px] md:flex md:justify-between ">
                             @for ($i = 1; $i <= 5; $i++)
                             <label class="flex flex-col items-center">
                                 <span class="mb-1">{{$i}}</span>

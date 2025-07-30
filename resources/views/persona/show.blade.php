@@ -237,7 +237,7 @@
 
                         <p class="py-2 font-bold">Diagnostico:</p>
                         <div class="border-gray-400 border-solid">
-                            <p class="py-2 break-words text-justify">{{$ficha->diagnostico}}</p>
+                            <p class="py-2 break-words text-justify">{{$ficha->diagnostico ?? 'N/A'}}</p>
                         </div>
                              <div class="overflow-x-auto mt-2">
                                 <table class="table w-full">

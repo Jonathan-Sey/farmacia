@@ -33,32 +33,37 @@
                         </div>
                     </div>
                     <div class="flex flex-col text-left justify-start">
-                        <div class="px-6 w-auto break-words md:text-lg lg:text-xl">
+                        <div class="px-6 w-auto break-words md:text-lg lg:text-xl grid gap-1">
                             <p class="uppercase text-lg font-bold text-black">{{$sucursal->nombre}}</p>
-                            <p class="text-lg text-black"><i class="fa-solid fa-circle-user"></i> {{$sucursal->encargado}}</p>
-                            <p class="text-lg text-black"><i class="fa-solid fa-location-dot"></i> {{$sucursal->ubicacion}}</p>
-                            <a href="{{$sucursal->google_maps_link}}"
-                                class="text-blue-600 hover:underline flex items-center"
+                            <p class="text-base text-black"><i class="fa-solid fa-circle-user"></i> {{$sucursal->encargado}}</p>
+                            <p class="text-base text-black"><i class="fa-solid fa-location-dot"></i> {{$sucursal->ubicacion}}</p>
+                            {{-- contenedor enlaces --}}
+                            <div class=" grid justify-start gap-1 md:grid-cols-2 md:justify-center md:items-center  ">
+                                <a href="{{$sucursal->google_maps_link}}"
+                                class="text-blue-600 hover:underline flex items-center text-[1rem]"
                                 target="_blank"
                                 >
-                                <i class="fa-solid fa-map-location-dot mr-2"></i> Ver en Google Maps
-                            </a>
+                                <i class="fa-solid fa-map-location-dot mr-2 font-zice"></i>Google Maps
+                                </a>
 
-                            <a href="https://wa.me/?text={{ urlencode('Ubicación de ' . $sucursal->nombre . ': ' . $sucursal->google_maps_link) }}"
-                                target="_blank"
-                                class="inline-block mt-2 px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600">
-                                 <i class="fab fa-whatsapp mr-2"></i> Compartir
-                             </a>
-                            <p class="text-lg text-black"><i class="fa-solid fa-phone"></i> {{$sucursal->telefono}}</p>
-                            <p class="text-lg text-black"><i class="fa-solid fa-envelope"></i> {{$sucursal->email}}</p>
+                                <a href="https://wa.me/?text={{ urlencode('Ubicación de ' . $sucursal->nombre . ': ' . $sucursal->google_maps_link) }}"
+                                    target="_blank"
+                                    class="inline-block mt-2 px-2 py-0.8 bg-green-500 text-white rounded-md hover:bg-green-600 text-[1rem] text-center">
+                                    <i class="fab fa-whatsapp mr-2"></i> Compartir
+                                </a>
+
+                            </div>
+                            
+                            <p class="text-base text-black"><i class="fa-solid fa-phone"></i> {{$sucursal->telefono}}</p>
+                            <p class="text-base text-black"><i class="fa-solid fa-envelope"></i> {{$sucursal->email}}</p>
                         </div>
-                        <div class="lg:grid lg:grid-cols-2 lg:mt-4 lg:gap-2 px-5 lg:justify-between ">
+                        <div class="lg:grid lg:grid-cols-2 lg:mt-4 lg:gap-2 px-5 lg:justify-between grid gap-1 mt-3">
                             <div class="m-1">
                                 {{-- Botón Editar --}}
                                 <form action="{{ route('sucursales.edit', ['sucursal' => $sucursal->id]) }}" method="GET">
                                     @csrf
                                     <button type="submit" class="btn btn-primary font-bold uppercase btn-sm w-full">
-                                        <i class="fas fa-edit"></i>
+                                        <i class="fas fa-edit"></i> Editar
                                     </button>
                                 </form>
 
@@ -67,7 +72,7 @@
                             <div class="m-1">
                                     {{-- Botón Cambiar estado --}}
                                 <button type="button" class="btn w-full btn-warning font-bold uppercase cambiar-estado-btn btn-sm" data-id="{{ $sucursal->id }}" data-estado="{{ $sucursal->estado }}" data-info="{{ $sucursal->nombre }}">
-                                    <i class="fas fa-sync-alt"></i>
+                                    <i class="fas fa-sync-alt"></i> Estado
                                 </button>
                             </div>
 

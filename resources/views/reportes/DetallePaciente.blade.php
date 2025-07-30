@@ -1,5 +1,20 @@
 @extends('template')
-@section('titulo', 'Reporte de Paciente' . ' '. $persona->nombre)
+
+@php    
+            if($persona->rol == 1){
+                $nombre = $persona->nombre;
+                $nombreCompleto = $nombre;
+            }else{
+                $nombre = $persona->fichasMedicas->first()->nombre;
+                $apellido_paterno = $persona->fichasMedicas->first()->apellido_paterno;
+                $apellido_materno = $persona->fichasMedicas->first()->apellido_materno;
+                $nombreCompleto = $nombre . " ".$apellido_paterno . " ".$apellido_materno;
+            }
+            
+            
+    
+@endphp
+@section('titulo', 'Reporte de Paciente' . ' '. $nombreCompleto)
 @push('css')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
@@ -27,7 +42,7 @@
         <tbody>
             @foreach ($fichas as $ficha)
             <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->diagnostico ?? 'Sin diagnosticos'}}</td>
+                <td class="px-6 py-4 whitespace-nowrap">{{ Str::limit($ficha->diagnostico ?? 'Sin diagnosticos', 40)  }}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->detalleMedico->usuario->name ?? 'Medico no asignado'}}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->sucursal->nombre ?? 'No tiene sucursal'}}</td>
                 <td class="px-6 py-4 whitespace-nowrap">{{ $ficha->consulta_programada ?? 'Sin fecha programada'}}</td>

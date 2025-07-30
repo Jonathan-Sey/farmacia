@@ -23,7 +23,7 @@
                         label="Médico"
                         :options="$medicos->pluck('name', 'id')"
                         :selected="old('detalle_medico_id')"
-                        placeholder="Buscar Medico"
+                        placeholder="Buscar Médico"
                         required
                     />
                 </div>
@@ -111,7 +111,6 @@
                 <select name="preguntas[${index}][tipo]" class="tipo-pregunta block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" required>
                     <option value="escala">Escala de satisfacción (1-5)</option>
                     <option value="cerrado">Cerrado</option>
-                    <option value="texto">Respuesta abierta</option>
                 </select>
             </div>
         `;

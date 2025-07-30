@@ -184,11 +184,13 @@ class InventarioController extends Controller
     {
 
         // Obtener los lotes originales
-        $lotesOriginales = Lote::where('id_producto', $idProducto)->get();
+        $lotesOriginales = Lote::where('id_producto', $idProducto)->latest()->take(10)->get();
 
         $lotesDisponibles  = Inventario::with(['lote', 'producto', 'bodega'])
             ->where('id_producto', $idProducto)
             ->where('id_bodega', $idBodega)
+            ->latest()
+            ->take(10)
             ->get();
         // $inventario = Inventario::with('lote', 'producto', 'bodegas')->findOrFail($inventario->id);
         // return view('Inventario.show',compact('inventario'));

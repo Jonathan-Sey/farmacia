@@ -51,6 +51,7 @@ class EncuestaController extends Controller
         //dd($request);
         $request->validate([
             'detalle_medico_id' => 'required|exists:detalle_medico,id',
+            'sucursal_id' => 'required|exists:sucursal,id',
             'titulo' => 'required|string|max:255',
             'descripcion' => 'nullable|string',
             'preguntas' => 'required|array|min:1',
@@ -61,6 +62,7 @@ class EncuestaController extends Controller
         // Crear encuesta
         $encuesta = Encuestas::create([
             'medico_id' => $request->detalle_medico_id,
+            'sucursal_id' => $request->sucursal_id,
             'titulo' => $request->titulo,
             'descripcion' => $request->descripcion,
         ]);
@@ -202,9 +204,10 @@ class EncuestaController extends Controller
     public function edit(Encuestas $encuesta)
     {
         $medicos = DetalleMedico::with('usuario','especialidad')->get();
+        $sucursales = Sucursal::all();
         $encuesta->load('preguntas');
         //dd($encuesta);
-        return view('Encuesta.edit', compact('encuesta', 'medicos'));
+        return view('Encuesta.edit', compact('encuesta', 'medicos','sucursales'));
     }
 
     /**
@@ -220,6 +223,7 @@ class EncuestaController extends Controller
 
     $request->validate([
         'detalle_medico_id' => 'required|exists:detalle_medico,id',
+        'sucursal_id' => 'required|exists:sucursal,id',
         'titulo' => 'required|string|max:255',
         'descripcion' => 'nullable|string',
         'preguntas' => 'required|array|min:1',
@@ -231,6 +235,7 @@ class EncuestaController extends Controller
     // Actualizar datos básicos de la encuesta
     $encuesta->update([
         'medico_id' => $request->detalle_medico_id,
+        'sucursal_id' => $request->sucursal_id,
         'titulo' => $request->titulo,
         'descripcion' => $request->descripcion,
     ]);

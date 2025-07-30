@@ -22,7 +22,7 @@
                 <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Telefono</th>
                 {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Medico</th> --}}
                 {{-- <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Direccion</th> --}}
-                <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Diagnostico</th>
+                <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
             </tr>
         </thead>
     </x-slot>
@@ -30,66 +30,73 @@
     <x-slot name="tbody">
         <tbody>
             @foreach ($fichasAgrupadas as $persona)
-            <tr>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $persona->id }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $persona->nombre }} {{ $persona->apellido_paterno }} {{ $persona->apellido_materno }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $persona->DPI }}</td>
-                <td class="px-6 py-4 whitespace-nowrap">{{ $persona->telefono }}</td>
-
-                {{-- Médico: usamos el primer médico asignado si hay varios --}}
-                {{-- <td class="px-6 py-4 whitespace-nowrap">
-                    {{ optional(optional(optional($persona->fichasMedicas->first())->detalleMedico)->usuario)->name ?? 'Sin Médico' }}
-
-                </td> --}}
-                {{-- <td class="px-6 py-4 whitespace-nowrap">
-                    <ul class="list-disc pl-4">
-                        @foreach ($persona->fichasMedicas as $ficha)
-                            <li>{{ $ficha->detalleMedico->usuario->name ?? 'Sin Medico' }}
-                                <small class="text-gray-500">({{ \Carbon\Carbon::parse($ficha->created_at)->format('d/m/Y') }})</small>
-                            </li>
-                        @endforeach
-                    </ul>
-                </td> --}}
-{{-- 
-                <td class="px-6 py-4 whitespace-nowrap">
-                    <ul class="list-disc pl-4">
-                        @foreach ($persona->fichasMedicas as $ficha)
-                            <li>{{ $ficha->sucursal->nombre ?? 'Sin diagnóstico' }}
-                                <small class="text-gray-500">({{ \Carbon\Carbon::parse($ficha->created_at)->format('d/m/Y') }})</small>
-                            </li>
-                        @endforeach
-                    </ul>
-                </td> --}}
-                 {{-- @foreach ($persona->fichasMedicas as $ficha )
-
+            @if($persona->rol == 2 || $persona->rol == 3)
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $persona->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        {{ $ficha->direccion ?? 'Sin direccion'}}
+                        {{ $persona->nombre }} 
+                        {{$persona->fichasMedicas->first()->apellido_paterno ?? ' '}}  
+                        {{$persona->fichasMedicas->first()->apellido_materno ?? ' '}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $persona->DPI ?? 'Sin datos'}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $persona->telefono ?? 'Sin datos'}}</td>
+
+                    {{-- Médico: usamos el primer médico asignado si hay varios --}}
+                    {{-- <td class="px-6 py-4 whitespace-nowrap">
+                        {{ optional(optional(optional($persona->fichasMedicas->first())->detalleMedico)->usuario)->name ?? 'Sin Médico' }}
+
+                    </td> --}}
+                    {{-- <td class="px-6 py-4 whitespace-nowrap">
+                        <ul class="list-disc pl-4">
+                            @foreach ($persona->fichasMedicas as $ficha)
+                                <li>{{ $ficha->detalleMedico->usuario->name ?? 'Sin Medico' }}
+                                    <small class="text-gray-500">({{ \Carbon\Carbon::parse($ficha->created_at)->format('d/m/Y') }})</small>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </td> --}}
+    {{-- 
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        <ul class="list-disc pl-4">
+                            @foreach ($persona->fichasMedicas as $ficha)
+                                <li>{{ $ficha->sucursal->nombre ?? 'Sin diagnóstico' }}
+                                    <small class="text-gray-500">({{ \Carbon\Carbon::parse($ficha->created_at)->format('d/m/Y') }})</small>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </td> --}}
+                    {{-- @foreach ($persona->fichasMedicas as $ficha )
+
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            {{ $ficha->direccion ?? 'Sin direccion'}}
+                        </td>
+                    @endforeach --}}
+                    {{-- <td class="px-6 py-4 whitespace-nowrap">{{ $persona->fichasmedicas->detalleMedico->consultas}}</td> --}}
+
+                    {{-- Diagnósticos agrupados --}}
+                    {{-- <td class="px-6 py-4 whitespace-nowrap">
+                        <ul class="list-disc pl-4">
+                            @foreach ($persona->fichasMedicas as $ficha)
+                                <li>{{ $ficha->diagnostico ?? 'Sin diagnóstico' }}
+                                    <small class="text-gray-500">({{ \Carbon\Carbon::parse($ficha->created_at)->format('d/m/Y') }})</small>
+                                </li>
+                            @endforeach
+                        </ul>
+                    </td> --}}
+
+                    <td class="flex gap-2 justify-center">
+
+                        {{-- <form action="{{route('reporte.DetallePaciente')}}" method="GET"> --}}
+                        <form action="{{route('reporte.DetallePaciente', $persona->id)}}" method="GET">
+                            @csrf
+                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                                ver
+                            </button>
+                        </form>
                     </td>
-                @endforeach --}}
-                {{-- <td class="px-6 py-4 whitespace-nowrap">{{ $persona->fichasmedicas->detalleMedico->consultas}}</td> --}}
+                </tr>
 
-                {{-- Diagnósticos agrupados --}}
-                {{-- <td class="px-6 py-4 whitespace-nowrap">
-                    <ul class="list-disc pl-4">
-                        @foreach ($persona->fichasMedicas as $ficha)
-                            <li>{{ $ficha->diagnostico ?? 'Sin diagnóstico' }}
-                                <small class="text-gray-500">({{ \Carbon\Carbon::parse($ficha->created_at)->format('d/m/Y') }})</small>
-                            </li>
-                        @endforeach
-                    </ul>
-                </td> --}}
-
-                <td class="flex gap-2 justify-center">
-
-                    {{-- <form action="{{route('reporte.DetallePaciente')}}" method="GET"> --}}
-                     <form action="{{route('reporte.DetallePaciente', $persona->id)}}" method="GET">
-                        @csrf
-                        <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
-                            ver
-                        </button>
-                    </form>
-                </td>
-            </tr>
+            @endif
+            
             @endforeach
 
 

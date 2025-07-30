@@ -56,6 +56,10 @@ class Sucursal extends Model
         return $this->hasMany(FichaMedica::class);
      }
 
+     public function getNameAttribute(): string 
+     {
+        return "{$this->codigo_sucursal} - {$this->nombre}";
+     }
 
 
 }

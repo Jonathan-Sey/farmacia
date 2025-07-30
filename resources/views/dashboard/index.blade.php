@@ -119,7 +119,7 @@
                             @endif
                             @endforeach
                         </td>
-                        <td>{{ $venta->sucursal->nombre }} - {{ $venta->sucursal->ubicacion }}</td>
+                        <td>{{ $venta->sucursal->nombre }}</td>
                         <td>{{ $venta->total }}</td>
                         <td><a href="{{ route('ventas.show', $venta->id) }}"><i class="fa-solid fa-eye"></i></a></td>
                         <th>{{ $loop->iteration }}</th>
@@ -131,7 +131,7 @@
 
         <div class="max-h-[800px] overflow-x-auto bg-white p-2 rounded-lg shadow-lg text-center">
             <h2 class="text-2xl m-2 text-black">Productos más vendidos</h2>
-            <div class="md:flex md:flex-row md:gap-3 lg:justify-between p-3 pb-8 sm:flex sm:flex-col sm:gap-5 sm:justify-center">
+            <div class="md:flex md:flex-row md:gap-3 lg:justify-between p-3 pb-8 sm:flex sm:flex-col sm:gap-5 sm:justify-center flex flex-col gap-5">
                 <div>
                     <label for="sucursalSelectorProductos" class="uppercase block text-sm font-medium text-gray-900">Sucursal</label>
                     <select
@@ -140,7 +140,7 @@
                     >
                         <option value="">Todo</option>
                         @foreach ($nombreSucursales as $sucursal)
-                            <option value="{{ $sucursal->id }}">{{$sucursal->nombre}} - {{$sucursal->ubicacion}}</option>
+                            <option value="{{ $sucursal->id }}">{{$sucursal->nombre}}</option>
                         @endforeach
                     </select>
                 </div>
@@ -163,7 +163,7 @@
                                 >
                                 <option value="">Todo</option>
                                 @foreach ($nombreSucursales as $sucursal)
-                                    <option value="{{ $sucursal->id }}">{{$sucursal->nombre}} - {{$sucursal->ubicacion}}</option>
+                                    <option value="{{ $sucursal->id }}">{{$sucursal->nombre}}</option>
                                 @endforeach
                             </select>
                     </div>
