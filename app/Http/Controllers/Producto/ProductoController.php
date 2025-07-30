@@ -65,7 +65,7 @@ class ProductoController extends Controller
             // 'codigo'=>['nullable'],
             'id_categoria'=>'required',
             'imagen'=>'required',
-            'nombre'=>['required','string','max:50'],
+            'nombre'=>['required','string','max:255'],
             'descripcion'=>['max:100','required','string'],
             'precio_venta'=>'numeric|required|min:0',
             'precio_porcentaje' => 'nullable|numeric',
@@ -158,7 +158,7 @@ class ProductoController extends Controller
     {
         $this->validate($request, [
             'id_categoria' => 'required|exists:categoria,id',
-            'nombre' => ['required', 'string', 'max:50'],
+            'nombre' => ['required', 'string', 'max:255'],
             'imagen' => 'nullable',
             'descripcion' => ['required', 'string', 'max:100'],
             'precio_venta' => 'numeric|required|min:0',

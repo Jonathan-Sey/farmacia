@@ -101,7 +101,7 @@
                                 >
                                 <option value="">Todo</option>
                                 @foreach ($nombreSucursales as $sucursal)
-                                    <option value="{{ $sucursal->id }}">{{$sucursal->nombre}} - {{$sucursal->ubicacion}}</option>
+                                    <option value="{{ $sucursal->id }}">{{$sucursal->nombre}}</option>
                                 @endforeach
                             </select>
                     </div>

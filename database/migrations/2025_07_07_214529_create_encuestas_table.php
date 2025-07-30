@@ -17,6 +17,7 @@ class CreateEncuestasTable extends Migration
         Schema::create('encuestas', function (Blueprint $table) {
                 $table->id();
                 $table->foreignId('medico_id')->constrained('detalle_medico');
+                $table->foreignId('sucursal_id')->constrained('sucursal');
                 $table->string('titulo');
                 $table->text('descripcion')->nullable();
                 $table->boolean('activa')->default(true);

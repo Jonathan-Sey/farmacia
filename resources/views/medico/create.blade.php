@@ -38,15 +38,15 @@
                 <div class="mt-2 mb-5">
                     <label for="especialidad" class="uppercase block text-sm font-medium text-gray-900">Especialidad</label>
                     <div class="border p-3 rounded-md bg-gray-100">
-                        <label for="especialidad" class="block text-sm font-medium text-gray-700">Especialidad</label>
-                        <select name="especialidad" id="especialidad" class="block w-full rounded-md bg-white px-3 py-1.5 text-gray-900 outline outline-1 outline-gray-300 focus:outline-indigo-600" required>
-                            <option value="">Seleccione una especialidad</option>
-                            @foreach ($especialidades as $especialidad)
-                            <option value="{{ $especialidad->id }}" {{ old('especialidad') == $especialidad->id ? 'selected' : '' }}>
-                                {{ $especialidad->nombre }}
-                            </option>
-                            @endforeach
-                        </select>
+                        <x-select2
+                        id="especialidad"
+                        name="especialidad"
+                        label="Especialidad"
+                        :options="$especialidades->pluck('nombre', 'id')"
+                        :selected="old('especialidad')"
+                        placeholder="Selecionar una especialidad"
+                        required
+                   />
                     </div>
                 </div>
 

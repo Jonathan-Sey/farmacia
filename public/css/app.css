@@ -3798,6 +3798,12 @@ details.collapse summary::-webkit-details-marker {
 .grid-cols-5 {
   grid-template-columns: repeat(5, minmax(0, 1fr));
 }
+.grid-cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
 .flex-row {
   flex-direction: row;
 }
@@ -4231,6 +4237,14 @@ details.collapse summary::-webkit-details-marker {
   padding-top: 2rem;
   padding-bottom: 2rem;
 }
+.py-0\.5 {
+  padding-top: 0.125rem;
+  padding-bottom: 0.125rem;
+}
+.px-1 {
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
 .pb-1 {
   padding-bottom: 0.25rem;
 }
@@ -4333,6 +4347,9 @@ details.collapse summary::-webkit-details-marker {
 .text-xs {
   font-size: 0.75rem;
   line-height: 1rem;
+}
+.text-\[1rem\] {
+  font-size: 1rem;
 }
 .font-black {
   font-weight: 900;
@@ -4458,6 +4475,12 @@ details.collapse summary::-webkit-details-marker {
 .text-yellow-700 {
   --tw-text-opacity: 1;
   color: rgb(161 98 7 / var(--tw-text-opacity, 1));
+}
+.text-\[1rme\] {
+  color: 1rme;
+}
+.text-\[rem\] {
+  color: rem;
 }
 .underline {
   text-decoration-line: underline;
@@ -4964,6 +4987,10 @@ details.collapse summary::-webkit-details-marker {
     grid-column: span 2 / span 2;
   }
 
+  .md\:m-auto {
+    margin: auto;
+  }
+
   .md\:mx-0 {
     margin-left: 0px;
     margin-right: 0px;
@@ -5017,6 +5044,10 @@ details.collapse summary::-webkit-details-marker {
     width: 20%;
   }
 
+  .md\:w-\[400px\] {
+    width: 400px;
+  }
+
   .md\:max-w-none {
     max-width: none;
   }
@@ -5043,6 +5074,14 @@ details.collapse summary::-webkit-details-marker {
 
   .md\:items-center {
     align-items: center;
+  }
+
+  .md\:justify-center {
+    justify-content: center;
+  }
+
+  .md\:justify-between {
+    justify-content: space-between;
   }
 
   .md\:gap-2 {
@@ -5091,6 +5130,19 @@ details.collapse summary::-webkit-details-marker {
   .md\:text-lg {
     font-size: 1.125rem;
     line-height: 1.75rem;
+  }
+
+  .md\:text-\[1rem\] {
+    font-size: 1rem;
+  }
+
+  .md\:text-\[2rem\] {
+    font-size: 2rem;
+  }
+
+  .md\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 @media (min-width: 1024px) {
@@ -5176,6 +5228,15 @@ details.collapse summary::-webkit-details-marker {
   .lg\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
+  }
+
+  .lg\:text-\[2rem\] {
+    font-size: 2rem;
+  }
+
+  .lg\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 }
 @media (min-width: 1280px) {

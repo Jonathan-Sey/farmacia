@@ -132,12 +132,85 @@
 <script src="/js/select2-global.js"></script>
 <script>
 
+    $(document).ready(function() {
+
+
+        // Validar el formulario antes de enviar
+        $('form').on('submit', function(e) {
+            if (!validarHorarios()) {
+                e.preventDefault(); // Detener el envío del formulario
+            }
+        });
+    });
 
     let sucursales = @json($sucursales);
+
+
+    //validacion de los horarios 
+     function validarHorarios() {
+        let horarios = document.querySelectorAll('[name^="horarios["]');
+        let esValido = true;
+        let mensajeError = '';
+
+        // Validar que haya al menos un horario
+        if (horarios.length === 0) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Debe agregar al menos un horario para el médico.',
+            });
+            return false;
+        }
+
+        // Validar cada horario individualmente
+        for (let i = 0; i < horarios.length / 4; i++) {
+            const sucursal = document.querySelector(`[name="horarios[${i}][sucursal_id]`).value;
+            const dia = document.querySelector(`[name="horarios[${i}][dia]`).value;
+            const horaInicio = document.querySelector(`[name="horarios[${i}][hora_inicio]`).value;
+            const horaFin = document.querySelector(`[name="horarios[${i}][hora_fin]`).value;
+
+            // Validar que la hora de inicio sea menor que la hora de fin
+            if (horaInicio >= horaFin) {
+                mensajeError = `En el horario ${i+1}, la hora de inicio debe ser anterior a la hora de finalización.`;
+                esValido = false;
+                break;
+            }
+
+            // Validar que la diferencia sea de al menos 30 minutos
+            const inicio = new Date(`2000-01-01T${horaInicio}`);
+            const fin = new Date(`2000-01-01T${horaFin}`);
+            const diferencia = (fin - inicio) / (1000 * 60); // diferencia en minutos
+
+            if (diferencia < 30) {
+                mensajeError = `En el horario ${i+1}, la duración mínima debe ser de 30 minutos.`;
+                esValido = false;
+                break;
+            }
+        }
+
+        if (!esValido) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en los horarios',
+                text: mensajeError,
+            });
+        }
+
+        return esValido;
+    }
+
+
+    //let sucursales = @json($sucursales);
 
     function agregarHorario() {
         let container = document.getElementById('horarios-container');
         let index = container.children.length;
+
+        //proceso para validar horario 
+        let oldData = @json(old('horarios') ?? []);
+        let oldHorario = oldData[index] || {};
+
+
         let div = document.createElement('div');
         div.classList.add("mt-2", "mb-5", "p-3", "border", "border-gray-300", "rounded-md", "bg-white");
 
@@ -176,5 +249,15 @@
         `;
         container.appendChild(div);
     }
+
+    // Agregar horarios automáticamente si hay datos antiguos
+    $(document).ready(function() {
+        let oldHorarios = @json(old('horarios') ?? []);
+        if (oldHorarios.length > 0) {
+            oldHorarios.forEach((horario, index) => {
+                agregarHorario();
+            });
+        }
+    });
 </script>
 @endpush

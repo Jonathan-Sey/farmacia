@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Encuestas extends Model
 {
     use HasFactory;
-    protected $fillable = ['medico_id', 'titulo', 'descripcion', 'activa'];
+    protected $fillable = ['medico_id','sucursal_id', 'titulo', 'descripcion', 'activa'];
 
     public function medico()
     {
@@ -18,5 +18,10 @@ class Encuestas extends Model
     public function preguntas()
     {
         return $this->hasMany(Preguntas::class ,'encuesta_id') ;
+    }
+
+    public function sucursal()
+    {
+        return $this->belongsTo(Sucursal::class, 'sucursal_id');
     }
 }

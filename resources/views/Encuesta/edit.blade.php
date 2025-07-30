@@ -28,6 +28,17 @@
                         required
                     />
                 </div>
+                
+                {{-- select para buscar sucursal  --}}
+                <x-select2
+                        id="sucursal_id"
+                        name="sucursal_id"
+                        label="Sucursal"
+                        :options="$sucursales->pluck('nombre', 'id')"
+                        :selected="old('sucursal_id', $encuesta->sucursal_id)"
+                        placeholder="Buscar sucursal"
+                        required
+                />
 
                 <div class="mt-2 mb-5">
                     <label for="titulo" class="uppercase block text-sm font-medium text-gray-900">Título</label>
@@ -113,7 +124,6 @@
                 <select name="preguntas[${index}][tipo]" class="tipo-pregunta block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" onchange="cambiarTipoPregunta(this, ${index})" required>
                     <option value="escala" ${pregunta.tipo == 'escala' ? 'selected' : '' } >Escala de satisfacción (1-5)</option>
                     <option value="cerrado" ${pregunta.tipo == 'cerrado' ? 'selected' : '' } >Cerrado</option>
-                    <option value="texto" ${pregunta.tipo == 'texto' ? 'selected' : '' } >Respuesta abierta</option>
                 </select>
             </div>
         `;
@@ -147,7 +157,6 @@
                 <select name="preguntas[${index}][tipo]" class="tipo-pregunta block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" onchange="cambiarTipoPregunta(this, ${index})" required>
                     <option value="escala">Escala de satisfacción (1-5)</option>
                     <option value="cerrado">Cerrado</option>
-                    <option value="texto">Respuesta abierta</option>
                 </select>
             </div>
         `;
