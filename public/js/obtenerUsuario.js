@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
         crearUsuario.innerHTML = `
         <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
         document.getElementById("idUsuario").style.display = "none";
-        console.log('Sucursal ID del usuario:', sucursalId);
+        //console.log('Sucursal ID del usuario:', sucursalId);
     }
 
 

@@ -146,18 +146,12 @@
                     ]
                 }
             },
-            columnDefs: [{
-                    responsivePriority: 1,
-                    targets: 0
-                },
-                {
-                    responsivePriority: 2,
-                    targets: 3
-                },
-                {
-                    responsivePriority: 3,
-                    targets: 8
-                },
+            columnDefs: [
+                {responsivePriority: 4,targets: 8},
+                {responsivePriority: 3,targets: 7},
+                {responsivePriority: 1,targets: 1},
+                {responsivePriority: 2,targets: 2},
+
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado

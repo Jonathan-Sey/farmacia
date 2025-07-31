@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @section('contenido')
@@ -18,12 +19,13 @@
         <div>
             <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
                 <label for="sucursal" class="block text-sm font-medium text-gray-600">Sucursal:</label>
-                <select id="sucursal" name="sucursal" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-                    <option value="" disabled selected>Seleccione una sucursal</option>
-                    @foreach($sucursales as $sucursal)
-                    <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
-                    @endforeach
-                </select>
+                <x-select2
+                    name="sucursal"
+                    id="sucursal"
+                    :options="$sucursales->pluck('nombre','id')"
+                    :selected="old('sucursal')"
+                    placeholder="Seleccionar una sucursal"
+                />                
 
                 <div class="flex flex-col sm:flex-row gap-4">
                 
@@ -84,6 +86,8 @@
 
 
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
 
 
 

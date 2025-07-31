@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @section('contenido')
@@ -13,39 +14,24 @@
 <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
 
     <form id="formReporte" class="space-y-4">
-        <!-- Fila Día, Mes, Año -->
-        <!--<div class="flex gap-4">
-            <div class="flex-1 m-2">
-                <label for="fecha" class="block text-sm font-medium text-gray-600 ">Día:</label>
-                <input type="date" id="fecha" name="fecha"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-
-            <div class="flex-1 m-2">
-                <label for="mes" class="block text-sm font-medium text-gray-600">Mes:</label>
-                <input type="month" id="mes" name="mes"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-
-            <div class="flex-1 m-2">
-                <label for="año" class="block text-sm font-medium text-gray-600">Año:</label>
-                <input type="number" id="año" name="año" min="2000" max="2100"
-                    class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-            </div>
-        </div>
-
-
-        -->
-
         <div>
             <div class="max-w-5xl mx-auto p-6 m-5 bg-white rounded-lg shadow-md">
-                <label for="Usuario" class="block text-sm font-medium text-gray-600">Usuario:</label>
+                {{-- <label for="Usuario" class="block text-sm font-medium text-gray-600">Usuario:</label>
                 <select id="Usuario" name="Usuario" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
                     <option value="" disabled selected>Seleccione un usuario</option>
                     @foreach($usuarios as $usuario)
                     <option value="{{ $usuario->id }}">{{ $usuario->name }}</option>
                     @endforeach
-                </select>
+                </select> --}}
+                
+                <label for="Usuario" class="block text-sm font-medium text-gray-600">Usuario:</label>
+                <x-select2
+                    id="Usuario"
+                    name="Usuario"
+                    :options="$usuarios->pluck('name','id')"
+                    :selected="old('Usuario')"
+                    placeholder="Todos"
+                />
             </div>
         </div>
 
@@ -104,7 +90,8 @@
 
 
 @push('js')
-
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
 
 
 

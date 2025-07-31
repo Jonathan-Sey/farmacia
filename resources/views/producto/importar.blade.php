@@ -5,7 +5,7 @@
 @section('contenido')
 <div class="flex justify-center items-center mx-3">
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl">
-        <h2 class="text-2xl font-bold mb-5">Importar Productos desde Excel</h2>
+        <h2 class="text-2xl font-bold mb-5">Cargar Productos desde Excel</h2>
 
         <form action="{{ route('productos.importar.procesar') }}" method="POST" enctype="multipart/form-data">
             @csrf
@@ -20,6 +20,7 @@
                     hover:file:bg-blue-100" required>
                 <p class="mt-1 text-sm text-gray-500">Formatos soportados: .xlsx, .xls</p>
             </div>
+
 
             <div class="mt-6 flex items-center justify-end gap-x-6">
                 <a href="{{ route('productos.index') }}" class="text-sm font-semibold text-gray-900">Cancelar</a>

@@ -425,21 +425,6 @@
     }
     </script>
 
-    <script>
-        let datos = @json($fichas);
-        console.log(datos);
-        console.log(datos.data);
-
-        mostrarRestricciones(1);
-
-        function mostrarRestricciones(idPersona) {
-            fetch(`/personas/${idPersona}/productos`)
-            .then(response => response.json())
-            .then(data => {
-            console.log(data.cantidad)
-            });
-        }
-    </script>
     {{-- Mensaje de alerta --}}
     <script>
         $(document).ready(function() {

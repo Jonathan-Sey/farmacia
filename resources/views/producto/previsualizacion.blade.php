@@ -4,14 +4,14 @@
 
 @section('contenido')
 <div class="container mx-auto px-4">
-    <h2 class="text-2xl font-bold mb-5">Previsualización de Productos a Importar</h2>
+    <h2 class="text-2xl font-bold mb-5">Previsualización de Productos</h2>
 
     <form action="{{ route('productos.importar.guardar') }}" method="POST">
         @csrf
 
         <div class="mb-4">
             <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
-                Confirmar Importación
+                Confirmar
             </button>
             <a href="{{ route('productos.importar') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2">
                 Volver
@@ -31,10 +31,10 @@
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-200">
                 <thead class="bg-gray-100">
-                    <tr>
+                    <tr class="bg-white">
                         <th class="py-2 px-4 border-b">Código</th>
                         <th class="py-2 px-4 border-b">Nombre</th>
-                        <th class="py-2 px-4 border-b">Precio Venta</th>
+                        <th class="py-2 px-4 border-b">Precio Costo</th>
                         <th class="py-2 px-4 border-b">Categoría</th>
                         <th class="py-2 px-4 border-b">Acciones</th>
                     </tr>

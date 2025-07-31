@@ -42,7 +42,7 @@ class ProveedorController extends Controller
     public function store(Request $request)
     {
         $this->validate($request,[
-            'nombre'=>['required','string','max:35'],
+            'nombre'=>['required','string','max:35','unique:proveedor,nombre'],
             'telefono'=>['required','string','max:20'],
             'empresa'=>['required','string','max:35'],
             'correo'=>['required','string','max:35'],
@@ -107,7 +107,7 @@ class ProveedorController extends Controller
     public function update(Request $request, Proveedor $proveedor)
     {
         $this->validate($request,[
-            'nombre'=>['required','string','max:35'],
+            'nombre'=>['required','string','max:35','unique:proveedor,nombre,' . $proveedor->id ],
             'telefono'=>['required','string','max:20'],
             'empresa'=>['required','string','max:35'],
             'correo'=>['required','string','max:35'],

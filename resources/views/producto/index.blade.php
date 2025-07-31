@@ -192,14 +192,7 @@
                 { responsivePriority: 1, targets: 1 },
                 { responsivePriority: 2, targets: 9 },
             ],
-            // drawCallback: function() {
-            //     // Esperar un momento para asegurarse de que los botones se hayan cargado
-            //     setTimeout(function() {
-            //         // Seleccionar los botones de paginación y agregar clases de DaisyUI
-            //         $('a.paginate_button').addClass('btn btn-sm btn-primary mx-1'); // Todos los botones
-            //         $('a.paginate_button.current').removeClass('btn-gray-800').addClass('btn btn-sm btn-primary'); // Resaltar la página actual
-            //     }, 100); // Espera 100 ms antes de aplicar las clases
-            // },
+
         });
 
         

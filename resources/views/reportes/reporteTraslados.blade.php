@@ -6,6 +6,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 
 <style>
     /* Estilos adicionales */
@@ -20,12 +21,16 @@
     <div class="flex flex-wrap gap-4 items-end">
         <div class="flex-1 min-w-[200px]">
             <label for="sucursal-select" class="block text-sm font-medium text-gray-700">Sucursal:</label>
-            <select id="sucursal-select" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-                <option value="">-- Todas las sucursales --</option>
-                @foreach ($sucursales as $sucursal)
-                    <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
-                @endforeach
-            </select>
+            <x-select2
+                name="sucursal-select"
+                id="sucursal-select"
+                placeholder="Todas"
+                :options="$sucursales->pluck('nombre','id')"
+                :selected="old('sucursal-select')"
+            />
+
+            
+
         </div>
         <div class="flex-1 min-w-[200px]">
             <label for="fecha-input" class="block text-sm font-medium text-gray-700">Fecha:</label>
@@ -62,6 +67,8 @@
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
 
 <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.js"></script>
 <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap5.js"></script>
@@ -95,6 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar DataTable
     const tablaReporte = $('#example').DataTable({
         responsive: true,
+        order: [5,'desc'],
         language: {
             url: '/js/i18n/Spanish.json',
             emptyTable: "Seleccione una sucursal y/o fecha para ver los datos.",

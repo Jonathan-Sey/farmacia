@@ -290,8 +290,6 @@
             return;
         }
 
-        console.log(datos);
-
 
         // proceso para agregar los productos a la tabla 
         contador ++;

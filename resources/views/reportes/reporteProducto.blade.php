@@ -5,6 +5,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
 @endpush
 
 @section('contenido')
@@ -12,14 +14,17 @@
 <div class="max-w-5xl mx-auto p-4 mb-6 bg-white rounded-lg shadow-md">
     <div class="flex flex-wrap gap-4 items-end">
         <div class="flex-1 min-w-[200px]">
-            <label for="select-sucursal" class="block text-sm font-medium text-gray-700">Sucursal:</label>
-            <select id="select-sucursal" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-                <option value="">Todas</option>
-                @foreach ($sucursales as $sucursal)
-                <option value="{{ $sucursal->id }}">{{ $sucursal->nombre }}</option>
-                @endforeach
-            </select>
+            <label for="select-sucursal" class="block text-sm font-medium text-gray-700">Farmacia:</label>
+            <x-select2
+                id="select-sucursal"
+                name="select-sucursal"
+                :options="$sucursales->pluck('nombre','id')"
+                :selected="old('select-sucursal')"
+                placeholder="Todas"
+            />
         </div>
+
+
         <div class="flex-1 min-w-[200px]">
             <label for="fecha" class="block text-sm font-medium text-gray-700">Fecha:</label>
             <input type="date" id="fecha" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
@@ -54,6 +59,8 @@
 @endsection
 
 @push('js')
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
 
 <script>
     // Función para calcular el número de semana ISO
@@ -180,18 +187,10 @@
                     ]
                 }
             },
-            columnDefs: [{
-                    responsivePriority: 3,
-                    targets: 0
-                },
-                {
-                    responsivePriority: 1,
-                    targets: 1
-                },
-                {
-                    responsivePriority: 2,
-                    targets: 3
-                },
+            columnDefs: [
+                {responsivePriority: 3,targets: 0},
+                {responsivePriority: 1,targets: 1},
+                {responsivePriority: 2,targets: 3},
             ],
             drawCallback: function() {
                 // Esperar un momento para asegurarse de que los botones se hayan cargado
