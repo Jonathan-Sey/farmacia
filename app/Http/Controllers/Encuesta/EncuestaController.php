@@ -23,7 +23,7 @@ class EncuestaController extends Controller
     public function index()
     {
         $encuestas = Encuestas::with(['medico.usuario'])->latest()->get();
-        return view('encuesta.index', compact('encuestas'));
+        return view('Encuesta.index', compact('encuestas'));
     }
 
     /**
@@ -37,7 +37,7 @@ class EncuestaController extends Controller
         $usuarios = User::all();
         $sucursales = Sucursal::all(); // Asegúrate de que esta consulta está correcta
         $especialidades = Especialidades::all(); // Si necesitas las especialidades, puedes obtenerlas aquí
-        return view('encuesta.create', compact('sucursales','especialidades','usuarios','medicos'));
+        return view('Encuesta.create', compact('sucursales','especialidades','usuarios','medicos'));
     }
 
     /**
@@ -141,7 +141,7 @@ class EncuestaController extends Controller
         $estadisticas = $this->calcularEstadisticas($encuesta);
         //dd($estadisticas); array con las datos estadisticos como promedio, max, min, total
         //dd($estadisticas);
-        return view('encuesta.respuestas', compact('encuesta', 'estadisticas'));
+        return view('Encuesta.respuestas', compact('encuesta', 'estadisticas'));
     }
 
     protected function calcularEstadisticas($encuesta)

@@ -300,7 +300,7 @@
                     <th>${contador}</th>
                     <td>${nombre}</td>
                     <td>${cantidad}</td>
-                    <td>${instrucciones || 'N/A'}</td>
+                    <td>${instrucciones || `N/A`}</td>
                     <td>
                         <button type="button" class = "eliminar-producto">
                             <i class="p-3 cursor-pointer fa-solid fa-trash"></i>

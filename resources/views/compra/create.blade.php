@@ -152,17 +152,26 @@
                     <legend class="text-blue-500 font-bold">Datos Generales</legend>
                     <div class="border-b border-gray-900/10 ">
 
-                     
-                        <x-select2
-                            name="id_proveedor"
-                            label="proveedor"
-                            :options="$proveedores->pluck('empresa','id')"
-                            :selected="old('id_proveedor')"
-                            placeholder="Seleccionar proveedor"
-                        />
+                        <div class="mt-2 mb-5">
+                            <label for="id_proveedor" class="uppercase block text-sm font-medium text-gray-900">Proveedor</label>
+                            <select
+                                class="select2-proveedor block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                name="id_proveedor"
+                                id="id_proveedor"
+                                required>
+                                <option value="">Seleccionar una categoría</option>
+                                @foreach ($proveedores as $proveedor)
+                                    <option value="{{ $proveedor->id }}" {{old('id_proveedor') == $proveedor->id ? 'selected' : ''}}>{{$proveedor->empresa}}</option>
+                                @endforeach
+                            </select>
+                            @error('id_proveedor')
+                                <div role="alert" class="alert alert-error mt-4 p-2">
+                                    <span class="text-white font-bold">{{ $message }}</span>
+                                </div>
+                            @enderror
+                        </div>
 
-
-                        {{-- <div class="mt-2 mb-5">
+                        <div class="mt-2 mb-5">
                             <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Código de sucursal</label>
                             <select
                                 class="select2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
@@ -182,15 +191,7 @@
                                     <span class="text-white font-bold">{{ $message }}</span>
                                 </div>
                             @enderror
-                        </div>   --}}
-
-                        <x-select2
-                            name="id_sucursal"
-                            label="Código de sucursal"
-                            :options="$sucursales->pluck('name','id')"
-                            :selected="old('id_sucursal')"
-                            placeholder="Seleccionar una Sucursal"
-                        /> 
+                        </div>
 
                         <!-- formulario para prescripciones -->
                         <div class="mt-2 mb-5">
@@ -251,6 +252,19 @@
                                 </div>
                             </div>
 
+                            {{-- <div class="mt-2 mb-5">
+                                <label for="fecha_compra" class="uppercase block text-sm font-medium text-gray-900">Fecha</label>
+                                <input
+                                    readonly
+                                    type="date"
+                                    name="fecha_compra"
+                                    id="fecha_compra"
+                                    autocomplete="given-name"
+                                    placeholder="Impuesto"
+                                    class=" block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
+                                    value="<?php echo date("Y-m-d") ?>">
+
+                            </div> --}}
                             <div class="mt-2 mb-5">
                                 <label for="fecha_vencimiento" class="uppercase block text-sm font-medium text-gray-900">Fecha de Vencimiento</label>
                                 <input
@@ -298,9 +312,6 @@
                                     </div>
                                 @enderror
                             </div>
-
-                            
-
                             <!-- Contenedor para mostrar la imagen -->
                             <div id="imagen-producto" class="mt-4 hidden">
                                 <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded">
@@ -438,7 +449,6 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/obtenerUsuario.js"></script>
-<script src="/js/select2-global.js"></script>
 <script>
 
     function verificarEstadoFormulario() {
@@ -478,7 +488,7 @@
         });
 
         // Configuración para el select de productos
-        $('#id-producto').select2({
+        $('#id_producto').select2({
             width: '100%',
             placeholder: "Buscar producto",
             allowClear: true,
@@ -1108,7 +1118,5 @@ document.getElementById('btn-subir-comprobante').addEventListener('click', funct
 
      </script>
 
-</script>
 
 @endpush
-

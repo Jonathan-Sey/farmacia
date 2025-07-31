@@ -304,7 +304,7 @@ class AlmacenController extends Controller
              'accion' => 'Actualización',
              'tabla_afectada' => 'Almacen',
              'detalles' => "Se actualizo la alerta del producto: {$almacen->producto->nombre} con el minimo de {$request->alerta_stock} en la sucursal: {$almacen->sucursal->nombre}",
-             'ficha_hora' => now(),
+             'fecha_hora' => now(),
          ]);
 
         return redirect()->route('almacenes.index')->with('success', '¡Alerta de stock actualizada!');

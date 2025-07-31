@@ -29,7 +29,7 @@ use App\Http\Controllers\solicitud\solicitudController;
 use App\Http\Controllers\FichaMedicaController;
 use App\Http\Controllers\traslado\trasladoController;
 use App\Http\Controllers\Venta\VentaController;
-use App\Http\Controllers\encuesta\EncuestaController;
+use App\Http\Controllers\Encuesta\EncuestaController;
 use App\Imports\ProductosImport;
 use App\Mail\validacion;
 use App\Models\Devoluciones;

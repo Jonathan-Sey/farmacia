@@ -3566,6 +3566,9 @@ details.collapse summary::-webkit-details-marker {
 .table {
   display: table;
 }
+.flow-root {
+  display: flow-root;
+}
 .grid {
   display: grid;
 }
@@ -3713,6 +3716,12 @@ details.collapse summary::-webkit-details-marker {
 .w-full {
   width: 100%;
 }
+.w-\[200px\] {
+  width: 200px;
+}
+.w-\[100px\] {
+  width: 100px;
+}
 .min-w-\[150px\] {
   min-width: 150px;
 }
@@ -3721,6 +3730,9 @@ details.collapse summary::-webkit-details-marker {
 }
 .min-w-full {
   min-width: 100%;
+}
+.min-w-0 {
+  min-width: 0px;
 }
 .max-w-3xl {
   max-width: 48rem;
@@ -3761,6 +3773,15 @@ details.collapse summary::-webkit-details-marker {
 }
 .max-w-sm {
   max-width: 24rem;
+}
+.max-w-\[100px\] {
+  max-width: 100px;
+}
+.max-w-\[400px\] {
+  max-width: 400px;
+}
+.max-w-\[500px\] {
+  max-width: 500px;
 }
 .flex-1 {
   flex: 1 1 0%;
@@ -3903,9 +3924,18 @@ details.collapse summary::-webkit-details-marker {
   border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
   border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
 }
+.divide-x > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-x-reverse: 0;
+  border-right-width: calc(1px * var(--tw-divide-x-reverse));
+  border-left-width: calc(1px * calc(1 - var(--tw-divide-x-reverse)));
+}
 .divide-gray-200 > :not([hidden]) ~ :not([hidden]) {
   --tw-divide-opacity: 1;
   border-color: rgb(229 231 235 / var(--tw-divide-opacity, 1));
+}
+.divide-base-300 > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-opacity: 1;
+  border-color: var(--fallback-b3,oklch(var(--b3)/var(--tw-divide-opacity, 1)));
 }
 .self-start {
   align-self: flex-start;
@@ -4160,6 +4190,10 @@ details.collapse summary::-webkit-details-marker {
 .bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity, 1));
+}
+.bg-blue-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(219 234 254 / var(--tw-bg-opacity, 1));
 }
 .bg-opacity-50 {
   --tw-bg-opacity: 0.5;
@@ -4858,6 +4892,10 @@ details.collapse summary::-webkit-details-marker {
 
   .sm\:min-w-\[400px\] {
     min-width: 400px;
+  }
+
+  .sm\:max-w-\[400px\] {
+    max-width: 400px;
   }
 
   .sm\:grid-cols-1 {

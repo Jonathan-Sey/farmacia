@@ -18,7 +18,7 @@ class CreateRecetaProductoTable extends Migration
             $table->foreignId('ficha_medica_id')->constrained('fichas_medicas')->onDelete('cascade');
             $table->foreignId('producto_id')->constrained('producto')->onDelete('cascade');
             $table->integer('cantidad');
-            $table->text('instrucciones');
+            $table->text('instrucciones')->nullable();
             $table->timestamps();
         });
     }

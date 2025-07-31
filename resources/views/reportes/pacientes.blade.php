@@ -30,13 +30,37 @@
     <x-slot name="tbody">
         <tbody>
             @foreach ($fichasAgrupadas as $persona)
-            @if($persona->rol == 2 || $persona->rol == 3)
+            @if($persona->rol == 2)
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $persona->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
                         {{ $persona->nombre }} 
                         {{$persona->fichasMedicas->first()->apellido_paterno ?? ' '}}  
                         {{$persona->fichasMedicas->first()->apellido_materno ?? ' '}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $persona->DPI ?? 'Sin datos'}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $persona->telefono ?? 'Sin datos'}}</td>
+
+
+                    <td class="flex gap-2 justify-center">
+
+                        {{-- <form action="{{route('reporte.DetallePaciente')}}" method="GET"> --}}
+                        <form action="{{route('reporte.DetallePaciente', $persona->id)}}" method="GET">
+                            @csrf
+                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                                ver
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+            @endif
+        @if($persona->rol == 3)
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $persona->id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {{ $persona->fichasMedicas->first()->nombreMenor ?? 'Sin informacion ' }} 
+                        {{$persona->fichasMedicas->first()->apellido_paterno_menor ?? ' '}}  
+                        {{$persona->fichasMedicas->first()->apellido_materno_menor ?? ' '}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $persona->DPI ?? 'Sin datos'}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $persona->telefono ?? 'Sin datos'}}</td>
 

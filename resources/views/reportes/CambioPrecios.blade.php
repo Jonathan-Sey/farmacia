@@ -7,12 +7,13 @@
 
 @section('contenido')
 <div class="container">
-
-     <form id="formReporte" class="space-y-4 sm:space-y-6 mb-5" >
-        @csrf
-        <div class="mb-5">
+    
+    <div class="mb-5">
                <a href="{{route('Reporte_ventas.index')}}" class="bg-blue-700 text-white font-bold p-3 rounded-md inline-block" >Volver</a>
-        </div>
+    </div>
+
+     <form action="{{ route('reporte.fechaCambioPrecio') }}" method="POST" id="formReporte" class="space-y-4 sm:space-y-6 mb-5" >
+        @csrf
 
         <!-- Toggle para alternar modo de búsqueda -->
         <div class="flex flex-row gap-5">
@@ -80,17 +81,15 @@
         </x-slot>
         <x-slot name="tbody">
             <tbody id="tabla">
-                @forelse($historico as $registro)
+                @foreach($historico as $registro)
                     <tr>
                         <td class="px-6 py-4">{{ $registro->producto->nombre }}</td>
                         <td class="px-6 py-4">{{ number_format($registro->precio_anterior, 2) }}</td>
                         <td class="px-6 py-4">{{ number_format($registro->precio_nuevo, 2) }}</td>
                         <td class="px-6 py-4">{{ $registro->fecha_cambio }}</td>
                     </tr>
-                    @empty
-                    <td class="px-6 py-4">No se encuentran registros</td>
 
-                @endforelse
+                @endforeach
             </tbody>
         </x-slot>
     </x-data-table>
@@ -147,7 +146,7 @@
     });
 </script>
 
-<script>
+{{-- <script>
     $(document).ready(function (){
         // asignamos un evneto de tipo submit al formulario
         // al accionarse mandamos los datos de los inputs fecha, producto
@@ -205,7 +204,7 @@
 
 
     })
-</script>
+</script> --}}
 
 {{-- proceso para ocultar y mostrar los datos  --}}
 <script>

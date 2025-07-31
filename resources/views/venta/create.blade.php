@@ -191,7 +191,7 @@
             <div id="usuario"></div>
             {{-- <input type="hidden" id="userSucursalId" name="userSucursalId"> --}}
             <div class="lg:grid lg:grid-cols-2 lg:gap-5 sm:grid sm:grid-cols-1 sm:gap-5 items-start">
-                <fieldset class="border-2 border-gray-200 p-2 rounded-2xl">
+                <fieldset class="border-2 border-gray-200 p-2 rounded-2xl ">
                     <legend class="text-blue-500 font-bold">Datos Generales</legend>
 
                     <div class="border-b border-gray-900/10 ">
@@ -352,10 +352,10 @@
                 </fieldset>
 
 
-                <fieldset class="border-2 border-gray-200 p-2 rounded-2xl self-start">
+                <fieldset class="border-2 border-gray-200 p-2 rounded-2xl self-start min-w-full max-w-full">
                     <legend class="text-blue-500 font-bold">Venta</legend>
                     <!-- Toggle para alternar modo de búsqueda -->
-                    <div class="flex flex-row gap-5">
+                    <div class="flex flex-row gap-5 overflow-x-auto">
                         <div class="flex flex-col gap-1">
                             <label for="tipo" class="font-me">Buscar Consulta medica</label>
                             <input name="tipo" id="tipo" type="checkbox" class="toggle toggle-success"
@@ -363,6 +363,7 @@
                                 />
                         </div>
                     </div>
+                    
 
 
                     <div class="mt-2 mb-5 select-medico" id="select-consulta">
@@ -382,29 +383,29 @@
                             @enderror
                     </div>
 
-                    
-                    <div class="mt-5" id="tabla-detalles" >
-                        <div class="overflow-x-auto">
-                            <h3 class="text-center text-lg font-bold mb-3">Productos Recetados</h3>
-                            <table class="table table-xs table-pin-rows table-pin-cols" id="tabla-productos-recetados">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <td>Nombre</td>
-                                    {{-- <td>Precio</td> --}}
-                                    <td>Cantidad</td>
-                                    {{-- <td>Instrucciones</td>
-                                    <td>Acciones</td> --}}
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                    <tbody>
-                                            {{-- contenido generado en js --}}
-                                    </tbody>
-                                </table>
-                        </div>
-                    </div>
-
+                     {{-- inicio de la tabla  --}}
+                           <div class="mt-5 flex flex-col min-w-0 mb-5" id="tabla-detalles" >
+                                <div class="overflow-x-auto min-w-0">
+                                    <h3 class="text-center text-lg font-bold mb-3">Productos Recetados</h3>
+                                    <table class="min-w-full table table-sm table-pin-rows table-pin-cols" id="tabla-productos-recetados">
+                                        <thead>
+                                        <tr class="break-words">
+                                            <th></th>
+                                            <td>Nombre</td>
+                                            {{-- <td>Precio</td> --}}
+                                            <td>Cantidad</td>
+                                            {{-- <td>Instrucciones</td>
+                                            <td>Acciones</td> --}}
+                                            <th></th>
+                                        </tr>
+                                        </thead>
+                                            <tbody>
+                                                    {{-- contenido generado en js --}}
+                                            </tbody>
+                                        </table>
+                                </div>
+                            </div>
+                        {{-- fin toggle --}}
 
                     <div class="border-b border-gray-900/10  lg:pb-0 lg:mb-0">
                         {{-- producto --}}
@@ -551,28 +552,6 @@
 
 
             </div>
-
-                    <div class="mt-5" id="tabla-detalles" >
-                        <div class="overflow-x-auto">
-                            <h3 class="text-center text-lg font-bold mb-3">Productos Recetados</h3>
-                            <table class="table table-md table-pin-rows table-pin-cols" id="tabla-productos-recetados">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <td>Nombre</td>
-                                    {{-- <td>Precio</td> --}}
-                                    <td>Cantidad</td>
-                                    {{-- <td>Instrucciones</td>
-                                    <td>Acciones</td> --}}
-                                    <th></th>
-                                </tr>
-                                </thead>
-                                    <tbody>
-                                            {{-- contenido generado en js --}}
-                                    </tbody>
-                                </table>
-                        </div>
-                    </div>
 
             {{-- tabla detalle --}}
             <div class="mt-8">
@@ -1128,49 +1107,49 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
             precioOriginal = precioVenta;
 
             // Para servicios, verificar si es cliente antiguo
-            if (tipoProducto == 2 && personaId) {
-                $.ajax({
-                    url: '/api/personas/' + personaId + '/es-antiguo',
-                    method: 'GET',
-                    success: function(response) {
-                        console.log(response);
-                        if (response.es_antiguo) {
-                            precioOriginal = precioPorcentaje;
-                            $('#precio').addClass('text-green-600');
-                            $('#nuevo_precio').val(precioPorcentaje).prop('readonly', true);
-                        } else {
-                            $('#precio').removeClass('text-green-600');
-                            $('#nuevo_precio').val('').prop('readonly', false);
-                        }
+            // if (tipoProducto == 2 && personaId) {
+            //     $.ajax({
+            //         url: '/api/personas/' + personaId + '/es-antiguo',
+            //         method: 'GET',
+            //         success: function(response) {
+            //             console.log(response);
+            //             if (response.es_antiguo) {
+            //                 precioOriginal = precioPorcentaje;
+            //                 $('#precio').addClass('text-green-600');
+            //                 $('#nuevo_precio').val(precioPorcentaje).prop('readonly', true);
+            //             } else {
+            //                 $('#precio').removeClass('text-green-600');
+            //                 $('#nuevo_precio').val('').prop('readonly', false);
+            //             }
 
-                        // Aplicar porcentaje si existe
-                        let porcentaje = parseFloat($('#porcentaje').val()) || 0;
-                        precioProducto = round(precioOriginal + (precioOriginal * (porcentaje / 100)));
-                        nombreProducto = selectedOption.getAttribute('data-nombre-completo');
+            //             // Aplicar porcentaje si existe
+            //             let porcentaje = parseFloat($('#porcentaje').val()) || 0;
+            //             precioProducto = round(precioOriginal + (precioOriginal * (porcentaje / 100)));
+            //             nombreProducto = selectedOption.getAttribute('data-nombre-completo');
 
-                        $('#precio').val(precioProducto);
-                        $('#precio_original').val(precioOriginal);
-                    },
-                    error: function() {
-                        console.error('Error al verificar cliente antiguo');
-                        // Continuar con precio normal si hay error
-                        let porcentaje = parseFloat($('#porcentaje').val()) || 0;
-                        precioProducto = round(precioOriginal + (precioOriginal * (porcentaje / 100)));
-                        nombreProducto = selectedOption.getAttribute('data-nombre-completo');
+            //             $('#precio').val(precioProducto);
+            //             $('#precio_original').val(precioOriginal);
+            //         },
+            //         error: function() {
+            //             console.error('Error al verificar cliente antiguo');
+            //             // Continuar con precio normal si hay error
+            //             let porcentaje = parseFloat($('#porcentaje').val()) || 0;
+            //             precioProducto = round(precioOriginal + (precioOriginal * (porcentaje / 100)));
+            //             nombreProducto = selectedOption.getAttribute('data-nombre-completo');
 
-                        $('#precio').val(precioProducto);
-                        $('#precio_original').val(precioOriginal);
-                    }
-                });
-            } else {
-                // Para productos o cuando no hay cliente seleccionado
-                let porcentaje = parseFloat($('#porcentaje').val()) || 0;
-                precioProducto = round(precioOriginal + (precioOriginal * (porcentaje / 100)));
-                nombreProducto = selectedOption.getAttribute('data-nombre-completo');
+            //             $('#precio').val(precioProducto);
+            //             $('#precio_original').val(precioOriginal);
+            //         }
+            //     });
+            // } else {
+            //     // Para productos o cuando no hay cliente seleccionado
+            //     let porcentaje = parseFloat($('#porcentaje').val()) || 0;
+            //     precioProducto = round(precioOriginal + (precioOriginal * (porcentaje / 100)));
+            //     nombreProducto = selectedOption.getAttribute('data-nombre-completo');
 
-                $('#precio').val(precioProducto);
-                $('#precio_original').val(precioOriginal);
-            }
+            //     $('#precio').val(precioProducto);
+            //     $('#precio_original').val(precioOriginal);
+            // }
         }
 
         // Toggle para aplicar descuento
@@ -1861,11 +1840,11 @@ function mensaje(message, icon = "error") {
                              const precio = parseFloat(producto.precio);
 
                              const contenedor = `
-                             <tr >
+                             <tr class="break-words">
                             <th>${index+1}</th>
-                             <td>${producto.nombre}</td>
+                             <td class="break-words">${producto.nombre}</td>
                              
-                             <td>${producto.cantidad}</td>
+                             <td class="break-words">${producto.cantidad}</td>
                              
                              </tr>
                              `;
@@ -1952,7 +1931,7 @@ function mensaje(message, icon = "error") {
                             : `Este cliente ha excedido su límite de compras (${data.compras_recientes}/${data.limite_compras})`;
 
                         alertContainer.innerHTML = `
-                            <div class="alert alert-error shadow-lg mb-4">
+                            <div class="alert alert-error shadow-lg mb-4 mt-2 ">
                                 <div>
                                     <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>

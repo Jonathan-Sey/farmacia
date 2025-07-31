@@ -338,38 +338,23 @@ class ReporteVentasController extends Controller
 
     public function filtrarCambioDePrecio(Request $request)
     {
+        //dd($request);
         $productos = Producto::all();
          $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')->get();
+         //dd($historico);
         return view('reportes.CambioPrecios', compact('historico','productos'));
     }
 
     public function filtrarFechaCambioDePrecio(Request $request){
         //dd($request);
+            $productos = Producto::all();
             // primera parte
              $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')
              ->whereBetween('fecha_cambio',[$request->fechaInicio, $request->fechaFin])
              ->get();
 
-
-            // segunda fase en prueba
-            // esta sera la primera fase para evaluar solo productos
-            $query = HistoricoPrecio::with('producto');
-            if($request->productos){
-                $historico->where('producto_id', $request->productos);
-            }
-
-            $historico->whereBetween('fecha_cambio', [
-                // definimos un formato para las fechas de inicio y fecha de fin
-                Carbon::parse($request->fechaInicio)->startOfDay(),
-                Carbon::parse($request->fechaFin)->endOfDay()
-            ]);
-
-            $historico = $query->ordenBy('fecha_cambio', 'desc')->get();
-            $html = view('reportes.CambioPrecios', compact('historico'))->render();
-            return response()->json(['html' => $html]);
-
             // esta es de la primera fase
-        // return view('reportes.CambioPrecios', compact('historico'));
+          return view('reportes.CambioPrecios', compact('historico','productos'));
     }
 
     public function filtrarCambioDePrecio2(Request $request)
