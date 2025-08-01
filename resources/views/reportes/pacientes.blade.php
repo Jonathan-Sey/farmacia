@@ -12,7 +12,32 @@
 {{-- <div class="max-w-5xl mx-auto p-4 mb-6 bg-white rounded-lg shadow-md">
 </div> --}}
 
-<x-data-table>
+<form action="{{route('reporte.DetallePacienteFecha')}}" method="POST">
+    @csrf
+        {{-- botones para definir el rango de fechas --}}
+        <div id="camposRengo" class="flex flex-col gap-2 md:flex-row">
+            <div class="flex-1 mb-4">
+                <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
+                <input type="date" id="fechaInicio" name="fechaInicio" 
+                class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
+            </div>
+            <div class="flex-1 mb-4">
+                <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
+                <input type="date" id="fechaFin" name="fechaFin" 
+                class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
+            </div>
+        </div>
+
+        <!-- Botón -->
+        <div class=" flex flex-col gap-5 md:flex-row justify-end">
+            <button type="submit" id="btnGenerarInforme"
+                class="w-full sm:w-auto px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 focus:bg-green-600 focus:ring-4 focus:ring-green-200 transition-all duration-200 font-medium text-sm sm:text-base">
+                Generar Informe
+            </button>
+        </div>
+</form>
+
+<x-data-table class="mt-5">
     <x-slot name="thead">
         <thead class=" text-white font-bold">
             <tr class="bg-slate-600  ">

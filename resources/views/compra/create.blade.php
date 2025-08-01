@@ -170,7 +170,7 @@
                                 </div>
                             @enderror
                         </div>
-
+{{-- 
                         <div class="mt-2 mb-5">
                             <label for="id_sucursal" class="uppercase block text-sm font-medium text-gray-900">Código de sucursal</label>
                             <select
@@ -191,7 +191,15 @@
                                     <span class="text-white font-bold">{{ $message }}</span>
                                 </div>
                             @enderror
-                        </div>
+                        </div> --}}
+
+                        <x-select2
+                            id="id_sucursal"
+                            name="id_sucursal"
+                            :options="$sucursales->pluck('nombre','id')"
+                            :selected="old('id_sucursal')"
+                            placeholder="Buscar una farmacia"
+                        />
 
                         <!-- formulario para prescripciones -->
                         <div class="mt-2 mb-5">
@@ -449,6 +457,7 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script src="/js/obtenerUsuario.js"></script>
+<script src="/js/select2-global.js"></script>
 <script>
 
     function verificarEstadoFormulario() {

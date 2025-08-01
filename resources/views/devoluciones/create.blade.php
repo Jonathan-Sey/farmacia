@@ -330,18 +330,19 @@
                     url: `/ventas-devoluciones/${ventaId}`,
                     method: "GET",
                     success: function(response) {
-                        console.log(response);
+                        //console.log(response);
                         $('#persona_nombre').val(response.persona.nombre);
                         $('#sucursal_nombre').val(response.sucursal.nombre);
                         $('#id_persona').val(response.persona.id);
                         $('#id_sucursal').val(response.sucursal.id);
+                        
 
                         tablaDetalles.empty();
 
                         response.detalles.forEach((detalle, index) => {
                             const subtotal = detalle.precio * detalle.cantidad;
-
-                            const row = `
+                            if(detalle.producto.tipo == 1){
+                                const row = `
                                 <tr>
                                     <td>${detalle.producto.nombre}</td>
                                     <td>${detalle.cantidad}</td>
@@ -360,6 +361,11 @@
                                 </tr>
                             `;
                             tablaDetalles.append(row);
+                            }else{
+                              //  console.log("producto tipo servicio")
+                            }
+                            
+                            
                         });
 
                         recalcularTotales();

@@ -76,7 +76,6 @@ class ReporteVentasController extends Controller
     {
         $reporte = ReporteKardex::with([
             'producto',
-
             'usuario'
         ])->get();
         return view('reportes.Kardex', compact('reporte'));
@@ -270,7 +269,7 @@ class ReporteVentasController extends Controller
     {
         $sucursales = Sucursal::all();
         $productos = Inventario::with([
-            'producto:id,nombre,precio_venta',
+            'producto:id,nombre,precio_porcentaje',
             'bodega:id,nombre,ubicacion'
         ])->get();
         return view('reportes.reporteProducto', compact('productos', 'sucursales'));
@@ -291,7 +290,7 @@ class ReporteVentasController extends Controller
 
                 DB::raw('WEEK(almacen.created_at, 3) as semana'),
                 DB::raw('SUM(almacen.cantidad) as cantidad_total'),
-                DB::raw('SUM(almacen.cantidad * producto.precio_venta) as valor_total_producto')
+                DB::raw('SUM(almacen.cantidad * producto.precio_porcentaje) as valor_total_producto')
             );
 
         if ($sucursalId) {
@@ -357,6 +356,17 @@ class ReporteVentasController extends Controller
           return view('reportes.CambioPrecios', compact('historico','productos'));
     }
 
+    public function DetallePacienteFecha(Request $request){ 
+        //dd($request);
+        // $fichasAgrupadas = Persona::with(['fichasMedicas.detalleMedico.usuario'])
+        //>whereBetween('created_at',[$request->fechaInicio, $request->fichaFin])
+        // ->get();
+        
+
+        dd($fichasAgrupadas);
+        return view('reportes.DetallePaciente', compact('fichasAgrupadas'));        
+    }
+
     public function filtrarCambioDePrecio2(Request $request)
     {
         $productos = Producto::all();
@@ -378,6 +388,7 @@ class ReporteVentasController extends Controller
     // Filtro por producto si está presente
     if ($request->filled('productos')) {
         $query->where('producto_id', $request->productos);
+
     }
 
     // Filtro por rango de fechas si están presentes

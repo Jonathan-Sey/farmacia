@@ -1,7 +1,10 @@
 @extends('template')
 
 @section('titulo', 'Previsualización de Importación')
-
+@push('css')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+@endpush
 @section('contenido')
 <div class="container mx-auto px-4">
     <h2 class="text-2xl font-bold mb-5">Previsualización de Productos</h2>
@@ -27,6 +30,8 @@
                 </ul>
             </div>
         @endif
+
+
 
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-200">
@@ -94,6 +99,7 @@
                                 </option>
                                 @endforeach
                             </select>
+                            
 
                             <!-- Mensaje para categoría no seleccionada -->
                             @if(is_null($producto['id_categoria']))
@@ -136,6 +142,9 @@
         </div>
     </form>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {

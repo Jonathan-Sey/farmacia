@@ -194,7 +194,7 @@ class devolucionesController extends Controller
 
     public function getVenta($id)
     {
-        $venta = Venta::with(['sucursal', 'usuario', 'persona'])->where('id', $id)->first();
+        $venta = Venta::with(['sucursal', 'usuario', 'persona','productos'])->where('id', $id)->first();
         $detalleVenta = DetalleVenta::with(['producto'])->where('id_venta', $id)->get();
         $venta->detalles = $detalleVenta;
         $venta->total = $detalleVenta->sum(function ($detalle) {

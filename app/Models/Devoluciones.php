@@ -44,7 +44,7 @@ class Devoluciones extends Model
 
         public function venta()
     {
-        return $this->belongsTo(venta::class, 'venta_id');
+        return $this->belongsTo(Venta::class, 'venta_id');
     }
 
 

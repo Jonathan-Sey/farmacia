@@ -243,6 +243,7 @@ Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProduc
 //reporte de pacientes y detalle medicos
 Route::get('/reporte-pacientes', [ReporteVentasController::class, 'filtrarPacientes'])->name('reporte.pacientes');
 Route::get('/reporte-pacientes/detalle-paciente/{id}', [ReporteVentasController::class, 'filtrarDetallePaciente'])->name('reporte.DetallePaciente');
+Route::post('/reporte-pacientes/fecha', [ReporteVentasController::class, 'DetallePacienteFecha'])->name('reporte.DetallePacienteFecha');
 
 
 //reporte para el cambio de precios

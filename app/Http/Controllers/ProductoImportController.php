@@ -15,7 +15,8 @@ class ProductoImportController extends Controller
 {
     public function mostrarImportacion()
     {
-        return view('producto.importar');
+        $categoria = Categoria::all(); 
+        return view('producto.importar', compact('categoria'));
     }
 
    public function procesarImportacion(Request $request)

@@ -26,6 +26,8 @@
 {{-- <div class="max-w-5xl mx-auto p-4 mb-6 bg-white rounded-lg shadow-md">
 </div> --}}
 
+
+
 <x-data-table>
     <x-slot name="thead">
         <thead class=" text-white font-bold">

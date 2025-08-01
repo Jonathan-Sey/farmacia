@@ -98,6 +98,7 @@
             })
             .then(data => {
                 // Limpiar la tabla DataTable completamente
+                console.log(data);
                 const table = $('#example').DataTable();
                 table.clear();
                 
