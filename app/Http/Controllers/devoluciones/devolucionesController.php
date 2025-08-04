@@ -206,4 +206,5 @@ class devolucionesController extends Controller
 
         return response()->json($venta);
     }
+    // reivsar 
 }
