@@ -8,10 +8,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <title>Farmacias Antigua Guatemala</title>
-    <link rel="stylesheet" href="{{ mix('css/app.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <title> @yield('titulo')</title>
-    <link rel="stylesheet" href="{{ mix('js/app.js') }}">
-    {{-- <link rel="stylesheet" href="{{ mix('js/datepicker/jquery-ui.min.css') }}"> --}}
+    <link rel="stylesheet" href="{{ asset('js/app.js') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('js/datepicker/jquery-ui.min.css') }}"> --}}
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css">
     <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css" />

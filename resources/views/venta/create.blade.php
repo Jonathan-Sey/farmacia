@@ -1005,13 +1005,13 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
                             response.forEach(function(producto) {
                                 $('#id_producto').append(`
                                     <option value="${producto.id}"
-                                        data-precio="${producto.precio_venta}"
+                                        data-precio="${producto.precio_porcentaje}"
                                         data-precio-porcentaje="${producto.precio_porcentaje || producto.precio_venta}"
                                         data-nombre-completo="${producto.nombre}"
                                         data-tipo="${producto.tipo}"
                                         data-stock="${producto.stock}"
                                         data-imagen="${producto.imagen}">
-                                        ${producto.nombre} - Precio: ${producto.precio_venta}
+                                        ${producto.nombre} - Precio: ${producto.precio_porcentaje}
                                     </option>
                                 `);
                             });

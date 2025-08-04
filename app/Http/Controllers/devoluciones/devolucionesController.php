@@ -40,7 +40,7 @@ class devolucionesController extends Controller
         $personas = Persona::all();
         $productos = producto::all();
         $ventas = Venta::all();
-
+        
         return view('devoluciones.create', compact('sucursales', 'personas', 'productos', 'ventas'));
     }
 
@@ -198,7 +198,7 @@ class devolucionesController extends Controller
         $detalleVenta = DetalleVenta::with(['producto'])->where('id_venta', $id)->get();
         $venta->detalles = $detalleVenta;
         $venta->total = $detalleVenta->sum(function ($detalle) {
-            return $detalle->cantidad * $detalle->precio_venta;
+            return $detalle->cantidad * $detalle->precio_porcentaje;
         });
         if (!$venta) {
             return response()->json(['error' => 'Venta no encontrada'], 404);
