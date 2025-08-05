@@ -90,7 +90,7 @@
                             @endif
                         </a>
                     </td>
-
+                    
                     <td class="flex gap-2 justify-center">
                         @if ($almacen->producto->tipo == 2)
                             <form action="{{route('almacenes.edit',['almacen'=>$almacen->id])}}" method="GET">

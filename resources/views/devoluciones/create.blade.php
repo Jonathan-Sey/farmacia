@@ -231,7 +231,7 @@
                             <tr>
                                 <th></th>
                                 <td class="text-sm font-black">SUMA: <span id="suma" class="font-black ">0</span></td>
-                                <td class="text-sm font-black">IVA %: <span id="iva" class="font-black">0</span></td>
+                                <td class="text-sm font-black">IVA %: <span id="iva" class="font-black iva">0</span></td>
                                 <td class="text-sm font-black"><input type="hidden" name="total" value="0" id="inputTotal"> TOTAL: <span id="total" class="font-black">0</span></td>
                                 <th></th>
                             </tr>
@@ -313,6 +313,8 @@
                 sumaTotal += subtotal;
             });
 
+            // variables globales para almacenar el iva y total 
+            
             const ivaValor = sumaTotal * 0; // IVA en 0 por ahora
             const totalConIVA = sumaTotal + ivaValor;
 
@@ -335,16 +337,25 @@
                         $('#sucursal_nombre').val(response.sucursal.nombre);
                         $('#id_persona').val(response.persona.id);
                         $('#id_sucursal').val(response.sucursal.id);
+                        const prueba = parseFloat(response.impuesto);
+                        console.log(prueba);
                         
                         
-
+                        
+                        
                         tablaDetalles.empty();
 
                         response.detalles.forEach((detalle, index) => {
                             const subtotal = detalle.precio * detalle.cantidad;
-                            const totalIva = response.impuesto;
-                            let total = parseFloat(subtotal)  + parseFloat(totalIva);
-                            console.log(total);
+                            //comprobando el iva 
+                            totalIva = response.impuesto;
+                            // de string a floar 
+                            totalConIva = parseFloat(subtotal) + parseFloat(totalIva);
+                            //comprobacion del total
+                            console.log(totalConIva);
+
+
+                            // si es producto validamo
                             if(detalle.producto.tipo == 1){
                                 const row = `
                                 <tr>
@@ -355,8 +366,10 @@
                                         <input type="hidden" name="detalles[${index}][producto_id]" value="${detalle.producto.id}">
                                         <input type="hidden" name="detalles[${index}][precio]" value="${detalle.precio}">
                                         <input type="number" name="detalles[${index}][cantidad]" value="${detalle.cantidad}" min="1" max="${detalle.cantidad}" class="cantidad-input w-20 border rounded px-2 py-1">
+
                                     </td>
                                     <td class="subtotal">${subtotal.toFixed(2)}</td>
+
                                     <td>
                                         <button type="button" class="btn-eliminar text-red-600 hover:text-red-800 font-bold">
                                             <i class="p-3 cursor-pointer fa-solid fa-trash"></i>

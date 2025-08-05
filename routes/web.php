@@ -180,6 +180,7 @@ Route::post('/personas/actualizar-restricciones', [PersonaController::class, 'ac
 //productos vencidos
 Route::get('/devoluciones/autorizar/{id}/{idNot}', [devolucionesController::class, 'autorizar'])->name('devoluciones.autorizar');
 Route::get('/ventas-devoluciones/{id}', [devolucionesController::class, 'getVenta']);
+Route::post('/ventas-devoluciones/fecha', [productosVencidosController::class, 'productosVencidosFecha'])->name('devoluciones.fechas');
 
 // prueba por ahora para obtener las recetas en ventas
 Route::get('/productos-consultas/{id}', [ventaController::class, 'getProductosRecetados']);
@@ -240,6 +241,7 @@ Route::get('encuestas/respuestas/{encuesta}', [EncuestaController::class, 'verRe
 
 //reporte productos
 Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProducto'])->name('reporte.productos');
+
 //reporte de pacientes y detalle medicos
 Route::get('/reporte-pacientes', [ReporteVentasController::class, 'filtrarPacientes'])->name('reporte.pacientes');
 Route::get('/reporte-pacientes/detalle-paciente/{id}', [ReporteVentasController::class, 'filtrarDetallePaciente'])->name('reporte.DetallePaciente');
@@ -248,7 +250,9 @@ Route::post('/reporte-pacientes/fecha', [ReporteVentasController::class, 'Detall
 
 //reporte para el cambio de precios
 Route::get('/reporte-cambioPrecio', [ReporteVentasController::class, 'filtrarCambioDePrecio'])->name('reporte.CambioPrecios');
-Route::post('/reporte-cambioPrecio/producto', [ReporteVentasController::class, 'filtrarFechaCambioDePrecio'])->name('reporte.fechaCambioPrecio');
+Route::post('/reporte-cambioPrecio/producto', [ReporteVentasController::class, 'filtrarProductoCambioDePrecio'])->name('reporte.ProductoCambioPrecio');
+
+
 
 
 

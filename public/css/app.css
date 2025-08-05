@@ -4853,8 +4853,16 @@ details.collapse summary::-webkit-details-marker {
     width: auto;
   }
 
+  .sm\:w-full {
+    width: 100%;
+  }
+
   .sm\:min-w-\[400px\] {
     min-width: 400px;
+  }
+
+  .sm\:flex-1 {
+    flex: 1 1 0%;
   }
 
   .sm\:grid-cols-1 {
@@ -5017,6 +5025,10 @@ details.collapse summary::-webkit-details-marker {
     display: block;
   }
 
+  .md\:inline-block {
+    display: inline-block;
+  }
+
   .md\:flex {
     display: flex;
   }
@@ -5137,6 +5149,10 @@ details.collapse summary::-webkit-details-marker {
 
   .lg\:mt-4 {
     margin-top: 1rem;
+  }
+
+  .lg\:inline-block {
+    display: inline-block;
   }
 
   .lg\:grid {

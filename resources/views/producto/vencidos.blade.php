@@ -65,6 +65,22 @@
         </tbody>
     </x-slot>
 </x-data-table>-->
+    <form action="{{ route('devoluciones.fechas') }}" method="POST" id="formReporte" class="space-y-4 sm:space-y-6 mb-5" >
+        @csrf
+        <div class="sm:flex-1 lg:inline-block mb-4">
+            <label for="fecha" class="block text-sm font-medium text-gray-600 mb-1">Desde:</label>
+            <input type="date" id="fecha" name="fecha" value="{{ old('fecha') }}"
+                    class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
+        </div>
+
+        <!-- Botón -->
+        <div class=" flex flex-col gap-5 md:flex-row justify-end mb-5">
+            <button type="submit" id="btnGenerarInforme"
+                class="w-full sm:w-auto px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 focus:bg-green-600 focus:ring-4 focus:ring-green-200 transition-all duration-200 font-medium text-sm sm:text-base">
+                Generar Informe
+            </button>
+        </div>
+    </form>
 
  <x-data-table>
         <x-slot name="thead">

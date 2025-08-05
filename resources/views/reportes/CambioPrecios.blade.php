@@ -3,6 +3,7 @@
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/responsive/3.0.3/css/responsive.bootstrap5.css">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 @endpush
 
 @section('contenido')
@@ -12,7 +13,7 @@
                <a href="{{route('Reporte_ventas.index')}}" class="bg-blue-700 text-white font-bold p-3 rounded-md inline-block" >Volver</a>
     </div>
 
-     <form action="{{ route('reporte.fechaCambioPrecio') }}" method="POST" id="formReporte" class="space-y-4 sm:space-y-6 mb-5" >
+     <form action="{{ route('reporte.ProductoCambioPrecio') }}" method="POST" id="formReporte" class="space-y-4 sm:space-y-6 mb-5" >
         @csrf
 
         <!-- Toggle para alternar modo de búsqueda -->
@@ -26,14 +27,20 @@
         </div>
 
         <div id="productos">
-            <label for="productos" class="block text-sm font-medium text-gray-600">Buscar producto:</label>
-                <select name="productos" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
+                {{-- <select name="productos" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
                     <option value="" disabled selected>Seleccione producto</option>
                     @foreach($productos as $producto)
                     <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
                     @endforeach
-                </select>
+                </select>  --}}
 
+                <x-select2
+                    name="productos"
+                    label="Productos"
+                    :options="$productos->pluck('nombre', 'id')"
+                    :selected="old('productos')"
+                    placeholder="Todo"
+                />
         </div>
 
         <!-- Toggle para alternar modo de búsqueda -->
@@ -43,7 +50,7 @@
                         Buscar por rango de fechas
                  </span>
             </div>
-        </div>
+        </div>                
         
         <!-- Campos para el rang de fechas -->
         <div id="camposRango" class=" flex flex-col gap-2 md:flex-row ">
@@ -59,6 +66,9 @@
                     class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
             </div>
         </div>
+
+        
+            
 
         <!-- Botón -->
         <div class=" flex flex-col gap-5 md:flex-row justify-end">
@@ -108,6 +118,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
 
 <script>
     $(document).ready(function() {
