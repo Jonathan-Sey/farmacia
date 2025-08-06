@@ -46,6 +46,7 @@ class devolucionesController extends Controller
 
     public function show($devoluciones)
     {
+        dd($devoluciones);
         $devolucion = Devoluciones::with([
             'usuario',
             'venta',

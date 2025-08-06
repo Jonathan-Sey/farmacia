@@ -48,7 +48,7 @@ class MedicoController extends Controller
     {
         // Validación de los datos
         $validatedData = $request->validate([
-            'id_usuario' => 'required|exists:users,id|unique:users,id',
+            'id_usuario' => 'required|unique:detalle_medico,id_usuario',
             'especialidad' => 'required|string|max:75',
             'numero_colegiado' => 'required|string|max:10',
             'estado' => 'integer',

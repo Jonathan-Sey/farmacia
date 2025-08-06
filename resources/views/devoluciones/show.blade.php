@@ -112,7 +112,7 @@
 
 @push('js')
 <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-
+{{-- 
 <script>
   $(document).ready(function(){
       calcularValores();
@@ -129,5 +129,5 @@
     $('#suma').html(Math.round(suma));
     $('#total').html(Math.round(suma));
   }
-</script>
+</script> --}}
 @endpush

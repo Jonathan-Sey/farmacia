@@ -4853,10 +4853,6 @@ details.collapse summary::-webkit-details-marker {
     width: auto;
   }
 
-  .sm\:w-full {
-    width: 100%;
-  }
-
   .sm\:min-w-\[400px\] {
     min-width: 400px;
   }
@@ -5023,10 +5019,6 @@ details.collapse summary::-webkit-details-marker {
 
   .md\:block {
     display: block;
-  }
-
-  .md\:inline-block {
-    display: inline-block;
   }
 
   .md\:flex {
