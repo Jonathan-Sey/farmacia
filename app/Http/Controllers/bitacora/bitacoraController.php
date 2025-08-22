@@ -14,4 +14,17 @@ class bitacoraController extends Controller
 
     return view('bitacora.index', compact('bitacora'));
    }
+
+   public function indexApi()  {
+    $bitacora = Bitacora::with('usuario')->orderBy('created_at', 'desc')->paginate(50);
+
+    return response()->json($bitacora);
+   }
+
+   public function show($id) {
+    $bitacora = Bitacora::with('usuario')->findOrFail($id);
+
+    
+    return response()->json($bitacora);
+}
 }

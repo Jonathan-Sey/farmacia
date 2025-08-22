@@ -26,6 +26,21 @@ class PersonaController extends Controller
         return view('persona.index', compact('personas'));
     }
 
+    public function indexApi()
+    {
+         $personas = Persona::select('id', 'nombre', 'nit', 'rol', 'telefono', 'estado')
+            ->where('estado', '!=', '0')
+            ->get();
+
+            return response()->json($personas);
+    }
+
+    public function showApi($id)
+    {
+        $persona = Persona::findOrFail($id);
+        return response()->json($persona);
+    }
+
     public function create()
     {
         $medicos = DetalleMedico::all();
@@ -56,30 +71,7 @@ class PersonaController extends Controller
              'restriccion_activa' => false // Valor por defecto
          ]);
      }
-    // protected function crearPersona(Request $request)
-    // {
-    //     $this->validate($request, [
-    //         'nombre' => 'required|string|max:45|unique:persona,nombre',
-    //         'nit' => 'max:10|unique:persona,nit',
-    //         'dpi' => ['required', new Dpi()],
-    //         'telefono' => 'max:20',
-    //     ]);
-    //     $rol = $request->input('rol') == 2 ? 2 : 1;
-
-    //     return Persona::create([
-    //         'nombre' => $request->nombre,
-    //         'nit' => $request->nit,
-    //         'DPI' => $request->dpi,
-    //         'rol' => $rol,
-    //         'telefono' => $request->telefono,
-    //         'fecha_nacimiento' => $request->fecha_nacimiento,
-    //     ]);
-    // }
-
-    // public function fichasMedicas()
-    // {
-    //     return $this->hasMany(FichaMedica::class);
-    // }
+   
     public function fichasMedicas()
     {
         return $this->hasMany(FichaMedica::class);
@@ -199,6 +191,101 @@ class PersonaController extends Controller
             ]);
         }
         return redirect()->route('personas.index')->with('success', 'Persona registrada correctamente');
+    }
+
+
+    public function storeApi(Request $request)
+    {
+
+        $this->validate($request, [
+            'nombre' => 'required|string|max:255',
+            'nit' => 'nullable|string|max:10|unique:persona,nit',
+            'telefono' => 'nullable|string|max:20',
+            'fecha_nacimiento' => 'nullable|date',
+            'rol' => 'required|in:1,2,3',
+            'apellido_paterno' => 'required_if:rol,2,3|string|max:100',
+            'apellido_materno' => 'required_if:rol,2,3|string|max:100',
+            'sexo' => 'required_if:rol,2,3|in:Hombre,Mujer',
+            'dpi' => ['required', new Dpi()],
+            'habla_lengua' => 'required_if:rol,2,3',
+            'antigueno' => 'required_if:rol,2,3',
+            'tipo_sangre' => 'nullable|string|max:5',
+            'direccion' => 'nullable|string|max:255',
+            'departamento_id' => 'required_if:rol,2,3|exists:departamentos,id',
+            'municipio_id' => 'required_if:rol,2,3|exists:municipios,id'
+        ]);
+
+      
+
+        $persona = $this->crearPersona($request);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Personas',
+                'detalles' => "Se creó la persona: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+            ]);
+     
+
+        if ($persona->rol == 3) {
+            
+            FichaMedica::create([
+                'persona_id' => $persona->id,
+                // datos para el menor de edad
+                'nombreMenor' => $request->nombreMenor,
+                'apellido_paterno_menor' => $request->apellido_paterno_menor,
+                'apellido_materno_menor' => $request->apellido_materno_menor,
+                //otros datos
+                'nombre' => $request->nombre,
+                'apellido_paterno' => $request->apellido_paterno,
+                'apellido_materno' => $request->apellido_materno,
+                'sexo' => $request->sexo,
+                'fecha_nacimiento' => $request->fecha_nacimiento,
+                'DPI' => $request->dpi,
+                'habla_lengua' => $request->habla_lengua,
+                'antigueno' => $request->antigueno,
+                'tipo_sangre' => $request->tipo_sangre,
+                'direccion' => $request->direccion,
+                'telefono' => $request->telefono,
+                'foto' => $request->foto,
+                'departamento_id' => $request->departamento_id,
+                'municipio_id' => $request->municipio_id,
+                'diagnostico' => $request->diagnostico,
+                'consulta_programada' => $request->consulta_programada,
+                'receta_foto' => $request->receta_foto,
+                'detalle_medico_id' => $request->detalle_medico_id,
+            ]);
+        }
+
+        if ($persona->rol == 2) {
+            //dd($request);
+            FichaMedica::create([
+                'persona_id' => $persona->id,
+                'nombre' => $request->nombre,
+                'apellido_paterno' => $request->apellido_paterno,
+                'apellido_materno' => $request->apellido_materno,
+                'sexo' => $request->sexo,
+                'fecha_nacimiento' => $request->fecha_nacimiento,
+                'DPI' => $request->dpi,
+                'habla_lengua' => $request->habla_lengua,
+                'antigueno' => $request->antigueno,
+                'tipo_sangre' => $request->tipo_sangre,
+                'direccion' => $request->direccion,
+                'telefono' => $request->telefono,
+                'foto' => $request->foto,
+                'departamento_id' => $request->departamento_id,
+                'municipio_id' => $request->municipio_id,
+                'diagnostico' => $request->diagnostico,
+                'consulta_programada' => $request->consulta_programada,
+                'receta_foto' => $request->receta_foto,
+                'detalle_medico_id' => $request->detalle_medico_id,
+            ]);
+        }
+        
+        return response()->json(['success' => true, 'message' => 'Persona registrada correctamente']);
     }
     // Nuevos métodos para restricciones
     public function obtenerRestricciones(Persona $persona)
@@ -573,6 +660,180 @@ class PersonaController extends Controller
             DB::rollBack();
             Log::error('Error al actualizar persona', ['error' => $e->getMessage()]);
             return back()->with('error', 'Error al actualizar: ' . $e->getMessage());
+        }
+    }
+
+     public function updateApi(Request $request, Persona $persona)
+    {
+        //dd($request);
+        Log::info('Iniciando update de persona', $request->all());
+
+        $rules = [
+            'nombre' => 'required|string|max:255' . $persona->id,
+            'rol' => 'required|in:1,2,3',
+            'telefono' => 'nullable|string|max:20',
+            'fecha_nacimiento' => 'nullable|date',
+            'nit' => 'nullable|string|max:10|unique:persona,nit,' . $persona->id,
+        ];
+
+        if ($request->rol == 2) {
+            $rules += [
+                'apellido_paterno' => 'required|string|max:100',
+                'apellido_materno' => 'required|string|max:100',
+                'sexo' => 'required|in:Hombre,Mujer',
+                'dpi' => ['required', new Dpi()],
+                'habla_lengua' => 'required|in:1,2,3',
+                'antigueno' => 'required|in:1,2',
+                'tipo_sangre' => 'nullable|string|max:5',
+                'direccion' => 'nullable|string|max:255',
+                'departamento_id' => 'required|exists:departamentos,id',
+                'municipio_id' => 'required|exists:municipios,id',
+            ];
+        }
+
+        if ($request->rol == 3) {
+            $rules += [
+                'nombreMenor' => 'required|string|max:100',
+                'apellido_paterno_menor' => 'required|string|max:100',
+                'apellido_materno_menor' => 'required|string|max:100',
+                'apellido_paterno' => 'required|string|max:100',
+                'apellido_materno' => 'required|string|max:100',
+                'sexo' => 'required|in:Hombre,Mujer',
+                'dpi' => ['required', new Dpi()],
+                'habla_lengua' => 'required|in:1,2,3',
+                'antigueno' => 'required|in:1,2',
+                'tipo_sangre' => 'nullable|string|max:5',
+                'direccion' => 'nullable|string|max:255',
+                'departamento_id' => 'required|exists:departamentos,id',
+                'municipio_id' => 'required|exists:municipios,id',
+            ];
+        }
+
+        $validatedData = $request->validate($rules);
+
+        DB::beginTransaction();
+        try {
+            $persona->nombre = $validatedData['nombre'];
+            $persona->nit = $validatedData['nit'] ?? null;
+            $persona->telefono = $validatedData['telefono'] ?? null;
+            $persona->fecha_nacimiento = $validatedData['fecha_nacimiento'] ?? null;
+            $persona->rol = $validatedData['rol'];
+            $persona->save();
+
+            Log::info('Datos básicos actualizados', $persona->toArray());
+
+            // Si el rol es paciente, actualizar o crear ficha médica
+            if ($validatedData['rol'] == 2) {
+                // Si no tiene ficha médica, crearla con datos mínimos para evitar error
+                if (!$persona->fichasMedicas()->exists()) {
+                    FichaMedica::create([
+                        'persona_id' => $persona->id,
+                        'nombre' => $persona->nombre,
+                        'apellido_paterno' => $validatedData['apellido_paterno'],
+                        'apellido_materno' => $validatedData['apellido_materno'],
+                        'sexo' => $validatedData['sexo'],
+                        'fecha_nacimiento' => $persona->fecha_nacimiento,
+                        'DPI' => $validatedData['dpi'],
+                        'habla_lengua' => $validatedData['habla_lengua'],
+                        'antigueno' => $validatedData['antigueno'],
+                        'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
+                        'direccion' => $validatedData['direccion'] ?? null,
+                        'departamento_id' => $validatedData['departamento_id'],
+                        'municipio_id' => $validatedData['municipio_id'],
+                        'telefono' => $persona->telefono,
+                    ]);
+                } else {
+                    // Actualizar ficha médica existente
+                    $persona->fichasMedicas()->updateOrCreate(
+                        ['persona_id' => $persona->id],
+                        [
+                            'apellido_paterno' => $validatedData['apellido_paterno'],
+                            'apellido_materno' => $validatedData['apellido_materno'],
+                            'sexo' => $validatedData['sexo'],
+                            'DPI' => $validatedData['dpi'],
+                            'habla_lengua' => $validatedData['habla_lengua'],
+                            'antigueno' => $validatedData['antigueno'],
+                            'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
+                            'direccion' => $validatedData['direccion'] ?? null,
+                            'departamento_id' => $validatedData['departamento_id'],
+                            'municipio_id' => $validatedData['municipio_id'],
+                        ]
+                    );
+                }
+
+                Log::info('Ficha médica actualizada o creada para paciente');
+            } elseif($validatedData['rol'] == 3){
+                // Si no tiene ficha médica, crearla con datos mínimos para evitar error
+                if (!$persona->fichasMedicas()->exists()) {
+                    FichaMedica::create([
+                        'persona_id' => $persona->id,
+                        // datos para el menor de edad
+                        'nombreMenor' => $persona->nombreMenor,
+                        'apellido_paterno_menor' => $validatedData['apellido_paterno_menor'],
+                        'apellido_materno_menor' => $validatedData['apellido_materno_menor'],
+                        'nombre' => $persona->nombre,
+                        'apellido_paterno' => $validatedData['apellido_paterno'],
+                        'apellido_materno' => $validatedData['apellido_materno'],
+                        'sexo' => $validatedData['sexo'],
+                        'fecha_nacimiento' => $persona->fecha_nacimiento,
+                        'DPI' => $validatedData['dpi'],
+                        'habla_lengua' => $validatedData['habla_lengua'],
+                        'antigueno' => $validatedData['antigueno'],
+                        'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
+                        'direccion' => $validatedData['direccion'] ?? null,
+                        'departamento_id' => $validatedData['departamento_id'],
+                        'municipio_id' => $validatedData['municipio_id'],
+                        'telefono' => $persona->telefono,
+                    ]);
+                } else {
+                    // Actualizar ficha médica existente
+                    $persona->fichasMedicas()->updateOrCreate(
+                        ['persona_id' => $persona->id],
+                        [
+                            'nombreMenor' => $validatedData['nombreMenor'],
+                            'apellido_paterno_menor' => $validatedData['apellido_paterno_menor'],
+                            'apellido_materno_menor' => $validatedData['apellido_materno_menor'],
+                            'sexo' => $validatedData['sexo'],
+                            'DPI' => $validatedData['dpi'],
+                            'habla_lengua' => $validatedData['habla_lengua'],
+                            'antigueno' => $validatedData['antigueno'],
+                            'tipo_sangre' => $validatedData['tipo_sangre'] ?? null,
+                            'direccion' => $validatedData['direccion'] ?? null,
+                            'departamento_id' => $validatedData['departamento_id'],
+                            'municipio_id' => $validatedData['municipio_id'],
+                        ]
+                    );
+                }
+
+                Log::info('Ficha médica actualizada o creada para paciente');
+
+            }
+            else {
+                // Opcional: si cambió a cliente, puedes borrar la ficha médica o dejarla intacta
+                // $persona->fichasMedicas()->delete();
+            }
+
+            $usuario=User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Actialización',
+                'tabla_afectada' => 'Persona',
+                'detalles' => "Se actualizo la ficha medica de {$persona->nombre} Nit: {$persona->nit} y DPI: {$persona->DPI} ",
+            ]);
+
+            DB::commit();
+
+            Log::info('Fin del proceso de actualización OK');
+
+
+            return response()->json(['success' => true, 'message' => 'Datos actualizados correctamente']);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error al actualizar persona', ['error' => $e->getMessage()]);
+            
+            return response()->json(['success' => false, 'message' => 'Error al actualizar: ' . $e->getMessage()]);
         }
     }
 

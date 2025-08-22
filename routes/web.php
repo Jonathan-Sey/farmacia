@@ -155,9 +155,7 @@ Route::post('/personas/from-ventas', [PersonaController::class, 'storeFromVentas
 
 Route::resource('traslado', trasladoController::class)->parameters(['traslado' => 'traslado']);
 Route::resource('solicitud', solicitudController::class)->parameters(['solicitud' => 'solicitud']);
-//Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
-//Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
-//Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
+
 // Nueva ruta para obtener stock en los traslados
 Route::get('/stock-por-sucursal-producto/{sucursalId}/{productoId}', [trasladoController::class, 'obtenerStock']);
 Route::get('/productos-por-sucursal/{id_sucursal}', [trasladoController::class, 'obtenerProductos']);
@@ -204,10 +202,8 @@ Route::get('/notificaciones/{id}', [notificacionesController::class, 'destroy'])
 
 
 
-//Route::resource('personas', PersonaController::class);
+
 Route::get('personas/{id}', [PersonaController::class, 'show'])->name('personas.show');
-// Route::get('personas/fichas/{id}/delete', [FichaMedicaController::class, 'destroyConfirm'])->name('fichas.delete');
-// Route::delete('personas/fichas/{id}', [FichaMedicaController::class, 'destroy'])->name('fichas.destroy');
 
 // Rutas para fichas médicas
 Route::prefix('personas/{persona_id}')->group(function () {
@@ -226,18 +222,7 @@ Route::post('encuestas/responder/{encuesta}', [EncuestaController::class, 'store
 Route::get('encuestas/respuestas/{encuesta}', [EncuestaController::class, 'verRespuestas'])->name('encuestas.respuestas');
 
 
-//Route::get('personas/{persona_id}/ficha/create', [FichaMedicaController::class, 'create'])->name('fichas.create');
-//Route::post('personas/{persona_id}/ficha', [FichaMedicaController::class, 'store'])->name('fichas.store');
-//Route::get('personas/{persona_id}/fichas/{id}/edit', [FichaMedicaController::class, 'edit'])->name('fichas.edit');
-//Route::put('personas/{persona_id}/fichas/{id}', [FichaMedicaController::class, 'update'])->name('fichas.update');
 
-
-// Route::resource('traslados', TrasladoController::class)->parameters(['traslado' => 'traslado']);
-// Route::get('/productos/sucursal/{id}', [VentaController::class, 'productosPorSucursal']);
-// Route::get('ventas/productos/{idSucursal}', [VentaController::class, 'obtenerProductosPorSucursal'])->name('ventas.productos');
-// Route::get('/almacen/productos/{idSucursal}', [AlmacenController::class, 'getProductosPorSucursal']);
-// Route::get('/get-lotes/{idProducto}/{idSucursal}', [TrasladoController::class, 'getLotes'])->name('get.lotes');
-// Route::get('/inventario/{idProducto}/{idSucursal}', [InventarioController::class, 'show'])->name('inventario.show');
 
 //reporte productos
 Route::get('/reporte-productos', [ReporteVentasController::class, 'filtrarProducto'])->name('reporte.productos');

@@ -26,6 +26,12 @@ class trasladoController extends Controller
         return view('traslado.index', compact('traslado', "cantidadDeSolicitudes"));
     }
 
+public function indexApi(){
+     $traslado = traslado::with('producto:id,nombre', "sucursal1:id,nombre")->where('estado', '!=', 0)->get();
+        $cantidadDeSolicitudes = Solicitud::where('estado', 1)->count();
+        return response()->json(compact('traslado', "cantidadDeSolicitudes"));
+}
+
     public function create()
     {
         $sucursales = Sucursal::activos()->get();
@@ -33,25 +39,26 @@ class trasladoController extends Controller
         // Usamos la relación correcta (almacen en lugar de almacenes)
         $productos = Producto::whereHas('almacen') // Relación en singular
             ->where('tipo', 1)
-            ->with(['almacen' => function($query) { // Relación en singular
+            ->with(['almacen' => function ($query) { // Relación en singular
                 $query->select('id_sucursal', 'id_producto', 'cantidad');
             }])
             ->get()
-            ->map(function($producto) {
+            ->map(function ($producto) {
                 // Agregar stock_actual para mostrar en el select (opcional)
                 $producto->stock_actual = $producto->almacen->sum('cantidad'); // Relación en singular
                 return $producto;
             });
 
-    return view('traslado.create', compact('sucursales', 'productos'));
+        return view('traslado.create', compact('sucursales', 'productos'));
     }
+
     public function obtenerProductos($id_sucursal)
     {
         $productos = Almacen::with('producto')
             ->where('id_sucursal', $id_sucursal)
             ->where('cantidad', '>', 0)
             ->get()
-            ->map(function($item) {
+            ->map(function ($item) {
                 return [
                     'id_producto' => $item->id_producto,
                     'producto' => [
@@ -105,7 +112,7 @@ class trasladoController extends Controller
 
         $almacen_destino = Almacen::firstOrCreate(
             ['id_producto' => $producto_id, 'id_sucursal' => $sucursal_destino_id],
-            ['cantidad' => 0, 'id_user' => 1, 'fecha_vencimiento' =>$almacen_origen->fecha_vencimiento ]
+            ['cantidad' => 0, 'id_user' => 1, 'fecha_vencimiento' => $almacen_origen->fecha_vencimiento]
         );
 
         $almacen_destino->cantidad += $cantidad;
@@ -128,7 +135,7 @@ class trasladoController extends Controller
             'accion' => 'Ver detalles',
             'url' => route('traslado.index'),
             'estado' => false,
-         ]);
+        ]);
 
         $usuario = User::find($request->idUsuario);
         $producto = Producto::find($request->id_producto);
@@ -141,7 +148,7 @@ class trasladoController extends Controller
             'name_usuario' => $usuario->name,
             'accion' => 'Creación',
             'tabla_afectada' => 'Traslado',
-           'detalles' => "Se creo el traslado de: {$producto->nombre}, para {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
+            'detalles' => "Se creo el traslado de: {$producto->nombre}, para {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
             'fecha_hora' => now(),
         ]);
 
@@ -150,70 +157,59 @@ class trasladoController extends Controller
         return redirect()->route("traslado.index")->with('success', '¡Transferencia realizada !');
     }
 
-    public function edit(traslado $traslado)
-{
-    $sucursales = Sucursal::activos()->get();
+    public function storeApi(Request $request)
+    {
+        $this->validate($request, [
+            'id_sucursal_1' => ['required'],
+            'id_sucursal_2' => ['required'],
+            'id_producto' => ['required'],
+            'idUsuario' => ['required'],
+            'cantidad' => ['required', 'numeric']
+        ]);
 
-    // Obtener productos con stock en la sucursal de origen
-    $productos = Producto::whereHas('almacen', function($query) use ($traslado) {
-            $query->where('id_sucursal', $traslado->id_sucursal_origen);
-        })
-        ->where('tipo', 1)
-        ->with(['almacen' => function($query) use ($traslado) {
-            $query->where('id_sucursal', $traslado->id_sucursal_origen)
-                  ->select('id_sucursal', 'id_producto', 'cantidad');
-        }])
-        ->get()
-        ->map(function($producto) {
-            $producto->stock_actual = $producto->almacen->sum('cantidad');
-            return $producto;
-        });
+        $producto_id = $request->id_producto;
+        $sucursal_origen_id = $request->id_sucursal_1;
+        $sucursal_destino_id = $request->id_sucursal_2;
 
-    return view('traslado.edit', compact('traslado', 'sucursales', 'productos'));
-}
+        $cantidad = $request->cantidad;
 
-public function update(Request $request, traslado $traslado)
-{
-    $this->validate($request, [
-        'id_sucursal_1' => ['required'],
-        'id_sucursal_2' => ['required'],
-        'id_producto' => ['required'],
-        'cantidad' => ['required', 'numeric'],
-        'idUsuario' => ['required']
-    ]);
-
-    // Iniciamos la transacción
-    DB::beginTransaction();
-
-    try {
-        // 1. Revertir el traslado original
-        $this->revertirTraslado($traslado);
-
-        // 2. Validar stock en nueva sucursal de origen
-        $almacen_origen = Almacen::where('id_producto', $request->id_producto)
-            ->where('id_sucursal', $request->id_sucursal_1)
-            ->lockForUpdate() // Bloqueamos el registro para evitar race conditions
+        $almacen_origen = Almacen::where('id_producto', $producto_id)
+            ->where('id_sucursal', $sucursal_origen_id)
             ->first();
 
-        if (!$almacen_origen || $almacen_origen->cantidad < $request->cantidad) {
-            // Si no hay stock, revertimos la reversión
-            $this->aplicarTraslado($traslado);
-            DB::rollBack();
-            return redirect()->back()
-                ->withErrors(['cantidad' => 'Stock insuficiente en la sucursal de origen'])
-                ->withInput();
+        if (!$almacen_origen || $almacen_origen->cantidad < $cantidad) {
+           
+            return response()->json(['error' => 'Stock insuficiente en la sucursal de origen'], 400);
         }
 
-        // 3. Aplicar nuevo traslado
-        $this->aplicarTraslado($request);
+        $almacen_origen->cantidad -= $cantidad;
+        $almacen_origen->save();
 
-        // 4. Actualizar registro del traslado
-        $traslado->update([
-            "id_sucursal_origen" => $request->id_sucursal_1,
-            "id_sucursal_destino" => $request->id_sucursal_2,
-            "id_producto" => $request->id_producto,
-            "cantidad" => $request->cantidad,
-            "id_user" => $request->idUsuario
+        $almacen_destino = Almacen::firstOrCreate(
+            ['id_producto' => $producto_id, 'id_sucursal' => $sucursal_destino_id],
+            ['cantidad' => 0, 'id_user' => 1, 'fecha_vencimiento' => $almacen_origen->fecha_vencimiento]
+        );
+
+        $almacen_destino->cantidad += $cantidad;
+        $almacen_destino->save();
+
+        traslado::create(
+            [
+                "id_sucursal_origen" => $request->id_sucursal_1,
+                "id_sucursal_destino" => $request->id_sucursal_2,
+                "id_producto" => $request->id_producto,
+                "cantidad" => $request->cantidad,
+                "id_user" => $request->idUsuario,
+                "estado" => 1
+            ]
+        );
+
+        $notificacion =  Notificaciones::create([
+            'tipo' => 'traslado',
+            'mensaje' => "Se ha realizado un traslado del producto {$request->id_producto} con la cantidad de {$request->cantidad} desde la sucursal {$request->id_sucursal_1} a la sucursal {$request->id_sucursal_2}.",
+            'accion' => 'Ver detalles',
+            'url' => route('traslado.index'),
+            'estado' => false,
         ]);
 
         $usuario = User::find($request->idUsuario);
@@ -225,82 +221,250 @@ public function update(Request $request, traslado $traslado)
         Bitacora::create([
             'id_usuario' => $request->idUsuario,
             'name_usuario' => $usuario->name,
-            'accion' => 'Actualización',
+            'accion' => 'Creación',
             'tabla_afectada' => 'Traslado',
-           'detalles' => "Traslado actualizado: {$producto->nombre}, de {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
+            'detalles' => "Se creo el traslado de: {$producto->nombre}, para {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
             'fecha_hora' => now(),
         ]);
 
 
-        DB::commit();
 
-        return redirect()->route('traslado.index')->with('success', "¡Traslado actualizado!");
-
-    } catch (\Exception $e) {
-        // Algo falló, hacemos rollback
-        DB::rollBack();
-        Log::error('Error al actualizar traslado: ' . $e->getMessage());
-
-        return redirect()->back()
-            ->withErrors(['error' => 'Ocurrió un error al actualizar el traslado'])
-            ->withInput();
-    }
-}
-
-// Métodos auxiliares (sin cambios)
-private function revertirTraslado($traslado)
-{
-    // Devolver cantidad a sucursal de origen
-    $almacen_origen = Almacen::where('id_producto', $traslado->id_producto)
-        ->where('id_sucursal', $traslado->id_sucursal_origen)
-        ->first();
-
-    if ($almacen_origen) {
-        $almacen_origen->cantidad += $traslado->cantidad;
-        $almacen_origen->save();
+      
+        return response()->json(['success' => true, 'message' => '¡Transferencia realizada!']);
     }
 
-    // Quitar cantidad de sucursal de destino
-    $almacen_destino = Almacen::where('id_producto', $traslado->id_producto)
-        ->where('id_sucursal', $traslado->id_sucursal_destino)
-        ->first();
+    public function show($id){
+        $traslado = Traslado::find($id);
+        if (!$traslado) {
+            return response()->json(['error' => 'Traslado no encontrado'], 404);
+        }
+        return response()->json($traslado);
+    }
 
-    if ($almacen_destino) {
-        $almacen_destino->cantidad -= $traslado->cantidad;
-        if ($almacen_destino->cantidad <= 0) {
-            $almacen_destino->delete();
-        } else {
-            $almacen_destino->save();
+    public function edit(traslado $traslado)
+    {
+        $sucursales = Sucursal::activos()->get();
+
+        // Obtener productos con stock en la sucursal de origen
+        $productos = Producto::whereHas('almacen', function ($query) use ($traslado) {
+            $query->where('id_sucursal', $traslado->id_sucursal_origen);
+        })
+            ->where('tipo', 1)
+            ->with(['almacen' => function ($query) use ($traslado) {
+                $query->where('id_sucursal', $traslado->id_sucursal_origen)
+                    ->select('id_sucursal', 'id_producto', 'cantidad');
+            }])
+            ->get()
+            ->map(function ($producto) {
+                $producto->stock_actual = $producto->almacen->sum('cantidad');
+                return $producto;
+            });
+
+        return view('traslado.edit', compact('traslado', 'sucursales', 'productos'));
+    }
+
+    public function update(Request $request, traslado $traslado)
+    {
+
+        $this->validate($request, [
+            'id_sucursal_1' => ['required'],
+            'id_sucursal_2' => ['required'],
+            'id_producto' => ['required'],
+            'cantidad' => ['required', 'numeric'],
+            'idUsuario' => ['required']
+        ]);
+
+        // Iniciamos la transacción
+        DB::beginTransaction();
+
+        try {
+            // 1. Revertir el traslado original
+            $this->revertirTraslado($traslado);
+
+            // 2. Validar stock en nueva sucursal de origen
+            $almacen_origen = Almacen::where('id_producto', $request->id_producto)
+                ->where('id_sucursal', $request->id_sucursal_1)
+                ->lockForUpdate() // Bloqueamos el registro para evitar race conditions
+                ->first();
+
+            if (!$almacen_origen || $almacen_origen->cantidad < $request->cantidad) {
+                // Si no hay stock, revertimos la reversión
+                $this->aplicarTraslado($traslado);
+                DB::rollBack();
+                return redirect()->back()
+                    ->withErrors(['cantidad' => 'Stock insuficiente en la sucursal de origen'])
+                    ->withInput();
+            }
+
+            // 3. Aplicar nuevo traslado
+            $this->aplicarTraslado($request);
+
+            // 4. Actualizar registro del traslado
+            $traslado->update([
+                "id_sucursal_origen" => $request->id_sucursal_1,
+                "id_sucursal_destino" => $request->id_sucursal_2,
+                "id_producto" => $request->id_producto,
+                "cantidad" => $request->cantidad,
+                "id_user" => $request->idUsuario
+            ]);
+
+            $usuario = User::find($request->idUsuario);
+            $producto = Producto::find($request->id_producto);
+            $sucursalOrigen = Sucursal::find($request->id_sucursal_1);
+            $sucursalDestino = Sucursal::find($request->id_sucursal_2);
+
+            // Registrar en la bitácora
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Traslado',
+                'detalles' => "Traslado actualizado: {$producto->nombre}, de {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
+                'fecha_hora' => now(),
+            ]);
+
+
+            DB::commit();
+
+            return redirect()->route('traslado.index')->with('success', "¡Traslado actualizado!");
+        } catch (\Exception $e) {
+            // Algo falló, hacemos rollback
+            DB::rollBack();
+            Log::error('Error al actualizar traslado: ' . $e->getMessage());
+
+            return redirect()->back()
+                ->withErrors(['error' => 'Ocurrió un error al actualizar el traslado'])
+                ->withInput();
         }
     }
-}
 
-private function aplicarTraslado($request, $traslado = null)
-{
-    $producto_id = $request->id_producto ?? $traslado->id_producto;
-    $sucursal_origen_id = $request->id_sucursal_1 ?? $traslado->id_sucursal_origen;
-    $sucursal_destino_id = $request->id_sucursal_2 ?? $traslado->id_sucursal_destino;
-    $cantidad = $request->cantidad ?? $traslado->cantidad;
+      public function updateApi(Request $request, $id)
+    {
+        $this->validate($request, [
+            'id_sucursal_1' => ['required'],
+            'id_sucursal_2' => ['required'],
+            'id_producto' => ['required'],
+            'cantidad' => ['required', 'numeric'],
+            'idUsuario' => ['required']
+        ]);
 
-    // Quitar cantidad de sucursal de origen
-    $almacen_origen = Almacen::where('id_producto', $producto_id)
-        ->where('id_sucursal', $sucursal_origen_id)
-        ->first();
+        $traslado =  traslado::find($id);
+        // Iniciamos la transacción
+        DB::beginTransaction();
 
-    if ($almacen_origen) {
-        $almacen_origen->cantidad -= $cantidad;
-        $almacen_origen->save();
+        try {
+            // 1. Revertir el traslado original
+            $this->revertirTraslado($traslado);
+
+            // 2. Validar stock en nueva sucursal de origen
+            $almacen_origen = Almacen::where('id_producto', $request->id_producto)
+                ->where('id_sucursal', $request->id_sucursal_1)
+                ->lockForUpdate() // Bloqueamos el registro para evitar race conditions
+                ->first();
+
+            if (!$almacen_origen || $almacen_origen->cantidad < $request->cantidad) {
+                // Si no hay stock, revertimos la reversión
+                $this->aplicarTraslado($traslado);
+                DB::rollBack();
+                    return response()->json(['error' => 'Stock insuficiente en la sucursal de origen'], 400);
+            }
+
+            // 3. Aplicar nuevo traslado
+            $this->aplicarTraslado($request);
+
+            // 4. Actualizar registro del traslado
+            $traslado->update([
+                "id_sucursal_origen" => $request->id_sucursal_1,
+                "id_sucursal_destino" => $request->id_sucursal_2,
+                "id_producto" => $request->id_producto,
+                "cantidad" => $request->cantidad,
+                "id_user" => $request->idUsuario
+            ]);
+
+            $usuario = User::find($request->idUsuario);
+            $producto = Producto::find($request->id_producto);
+            $sucursalOrigen = Sucursal::find($request->id_sucursal_1);
+            $sucursalDestino = Sucursal::find($request->id_sucursal_2);
+
+            // Registrar en la bitácora
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Traslado',
+                'detalles' => "Traslado actualizado: {$producto->nombre}, de {$sucursalOrigen->nombre} a {$sucursalDestino->nombre}, cantidad: {$request->cantidad}",
+                'fecha_hora' => now(),
+            ]);
+
+
+            DB::commit();
+
+
+            return response()->json(['success' => true, 'message' => 'Traslado actualizado correctamente']);
+        } catch (\Exception $e) {
+            // Algo falló, hacemos rollback
+            DB::rollBack();
+            Log::error('Error al actualizar traslado: ' . $e->getMessage());
+
+           
+                return response()->json(['success' => false, 'message' => 'Ocurrió un error al actualizar el traslado']);
+        }
     }
 
-    // Agregar cantidad a sucursal de destino
-    $almacen_destino = Almacen::firstOrCreate(
-        ['id_producto' => $producto_id, 'id_sucursal' => $sucursal_destino_id],
-        ['cantidad' => 0, 'id_user' => $request->idUsuario ?? $traslado->id_user]
-    );
+    // Métodos auxiliares (sin cambios)
+    private function revertirTraslado($traslado)
+    {
+        // Devolver cantidad a sucursal de origen
+        $almacen_origen = Almacen::where('id_producto', $traslado->id_producto)
+            ->where('id_sucursal', $traslado->id_sucursal_origen)
+            ->first();
 
-    $almacen_destino->cantidad += $cantidad;
-    $almacen_destino->save();
-}
+        if ($almacen_origen) {
+            $almacen_origen->cantidad += $traslado->cantidad;
+            $almacen_origen->save();
+        }
+
+        // Quitar cantidad de sucursal de destino
+        $almacen_destino = Almacen::where('id_producto', $traslado->id_producto)
+            ->where('id_sucursal', $traslado->id_sucursal_destino)
+            ->first();
+
+        if ($almacen_destino) {
+            $almacen_destino->cantidad -= $traslado->cantidad;
+            if ($almacen_destino->cantidad <= 0) {
+                $almacen_destino->delete();
+            } else {
+                $almacen_destino->save();
+            }
+        }
+    }
+
+    private function aplicarTraslado($request, $traslado = null)
+    {
+        $producto_id = $request->id_producto ?? $traslado->id_producto;
+        $sucursal_origen_id = $request->id_sucursal_1 ?? $traslado->id_sucursal_origen;
+        $sucursal_destino_id = $request->id_sucursal_2 ?? $traslado->id_sucursal_destino;
+        $cantidad = $request->cantidad ?? $traslado->cantidad;
+
+        // Quitar cantidad de sucursal de origen
+        $almacen_origen = Almacen::where('id_producto', $producto_id)
+            ->where('id_sucursal', $sucursal_origen_id)
+            ->first();
+
+        if ($almacen_origen) {
+            $almacen_origen->cantidad -= $cantidad;
+            $almacen_origen->save();
+        }
+
+        // Agregar cantidad a sucursal de destino
+        $almacen_destino = Almacen::firstOrCreate(
+            ['id_producto' => $producto_id, 'id_sucursal' => $sucursal_destino_id],
+            ['cantidad' => 0, 'id_user' => $request->idUsuario ?? $traslado->id_user]
+        );
+
+        $almacen_destino->cantidad += $cantidad;
+        $almacen_destino->save();
+    }
 
     public function destroy(Request $request, traslado $traslado)
     {
@@ -340,5 +504,4 @@ private function aplicarTraslado($request, $traslado = null)
 
         return response()->json(['success' => false]);
     }
-
 }

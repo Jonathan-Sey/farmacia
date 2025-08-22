@@ -17,6 +17,14 @@ class especialidadesController extends Controller
         return view('especialidades.index', compact('especialidades'));
     }
 
+    public function indexApi()
+    {
+        $especialidades = Especialidades::where('estado', '!=', 0)
+            ->select('id', 'nombre', 'descripcion', 'estado', 'created_at')
+            ->get();
+        return response()->json($especialidades);
+    }
+
     public function create()
     {
         // Aquí puedes implementar la lógica para mostrar el formulario de creación de especialidades
@@ -34,6 +42,28 @@ class especialidadesController extends Controller
 
         return redirect()->route('especialidades.index')->with('success', 'Especialidad creada exitosamente.');
     }
+
+        public function storeApi(Request $request)
+    {
+        // Aquí puedes implementar la lógica para almacenar una nueva especialidad
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+        ]);
+
+        Especialidades::create($request->all());
+
+        return response()->json(['success' => true, 'message' => 'Especialidad creada exitosamente.']);
+    }
+
+    public function show($id)
+    {
+        // Aquí puedes implementar la lógica para mostrar una especialidad específica
+        $especialidad = Especialidades::findOrFail($id);
+        return response()->json($especialidad);
+    }
+
+    
 
     public function edit($id)
     {
@@ -55,6 +85,22 @@ class especialidadesController extends Controller
 
         return redirect()->route('especialidades.index')->with('success', 'Especialidad actualizada exitosamente.');
     }
+
+
+        public function updateApi(Request $request, $id)
+    {
+        // Aquí puedes implementar la lógica para actualizar una especialidad existente
+        $request->validate([
+            'nombre' => 'required|string|max:255',
+            'descripcion' => 'nullable|string',
+        ]);
+
+        $especialidad = Especialidades::findOrFail($id);
+        $especialidad->update($request->all());
+
+        return response()->json(['success' => true, 'message' => 'Especialidad actualizada exitosamente.']);
+    }
+
 
     public function cambiarEstado($id)
     {

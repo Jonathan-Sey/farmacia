@@ -39,6 +39,22 @@ class VentaController extends Controller
 
         return view('venta.index', compact('ventas'));
     }
+
+    public function indexApi()
+    {
+        $ventas = Venta::with(['sucursal', 'persona', 'usuario'])
+            ->where('estado', 1)
+            ->latest()
+            ->get();
+
+        return response()->json($ventas);
+    }
+
+
+
+
+
+
     public function obtenerStock($id, $sucursal)
     {
         Log::info('Solicitud para obtener stock:', ['id_producto' => $id, 'id_sucursal' => $sucursal]);
@@ -80,31 +96,30 @@ class VentaController extends Controller
         //        $productos = Producto::whereIn('id', $almacenesActivos->pluck('id_producto'))->get();
 
         $personas = Persona::activos()
-        ->orderByRaw("CASE WHEN nit = '0' THEN 0 ELSE 1 END") // Consumidor final primero
-        ->orderBy('nombre')
-        ->get(['id', 'nombre', 'nit', 'DPI as dpi', 'rol']);
-        return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona','fichasMedicas','productos'));
-
+            ->orderByRaw("CASE WHEN nit = '0' THEN 0 ELSE 1 END") // Consumidor final primero
+            ->orderBy('nombre')
+            ->get(['id', 'nombre', 'nit', 'DPI as dpi', 'rol']);
+        return view('venta.create', compact('sucursales', 'personas', 'almacenesActivos', 'persona', 'fichasMedicas', 'productos'));
     }
 
     public function getProductosRecetados($id)
     {
         //Productos recetados desde las fichas medicas
-        $fichasMedicas = FichaMedica::with(['productosRecetados' => function($query){
+        $fichasMedicas = FichaMedica::with(['productosRecetados' => function ($query) {
             // definimos los campos que vamos a obtenert
-            $query->select('producto.id','producto.nombre', 'producto.precio_porcentaje');
+            $query->select('producto.id', 'producto.nombre', 'producto.precio_porcentaje');
         }])->findOrFail($id);
 
         // accedemos a los productos recetados y retornamos lo necesario
-         $productos = $fichasMedicas->productosRecetados->map(function($producto){
-             return [
-                 'id' => $producto->id,
-                 'nombre' => $producto->nombre,
-                 'precio' => $producto->precio_porcentaje,
-                  'cantidad' => $producto->pivot->cantidad,
-                  'instrucciones' => $producto->pivot->instrucciones
-             ];
-         });
+        $productos = $fichasMedicas->productosRecetados->map(function ($producto) {
+            return [
+                'id' => $producto->id,
+                'nombre' => $producto->nombre,
+                'precio' => $producto->precio_porcentaje,
+                'cantidad' => $producto->pivot->cantidad,
+                'instrucciones' => $producto->pivot->instrucciones
+            ];
+        });
         return response()->json($productos);
     }
 
@@ -113,31 +128,31 @@ class VentaController extends Controller
 
     public function getantiguenio($id)
     {
-    // Obtener la ficha médica con los productos recetados
-    //$fichaMedica = FichaMedica::select('antigueno','consulta_programada')->findOrFail($id);
-    $persona = Persona::findOrFail($id);
-    $ficha = $persona->fichasMedicas()->paginate(1);
-    
-    $valor = $ficha->map(function($dato){
-        return [
-            'antigueno' =>$dato->antigueno,
-        ];
-    });
-    
-    
+        // Obtener la ficha médica con los productos recetados
+        //$fichaMedica = FichaMedica::select('antigueno','consulta_programada')->findOrFail($id);
+        $persona = Persona::findOrFail($id);
+        $ficha = $persona->fichasMedicas()->paginate(1);
 
-    // Formatear la respuesta
-    // $productos = $fichaMedica->productosRecetados->map(function($producto) {
-    //     return [
-    //         'id' => $producto->id,
-    //         'nombre' => $producto->nombre,
-    //         'precio' => $producto->precio_venta,
-    //         'cantidad' => $producto->pivot->cantidad,
-    //         'instrucciones' => $producto->pivot->instrucciones
-    //     ];
-    // });
+        $valor = $ficha->map(function ($dato) {
+            return [
+                'antigueno' => $dato->antigueno,
+            ];
+        });
 
-    //$personaAntiguena = $fichaMedica () 
+
+
+        // Formatear la respuesta
+        // $productos = $fichaMedica->productosRecetados->map(function($producto) {
+        //     return [
+        //         'id' => $producto->id,
+        //         'nombre' => $producto->nombre,
+        //         'precio' => $producto->precio_venta,
+        //         'cantidad' => $producto->pivot->cantidad,
+        //         'instrucciones' => $producto->pivot->instrucciones
+        //     ];
+        // });
+
+        //$personaAntiguena = $fichaMedica () 
 
 
         return response()->json($valor);
@@ -164,7 +179,6 @@ class VentaController extends Controller
             });
 
         return response()->json($productos);
-
     }
 
 
@@ -179,20 +193,20 @@ class VentaController extends Controller
     public function store(Request $request)
     {
 
-        //dd($request->all());
+       // dd($request->all());
         //dd($request);
-         $this->validate($request, [
-             'arrayprecio' => 'required|array',
-             'estado' => 'integer',
-             'arraycantidad.*' => 'integer|min:1',
-             'arrayprecio.*' => 'numeric|min:0',
-             'arrayPrecioOriginal.*' => 'numeric|min:0',
-             'arrayJustificacion.*' => 'nullable|string|max:255',
-             'imagen_receta' => 'nullable|string',
-             'numero_reserva' => 'nullable|string|max:50',
-             'observaciones_receta' => 'nullable|string|max:500'
+        $this->validate($request, [
+            'arrayprecio' => 'required|array',
+            'estado' => 'integer',
+            'arraycantidad.*' => 'integer|min:1',
+            'arrayprecio.*' => 'numeric|min:0',
+            'arrayPrecioOriginal.*' => 'numeric|min:0',
+            'arrayJustificacion.*' => 'nullable|string|max:255',
+            'imagen_receta' => 'nullable|string',
+            'numero_reserva' => 'nullable|string|max:50',
+            'observaciones_receta' => 'nullable|string|max:500'
 
-         ]);
+        ]);
         // validamos el control de compora por cliente
         $persona = Persona::find($request->id_persona);
 
@@ -274,32 +288,32 @@ class VentaController extends Controller
                         throw new Exception("No hay suficiente inventario para el producto: {$producto->nombre}");
                     }
 
-                // Descontar inventario
-                $almacen->cantidad -= $arrayCantidad[$index];
-                $almacen->save();
+                    // Descontar inventario
+                    $almacen->cantidad -= $arrayCantidad[$index];
+                    $almacen->save();
 
-                $nombreSucursal = Sucursal::find($request->id_sucursal)->nombre;
-                $reportekardex = ReporteKardex::create([
-                    'producto_id' => $idProducto,
-                    'nombre_sucursal' => $nombreSucursal,
-                    'tipo_movimiento' => 'Venta',
+                    $nombreSucursal = Sucursal::find($request->id_sucursal)->nombre;
+                    $reportekardex = ReporteKardex::create([
+                        'producto_id' => $idProducto,
+                        'nombre_sucursal' => $nombreSucursal,
+                        'tipo_movimiento' => 'Venta',
+                        'cantidad' => $arrayCantidad[$index],
+                        'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
+                        'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
+                        'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                        'fecha_movimiento' => now()
+                    ]);
+                }
+
+                // Crear el detalle de venta
+                DetalleVenta::create([
+                    'id_venta' => $venta->id,
+                    'id_producto' => $idProducto,
                     'cantidad' => $arrayCantidad[$index],
-                    'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
-                    'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
-                    'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
-                    'fecha_movimiento' => now()
+                    'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+                    'precio_original' => round($arrayPrecioOriginal[$index], 2),
+                    'justificacion_descuento' => $arrayJustificacion[$index],
                 ]);
-            }
-
-                    // Crear el detalle de venta
-                    DetalleVenta::create([
-                       'id_venta' => $venta->id,
-                       'id_producto' => $idProducto,
-                       'cantidad' => $arrayCantidad[$index],
-                       'precio' => round($arrayprecio[$index], 2), // Redondear el precio
-                       'precio_original' => round($arrayPrecioOriginal[$index], 2),
-                       'justificacion_descuento' => $arrayJustificacion[$index],
-                     ]);
             }
 
             DB::commit();
@@ -320,6 +334,141 @@ class VentaController extends Controller
             DB::rollBack();
 
             return redirect()->route('ventas.create')->with('error', 'Error al crear la venta: ' . $e->getMessage());
+        }
+    }
+
+      public function storeApi(Request $request)
+    {
+        
+        $this->validate($request, [
+            'arrayprecio' => 'required|array',
+            'estado' => 'integer',
+            'arraycantidad.*' => 'integer|min:1',
+            'arrayprecio.*' => 'numeric|min:0',
+            'arrayPrecioOriginal.*' => 'numeric|min:0',
+            'arrayJustificacion.*' => 'nullable|string|max:255',
+            'imagen_receta' => 'nullable|string',
+            'numero_reserva' => 'nullable|string|max:50',
+            'observaciones_receta' => 'nullable|string|max:500'
+
+        ]);
+        // validamos el control de compora por cliente
+        $persona = Persona::find($request->id_persona);
+
+        // Verificar restricciones
+        if ($persona->tieneRestriccion()) {
+            $mensaje = 'Esta persona tiene restricciones de compra: ';
+
+            if ($persona->restriccion_activa) {
+                $mensaje .= 'Restricción manual activada';
+            } else {
+                $mensaje .= "Excedió el límite de compras ({$persona->comprasRecientes()}/{$persona->limite_compras})";
+            }
+
+          
+
+                return response()->json(['error' => $mensaje], 403);
+        }
+
+       
+
+        try {
+            DB::beginTransaction();
+
+            // Mover imagen temporal a definitiva si existe
+            $imagenReceta = null;
+            if (!empty($request->imagen_receta)) {
+                $imagenController = new ImagenController();
+                $imagenReceta = $imagenController->moverDefinitiva($request->imagen_receta)
+                    ? $request->imagen_receta
+                    : null;
+            }
+
+
+
+          
+            $venta = Venta::create([
+                'id_sucursal' => $request->id_sucursal,
+                'fecha_venta' => $request->fecha_venta,
+                'impuesto' => $request->impuesto,
+                'total' => $request->total,
+                'id_usuario' => $request->idUsuario, // Usar el usuario actual o el correcto
+                'id_persona' => $request->id_persona,
+                'estado' => 1,
+                'es_prescrito' => $request->has('es_prescrito'),
+                'imagen_receta' => $imagenReceta,
+                'numero_reserva' => $request->numero_reserva,
+                'observaciones_receta' => $request->observaciones_receta
+            ]);
+
+            // Obtener los arrays de detalles
+            $arrayProducto_id = $request->get('arrayIdProducto');
+            $arrayCantidad = $request->get('arraycantidad');
+            $arrayprecio = $request->get('arrayprecio');
+            $arrayPrecioOriginal = $request->get('arrayPrecioOriginal');
+            $arrayJustificacion = $request->get('arrayJustificacion');
+
+            foreach ($arrayProducto_id as $index => $idProducto) {
+                $producto = Producto::findOrFail($idProducto);
+
+                // Validar productos físicos (tipo = 1)
+                if ($producto->tipo == 1) {
+                    $almacen = Almacen::where('id_sucursal', $request->id_sucursal)
+                        ->where('id_producto', $idProducto)
+                        ->first();
+
+                    if (!$almacen || $almacen->cantidad < $arrayCantidad[$index]) {
+                        throw new Exception("No hay suficiente inventario para el producto: {$producto->nombre}");
+                    }
+
+                    // Descontar inventario
+                    $almacen->cantidad -= $arrayCantidad[$index];
+                    $almacen->save();
+
+                    $nombreSucursal = Sucursal::find($request->id_sucursal)->nombre;
+                    $reportekardex = ReporteKardex::create([
+                        'producto_id' => $idProducto,
+                        'nombre_sucursal' => $nombreSucursal,
+                        'tipo_movimiento' => 'Venta',
+                        'cantidad' => $arrayCantidad[$index],
+                        'Cantidad_anterior' => $almacen->cantidad + $arrayCantidad[$index], // Cantidad antes de la venta
+                        'Cantidad_nueva' => $almacen->cantidad, // Cantidad después de la venta
+                        'usuario_id' => $request->idUsuario, // Aquí deberías usar el ID del usuario autenticado
+                        'fecha_movimiento' => now()
+                    ]);
+                }
+
+                // Crear el detalle de venta
+                DetalleVenta::create([
+                    'id_venta' => $venta->id,
+                    'id_producto' => $idProducto,
+                    'cantidad' => $arrayCantidad[$index],
+                    'precio' => round($arrayprecio[$index], 2), // Redondear el precio
+                    'precio_original' => round($arrayPrecioOriginal[$index], 2),
+                    'justificacion_descuento' => $arrayJustificacion[$index],
+                ]);
+            }
+
+            DB::commit();
+
+            $usuario = User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Venta',
+                'detalles' => "Se creó la venta en la farmacia: {$venta->sucursal->nombre}, para la persona {$venta->persona->nombre} - {$venta->persona->DPI}", //detalles especificos
+                'fecha_hora' => now(),
+            ]);
+
+            
+            return response()->json(['success' => true, 'message' => 'Venta creada exitosamente', 'venta_id' => $venta->id]);
+        } catch (Exception $e) {
+            // Cancelar transacción en caso de error
+            DB::rollBack();
+
+            
+            return response()->json(['success' => false, 'message' => 'Error al crear la venta: ' . $e->getMessage()], 500);
         }
     }
 

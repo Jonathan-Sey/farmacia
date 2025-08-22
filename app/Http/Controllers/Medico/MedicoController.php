@@ -18,15 +18,39 @@ class MedicoController extends Controller
      */
     public function index()
     {
-        $medicos = DetalleMedico::with(['usuario:id,name', 'especialidad:id,nombre', 'horarios' => function($query) {
+        $medicos = DetalleMedico::with(['usuario:id,name', 'especialidad:id,nombre', 'horarios' => function ($query) {
             $query->with('sucursal')->latest();
         }])
-        ->select('id', 'id_usuario', 'id_especialidad', 'estado', 'numero_colegiado')
-        ->get();
+            ->select('id', 'id_usuario', 'id_especialidad', 'estado', 'numero_colegiado')
+            ->get();
 
         return view('medico.index', compact('medicos'));
     }
 
+    public function indexApi()
+    {
+        $medicos = DetalleMedico::with(['usuario:id,name', 'especialidad:id,nombre', 'horarios' => function ($query) {
+            $query->with('sucursal')->latest();
+        }])
+            ->select('id', 'id_usuario', 'id_especialidad', 'estado', 'numero_colegiado')
+            ->get();
+
+        return response()->json($medicos);
+    }
+
+    function showApi($id) {
+        $medico = DetalleMedico::with(['usuario:id,name', 'especialidad:id,nombre', 'horarios' => function ($query) {
+            $query->with('sucursal')->latest();
+        }])
+            ->select('id', 'id_usuario', 'id_especialidad', 'estado', 'numero_colegiado')
+            ->find($id);
+
+        if (!$medico) {
+            return response()->json(['message' => 'Médico no encontrado'], 404);
+        }
+
+        return response()->json($medico);
+    }
     /**
      * Mostrar el formulario para crear un nuevo médico.
      */
@@ -42,9 +66,61 @@ class MedicoController extends Controller
 
 
     /**
-         * Guardar un nuevo médico y sus horarios en la base de datos.
+     * Guardar un nuevo médico y sus horarios en la base de datos.
      */
     public function store(Request $request)
+    {
+
+        dd($request->all());
+        // Validación de los datos
+        $validatedData = $request->validate([
+            'id_usuario' => 'required|unique:detalle_medico,id_usuario',
+            'especialidad' => 'required|string|max:75',
+            'numero_colegiado' => 'required|string|max:10',
+            'estado' => 'integer',
+            'horarios' => 'required|array',
+            'horarios.*.sucursal_id' => 'required|exists:sucursal,id',
+            'horarios.*.dia' => 'required|string',
+            'horarios.*.hora_inicio' => 'required|date_format:H:i',
+            'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
+        ]);
+
+        // Crear el médico
+        $medico = DetalleMedico::create([
+            'id_usuario' => $validatedData['id_usuario'],
+            'id_especialidad' => $validatedData['especialidad'],
+            'numero_colegiado' => $validatedData['numero_colegiado'],
+            'estado' => 1,
+            // 'horarios' => json_encode($request->horarios),
+        ]);
+        $usuario = User::find($request->id_usuario);
+
+        Bitacora::create([
+            'id_usuario' => $request->id_usuario,
+            'name_usuario' => $usuario->name,
+            'accion' => 'Creación',
+            'tabla_afectada' => 'Medico',
+            'detalles' => "Se creó el médico: {$usuario->name}",
+            'fecha_hora' => now(),
+        ]);
+
+        // Guardar los horarios
+        foreach ($validatedData['horarios'] as $horario) {
+            Horario::create([
+                'medico_id' => $medico->id,
+                'sucursal_id' => $horario['sucursal_id'],
+                'horarios' => [ // Pasamos directamente el array
+                    $horario['dia'] => [
+                        $horario['hora_inicio'] . '-' . $horario['hora_fin']
+                    ]
+                ],
+            ]);
+        }
+
+        return redirect()->route('medicos.index')->with('success', '¡Médico registrado exitosamente!');
+    }
+
+    public function storeApi(Request $request)
     {
         // Validación de los datos
         $validatedData = $request->validate([
@@ -65,18 +141,18 @@ class MedicoController extends Controller
             'id_especialidad' => $validatedData['especialidad'],
             'numero_colegiado' => $validatedData['numero_colegiado'],
             'estado' => 1,
-           // 'horarios' => json_encode($request->horarios),
+            // 'horarios' => json_encode($request->horarios),
         ]);
-         $usuario = User::find($request->id_usuario);
+        $usuario = User::find($request->id_usuario);
 
-    Bitacora::create([
-        'id_usuario' => $request->id_usuario,
-        'name_usuario' => $usuario->name,
-        'accion' => 'Creación',
-        'tabla_afectada' => 'Medico',
-        'detalles' => "Se creó el médico: {$usuario->name}",
-        'fecha_hora' => now(),
-    ]);
+        Bitacora::create([
+            'id_usuario' => $request->id_usuario,
+            'name_usuario' => $usuario->name,
+            'accion' => 'Creación',
+            'tabla_afectada' => 'Medico',
+            'detalles' => "Se creó el médico: {$usuario->name}",
+            'fecha_hora' => now(),
+        ]);
 
         // Guardar los horarios
         foreach ($validatedData['horarios'] as $horario) {
@@ -91,7 +167,12 @@ class MedicoController extends Controller
             ]);
         }
 
-        return redirect()->route('medicos.index')->with('success', '¡Médico registrado exitosamente!');
+       
+        return response()->json([
+            'success' => true,
+            'message' => '¡Médico registrado exitosamente!',
+            'medico' => $medico
+        ]);
     }
 
     /**
@@ -105,8 +186,8 @@ class MedicoController extends Controller
 
         // Obtener horarios directamente con una consulta
         $horarios = Horario::where('medico_id', $medico->id)
-                    ->with('sucursal')
-                    ->get();
+            ->with('sucursal')
+            ->get();
 
         $horariosTransformados = [];
 
@@ -156,6 +237,7 @@ class MedicoController extends Controller
      */
     public function update(Request $request, DetalleMedico $medico)
     {
+    
         $validated = $request->validate([
             'id_usuario' => 'required|exists:users,id',
             'id_especialidad' => 'required|exists:especialidades,id',
@@ -166,19 +248,19 @@ class MedicoController extends Controller
             'horarios.*.hora_inicio' => 'required|date_format:H:i',
             'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
         ]);
-         $usuario = User::find($request->id_usuario);
-         Bitacora::create([
-        'id_usuario' => $request->id_usuario,
-        'name_usuario' => $usuario->name,
-        'accion' => 'Actualización',
-        'tabla_afectada' => 'Medico',
-        'detalles' => "Se actualizo el médico: {$usuario->name}",
-        'fecha_hora' => now(),
-    ]);
-           // Verificar que horarios es un array
-    if (!is_array($validated['horarios'])) {
-        return back()->with('error', 'Formato de horarios inválido');
-    }
+        $usuario = User::find($request->id_usuario);
+        Bitacora::create([
+            'id_usuario' => $request->id_usuario,
+            'name_usuario' => $usuario->name,
+            'accion' => 'Actualización',
+            'tabla_afectada' => 'Medico',
+            'detalles' => "Se actualizo el médico: {$usuario->name}",
+            'fecha_hora' => now(),
+        ]);
+        // Verificar que horarios es un array
+        if (!is_array($validated['horarios'])) {
+            return back()->with('error', 'Formato de horarios inválido');
+        }
         // Actualizar datos del medico
         $medico->update([
             'id_usuario' => $request->id_usuario,
@@ -187,49 +269,129 @@ class MedicoController extends Controller
         ]);
 
         // Obtener ids de los horarios enviados
-    $idsRecibidos = collect($request->horarios)
-    ->pluck('horario_id')
-    ->filter()
-    ->toArray();
+        $idsRecibidos = collect($request->horarios)
+            ->pluck('horario_id')
+            ->filter()
+            ->toArray();
 
 
 
-    // Eliminar horarios que ya no están en el formulario
-    Horario::where('medico_id', $medico->id)
-        ->whereNotIn('id', $idsRecibidos)
-        ->delete();
+        // Eliminar horarios que ya no están en el formulario
+        Horario::where('medico_id', $medico->id)
+            ->whereNotIn('id', $idsRecibidos)
+            ->delete();
 
-    // Recorrer y actualizar o crear horarios
-    foreach ($validated['horarios'] as $horario) {
-        $horarioData = [
-            $horario['dia'] => [$horario['hora_inicio'] . '-' . $horario['hora_fin']]
-        ];
+        // Recorrer y actualizar o crear horarios
+        foreach ($validated['horarios'] as $horario) {
+            $horarioData = [
+                $horario['dia'] => [$horario['hora_inicio'] . '-' . $horario['hora_fin']]
+            ];
 
-        if (isset($horario['horario_id'])) {
-            Horario::where('id', $horario['horario_id'])
-                ->update([
+            if (isset($horario['horario_id'])) {
+                Horario::where('id', $horario['horario_id'])
+                    ->update([
+                        'sucursal_id' => $horario['sucursal_id'],
+                        'horarios' => $horarioData // Ya no usamos json_encode aquí
+                    ]);
+            } else {
+                Horario::create([
+                    'medico_id' => $medico->id,
                     'sucursal_id' => $horario['sucursal_id'],
                     'horarios' => $horarioData // Ya no usamos json_encode aquí
                 ]);
-        } else {
-            Horario::create([
-                'medico_id' => $medico->id,
-                'sucursal_id' => $horario['sucursal_id'],
-                'horarios' => $horarioData // Ya no usamos json_encode aquí
-            ]);
+            }
         }
+        // Forzar refresco de la relación
+        $medico->load('horarios');
+
+        // Alternativa: refrescar toda la instancia
+        $medico->refresh();
+        //dd($medico);
+
+
+        return redirect()->route('medicos.index')->with('success', 'Médico actualizado correctamente');
+    }
+
+    public function updateApi(Request $request, DetalleMedico $medico)
+    {
+        $validated = $request->validate([
+            'id_usuario' => 'required|exists:users,id',
+            'id_especialidad' => 'required|exists:especialidades,id',
+            'numero_colegiado' => 'required|string|max:10',
+            'horarios' => 'required|array',
+            'horarios.*.sucursal_id' => 'required|exists:sucursal,id',
+            'horarios.*.dia' => 'required|string',
+            'horarios.*.hora_inicio' => 'required|date_format:H:i',
+            'horarios.*.hora_fin' => 'required|date_format:H:i|after:horarios.*.hora_inicio',
+        ]);
+        $usuario = User::find($request->id_usuario);
+        Bitacora::create([
+            'id_usuario' => $request->id_usuario,
+            'name_usuario' => $usuario->name,
+            'accion' => 'Actualización',
+            'tabla_afectada' => 'Medico',
+            'detalles' => "Se actualizo el médico: {$usuario->name}",
+            'fecha_hora' => now(),
+        ]);
+        // Verificar que horarios es un array
+        if (!is_array($validated['horarios'])) {
+            
+            return response()->json(['error' => 'Formato de horarios inválido'], 400);
+        }
+        // Actualizar datos del medico
+        $medico->update([
+            'id_usuario' => $request->id_usuario,
+            'id_especialidad' => $request->id_especialidad,
+            'numero_colegiado' => $request->numero_colegiado,
+        ]);
+
+        // Obtener ids de los horarios enviados
+        $idsRecibidos = collect($request->horarios)
+            ->pluck('horario_id')
+            ->filter()
+            ->toArray();
+
+
+
+        // Eliminar horarios que ya no están en el formulario
+        Horario::where('medico_id', $medico->id)
+            ->whereNotIn('id', $idsRecibidos)
+            ->delete();
+
+        // Recorrer y actualizar o crear horarios
+        foreach ($validated['horarios'] as $horario) {
+            $horarioData = [
+                $horario['dia'] => [$horario['hora_inicio'] . '-' . $horario['hora_fin']]
+            ];
+
+            if (isset($horario['horario_id'])) {
+                Horario::where('id', $horario['horario_id'])
+                    ->update([
+                        'sucursal_id' => $horario['sucursal_id'],
+                        'horarios' => $horarioData // Ya no usamos json_encode aquí
+                    ]);
+            } else {
+                Horario::create([
+                    'medico_id' => $medico->id,
+                    'sucursal_id' => $horario['sucursal_id'],
+                    'horarios' => $horarioData // Ya no usamos json_encode aquí
+                ]);
+            }
+        }
+        // Forzar refresco de la relación
+        $medico->load('horarios');
+
+        // Alternativa: refrescar toda la instancia
+        $medico->refresh();
+        //dd($medico);
+
 
         
-    }
-     // Forzar refresco de la relación
-     $medico->load('horarios');
-
-         // Alternativa: refrescar toda la instancia
-    $medico->refresh();
-    //dd($medico);
-    
-
-    return redirect()->route('medicos.index')->with('success', 'Médico actualizado correctamente');
+        return response()->json([
+            'success' => true,
+            'message' => 'Médico actualizado correctamente',
+            
+        ]);
     }
 
 
@@ -242,7 +404,8 @@ class MedicoController extends Controller
         $medico->update(['estado' => $estado]);
 
         return redirect()->route('medicos.index')->with(
-            'success', $estado == 0 ? 'Médico desactivado con éxito!' : 'Médico activado con éxito!'
+            'success',
+            $estado == 0 ? 'Médico desactivado con éxito!' : 'Médico activado con éxito!'
         );
     }
 

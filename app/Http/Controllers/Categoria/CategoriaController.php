@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Bitacora;
 use App\Models\Categoria;
 use App\Models\User;
+use GuzzleHttp\Psr7\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Tymon\JWTAuth\Facades\JWTAuth;
@@ -27,6 +28,16 @@ class CategoriaController extends Controller
         ->get();
         return view('categorias.index',['categorias'=>$categorias]);
     }
+
+    public function indexApi()
+    {
+        $categorias = Categoria::select('id','nombre','descripcion','estado','created_at')
+        ->where('estado', '!=', 0)
+        ->get();
+
+        return response()->json($categorias);
+    }
+
 
     /**
      * Show the form for creating a new resource.
@@ -69,6 +80,32 @@ class CategoriaController extends Controller
             return redirect()->route('categorias.index')->with('success', '¡Registro exitoso!');
     }
 
+    public function storeApi(Request $request)
+    {
+        $this->validate($request,[
+            'nombre'=>['required','string','max:35','unique:categoria,nombre'],
+            'descripcion'=>'required|max:100',
+            'estado'=>'integer',
+        ]);
+        Categoria::create([
+            'nombre'=> $request->nombre,
+            'descripcion'=> $request->descripcion,
+            'estado'=> 1,
+        ]);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Categorías',
+                'detalles' => "Se creó la categoria: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
+
+            return response()->json(['success' => true, 'message' => 'Categoría creada con éxito']);
+    }
+
     /**
      * Display the specified resource.
      *
@@ -77,7 +114,9 @@ class CategoriaController extends Controller
      */
     public function show($id)
     {
-        //
+        $categoria = Categoria::find($id);
+
+        return response()->json($categoria);
     }
 
     /**
@@ -130,6 +169,43 @@ class CategoriaController extends Controller
         ]);
 
         return redirect()->route('categorias.index')->with('success', '¡Categoria actualizado!');
+    }
+
+      public function updateApi(Request $request, $id)
+    {
+
+        $categoria = Categoria::find($id);
+        // Validaciones de los datos
+        $this->validate($request, [
+            'nombre' => ['required', 'string', 'max:35', 'unique:categoria,nombre,' . $categoria->id],
+            'descripcion' => 'required|max:100',
+            'estado' => 'integer',
+        ]);
+
+        // Verificación de cambios
+        $datosActualizados = $request->only(['nombre', 'descripcion']);
+        $datosSinCambios = $categoria->only(['nombre', 'descripcion']);
+
+        if ($datosActualizados == $datosSinCambios) {
+           
+            return response()->json(['success' => false, 'message' => 'No se realizaron cambios.']);
+        }
+
+        // Actualizar datos
+        $categoria->update($datosActualizados);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Categorías',
+                'detalles' => "Se actualizo la categoria: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
+
+       
+        return response()->json(['success' => true, 'message' => 'Categoría actualizada con éxito']);
     }
 
     /**

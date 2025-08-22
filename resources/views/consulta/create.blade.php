@@ -64,7 +64,7 @@
                             <option value="">Buscar Medico</option>
                             @foreach ($medicos as $medico)
                                 <option value="{{ $medico->id }}">
-                                    {{ $medico->usuario->name }} - {{$medico->especialidad}}</option>
+                                    {{ $medico->usuario->name }}</option>
                             @endforeach
                         </select>
                         @error('id_medico')

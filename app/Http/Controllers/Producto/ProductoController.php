@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\HistoricoPrecio;
 use App\Models\Sucursal;
 use App\Models\SucursalUser;
+use Database\Seeders\productos;
 use Illuminate\Http\Request;
 
 class ProductoController extends Controller
@@ -32,6 +33,16 @@ class ProductoController extends Controller
         ->get();
         //return $productos;
         return view('producto.index',['productos'=>$productos]);
+    }
+
+    public function indexApi()  {
+         $productos = Producto::with('categoria:id,nombre')
+        ->select('id','codigo','nombre','tipo','ultimo_precio_compra','precio_venta','precio_porcentaje','imagen','estado','id_categoria','updated_at')
+        ->where('estado', '!=', 0)
+
+        ->get();
+        //return $productos;
+        return response()->json($productos);
     }
 
 
@@ -123,6 +134,74 @@ class ProductoController extends Controller
 
     }
 
+        public function storeApi(Request $request)
+    {
+
+              // Guardar el nombre de la imagen temporalmente
+            $imagenNombre = $request->imagen;
+
+        $this->validate($request,[
+            // 'codigo'=>['nullable'],
+            'id_categoria'=>'required',
+            'imagen'=>'required',
+            'nombre'=>['required','string','max:255'],
+            'descripcion'=>['max:100','required','string'],
+            'precio_venta'=>'numeric|required|min:0',
+            'precio_porcentaje' => 'nullable|numeric',
+            'estado'=>'integer',
+
+        ]);
+
+         // Mover la imagen de temp a definitivo
+        $imagenController = new ImagenController();
+        $imagenMovida = $imagenController->moverDefinitiva($request->imagen);
+
+   
+
+
+
+        $tipo = $request->has('tipo') ? 2 : 1;
+        // generacion de codigo
+        $ultimoId = Producto::max('id') ?? 0;
+        $codigo = 'C-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
+
+        $datosProducto = [
+            'nombre' => $request->nombre,
+            'imagen' => $request->imagen,
+            'descripcion' => $request->descripcion,
+            'precio_venta' => $request->precio_venta,
+            'id_categoria' => $request->id_categoria,
+            'estado' => 1,
+            'tipo' => $tipo,
+            'codigo' => $codigo,
+        ];
+
+        // Asignar precio_porcentaje según el tipo
+        $datosProducto['precio_porcentaje'] = ($tipo == 1)
+            ? $request->precio_venta  // Para productos
+            : $request->precio_porcentaje;  // Para servicios
+
+        Producto::create($datosProducto);
+
+            // Limpiar la imagen temporal de la sesión
+            session()->forget('imagen_temp');
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Producto',
+                'detalles' => "Se creo el producto: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
+
+        return response()->json(['message' => '¡Registro exitoso!'], 201);
+
+    }
+
+
+
     /**
      * Display the specified resource.
      *
@@ -131,7 +210,8 @@ class ProductoController extends Controller
      */
     public function show($id)
     {
-        //
+        $producto = Producto::find($id);
+        return response()->json($producto);
     }
 
     /**
@@ -245,6 +325,101 @@ class ProductoController extends Controller
         }
 
         return redirect()->route('productos.index');
+    }
+
+
+      public function updateApi(Request $request, Producto $producto)
+    {
+        $this->validate($request, [
+            'id_categoria' => 'required|exists:categoria,id',
+            'nombre' => ['required', 'string', 'max:255'],
+            'imagen' => 'nullable',
+            'descripcion' => ['required', 'string', 'max:100'],
+            'precio_venta' => 'numeric|required|min:0',
+            'precio_porcentaje' => 'nullable|numeric|min:0',
+            'estado' => 'integer',
+        ]);
+
+        // Determinar el tipo de producto
+        $nuevoTipo = $request->has('tipo') ? 2 : 1;
+
+        // Preparar datos para actualización
+        $datosActualizados = [
+            'id_categoria' => $request->id_categoria,
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
+            'tipo' => $nuevoTipo,
+        ];
+
+        // Manejo de imagen
+        $imagenOriginal = $producto->imagen;
+
+        if ($request->has('eliminar_imagen') && $request->eliminar_imagen == '1') {
+            if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                unlink(public_path('uploads/' . $imagenOriginal));
+            }
+            $datosActualizados['imagen'] = null;
+        } elseif ($request->imagen && $request->imagen !== $imagenOriginal) {
+            $imagenController = new ImagenController();
+            $imagenMovida = $imagenController->moverDefinitiva($request->imagen);
+
+            if (!$imagenMovida) {
+               
+                return response()->json(['error' => 'No se pudo guardar la nueva imagen'], 500);
+            }
+
+            if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                unlink(public_path('uploads/' . $imagenOriginal));
+            }
+
+            $datosActualizados['imagen'] = $request->imagen;
+        } else {
+            $datosActualizados['imagen'] = $imagenOriginal;
+        }
+
+        // Lógica de precios según tipo de producto
+        if ($nuevoTipo == 1) {
+            // Producto normal: ambos precios iguales
+            $nuevoPrecio = round($request->precio_venta * 10) / 10;
+            $datosActualizados['precio_venta'] = $nuevoPrecio;
+            $datosActualizados['precio_porcentaje'] = $nuevoPrecio;
+        } else {
+            // Servicio: precios pueden ser diferentes
+            $datosActualizados['precio_venta'] = round($request->precio_venta * 10) / 10;
+            $datosActualizados['precio_porcentaje'] = $request->precio_porcentaje
+                ? round($request->precio_porcentaje * 10) / 10
+                : null;
+        }
+
+        // Registrar cambio de precio si hubo modificación
+        if ($producto->precio_porcentaje != $datosActualizados['precio_porcentaje']) {
+            HistoricoPrecio::create([
+                'id_producto' => $producto->id,
+                'precio_anterior' => $producto->precio_porcentaje,
+                'precio_nuevo' => $datosActualizados['precio_porcentaje'],
+                'fecha_cambio' => now(),
+            ]);
+        }
+
+        // Actualizar el producto si hay cambios
+        if ($producto->fill($datosActualizados)->isDirty()) {
+            $producto->save();
+
+            $usuario = User::find($request->idUsuario);
+            Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' => $usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Productos',
+                'detalles' => "Se actualizó el producto: {$request->nombre}",
+                'fecha_hora' => now(),
+            ]);
+
+            
+            return response()->json(['message' => '¡Producto actualizado!'], 200);
+        }
+
+        return  response()->json(['message' => 'No se realizaron cambios'], 200);
     }
 
 
