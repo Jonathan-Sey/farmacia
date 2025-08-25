@@ -147,4 +147,22 @@ Route::middleware(['jwt.auth'])->group(function () {
     Route::get("categorias/{id}", [CategoriaController::class, 'show']);
     Route::put("categorias/{id}/actualizar", [CategoriaController::class, 'updateApi']);
 
+    //api para los proveedores
+    Route::get("proveedores", [ProveedorController::class, 'indexApi']);
+    Route::post("proveedores/insertar", [ProveedorController::class, 'storeApi']);
+    Route::get("proveedores/{id}", [ProveedorController::class, 'show']);
+    Route::put("proveedores/{id}/actualizar", [ProveedorController::class, 'updateApi']);
+
+    //api para los roles
+    Route::get("roles", [RolController::class, 'indexApi']);
+    Route::post("roles/insertar", [RolController::class, 'storeApi']);
+    Route::get("roles/{id}", [RolController::class, 'show']);
+    Route::put("roles/{id}/actualizar", [RolController::class, 'updateApi']);
+
+    //api sucursales
+    Route::get("sucursales", [SucursalController::class, 'indexApi']);
+    Route::post("sucursales/insertar", [SucursalController::class, 'storeApi']);
+    Route::get("sucursales/{id}", [SucursalController::class, 'show']);
+    Route::put("sucursales/{id}/actualizar", [SucursalController::class, 'updateApi']);
+
 });

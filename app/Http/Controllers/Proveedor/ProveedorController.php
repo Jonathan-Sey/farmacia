@@ -23,6 +23,15 @@ class ProveedorController extends Controller
        return view('proveedor.index', compact('proveedores'));
     }
 
+    public function indexApi()
+    {
+        $proveedores = Proveedor::select('id','nombre','telefono','empresa','correo','estado','updated_at')
+        ->where('estado', '!=', 0)
+        ->get();
+
+        return response()->json($proveedores);
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -71,7 +80,40 @@ class ProveedorController extends Controller
         ]);
         return redirect()->route('proveedores.index')->with('success', '¡Registro exitoso!');
     }
+    
+       public function storeApi(Request $request)
+    {
+        $this->validate($request,[
+            'nombre'=>['required','string','max:35','unique:proveedor,nombre'],
+            'telefono'=>['required','string','max:20'],
+            'empresa'=>['required','string','max:35'],
+            'correo'=>['required','string','max:35'],
+            'direccion'=>['max:100','required','string'],
+            'estado'=>'integer',
+        ]);
 
+        Proveedor::create([
+            'nombre' => $request->nombre,
+            'telefono' => $request->telefono,
+            'empresa' => $request->empresa,
+            'correo' => $request->correo,
+            'direccion' => $request->direccion,
+            'estado' => 1,
+
+        ]);
+
+        $usuario=User::find($request->idUsuario);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Proveedores',
+                'detalles' => "Se creó el proveedor: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
+       
+        return response()->json(['success' => true, 'message' => 'Proveedor creado con éxito']);
+    }
     /**
      * Display the specified resource.
      *
@@ -80,7 +122,11 @@ class ProveedorController extends Controller
      */
     public function show($id)
     {
-        //
+        $proveedor = Proveedor::find($id);
+        if (!$proveedor) {
+            return redirect()->route('proveedores.index')->with('error', 'Proveedor no encontrado');
+        }
+        return response()->json($proveedor);
     }
 
     /**
@@ -136,6 +182,44 @@ class ProveedorController extends Controller
         return redirect()->route('proveedores.index')->with('success','¡Proveedor actualizado!');
 
     }
+
+       public function updateApi(Request $request, $id)
+    {
+
+        $proveedor = Proveedor::find($id);
+        $this->validate($request,[
+            'nombre'=>['required','string','max:35','unique:proveedor,nombre,' . $proveedor->id ],
+            'telefono'=>['required','string','max:20'],
+            'empresa'=>['required','string','max:35'],
+            'correo'=>['required','string','max:35'],
+            'direccion'=>['max:100','required','string'],
+            'estado'=>'integer',
+        ]);
+
+        $datosActualizados = $request->only(['nombre','telefono','empresa','correo','direccion']);
+        $datosSinCambio = $proveedor->only(['nombre','telefono','empresa','correo','direccion']);
+
+        if($datosActualizados == $datosSinCambio){
+           
+            response()->json(['success' => false, 'message' => 'No se realizaron cambios']);
+        }
+        $proveedor->update($datosActualizados);
+
+        $usuario=User::find($request->estado);
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Actualización',
+                'tabla_afectada' => 'Proveedores',
+                'detalles' => "Se actualizo el proveedor: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
+
+        
+        return response()->json(['success' => true, 'message' => 'Proveedor actualizado con éxito']);
+
+    }
+
 
     /**
      * Remove the specified resource from storage.

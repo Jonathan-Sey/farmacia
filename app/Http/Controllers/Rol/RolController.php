@@ -28,11 +28,21 @@ class RolController extends Controller
 
     }
 
+    function indexApi()  {
+        $roles = Rol::where('estado', '!=', 0)->get();
+        return response()->json($roles);
+    }
+
     public function create()
     {
         $pestanas = Pestana::all();
         return view('roles.create',compact('pestanas'));
 
+    }
+
+    public function show($id) {
+        $rol = Rol::with('pestanas')->find($id);
+        return response()->json($rol);
     }
 
     public function edit(Rol $rol)
@@ -49,6 +59,7 @@ class RolController extends Controller
 
     public function store(Request $request)
     {
+        
 
         $this->validate($request, [
             'nombre' => ['required', 'string', 'max:20', 'unique:rol,nombre'],
@@ -100,6 +111,51 @@ class RolController extends Controller
         return redirect()->route('roles.index')->with('success', '¡Registro exitoso!');
     }
 
+     public function storeApi(Request $request)
+    {
+
+        $this->validate($request, [
+            'nombre' => ['required', 'string', 'max:20', 'unique:rol,nombre'],
+            'descripcion' => 'required|max:100',
+            'estado' => 'integer',
+            'pestanas' => 'required|array', // Se valida que pestanas sea un array
+            'pestanas.*' => 'exists:pestanas,id', // Se valida que cada ID de pestaña exista en la base de datos
+            'pagina_inicio' => 'nullable|exists:pestanas,id', // Se valida que la nueva pestaña, si es seleccionada, exista
+        ]);
+
+
+        $rol = Rol::create([
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion,
+            'estado' => 1,
+        ]);
+
+        
+
+        $pestanasData = [];
+        foreach ($request->pestanas as $index => $pestanaId) {
+            $pestanasData[$pestanaId] = [
+                'orden' => $index + 1,
+                'es_inicio' => $pestanaId == $request->pagina_inicio
+            ];
+        }
+
+        $rol->pestanas()->sync($pestanasData);
+
+        $usuario=User::find($request->idUsuario);
+
+        Bitacora::create([
+                'id_usuario' => $request->idUsuario,
+                'name_usuario' =>$usuario->name,
+                'accion' => 'Creación',
+                'tabla_afectada' => 'Rol',
+                'detalles' => "Se creó el Rol: {$request->nombre}", //detalles especificos
+                'fecha_hora' => now(),
+        ]);
+        
+        return response()->json($rol);
+    }
+
     public function update(Request $request, Rol $rol)
     {
         $validated = $request->validate([
@@ -140,6 +196,51 @@ class RolController extends Controller
         ]);
 
         return redirect()->route('roles.index')->with('success', 'Rol actualizado con éxito');
+    }
+
+    public function updateApi(Request $request, $id)
+    {
+
+            $rol = Rol::find($id);
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:255|unique:rol,nombre,'.$rol->id,
+            'descripcion' => 'required|string|max:255',
+            'pestanas' => 'required|array',
+            'pestanas.*' => 'exists:pestanas,id',
+            'pagina_inicio' => 'required|exists:pestanas,id'
+        ]);
+
+        // Actualizar datos básicos del rol
+        $rol->update([
+            'nombre' => $request->nombre,
+            'descripcion' => $request->descripcion
+        ]);
+
+        // Preparar datos para sincronización
+        $pestanasData = [];
+        foreach ($request->pestanas as $index => $pestanaId) {
+            $pestanasData[$pestanaId] = [
+                'orden' => $index + 1,
+                'es_inicio' => $pestanaId == $request->pagina_inicio ? 1 : 0
+            ];
+        }
+
+        // Sincronizar pestañas
+        $rol->pestanas()->sync($pestanasData);
+
+        // Bitácora
+        $usuario = User::find($request->idUsuario);
+        Bitacora::create([
+            'id_usuario' => $request->idUsuario,
+            'name_usuario' => $usuario->name,
+            'accion' => 'Actualización',
+            'tabla_afectada' => 'Rol',
+            'detalles' => "Se actualizó el Rol: {$request->nombre}",
+            'fecha_hora' => now(),
+        ]);
+
+
+        return response()->json(["message" => "Rol actualizado con éxito", "data" => $rol]);
     }
 
     public function destroy(Request $request, Rol $rol)
