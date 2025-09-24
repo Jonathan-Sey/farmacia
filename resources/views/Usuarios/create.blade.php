@@ -47,7 +47,7 @@
                 </div>
 
                 <!-- Selección de Rol -->
-                <div class="mt-4">
+                {{-- <div class="mt-4">
                     <label for="id_rol" class="block text-sm font-medium text-gray-900">Seleccionar Rol</label>
                     <select name="id_rol" id="id_rol" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
                         @foreach ($roles as $rol)
@@ -59,7 +59,19 @@
                         <span class="text-white font-bold">{{ $message }}</span>
                     </div>
                     @enderror
+                </div> --}}
+
+                <div class="mt-4">
+                    <x-select2
+                        id="id_rol"
+                        name="id_rol"
+                        :options="$roles->pluck('nombre','id')"
+                        :selected="old('id_rol')"
+                        placeholder="Seleccionar Rol"
+                    />
+
                 </div>
+
                 <div class="mt-4">
                     <x-select2
                         name="sucursal_id"

@@ -65,7 +65,7 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_venta}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$producto->precio_porcentaje}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-        
+
                         {{-- <a href="{{ $producto->imagen ? asset('uploads/' . $producto->imagen) : '#' }}">
                             @if ($producto->imagen)
                                 <img src="{{ asset('uploads/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded">
@@ -78,7 +78,7 @@
                             @else
                                 <span class="text-gray-500">Sin imagen</span>
                          @endif
-                         
+
 
                         </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
@@ -120,7 +120,7 @@
             </tbody>
         </x-slot>
     </x-data-table>
-    
+
      <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
         <div class="modal-box max-w-5xl m-auto">
             <span class="text-white text-2xl cursor-pointer absolute top-4 right-4" onclick="closeModal()">&times;</span>
@@ -192,21 +192,9 @@
                 { responsivePriority: 1, targets: 1 },
                 { responsivePriority: 2, targets: 9 },
             ],
-<<<<<<< HEAD
-            // drawCallback: function() {
-            //     // Esperar un momento para asegurarse de que los botones se hayan cargado
-            //     setTimeout(function() {
-            //         // Seleccionar los botones de paginación y agregar clases de DaisyUI
-            //         $('a.paginate_button').addClass('btn btn-sm btn-primary mx-1'); // Todos los botones
-            //         $('a.paginate_button.current').removeClass('btn-gray-800').addClass('btn btn-sm btn-primary'); // Resaltar la página actual
-            //     }, 100); // Espera 100 ms antes de aplicar las clases
-            // },
-=======
-
->>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
         });
 
-        
+
             $('#example tbody').on('click', '.cambiar-estado-btn', function () {
                 const button = $(this);
                 const Id = button.data('id');

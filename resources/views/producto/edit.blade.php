@@ -265,13 +265,8 @@
                     </div>
                     @enderror
                 </div> --}}
-<<<<<<< HEAD
-
-                <div class="mt-2">
-=======
             </div>
             <div class="mt-2">
->>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
                     <label for="descripcion" class="uppercase block text-sm font-medium text-gray-900">Descripción</label>
                     <textarea name="descripcion"
                     require
@@ -285,13 +280,6 @@
                     @enderror
                 </div>
 
-<<<<<<< HEAD
-
-
-            </div>
-
-=======
->>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
             <div class="mt-6 flex items-center justify-end gap-x-6">
                 <a href="{{route('productos.index')}}">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>

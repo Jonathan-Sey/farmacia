@@ -29,7 +29,7 @@
              <td class="px-6 py-4 whitespace-nowrap text-left">{{ $almacen->producto->codigo }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-left"> {{ $almacen->producto->nombre }}</td>
                 <td class="px-6 py-4 whitespace-nowrap text-left">
-                   
+
                     @if ($almacen->producto->imagen)
                         <div class="mt-2">
                             <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
@@ -59,14 +59,12 @@
                     @endif
                 </td>
 
-             
+
             </tr>
             @endforeach
         </tbody>
     </x-slot>
 </x-data-table>-->
-<<<<<<< HEAD
-=======
     <form action="{{ route('devoluciones.fechas') }}" method="POST" id="formReporte" class="space-y-4 sm:space-y-6 mb-5" >
         @csrf
         <div class="sm:flex-1 lg:inline-block mb-4">
@@ -83,7 +81,6 @@
             </button>
         </div>
     </form>
->>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
 
  <x-data-table>
         <x-slot name="thead">
@@ -95,7 +92,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Cantidad</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Tipo</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Imagen</th>
-                    
+
                 </tr>
             </thead>
         </x-slot>
@@ -183,7 +180,7 @@
                 { responsivePriority: 1, targets: 1 },
                 { responsivePriority: 2, targets: 5 },
             ],
-           
+
         });
     });
 </script>
