@@ -52,11 +52,11 @@
                         @endif  --}}
 
                         @if ($almacen->producto->imagen)
-                            <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="Producto" 
+                            <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="Producto"
                             class="w-16 h-16 object-cover rounded" onclick="openModal('{{ asset('uploads/' . $almacen->producto->imagen) }}')">
                         @else
                                 <span class="text-gray-500">Sin imagen</span>
-                        @endif 
+                        @endif
                     </td>
                     <td class=" px-6 py-4 whitespace-nowrap text-center">
                         <a href="#" class="estado">
@@ -134,7 +134,7 @@
     </div>
 
 
-    
+
 @endsection
 
 @push('js')

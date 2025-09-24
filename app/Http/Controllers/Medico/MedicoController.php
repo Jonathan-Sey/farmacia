@@ -48,7 +48,7 @@ class MedicoController extends Controller
     {
         // Validación de los datos
         $validatedData = $request->validate([
-            'id_usuario' => 'required|exists:users,id',
+            'id_usuario' => 'required|exists:users,id|unique:users,id',
             'especialidad' => 'required|string|max:75',
             'numero_colegiado' => 'required|string|max:10',
             'estado' => 'integer',
@@ -219,7 +219,7 @@ class MedicoController extends Controller
             ]);
         }
 
-        
+
     }
      // Forzar refresco de la relación
      $medico->load('horarios');
@@ -227,7 +227,7 @@ class MedicoController extends Controller
          // Alternativa: refrescar toda la instancia
     $medico->refresh();
     //dd($medico);
-    
+
 
     return redirect()->route('medicos.index')->with('success', 'Médico actualizado correctamente');
     }

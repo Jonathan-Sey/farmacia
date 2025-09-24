@@ -109,7 +109,7 @@
 @section('contenido')
 {{-- Obtenemos el dato completo de la persona --}}
 @php
-        // nombe del adulto 
+        // nombe del adulto
         $nombre = $persona->fichasMedicas->first()->nombre;
         $apellido_paterno = $persona->fichasMedicas->first()->apellido_paterno;
         $apellido_materno = $persona->fichasMedicas->first()->apellido_materno;
@@ -144,7 +144,7 @@
             @if ($persona->fichasMedicas->first()->nombreMenor)
                 <h3 class="text-xl font-semibold mb-4">Crear Ficha Médica para {{$nombreMenor}}</h3>
                 <input type="hidden" name="nombrePersona"  value="{{$nombreMenor}}">
-            @else 
+            @else
                 <h3 class="text-xl font-semibold mb-4">Crear Ficha Médica para {{ $nombreCompleto }}</h3>
                 <input type="hidden" name="nombrePersona" value="{{$nombreCompleto}}">
             @endif
@@ -216,7 +216,7 @@
                         </td>
                         <td>
                             <textarea class="editable-instrucciones w-full px-2 py-1 border rounded">{{$producto->pivot->instrucciones ?? 'N/A'}}</textarea>
-                            
+
                         </td>
                         <td>
                                 <button type="button" class="eliminar-producto">
@@ -357,8 +357,6 @@
             return;
         }
 
-        console.log(datos);
-
 
         // proceso para agregar los productos a la tabla
         contador ++;
@@ -367,11 +365,11 @@
                     <th>${contador}</th>
                     <td>${nombre}</td>
                     <td>
-                    <input type="number" 
+                    <input type="number"
                     min="1"
                     class="editable-cantidad w-full px-2 py-1 border rounded"
                     value="${cantidad}"
-                    > 
+                    >
                     </td>
                     <td>
                         <textarea class="editable-instrucciones w-full px-2 py-1 border rounded">${instrucciones ?? 'N/A'}</textarea>
@@ -390,7 +388,7 @@
         limpiar();
     }
 
-    // proceso para editar los arrays de los productos 
+    // proceso para editar los arrays de los productos
     function actualizarProductos(){
         $('#contenido-productos tr').each(function(){
             const productoId = $(this).data('producto-id');
@@ -400,7 +398,7 @@
             //asignamos valores nuevos al array
             $(this).find('input[name="producto['+productoId+'][cantidad]"]').val(cantidad);
             $(this).find('input[name="producto['+productoId+'][instrucciones]"]').val(instruccion);
-            
+
         });
     }
 

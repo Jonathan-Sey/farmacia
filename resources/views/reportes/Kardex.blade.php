@@ -10,12 +10,11 @@
 @endpush
 
 @section('contenido')
-   
+
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">
                 <tr class="bg-slate-600  ">
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Id</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Producto</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Sucursal</th>
                      <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Usuario</th>
@@ -24,8 +23,8 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Cantidad anterior</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Cantidad nueva</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha</th>
-                   
-            
+
+
                 </tr>
             </thead>
         </x-slot>
@@ -34,7 +33,6 @@
             <tbody>
                 @foreach ($reporte as $reportes)
                 <tr>
-                    <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->id}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->producto->nombre}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->nombre_sucursal}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->usuario->name}}</td>
@@ -44,7 +42,7 @@
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->Cantidad_nueva}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">{{$reportes->fecha_movimiento}}</td>
 
-                   
+
                 </tr>
                 @endforeach
             </tbody>
@@ -88,9 +86,9 @@
                 }
             },
             columnDefs: [
-                { responsivePriority: 3, targets: 0 },
+                { responsivePriority: 3, targets: 4 },
                 { responsivePriority: 1, targets: 1 },
-                { responsivePriority: 2, targets: 6 },
+                { responsivePriority: 2, targets: 3 },
 
             ],
             drawCallback: function() {

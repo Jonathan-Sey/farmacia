@@ -92,7 +92,14 @@
                 }
             },
             columnDefs: [
+<<<<<<< HEAD
                 { responsivePriority: 3, targets: 0 },
+=======
+                { responsivePriority: 3, targets: 9},
+                { responsivePriority: 1, targets: 1 },
+                { responsivePriority: 2, targets: 2 },
+                
+>>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
 
             ],
             drawCallback: function() {

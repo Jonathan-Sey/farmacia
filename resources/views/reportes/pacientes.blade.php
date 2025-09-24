@@ -12,7 +12,32 @@
 {{-- <div class="max-w-5xl mx-auto p-4 mb-6 bg-white rounded-lg shadow-md">
 </div> --}}
 
-<x-data-table>
+<form action="{{route('reporte.DetallePacienteFecha')}}" method="POST">
+    @csrf
+        {{-- botones para definir el rango de fechas --}}
+        <div id="camposRengo" class="flex flex-col gap-2 md:flex-row">
+            <div class="flex-1 mb-4">
+                <label for="fechaInicio" class="block text-sm font-medium text-gray-600">Desde:</label>
+                <input type="date" id="fechaInicio" name="fechaInicio"
+                class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
+            </div>
+            <div class="flex-1 mb-4">
+                <label for="fechaFin" class="block text-sm font-medium text-gray-600">Hasta:</label>
+                <input type="date" id="fechaFin" name="fechaFin"
+                class="w-full p-2 sm:p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-blue-300 transition-all duration-200 text-sm sm:text-base">
+            </div>
+        </div>
+
+        <!-- Botón -->
+        <div class=" flex flex-col gap-5 md:flex-row justify-end">
+            <button type="submit" id="btnGenerarInforme"
+                class="w-full sm:w-auto px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 focus:bg-green-600 focus:ring-4 focus:ring-green-200 transition-all duration-200 font-medium text-sm sm:text-base">
+                Generar Informe
+            </button>
+        </div>
+</form>
+
+<x-data-table class="mt-5">
     <x-slot name="thead">
         <thead class=" text-white font-bold">
             <tr class="bg-slate-600  ">
@@ -30,13 +55,37 @@
     <x-slot name="tbody">
         <tbody>
             @foreach ($fichasAgrupadas as $persona)
-            @if($persona->rol == 2 || $persona->rol == 3)
+            @if($persona->rol == 2)
                 <tr>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $persona->id }}</td>
                     <td class="px-6 py-4 whitespace-nowrap">
-                        {{ $persona->nombre }} 
-                        {{$persona->fichasMedicas->first()->apellido_paterno ?? ' '}}  
+                        {{ $persona->nombre }}
+                        {{$persona->fichasMedicas->first()->apellido_paterno ?? ' '}}
                         {{$persona->fichasMedicas->first()->apellido_materno ?? ' '}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $persona->DPI ?? 'Sin datos'}}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $persona->telefono ?? 'Sin datos'}}</td>
+
+
+                    <td class="flex gap-2 justify-center">
+
+                        {{-- <form action="{{route('reporte.DetallePaciente')}}" method="GET"> --}}
+                        <form action="{{route('reporte.DetallePaciente', $persona->id)}}" method="GET">
+                            @csrf
+                            <button type="submit" class="btn btn-primary font-bold uppercase btn-sm">
+                                ver
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+
+            @endif
+        @if($persona->rol == 3)
+                <tr>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $persona->id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">
+                        {{ $persona->fichasMedicas->first()->nombreMenor ?? 'Sin informacion ' }}
+                        {{$persona->fichasMedicas->first()->apellido_paterno_menor ?? ' '}}
+                        {{$persona->fichasMedicas->first()->apellido_materno_menor ?? ' '}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $persona->DPI ?? 'Sin datos'}}</td>
                     <td class="px-6 py-4 whitespace-nowrap">{{ $persona->telefono ?? 'Sin datos'}}</td>
 
@@ -54,7 +103,7 @@
                             @endforeach
                         </ul>
                     </td> --}}
-    {{-- 
+    {{--
                     <td class="px-6 py-4 whitespace-nowrap">
                         <ul class="list-disc pl-4">
                             @foreach ($persona->fichasMedicas as $ficha)
@@ -96,7 +145,7 @@
                 </tr>
 
             @endif
-            
+
             @endforeach
 
 

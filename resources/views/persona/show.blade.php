@@ -3,8 +3,8 @@
 @section('contenido')
 <div class="container mx-auto py-6">
     @php
-        
-        
+
+
         if ($persona->rol == 1) {
             $nombre = $persona->nombre;
             $nombreCompleto = $nombre;
@@ -14,14 +14,14 @@
             $apellido_materno = $persona->fichasMedicas->first()->apellido_materno;
             $nombreCompleto = $nombre . " ".$apellido_paterno . " ".$apellido_materno;
         }
-        
+
         //dd($nombreCompleto);
     @endphp
 
         @if ($persona->nombre)
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">Detalles de {{$nombreCompleto}} 
-                
-                
+            <h1 class="text-3xl font-bold text-gray-800 mb-6">Detalles de {{$nombreCompleto}}
+
+
             </h1>
         @else
                 <p class="text-gray-800">No especificado</p>
@@ -213,7 +213,7 @@
                                 class=" w-full bg-blue-600 text-white rounded-md p-2 pt-1 text-center sm:inline-block text-sm hover:bg-blue-700 sm:w-auto sm:p-3 font-medium">
                                  Editar
                              </a>
-                            
+
                              <button onclick="productosModal{{$ficha->id}}.showModal()"
                               class="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 font-medium sm:p-3">
                                Ver  <i class="fa-solid fa-notes-medical"></i>
@@ -222,7 +222,7 @@
                         </div>
                     </div>
                 @endforeach
-                
+
                 {{-- modal para ver el detalle de la vista --}}
                 @foreach ($fichas as $ficha)
                 <dialog id="productosModal{{$ficha->id}}" class="modal">
@@ -250,14 +250,14 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                        
+
                                             @foreach ($ficha->productosRecetados as $index => $producto )
                                                 <tr>
                                                 <td>{{$index + 1}}</td>
                                                 <td>{{$producto->nombre}}</td>
                                                 <td>{{$producto->pivot->cantidad}}</td>
                                                 <td>{{$producto->pivot->instrucciones ?? 'N/A'}}</td>
-                                                </tr>            
+                                                </tr>
                                             @endforeach
                                     </tbody>
                                 </table>
@@ -299,7 +299,7 @@
                             Agregar Ficha medica
                     </button>
             </form>
-            
+
             <a href="{{ route('personas.index') }}">
             <button type="button" class="w-full sm:w-auto text-white bg-gray-600 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 px-6 py-2 rounded-md text-sm font-semibold mt-4">
                 Volver al Índice de Personas
@@ -425,21 +425,6 @@
     }
     </script>
 
-    <script>
-        let datos = @json($fichas);
-        console.log(datos);
-        console.log(datos.data);
-
-        mostrarRestricciones(1);
-
-        function mostrarRestricciones(idPersona) {
-            fetch(`/personas/${idPersona}/productos`)
-            .then(response => response.json())
-            .then(data => {
-            console.log(data.cantidad)
-            });
-        }
-    </script>
     {{-- Mensaje de alerta --}}
     <script>
         $(document).ready(function() {
@@ -469,7 +454,7 @@
                 }
             });
         }
-        
+
     </script>
 
 @endpush

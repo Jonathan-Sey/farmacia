@@ -192,6 +192,7 @@
                 { responsivePriority: 1, targets: 1 },
                 { responsivePriority: 2, targets: 9 },
             ],
+<<<<<<< HEAD
             // drawCallback: function() {
             //     // Esperar un momento para asegurarse de que los botones se hayan cargado
             //     setTimeout(function() {
@@ -200,6 +201,9 @@
             //         $('a.paginate_button.current').removeClass('btn-gray-800').addClass('btn btn-sm btn-primary'); // Resaltar la página actual
             //     }, 100); // Espera 100 ms antes de aplicar las clases
             // },
+=======
+
+>>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
         });
 
         

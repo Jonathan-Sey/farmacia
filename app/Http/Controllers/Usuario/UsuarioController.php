@@ -115,7 +115,7 @@ class UsuarioController extends Controller
         }
     public function register(Request $request){
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:100',
+            'nombre' => 'required|string|max:100|unique:users,name',
             'email' => 'required|string|email|max:100|unique:users',
             'password' => 'required|string|min:6|max:12',
             'id_rol' => 'required|exists:rol,id',

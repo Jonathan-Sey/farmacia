@@ -67,7 +67,7 @@ class devolucionesController extends Controller
            return redirect()->route('devoluciones.index')->with('error', 'Las devoluciones solo se pueden realizar de 8:00 a 16:00 horas.');
         }
 
-        
+
         $validate = $request->validate([
             'id_venta' => 'required',
             'id_sucursal' => 'required',
@@ -172,13 +172,13 @@ class devolucionesController extends Controller
 
         $venta = Venta::find($solicitud->venta_id);
         $nuevoTotal = max(0, $venta->total - $solicitud->total);
-        
+
         $venta->update([
             'total' => $nuevoTotal,
             'estado' => $nuevoTotal <= 0 ? 0 : $venta->estado, // Marcar como inactiva si total es 0
         ]);
 
-        
+
         $nuevaNotificacion = Notificaciones::create([
             'tipo' => 'Devolución',
             'mensaje' => 'La solicitud de devolución ha sido autorizada.',
@@ -194,11 +194,11 @@ class devolucionesController extends Controller
 
     public function getVenta($id)
     {
-        $venta = Venta::with(['sucursal', 'usuario', 'persona'])->where('id', $id)->first();
+        $venta = Venta::with(['sucursal', 'usuario', 'persona','productos'])->where('id', $id)->first();
         $detalleVenta = DetalleVenta::with(['producto'])->where('id_venta', $id)->get();
         $venta->detalles = $detalleVenta;
         $venta->total = $detalleVenta->sum(function ($detalle) {
-            return $detalle->cantidad * $detalle->precio_venta;
+            return $detalle->cantidad * $detalle->precio_porcentaje;
         });
         if (!$venta) {
             return response()->json(['error' => 'Venta no encontrada'], 404);
@@ -206,4 +206,5 @@ class devolucionesController extends Controller
 
         return response()->json($venta);
     }
+    // reivsar
 }

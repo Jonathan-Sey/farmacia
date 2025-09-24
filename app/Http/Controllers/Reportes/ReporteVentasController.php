@@ -76,7 +76,6 @@ class ReporteVentasController extends Controller
     {
         $reporte = ReporteKardex::with([
             'producto',
-
             'usuario'
         ])->get();
         return view('reportes.Kardex', compact('reporte'));
@@ -270,7 +269,7 @@ class ReporteVentasController extends Controller
     {
         $sucursales = Sucursal::all();
         $productos = Inventario::with([
-            'producto:id,nombre,precio_venta',
+            'producto:id,nombre,precio_porcentaje',
             'bodega:id,nombre,ubicacion'
         ])->get();
         return view('reportes.reporteProducto', compact('productos', 'sucursales'));
@@ -291,7 +290,7 @@ class ReporteVentasController extends Controller
 
                 DB::raw('WEEK(almacen.created_at, 3) as semana'),
                 DB::raw('SUM(almacen.cantidad) as cantidad_total'),
-                DB::raw('SUM(almacen.cantidad * producto.precio_venta) as valor_total_producto')
+                DB::raw('SUM(almacen.cantidad * producto.precio_porcentaje) as valor_total_producto')
             );
 
         if ($sucursalId) {
@@ -322,92 +321,91 @@ class ReporteVentasController extends Controller
         return view('reportes.pacientes', compact('fichasAgrupadas'));
     }
 
+    // ver informacion de un paciente
     public function filtrarDetallePaciente($id){
-
-        //dd('hola desde el controlador' );
-
         $persona = Persona::findOrFail($id);
-
-        // Obtener fichas médicas paginadas (5 por página)
         $fichas = $persona->fichasMedicas()->orderBy('created_at', 'desc')->get();
-
-       //dd($fichas);
-       //dd($personas);
         return view('reportes.DetallePaciente', compact('persona','fichas'));
     }
 
     public function filtrarCambioDePrecio(Request $request)
     {
+        //dd($request);
         $productos = Producto::all();
          $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')->get();
+         //dd($historico);
         return view('reportes.CambioPrecios', compact('historico','productos'));
     }
-
-    public function filtrarFechaCambioDePrecio(Request $request){
+    // filtrar por fecha a los pacientes
+    public function DetallePacienteFecha(Request $request){
         //dd($request);
-            // primera parte
-             $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')
-             ->whereBetween('fecha_cambio',[$request->fechaInicio, $request->fechaFin])
-             ->get();
+        $query = Persona::with(['fichasMedicas.detalleMedico.usuario']);
 
-
-            // segunda fase en prueba
-            // esta sera la primera fase para evaluar solo productos
-            $query = HistoricoPrecio::with('producto');
-            if($request->productos){
-                $historico->where('producto_id', $request->productos);
-            }
-
-            $historico->whereBetween('fecha_cambio', [
-                // definimos un formato para las fechas de inicio y fecha de fin
+        // buscar pro fecha
+        if($request->filled('fechaInicio') && $request->filled('fechaFin')){
+            $query->whereBetween('created_at', [
                 Carbon::parse($request->fechaInicio)->startOfDay(),
-                Carbon::parse($request->fechaFin)->endOfDay()
-            ]);
-
-            $historico = $query->ordenBy('fecha_cambio', 'desc')->get();
-            $html = view('reportes.CambioPrecios', compact('historico'))->render();
-            return response()->json(['html' => $html]);
-
-            // esta es de la primera fase
-        // return view('reportes.CambioPrecios', compact('historico'));
-    }
-
-    public function filtrarCambioDePrecio2(Request $request)
-    {
-        $productos = Producto::all();
-        $historico = HistoricoPrecio::with('producto')->orderBy('fecha_cambio', 'desc')->get();
-
-        // Si es una petición AJAX, devolvemos solo los datos
-        if ($request->ajax()) {
-            return response()->json([
-                'data' => $historico
+                Carbon::parse($request->fechaFin)->endOfDay(),
             ]);
         }
 
-        return view('reportes.CambioPrecios', compact('historico', 'productos'));
+        $fichasAgrupadas = $query->get();
+        //dd($fichasAgrupadas);
+        return view('reportes.pacientes', compact('fichasAgrupadas'));
+
     }
+
+    public function filtrarProductoCambioDePrecio(Request $request){
+        //dd($request);
+        $productos = Producto::select('id','nombre')->get();
+        $query = HistoricoPrecio::with('producto');
+
+        // Proceso para buscar por id el producto
+        if($request->filled('productos')){
+            $query->where('id_producto', $request->productos);
+        }
+
+        //proceso para buscar productos por fecha en espesifica
+        if($request->filled('fechaInicio') && $request->filled('fechaFin')){
+            //utilizamos la funcion between
+            $query->whereBetween('fecha_cambio',[
+                //fecha de inico
+                Carbon::parse($request->fechaInicio)->startOfDay(),
+                //fecha fina
+                Carbon::parse($request->fechaFin)->endOfDay(),
+            ]);
+        }
+
+        $historico = $query->orderBy('fecha_cambio','desc')->get();
+
+        //dd($historico);
+
+          return view('reportes.CambioPrecios', compact('historico','productos'));
+    }
+
     public function filtrarFechaCambioDePrecio2(Request $request)
-{
-    $query = HistoricoPrecio::with('producto');
+    {
+        $query = HistoricoPrecio::with('producto');
 
-    // Filtro por producto si está presente
-    if ($request->filled('productos')) {
-        $query->where('producto_id', $request->productos);
-    }
+        // Filtro por producto si está presente
+        if ($request->filled('productos')) {
+            $query->where('producto_id', $request->productos);
 
-    // Filtro por rango de fechas si están presentes
-    if ($request->filled('fechaInicio') && $request->filled('fechaFin')) {
-        $query->whereBetween('fecha_cambio', [
-            Carbon::parse($request->fechaInicio)->startOfDay(),
-            Carbon::parse($request->fechaFin)->endOfDay()
+        }
+
+        // Filtro por rango de fechas si están presentes
+        if ($request->filled('fechaInicio') && $request->filled('fechaFin')) {
+            $query->whereBetween('fecha_cambio', [
+                Carbon::parse($request->fechaInicio)->startOfDay(),
+                Carbon::parse($request->fechaFin)->endOfDay()
+            ]);
+        }
+
+        $historico = $query->orderBy('fecha_cambio', 'desc')->get();
+
+        return response()->json([
+            'data' => $historico
         ]);
-    }
-
-    $historico = $query->orderBy('fecha_cambio', 'desc')->get();
-
-    return response()->json([
-        'data' => $historico
-    ]);
 }
 
 

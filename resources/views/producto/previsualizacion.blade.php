@@ -1,17 +1,31 @@
 @extends('template')
 
 @section('titulo', 'Previsualización de Importación')
+<<<<<<< HEAD
 
 @section('contenido')
 <div class="container mx-auto px-4">
     <h2 class="text-2xl font-bold mb-5">Previsualización de Productos a Importar</h2>
+=======
+@push('css')
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+@endpush
+@section('contenido')
+<div class="container mx-auto px-4">
+    <h2 class="text-2xl font-bold mb-5">Previsualización de Productos</h2>
+>>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
 
     <form action="{{ route('productos.importar.guardar') }}" method="POST">
         @csrf
 
         <div class="mb-4">
             <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+<<<<<<< HEAD
                 Confirmar Importación
+=======
+                Confirmar
+>>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
             </button>
             <a href="{{ route('productos.importar') }}" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded ml-2">
                 Volver
@@ -28,6 +42,7 @@
             </div>
         @endif
 
+<<<<<<< HEAD
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white border border-gray-200">
                 <thead class="bg-gray-100">
@@ -35,6 +50,17 @@
                         <th class="py-2 px-4 border-b">Código</th>
                         <th class="py-2 px-4 border-b">Nombre</th>
                         <th class="py-2 px-4 border-b">Precio Venta</th>
+=======
+
+
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white border border-gray-200">
+                <thead class="bg-gray-100">
+                    <tr class="bg-white">
+                        <th class="py-2 px-4 border-b">Código</th>
+                        <th class="py-2 px-4 border-b">Nombre</th>
+                        <th class="py-2 px-4 border-b">Precio Costo</th>
+>>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
                         <th class="py-2 px-4 border-b">Categoría</th>
                         <th class="py-2 px-4 border-b">Acciones</th>
                     </tr>
@@ -94,6 +120,10 @@
                                 </option>
                                 @endforeach
                             </select>
+<<<<<<< HEAD
+=======
+                            
+>>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
 
                             <!-- Mensaje para categoría no seleccionada -->
                             @if(is_null($producto['id_categoria']))
@@ -137,6 +167,12 @@
     </form>
 </div>
 
+<<<<<<< HEAD
+=======
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="/js/select2-global.js"></script>
+
+>>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
 <script>
 document.addEventListener('DOMContentLoaded', function() {
 

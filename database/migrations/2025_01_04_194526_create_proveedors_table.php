@@ -19,7 +19,7 @@ class CreateProveedorsTable extends Migration
             $table->string('telefono',20);
             $table->string('empresa',35);
             $table->string('correo',35);
-            $table->text('direccion')->nullable();;
+            $table->text('direccion')->nullable();
             $table->tinyInteger('estado')->default(1);
             $table->timestamps();
         });

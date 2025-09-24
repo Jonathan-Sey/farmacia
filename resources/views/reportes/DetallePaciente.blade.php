@@ -1,6 +1,6 @@
 @extends('template')
 
-@php    
+@php
             if($persona->rol == 1){
                 $nombre = $persona->nombre;
                 $nombreCompleto = $nombre;
@@ -10,9 +10,9 @@
                 $apellido_materno = $persona->fichasMedicas->first()->apellido_materno;
                 $nombreCompleto = $nombre . " ".$apellido_paterno . " ".$apellido_materno;
             }
-            
-            
-    
+
+
+
 @endphp
 @section('titulo', 'Reporte de Paciente' . ' '. $nombreCompleto)
 @push('css')
@@ -25,6 +25,8 @@
 
 {{-- <div class="max-w-5xl mx-auto p-4 mb-6 bg-white rounded-lg shadow-md">
 </div> --}}
+
+
 
 <x-data-table>
     <x-slot name="thead">
