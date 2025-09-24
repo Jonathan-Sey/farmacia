@@ -388,13 +388,12 @@ class ReporteVentasController extends Controller
         $query = HistoricoPrecio::with('producto');
 
         // Filtro por producto si está presente
-        if ($request->filled('productos')) {
-            $query->where('producto_id', $request->productos);
-
+        if ($request->has('productos') && $request->productos != '') {
+            $query->where('id_producto', $request->productos);
         }
 
         // Filtro por rango de fechas si están presentes
-        if ($request->filled('fechaInicio') && $request->filled('fechaFin')) {
+        if ($request->has('fechaInicio') && $request->has('fechaFin')) {
             $query->whereBetween('fecha_cambio', [
                 Carbon::parse($request->fechaInicio)->startOfDay(),
                 Carbon::parse($request->fechaFin)->endOfDay()
@@ -403,10 +402,8 @@ class ReporteVentasController extends Controller
 
         $historico = $query->orderBy('fecha_cambio', 'desc')->get();
 
-        return response()->json([
-            'data' => $historico
-        ]);
-}
+        return response()->json($historico);
+    }
 
 
         public function filtrarTraslado()

@@ -16,40 +16,25 @@
      <form action="{{ route('reporte.ProductoCambioPrecio') }}" method="POST" id="formReporte" class="space-y-4 sm:space-y-6 mb-5" >
         @csrf
 
-        <!-- Toggle para alternar modo de búsqueda -->
-        <div class="flex flex-row gap-5">
-            <div class="flex flex-col gap-1">
-                <label for="tipo">Buscar Producto</label>
-                <input name="tipo" id="tipo" type="checkbox" class="toggle toggle-success"
-                {{ old('tipo') ? 'checked' : '' }}
-                     />
-            </div>
-        </div>
-
-        <div id="productos">
-                {{-- <select name="productos" class="w-full p-2 border rounded-lg focus:ring focus:ring-blue-300">
-                    <option value="" disabled selected>Seleccione producto</option>
-                    @foreach($productos as $producto)
-                    <option value="{{ $producto->id }}">{{ $producto->nombre }}</option>
-                    @endforeach
-                </select>  --}}
-
+        <!-- Filtros de búsqueda -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Filtro por producto -->
+            <div>
                 <x-select2
                     name="productos"
-                    label="Productos"
+                    label="Filtrar por Producto (Opcional)"
                     :options="$productos->pluck('nombre', 'id')"
                     :selected="old('productos')"
-                    placeholder="Todo"
+                    placeholder="Todos los productos"
                 />
+            </div>
         </div>
 
-        <!-- Toggle para alternar modo de búsqueda -->
-        <div class="flex items-center justify-center sm:justify-start mb-4">
-            <div class="flex flex-row items-center gap-2 justify-center ">
-                 <span class="ml-3 text-sm font-medium text-gray-600 select-none">
-                        Buscar por rango de fechas
-                 </span>
-            </div>
+        <!-- Título para rango de fechas -->
+        <div class="flex items-center justify-start mb-2">
+            <span class="text-sm font-medium text-gray-600">
+                Filtrar por rango de fechas (Opcional)
+            </span>
         </div>
 
         <!-- Campos para el rang de fechas -->
@@ -72,7 +57,7 @@
 
         <!-- Botón -->
         <div class=" flex flex-col gap-5 md:flex-row justify-end">
-            <button type="submit" id="btnGenerarInforme"
+            <button type="button" id="btnGenerarInforme"
                 class="w-full sm:w-auto px-6 py-3 bg-green-500 text-white rounded-lg shadow-md hover:bg-green-600 focus:bg-green-600 focus:ring-4 focus:ring-green-200 transition-all duration-200 font-medium text-sm sm:text-base">
                 Generar Informe
             </button>
@@ -123,6 +108,104 @@
 <script src="/js/select2-global.js"></script>
 
 <script>
+document.getElementById('btnGenerarInforme').addEventListener('click', async () => {
+    const btn = document.getElementById('btnGenerarInforme');
+    const originalText = btn.textContent;
+
+    // Mostrar indicador de carga
+    btn.disabled = true;
+    btn.textContent = 'Cargando...';
+
+    const productosSelect = document.getElementById('productos');
+    const productos = productosSelect ? productosSelect.value : '';
+    const fechaInicio = document.getElementById('fechaInicio').value;
+    const fechaFin = document.getElementById('fechaFin').value;
+
+    let url = '/reporte-cambioPrecio-informe?';
+    if (productos) url += `productos=${productos}&`;
+    if (fechaInicio) url += `fechaInicio=${fechaInicio}&`;
+    if (fechaFin) url += `fechaFin=${fechaFin}&`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Error en la respuesta');
+        const data = await response.json();
+
+        // Verificar si DataTable ya está inicializado
+        if ($.fn.DataTable.isDataTable('#example')) {
+            // Si ya existe, limpiar los datos y agregar los nuevos
+            const table = $('#example').DataTable();
+            table.clear();
+
+            // Agregar las nuevas filas
+            data.forEach(registro => {
+                table.row.add([
+                    registro.producto.nombre,
+                    parseFloat(registro.precio_anterior).toFixed(2),
+                    parseFloat(registro.precio_nuevo).toFixed(2),
+                    registro.fecha_cambio
+                ]);
+            });
+
+            table.draw();
+        } else {
+            // Si no existe, crear el HTML y luego inicializar DataTable
+            const rows = data.map(registro => `
+                <tr>
+                    <td class="px-6 py-4">${registro.producto.nombre}</td>
+                    <td class="px-6 py-4">${parseFloat(registro.precio_anterior).toFixed(2)}</td>
+                    <td class="px-6 py-4">${parseFloat(registro.precio_nuevo).toFixed(2)}</td>
+                    <td class="px-6 py-4">${registro.fecha_cambio}</td>
+                </tr>
+            `).join('');
+
+            const tbody = document.getElementById('tabla');
+            tbody.innerHTML = rows;
+
+            // Inicializar DataTable
+            $('#example').DataTable({
+                responsive: true,
+                order: [[3, 'desc']],
+                language: {
+                    url: '/js/i18n/Spanish.json',
+                },
+                layout: {
+                    topStart: {
+                        buttons: [
+                            {
+                                extend: 'collection',
+                                text: 'Export',
+                                buttons: ['copy', 'pdf', 'excel', 'print']
+                            },
+                            'colvis'
+                        ]
+                    }
+                },
+                columnDefs: [
+                    { responsivePriority: 1, targets: 0 },
+                    { responsivePriority: 2, targets: 3 }
+                ],
+                drawCallback: function() {
+                    setTimeout(function() {
+                        $('a.paginate_button').addClass('btn btn-sm btn-primary mx-1');
+                        $('a.paginate_button.current').removeClass('btn-gray-800').addClass('btn btn-sm btn-primary');
+                    }, 100);
+                },
+            });
+        }
+
+    } catch (error) {
+        console.error('Error:', error);
+        Swal.fire('Error', 'No se pudieron cargar los datos', 'error');
+    } finally {
+        // Restaurar el botón
+        btn.disabled = false;
+        btn.textContent = originalText;
+    }
+});
+</script>
+
+<script>
     $(document).ready(function() {
         $('#example').DataTable({
             responsive: true,
@@ -160,27 +243,5 @@
     });
 </script>
 
-{{-- proceso para ocultar y mostrar los datos  --}}
-<script>
-    document.addEventListener('DOMContentLoaded', function (){
-        const toggle = document.getElementById('tipo'); // selecionamos el toggle
-        const inputProducto = document.getElementById('productos');
-        const campoRangos = document.getElementById('camposRango')
 
-        function mostrarInputs(){
-            if(toggle.checked){
-                campoRangos.classList.remove('hidden');
-                inputProducto.classList.remove('hidden');
-            }else{
-                inputProducto.classList.add('hidden');
-                campoRangos.classList.remove('hidden');
-            }
-        }
-
-        mostrarInputs();
-
-        toggle.addEventListener('change', mostrarInputs);
-
-    });
-</script>
 @endpush

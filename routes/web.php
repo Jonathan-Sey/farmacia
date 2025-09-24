@@ -190,6 +190,7 @@ Route::get('/persona-antiguenia/{id}', [ventaController::class, 'getantiguenio']
 
 //productos vencidos
 Route::get('/productos-vencidos', [productosVencidosController::class, 'index'])->name('productos.vencidos');
+Route::get('/productos-vencidos-informe', [productosVencidosController::class, 'generateReportVencidos'])->name('productos.vencidos.informe');
 
 //devoluciones
 Route::resource('devoluciones', devolucionesController::class)->parameters(['devoluciones' => 'devoluciones']);
@@ -251,6 +252,7 @@ Route::post('/reporte-pacientes/fecha', [ReporteVentasController::class, 'Detall
 //reporte para el cambio de precios
 Route::get('/reporte-cambioPrecio', [ReporteVentasController::class, 'filtrarCambioDePrecio'])->name('reporte.CambioPrecios');
 Route::post('/reporte-cambioPrecio/producto', [ReporteVentasController::class, 'filtrarProductoCambioDePrecio'])->name('reporte.ProductoCambioPrecio');
+Route::get('/reporte-cambioPrecio-informe', [ReporteVentasController::class, 'filtrarFechaCambioDePrecio2'])->name('reporte.CambioPrecio.informe');
 
 
 
