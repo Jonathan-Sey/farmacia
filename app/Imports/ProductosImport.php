@@ -22,13 +22,8 @@ class ProductosImport implements ToCollection, WithHeadingRow
                 'codigo' => $row['codigo'] ?? null,
                 'nombre' => $row['nombre'] ?? null,
                 'ultimo_precio_compra' => 0,
-<<<<<<< HEAD
-                'precio_venta' => $row['precio_anterior'] ?? 0,
-                'precio_porcentaje' => $row['precio_anterior'] ?? 0,
-=======
                 'precio_venta' => $row['precio_costo'] ?? 0,
                 'precio_porcentaje' => $row['precio_costo'] ?? 0,
->>>>>>> 27095f710034727685a347e99b13cdc8aabb760c
                 'id_categoria' => $categoriaId,
                 'estado' => 1,
                 'imagen' => null,
