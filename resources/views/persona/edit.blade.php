@@ -31,7 +31,7 @@
                     </select>
                 </div>
 
-               
+
                 {{-- datos del menor de edad  --}}
                 @php $fichaMedica = $persona->fichasMedicas->first(); @endphp
                 <div   div class="mt-2 mb-5 grid grid-cols-1 gap-5 ">
@@ -57,7 +57,7 @@
                             </div>
                             <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
 
-                            
+
                                 <div>
                                     <label for="apellido_paterno_menor" class="uppercase block text-sm font-medium text-gray-900">Apellido Paterno</label>
                                     <input
@@ -77,13 +77,13 @@
                                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                                         value="{{ old('apellido_materno_menor', $fichaMedica->apellido_materno_menor ?? '') }}">
                                 </div>
-                            </div>                            
-                        </fieldset>                        
+                            </div>
+                        </fieldset>
                     </div>
 
-                 <!-- Datos Básicos -->    
+                 <!-- Datos Básicos -->
                     <!-- Nombre -->
-                
+
                     <div>
                         <h3 id="TituloEncargado" class="text-lg font-semibold text-gray-900 mb-5 border-b pb-2">Datos de la persona encargada</h3>
                         <label for="nombre" class="uppercase block text-sm font-medium text-gray-900">Nombre</label>
@@ -149,7 +149,7 @@
                             <label class="text-sm font-medium text-gray-700">DPI *</label>
                                 <input type="text" name="dpi" value="{{ old('dpi', $fichaMedica->DPI ?? $persona->DPI ?? '') }}"
                                     class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
-                                    
+
                                 @error('dpi')
                                     <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
                                 @enderror
@@ -172,13 +172,13 @@
                             @enderror
                         </div>
                     </div>
-                   
+
                 </div>
 
                 <!-- Sección específica para Pacientes -->
                 <div id="ficha_medica" class="hidden mt-6">
                     <h3 class="text-lg font-semibold text-gray-900 mb-5 border-b pb-2">Información Médica</h3>
-                    
+
                 <!-- Fecha de Nacimiento -->
                     <div class="grid grid-cols-1 w-full mb-5">
                         <div>
@@ -269,7 +269,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <div class="mt-5">
                             <label for="antigueno" class="uppercase block text-sm font-medium text-gray-900">Es antigueño?</label>
                             <select name="antigueno" id="antigueno" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
@@ -301,15 +301,15 @@
          const valor = document.getElementById('rol');
         const rol = valor.options[valor.selectedIndex].value;
         console.log(rol);
-        
-        //  tomamos el valor de toggle 
+
+        //  tomamos el valor de toggle
         const infoMenor = document.getElementById('datos-menor')
         const seccionEncargado = document.getElementById('TituloEncargado')
 //        console.log($persona->rol);
         // Manejar cambio de rol
         $('#rol').change(function() {
             if ($(this).val() == 2) {
-                //ocultamos la info del menor de edad 
+                //ocultamos la info del menor de edad
                 infoMenor.classList.add('hidden');
                 seccionEncargado.classList.add('hidden')
 
@@ -328,9 +328,9 @@
                 $('#nombreMenor, #apellido_paterno_menor, #apellido_materno_menor').prop('required', true);
                 $('#apellidos-section, #ficha_medica').removeClass('hidden');
             }
-            
+
             else {
-                //ocultamos la info del menor de edad 
+                //ocultamos la info del menor de edad
                 infoMenor.classList.add('hidden');
                 seccionEncargado.classList.add('hidden');
                 // Ocultar secciones adicionales
@@ -338,24 +338,18 @@
                 // Quitar requeridos
                 $('#apellido_paterno, #apellido_materno').prop('required', false);
                 $('#ficha_medica input, #ficha_medica select').prop('required', false);
-                // quitar requridos para los datos del menor de edad 
+                // quitar requridos para los datos del menor de edad
                 $('#nombreMenor, #apellido_paterno_menor, #apellido_materno_menor').prop('required', false);
 
             }
         }).trigger('change');
 
-        // Asegurar envío del formulario
-        $('form').submit(function(e) {
-            if ($('#rol').val() == 1) {
-                // Deshabilitar todo excepto DPI
-                $('#datos-menor, #apellidos-section, #ficha_medica').find('input, select').not('[name="dpi"]').prop('disabled', true);
-            }
-        });
-        
+
+
 
     });
-    
-</script> 
+
+</script>
 
 <script>
     $(document).ready(function () {
@@ -409,73 +403,7 @@
         }
     });
 </script>
-<script>
-    $(document).ready(function () {
-       
-        function toggleFichaMedica() {
-             
-            if ( rol == 2) {
-                //ocultamos la info del menor de edad 
-                infoMenor.classList.add('hidden');
-                seccionEncargado.classList.add('hidden')
 
-                // Mostrar apellidos y ficha médica
-                $('#apellidos-section, #ficha_medica').removeClass('hidden');
-                // Hacer requeridos los campos adicionales
-                $('#apellido_paterno, #apellido_materno').prop('required', true);
-                $('#ficha_medica input, #ficha_medica select').prop('required', true);
-                $('#nombreMenor, #apellido_paterno_menor, #apellido_materno_menor').prop('required', false);
-            } else if(rol == 3){
-                infoMenor.classList.remove('hidden');
-                seccionEncargado.classList.remove('hidden');
-                // datos para el menor de edad
-                $('#nombreMenor, #apellido_paterno_menor, #apellido_materno_menor').prop('required', true);
-                $('#apellidos-section, #ficha_medica').removeClass('hidden');
-            }
-            
-            else {
-                //ocultamos la info del menor de edad 
-                infoMenor.classList.add('hidden');
-                seccionEncargado.classList.add('hidden');
-                // Ocultar secciones adicionales
-                $('#apellidos-section, #ficha_medica').addClass('hidden');
-                // Quitar requeridos
-                $('#apellido_paterno, #apellido_materno').prop('required', false);
-                $('#ficha_medica input, #ficha_medica select').prop('required', false);
-                // quitar requridos para los datos del menor de edad 
-                $('#nombreMenor, #apellido_paterno_menor, #apellido_materno_menor').prop('required', false);
-
-            }
-        
-        }
-
-        $('#rol').change(function () {
-            const oldValue = $(this).data('old-value');
-            const newValue = $(this).val();
-
-            if (oldValue != newValue) {
-                Swal.fire({
-                    title: '¿Estás seguro?',
-                    text: 'Cambiar el tipo de persona modificará los campos requeridos.',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, cambiar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (!result.isConfirmed) {
-                        $(this).val(oldValue);
-                    }
-                    toggleFichaMedica();
-                });
-            } else {
-                toggleFichaMedica();
-            }
-        });
-
-        $('#rol').data('old-value', $('#rol').val());
-        toggleFichaMedica();
-    });
-</script>
 
 {{-- <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -485,7 +413,7 @@
                 console.log("la opcion selecionado es la numero 2")
             }
         });
-        
+
     });
 </script> --}}
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

@@ -3795,6 +3795,9 @@ details.collapse summary::-webkit-details-marker {
      -moz-user-select: none;
           user-select: none;
 }
+.resize {
+  resize: both;
+}
 .list-disc {
   list-style-type: disc;
 }
@@ -4857,10 +4860,6 @@ details.collapse summary::-webkit-details-marker {
     min-width: 400px;
   }
 
-  .sm\:flex-1 {
-    flex: 1 1 0%;
-  }
-
   .sm\:grid-cols-1 {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
@@ -5141,10 +5140,6 @@ details.collapse summary::-webkit-details-marker {
 
   .lg\:mt-4 {
     margin-top: 1rem;
-  }
-
-  .lg\:inline-block {
-    display: inline-block;
   }
 
   .lg\:grid {

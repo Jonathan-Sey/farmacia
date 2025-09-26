@@ -425,7 +425,8 @@
                         <div class="mt-2 mb-5">
                                      <!-- Contenedor para mostrar la imagen -->
                                      <div id="imagen-producto" class="mt-4 hidden">
-                                        <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded" >
+                                        <img id="imagen" src="" alt="" class="w-24 h-24 object-cover rounded hidden" >
+                                        <div id="sin-imagen" class="text-sm text-gray-500 hidden">Sin imagen</div>
                                     </div>
 
                         <div class="mt-2 mb-5">
@@ -992,6 +993,12 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
                 templateSelection: formatPersonaSelection
             });
 
+            // Manejar redimensionamiento de ventana para actualizar el formato
+            $(window).on('resize', function() {
+                // Disparar un evento para actualizar la selección actual
+                $('#id_persona').trigger('change.select2');
+            });
+
             // Cargar productos cuando cambia la sucursal
             $('#id_sucursal').change(function() {
                 var sucursalId = $(this).val();
@@ -1035,10 +1042,21 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
             $('#id_producto').change(function() {
                 const selectedOption = $(this).find('option:selected');
                 const imagenUrl = selectedOption.data('imagen');
-                if (imagenUrl) {
+
+                if (selectedOption.val()) {
                     $('#imagen-producto').removeClass('hidden');
-                    $('#imagen').attr('src', imagenUrl);
+
+                    if (imagenUrl && imagenUrl.trim() !== '') {
+                        // Hay imagen: mostrar imagen, ocultar mensaje
+                        $('#imagen').attr('src', imagenUrl).removeClass('hidden');
+                        $('#sin-imagen').addClass('hidden');
+                    } else {
+                        // No hay imagen: ocultar imagen, mostrar mensaje simple
+                        $('#imagen').addClass('hidden');
+                        $('#sin-imagen').removeClass('hidden');
+                    }
                 } else {
+                    // No hay producto seleccionado: ocultar todo
                     $('#imagen-producto').addClass('hidden');
                 }
             });
@@ -1547,21 +1565,90 @@ function editarProducto(index) {
 
         function formatPersonaOption(option) {
             if (!option.id) return option.text;
+
             var dpi = $(option.element).data('dpi');
             var nit = $(option.element).data('nit');
-            var nombre = option.text.split(' - ').slice(2).join(' - ');
-            var displayText = (dpi || 'Sin DPI') + (nit ? ' - ' + nit : '') + ' - ' + nombre;
-            return $('<div>' + displayText + '</div>');
+
+            // Extraer el nombre del texto original de forma más robusta
+            var textoCompleto = option.text;
+            var partes = textoCompleto.split(' - ');
+            var nombre = '';
+
+            // El nombre está en la última parte después de DPI y NIT
+            if (partes.length >= 3) {
+                // Formato: DPI - NIT - NOMBRE
+                nombre = partes.slice(2).join(' - ');
+            } else if (partes.length === 2) {
+                // Formato: DPI - NOMBRE (sin NIT)
+                nombre = partes[1];
+            } else {
+                // Solo nombre
+                nombre = textoCompleto;
+            }
+
+            // Formatear para el dropdown (mostrar información completa)
+            var displayText = (dpi || 'Sin DPI') +
+                            (nit ? ' - ' + nit : '') +
+                            ' - ' + nombre;
+
+            return $('<div style="word-wrap: break-word; overflow-wrap: break-word;" title="' + displayText + '">' + displayText + '</div>');
         }
 
         function formatPersonaSelection(option) {
             if (!option.id) return option.text;
+
             var dpi = $(option.element).data('dpi');
             var nit = $(option.element).data('nit');
-            var nombre = option.text.split(' - ').slice(2).join(' - ');
-            var displayText = (dpi || 'Sin DPI') + (nit ? ' - ' + nit : '');
-            var nombreTruncado = nombre.length > 10 ? nombre.substring(0, 10) + '...' : nombre;
-            return displayText + ' - ' + nombreTruncado;
+
+            // Extraer el nombre del texto original de forma más robusta
+            var textoCompleto = option.text;
+            var partes = textoCompleto.split(' - ');
+            var nombre = '';
+
+            // El nombre está en la última parte después de DPI y NIT
+            if (partes.length >= 3) {
+                // Formato: DPI - NIT - NOMBRE
+                nombre = partes.slice(2).join(' - ');
+            } else if (partes.length === 2) {
+                // Formato: DPI - NOMBRE (sin NIT)
+                nombre = partes[1];
+            } else {
+                // Solo nombre
+                nombre = textoCompleto;
+            }
+
+            // Para la selección, usar un formato más compacto pero que siempre incluya el nombre
+            var displayText = '';
+
+            // Priorizar mostrar DPI y nombre en espacios pequeños
+            if (window.innerWidth <= 768) {
+                // En móvil, mostrar DPI y nombre truncado
+                if (dpi) {
+                    displayText = dpi;
+                    if (nombre) {
+                        var nombreTruncado = nombre.length > 12 ? nombre.substring(0, 12) + '...' : nombre;
+                        displayText += ' - ' + nombreTruncado;
+                    }
+                } else if (nombre) {
+                    // Si no hay DPI, mostrar solo el nombre truncado
+                    displayText = nombre.length > 20 ? nombre.substring(0, 20) + '...' : nombre;
+                }
+            } else {
+                // En escritorio, mostrar más información
+                if (dpi) {
+                    displayText = dpi;
+                    if (nit) displayText += ' - ' + nit;
+                    if (nombre) {
+                        var nombreTruncado = nombre.length > 25 ? nombre.substring(0, 25) + '...' : nombre;
+                        displayText += ' - ' + nombreTruncado;
+                    }
+                } else if (nombre) {
+                    // Si no hay DPI, mostrar solo el nombre
+                    displayText = nombre.length > 40 ? nombre.substring(0, 40) + '...' : nombre;
+                }
+            }
+
+            return displayText || textoCompleto;
         }
 
         // Inicializar Dropzone solo una vez

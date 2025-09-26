@@ -222,14 +222,14 @@ class PersonaController extends Controller
 
     public function actualizarRestricciones(Request $request)
     {
-        
+
         $request->validate([
             'id_persona' => 'required|exists:persona,id',
             'limite_compras' => 'nullable|integer|min:0',
             'periodo_control' => 'nullable|integer|min:1',
             'restriccion_activa' => 'boolean'
         ]);
-        
+
         $persona = Persona::findOrFail($request->id_persona);
         $persona->limite_compras = $request->limite_compras;
         $persona->periodo_control = $request->periodo_control;
@@ -274,7 +274,7 @@ class PersonaController extends Controller
                 'rol' => $persona->rol,
             ],
             'personas' => Persona::where('estado', '!=', '0')->get(['id', 'nombre', 'nit', 'DPI', 'rol']),
-        ]);    
+        ]);
     }
 
     public function show($id)
@@ -406,8 +406,9 @@ class PersonaController extends Controller
     }
     public function update(Request $request, Persona $persona)
     {
-        //dd($request);
-        Log::info('Iniciando update de persona', $request->all());
+        Log::info('=== INICIANDO UPDATE DE PERSONA ===');
+        Log::info('Request completo:', $request->all());
+        Log::info('Persona actual:', $persona->toArray());
 
         $rules = [
             'nombre' => 'required|string|max:255' . $persona->id,
@@ -419,38 +420,42 @@ class PersonaController extends Controller
 
         if ($request->rol == 2) {
             $rules += [
-                'apellido_paterno' => 'required|string|max:100',
-                'apellido_materno' => 'required|string|max:100',
-                'sexo' => 'required|in:Hombre,Mujer',
-                'dpi' => ['required', new Dpi()],
-                'habla_lengua' => 'required|in:1,2,3',
-                'antigueno' => 'required|in:1,2',
+                'apellido_paterno' => 'nullable|string|max:100',
+                'apellido_materno' => 'nullable|string|max:100',
+                'sexo' => 'nullable|in:Hombre,Mujer',
+                'dpi' => ['nullable', new Dpi()],
+                'habla_lengua' => 'nullable|in:1,2,3',
+                'antigueno' => 'nullable|in:1,2',
                 'tipo_sangre' => 'nullable|string|max:5',
                 'direccion' => 'nullable|string|max:255',
-                'departamento_id' => 'required|exists:departamentos,id',
-                'municipio_id' => 'required|exists:municipios,id',
+                'departamento_id' => 'nullable|exists:departamentos,id',
+                'municipio_id' => 'nullable|exists:municipios,id',
             ];
         }
 
         if ($request->rol == 3) {
             $rules += [
-                'nombreMenor' => 'required|string|max:100',
-                'apellido_paterno_menor' => 'required|string|max:100',
-                'apellido_materno_menor' => 'required|string|max:100',
-                'apellido_paterno' => 'required|string|max:100',
-                'apellido_materno' => 'required|string|max:100',
-                'sexo' => 'required|in:Hombre,Mujer',
-                'dpi' => ['required', new Dpi()],
-                'habla_lengua' => 'required|in:1,2,3',
-                'antigueno' => 'required|in:1,2',
+                'nombreMenor' => 'nullable|string|max:100',
+                'apellido_paterno_menor' => 'nullable|string|max:100',
+                'apellido_materno_menor' => 'nullable|string|max:100',
+                'apellido_paterno' => 'nullable|string|max:100',
+                'apellido_materno' => 'nullable|string|max:100',
+                'sexo' => 'nullable|in:Hombre,Mujer',
+                'dpi' => ['nullable', new Dpi()],
+                'habla_lengua' => 'nullable|in:1,2,3',
+                'antigueno' => 'nullable|in:1,2',
                 'tipo_sangre' => 'nullable|string|max:5',
                 'direccion' => 'nullable|string|max:255',
-                'departamento_id' => 'required|exists:departamentos,id',
-                'municipio_id' => 'required|exists:municipios,id',
+                'departamento_id' => 'nullable|exists:departamentos,id',
+                'municipio_id' => 'nullable|exists:municipios,id',
             ];
         }
 
+        Log::info('Reglas de validación aplicadas:', $rules);
+
         $validatedData = $request->validate($rules);
+
+        Log::info('Datos validados exitosamente:', $validatedData);
 
         DB::beginTransaction();
         try {
@@ -459,6 +464,12 @@ class PersonaController extends Controller
             $persona->telefono = $validatedData['telefono'] ?? null;
             $persona->fecha_nacimiento = $validatedData['fecha_nacimiento'] ?? null;
             $persona->rol = $validatedData['rol'];
+
+            // Actualizar DPI si está presente
+            if (isset($validatedData['dpi'])) {
+                $persona->DPI = $validatedData['dpi'];
+            }
+
             $persona->save();
 
             Log::info('Datos básicos actualizados', $persona->toArray());
@@ -509,7 +520,7 @@ class PersonaController extends Controller
                     FichaMedica::create([
                         'persona_id' => $persona->id,
                         // datos para el menor de edad
-                        'nombreMenor' => $persona->nombreMenor,
+                        'nombreMenor' => $validatedData['nombreMenor'],
                         'apellido_paterno_menor' => $validatedData['apellido_paterno_menor'],
                         'apellido_materno_menor' => $validatedData['apellido_materno_menor'],
                         'nombre' => $persona->nombre,
@@ -558,9 +569,10 @@ class PersonaController extends Controller
             Bitacora::create([
                 'id_usuario' => $request->idUsuario,
                 'name_usuario' => $usuario->name,
-                'accion' => 'Actialización',
+                'accion' => 'Actualización',
                 'tabla_afectada' => 'Persona',
-                'detalles' => "Se actualizo la ficha medica de {$persona->nombre} Nit: {$persona->nit} y DPI: {$persona->DPI} ",
+                'detalles' => "Se actualizo la ficha de {$persona->nombre} Nit: {$persona->nit} y DPI: {$persona->DPI}",
+                'fecha_hora' => now(),
             ]);
 
             DB::commit();

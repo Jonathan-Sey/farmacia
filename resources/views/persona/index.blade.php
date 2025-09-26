@@ -16,7 +16,7 @@
             Crear
         </button>
     </a>
-    
+
     <div id="usuario"></div>
 
     <x-data-table>
@@ -48,9 +48,9 @@
                             {{$persona->nombre ?? 'N/A'}}
                             {{$persona->fichasMedicas->first()->apellido_paterno ?? ' '}}
                             {{$persona->fichasMedicas->first()->apellido_materno ?? ' '}}
-                        </td>    
+                        </td>
                     @endif
-                    
+
                     <td class=" px-6 py-4 whitespace-nowrap">{{$persona->nit}}</td>
                     <td class=" px-6 py-4 whitespace-nowrap">
 
@@ -297,7 +297,7 @@
 function mostrarRestricciones(idPersona) {
     fetch(`/personas/${idPersona}/restricciones`)
         .then(response => response.json())
-        
+
         .then(data => {
             const modal = `
                 <dialog id="modalRestricciones" class="modal">
