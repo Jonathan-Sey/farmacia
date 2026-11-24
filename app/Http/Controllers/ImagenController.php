@@ -52,15 +52,23 @@ class ImagenController extends Controller
 */
     public function moverDefinitiva($imagenNombre)
     {
+        if (!is_string($imagenNombre) || $imagenNombre === '') {
+            return false;
+        }
+
+        $imagenNombre = basename(str_replace('\\', '/', $imagenNombre));
+        if ($imagenNombre === '' || $imagenNombre === '.' || $imagenNombre === '..') {
+            return false;
+        }
+
         $rutaTemp = public_path('uploads/temp/' . $imagenNombre);
         $rutaDefinitiva = public_path('uploads/' . $imagenNombre);
 
-        if (file_exists($rutaTemp)) {
-            rename($rutaTemp, $rutaDefinitiva);
+        if (is_file($rutaDefinitiva)) {
             return true;
         }
 
-        return false;
+        return is_file($rutaTemp) && rename($rutaTemp, $rutaDefinitiva);
     }
 
 }

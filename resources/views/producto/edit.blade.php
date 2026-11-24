@@ -151,7 +151,7 @@
                     <div class="flex flex-row gap-5">
                         <div class="flex flex-col gap-1">
                             <label for="tipo">Servicio</label>
-                            <input name="tipo" id="tipo" type="checkbox" class="toggle toggle-success"
+                            <input name="tipo" id="tipo" type="checkbox" value="2" class="toggle toggle-success"
                             {{ old('tipo', $producto->tipo) == 2 ? 'checked' : '' }}
                             />
                         </div>
@@ -233,10 +233,12 @@
                 <div >
                     <label for="precio_porcentaje" class="uppercase block text-sm font-medium text-gray-900">Precio Antigueño</label>
                     <input
-                        type="numeric"
+                        type="number"
                         name="precio_porcentaje"
                         id="precio_porcentaje"
                         placeholder="Precio Antigueño"
+                        min="0"
+                        step="0.01"
                         class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                         value="{{ old('precio_porcentaje', $producto->precio_porcentaje) }}">
 

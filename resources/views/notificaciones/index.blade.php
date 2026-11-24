@@ -1,5 +1,5 @@
 @extends('template')
-@section('titulo', 'notoificaciones')
+@section('titulo', 'Notificaciones')
 
 @push('css')
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.2.0/css/buttons.dataTables.css">

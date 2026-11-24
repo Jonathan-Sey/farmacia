@@ -232,14 +232,13 @@
                                         <option value="">Seleccionar persona</option>
                                         @foreach ($personas as $persona)
                                         <option value="{{ $persona->id }}"
-                                                {{-- data-nombre-completo="{{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') - {{ $persona->nit }} @endif" --}}
-                                                data-nombre-completo="{{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') @endif"
+                                                data-nombre="{{ $persona->nombre }}"
                                                 data-dpi="{{ $persona->dpi }}"
                                                 data-nit="{{ $persona->nit }}"
                                                 @if(isset($personaPre) && $personaPre->id == $persona->id) selected @endif>
-                                            {{-- {{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') - {{ $persona->nit }} @endif - {{ $persona->nombre }} --}}
-                                            {{ $persona->dpi }} @if($persona->nit && $persona->nit != '0') @endif
-                                            @if($persona->nit == '0') (Consumidor Final) @endif
+                                            {{ $persona->nombre }} - DPI: {{ $persona->dpi }}
+                                            @if($persona->nit && $persona->nit != '0') - NIT: {{ $persona->nit }} @endif
+                                            @if($persona->nit == '0') - Consumidor Final @endif
                                         </option>
                                     @endforeach
                                     </select>
@@ -523,7 +522,7 @@
                                                 <span class="label-text">Precio con descuento</span>
                                             </label>
                                             <input type="number" name="nuevo_precio" id="nuevo_precio"
-                                                   class="input input-bordered w-full" min="0.01" step="0.01" readonly>
+                                                   class="input input-bordered w-full" min="0.01" step="0.01">
                                         </div>
                                     </div>
                                 </div>
@@ -826,14 +825,18 @@ document.getElementById('formPersona').addEventListener('submit', function(e) {
 
             // Agregar nueva opción al select de personas
             const select = $('#id_persona');
+            const nitDetalle = data.persona.nit && String(data.persona.nit) !== '0'
+                ? ` - NIT: ${data.persona.nit}`
+                : String(data.persona.nit) === '0' ? ' - Consumidor Final' : '';
             const newOption = new Option(
-                `${data.persona.dpi} ${data.persona.nit ? ' - '+data.persona.nit : ''} - ${data.persona.nombre}`,
+                `${data.persona.nombre} - DPI: ${data.persona.dpi}${nitDetalle}`,
                 data.persona.id,
                 true,
                 true
             );
 
             // Agregar datos adicionales al option
+            $(newOption).data('nombre', data.persona.nombre);
             $(newOption).data('dpi', data.persona.dpi);
             $(newOption).data('nit', data.persona.nit);
 
@@ -986,8 +989,9 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
                     var term = params.term.toLowerCase();
                     var dpi = $(data.element).data('dpi')?.toString().toLowerCase() || '';
                     var nit = $(data.element).data('nit')?.toString().toLowerCase() || '';
-                    var nombre = data.text.toLowerCase();
-                    return (dpi.includes(term) || nit.includes(term) || nombre.includes(term)) ? data : null;
+                    var nombre = $(data.element).data('nombre')?.toString().toLowerCase() || '';
+                    var texto = (data.text || '').toLowerCase();
+                    return (dpi.includes(term) || nit.includes(term) || nombre.includes(term) || texto.includes(term)) ? data : null;
                 },
                 templateResult: formatPersonaOption,
                 templateSelection: formatPersonaSelection
@@ -1011,13 +1015,13 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
                             response.forEach(function(producto) {
                                 $('#id_producto').append(`
                                     <option value="${producto.id}"
-                                        data-precio="${producto.precio_porcentaje}"
+                                        data-precio="${producto.precio_venta}"
                                         data-precio-porcentaje="${producto.precio_porcentaje || producto.precio_venta}"
                                         data-nombre-completo="${producto.nombre}"
                                         data-tipo="${producto.tipo}"
                                         data-stock="${producto.stock}"
                                         data-imagen="${producto.imagen}">
-                                        ${producto.nombre} - Precio: ${producto.precio_porcentaje}
+                                        ${producto.nombre} - Precio: ${producto.precio_venta}
                                     </option>
                                 `);
                             });
@@ -1089,6 +1093,12 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
 
             // Evento para el toggle de IVA
             $('#impuesto-checkbox').change(recalcularTotales);
+
+            $('#id_producto').on('change', function() {
+                $('#aplicar_descuento').prop('checked', false);
+                $('#campo-nuevo-precio').addClass('hidden').hide();
+                $('#justificacion_descuento, #nuevo_precio').val('');
+            });
 
             // Botón agregar producto
             $('#btn-agregar').click(agregarProducto);
@@ -1180,15 +1190,19 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
 
                 const tipoProducto = selectedOption.data('tipo');
                 const precioVenta = parseFloat(selectedOption.data('precio'));
-                let precioPorcentaje = parseFloat(selectedOption.data('precio-porcentaje')) || precioVenta;
+                const precioPorcentaje = parseFloat(selectedOption.data('precio-porcentaje'));
 
                 $('#precio_original').val(precioVenta.toFixed(2));
 
-                // Solo para servicios (tipo 2), auto-completar con precio porcentaje
                 if (tipoProducto == 2) {
-                    $('#nuevo_precio').val(precioPorcentaje.toFixed(2));
-                    precioProducto = precioPorcentaje;
-                    $('#precio').val(precioPorcentaje.toFixed(2));
+                    const descuentoConfigurado = Number.isFinite(precioPorcentaje)
+                        && precioPorcentaje > 0
+                        && precioPorcentaje < precioVenta;
+                    $('#nuevo_precio').val(descuentoConfigurado ? precioPorcentaje.toFixed(2) : '');
+                    if (descuentoConfigurado) {
+                        precioProducto = precioPorcentaje;
+                        $('#precio').val(precioPorcentaje.toFixed(2));
+                    }
                 }
             } else {
                 campoDescuento.css('display', 'none').addClass('hidden');
@@ -1245,12 +1259,16 @@ function agregarProducto() {
     // Validaciones para el descuento
     if (aplicarDescuento) {
         if (tipo == 2) { // Servicio
-            if (!justificacionDescuento) {
+            if (!justificacionDescuento.trim()) {
                 mensaje('Debe ingresar una justificación para el descuento.');
                 return;
             }
-            if (nuevoPrecio <= 0 || nuevoPrecio >= precioVenta) {
-                mensaje('El nuevo precio debe ser mayor que 0 y menor que el precio original');
+            if (!Number.isFinite(nuevoPrecio) || nuevoPrecio <= 0) {
+                mensaje('Ingrese un precio con descuento mayor que 0.');
+                return;
+            }
+            if (nuevoPrecio >= precioVenta) {
+                mensaje('El precio con descuento debe ser menor que el precio normal.');
                 return;
             }
             precio = nuevoPrecio;
@@ -1566,89 +1584,52 @@ function editarProducto(index) {
         function formatPersonaOption(option) {
             if (!option.id) return option.text;
 
-            var dpi = $(option.element).data('dpi');
-            var nit = $(option.element).data('nit');
+            var $option = $(option.element);
+            var nombre = $option.data('nombre') || option.text;
+            var dpi = $option.data('dpi');
+            var nit = $option.data('nit');
+            var nitTexto = nit && String(nit) !== '0' ? 'NIT: ' + nit : '';
 
-            // Extraer el nombre del texto original de forma más robusta
-            var textoCompleto = option.text;
-            var partes = textoCompleto.split(' - ');
-            var nombre = '';
+            var $item = $('<div>').addClass('flex items-center gap-3 py-1');
+            var iniciales = String(nombre).trim().split(/\s+/).slice(0, 2).map(function(parte) {
+                return parte.charAt(0).toUpperCase();
+            }).join('');
+            var $avatar = $('<span>')
+                .addClass('flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-sm font-bold text-indigo-700')
+                .text(iniciales);
+            var $detalle = $('<span>').addClass('flex min-w-0 flex-1 flex-col');
+            var $nombre = $('<span>').addClass('truncate font-semibold text-slate-800').text(nombre);
+            var $identificacion = $('<span>')
+                .addClass('truncate text-xs text-slate-500')
+                .text('DPI: ' + (dpi || 'No registrado'));
 
-            // El nombre está en la última parte después de DPI y NIT
-            if (partes.length >= 3) {
-                // Formato: DPI - NIT - NOMBRE
-                nombre = partes.slice(2).join(' - ');
-            } else if (partes.length === 2) {
-                // Formato: DPI - NOMBRE (sin NIT)
-                nombre = partes[1];
-            } else {
-                // Solo nombre
-                nombre = textoCompleto;
+            if (nitTexto) {
+                $identificacion.append(document.createTextNode('  ·  ' + nitTexto));
+            } else if (String(nit) === '0') {
+                $identificacion.append(document.createTextNode('  ·  Consumidor Final'));
             }
 
-            // Formatear para el dropdown (mostrar información completa)
-            var displayText = (dpi || 'Sin DPI') +
-                            (nit ? ' - ' + nit : '') +
-                            ' - ' + nombre;
+            $detalle.append($nombre, $identificacion);
+            $item.append($avatar, $detalle);
+            $item.attr('title', [nombre, dpi ? 'DPI: ' + dpi : '', nitTexto].filter(Boolean).join(' · '));
 
-            return $('<div style="word-wrap: break-word; overflow-wrap: break-word;" title="' + displayText + '">' + displayText + '</div>');
+            return $item;
         }
 
         function formatPersonaSelection(option) {
             if (!option.id) return option.text;
 
-            var dpi = $(option.element).data('dpi');
-            var nit = $(option.element).data('nit');
+            var $option = $(option.element);
+            var nombre = $option.data('nombre') || option.text;
+            var dpi = $option.data('dpi');
+            var $selection = $('<span>').addClass('inline-flex min-w-0 items-center gap-2');
+            var $dpi = $('<span>').addClass('shrink-0 text-xs font-medium text-slate-500').text('DPI ' + (dpi || 'N/D'));
+            var $nombre = $('<span>').addClass('truncate font-semibold text-slate-800').text(nombre);
 
-            // Extraer el nombre del texto original de forma más robusta
-            var textoCompleto = option.text;
-            var partes = textoCompleto.split(' - ');
-            var nombre = '';
+            $selection.append($dpi, $('<span>').addClass('text-slate-300').text('·'), $nombre);
+            $selection.attr('title', (dpi ? 'DPI: ' + dpi + ' · ' : '') + nombre);
 
-            // El nombre está en la última parte después de DPI y NIT
-            if (partes.length >= 3) {
-                // Formato: DPI - NIT - NOMBRE
-                nombre = partes.slice(2).join(' - ');
-            } else if (partes.length === 2) {
-                // Formato: DPI - NOMBRE (sin NIT)
-                nombre = partes[1];
-            } else {
-                // Solo nombre
-                nombre = textoCompleto;
-            }
-
-            // Para la selección, usar un formato más compacto pero que siempre incluya el nombre
-            var displayText = '';
-
-            // Priorizar mostrar DPI y nombre en espacios pequeños
-            if (window.innerWidth <= 768) {
-                // En móvil, mostrar DPI y nombre truncado
-                if (dpi) {
-                    displayText = dpi;
-                    if (nombre) {
-                        var nombreTruncado = nombre.length > 12 ? nombre.substring(0, 12) + '...' : nombre;
-                        displayText += ' - ' + nombreTruncado;
-                    }
-                } else if (nombre) {
-                    // Si no hay DPI, mostrar solo el nombre truncado
-                    displayText = nombre.length > 20 ? nombre.substring(0, 20) + '...' : nombre;
-                }
-            } else {
-                // En escritorio, mostrar más información
-                if (dpi) {
-                    displayText = dpi;
-                    if (nit) displayText += ' - ' + nit;
-                    if (nombre) {
-                        var nombreTruncado = nombre.length > 25 ? nombre.substring(0, 25) + '...' : nombre;
-                        displayText += ' - ' + nombreTruncado;
-                    }
-                } else if (nombre) {
-                    // Si no hay DPI, mostrar solo el nombre
-                    displayText = nombre.length > 40 ? nombre.substring(0, 40) + '...' : nombre;
-                }
-            }
-
-            return displayText || textoCompleto;
+            return $selection;
         }
 
         // Inicializar Dropzone solo una vez

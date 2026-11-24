@@ -22,7 +22,7 @@
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Código</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Proveedor</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Fecha de compra</th>
-                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >comprobante</th>
+                    <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Farmacia</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >total</th>
                     <th scope="col" class="px-6 py-3 text-left font-medium uppercase tracking-wider" >Acciones</th>
                 </tr>

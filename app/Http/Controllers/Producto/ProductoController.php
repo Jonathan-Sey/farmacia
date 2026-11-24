@@ -57,67 +57,70 @@ class ProductoController extends Controller
      */
     public function store(Request $request)
     {
+        $tipoServicio = in_array((string) $request->input('tipo'), ['2', 'on', 'true'], true);
 
-              // Guardar el nombre de la imagen temporalmente
-            $imagenNombre = $request->imagen;
-
-        $this->validate($request,[
-            // 'codigo'=>['nullable'],
-            'id_categoria'=>'required',
-            'imagen'=>'required',
-            'nombre'=>['required','string','max:255'],
-            'descripcion'=>['max:100','required','string'],
-            'precio_venta'=>'numeric|required|min:0',
-            'precio_porcentaje' => 'nullable|numeric',
-            'estado'=>'integer',
-
+        $this->validate($request, [
+            'id_categoria' => 'required|exists:categoria,id',
+            'imagen' => 'nullable|string',
+            'nombre' => ['required', 'string', 'max:255'],
+            'descripcion' => ['required', 'string', 'max:100'],
+            'precio_venta' => $tipoServicio ? 'nullable|numeric|min:0' : 'required|numeric|min:0',
+            'precio_porcentaje' => $tipoServicio
+                ? 'required_without:precio_venta|nullable|numeric|min:0'
+                : 'nullable|numeric|min:0',
+            'tipo' => 'nullable',
         ]);
 
-         // Mover la imagen de temp a definitivo
-        $imagenController = new ImagenController();
-        $imagenMovida = $imagenController->moverDefinitiva($request->imagen);
+        $tipo = $tipoServicio ? 2 : 1;
+        $precioVenta = $request->filled('precio_venta')
+            ? round((float) $request->precio_venta, 2)
+            : round((float) $request->precio_porcentaje, 2);
+        $precioPorcentaje = $tipoServicio
+            ? round((float) ($request->filled('precio_porcentaje') ? $request->precio_porcentaje : $precioVenta), 2)
+            : $precioVenta;
 
-        if (!$imagenMovida) {
-            return back()->with('error', 'No se pudo guardar la imagen del producto');
+        $imagen = null;
+        if ($request->filled('imagen')) {
+            $imagenController = new ImagenController();
+            if (!$imagenController->moverDefinitiva($request->imagen)) {
+                return back()->withInput()->with('error', 'No se encontró la imagen temporal. Vuelve a cargarla antes de guardar.');
+            }
+            $imagen = basename(str_replace('\\', '/', $request->imagen));
         }
 
-
-
-        $tipo = $request->has('tipo') ? 2 : 1;
         // generacion de codigo
         $ultimoId = Producto::max('id') ?? 0;
         $codigo = 'C-' . str_pad($ultimoId + 1, 5, '0', STR_PAD_LEFT);
 
         $datosProducto = [
             'nombre' => $request->nombre,
-            'imagen' => $request->imagen,
+            'imagen' => $imagen,
             'descripcion' => $request->descripcion,
-            'precio_venta' => $request->precio_venta,
+            'precio_venta' => $precioVenta,
+            'precio_porcentaje' => $precioPorcentaje,
             'id_categoria' => $request->id_categoria,
             'estado' => 1,
             'tipo' => $tipo,
             'codigo' => $codigo,
         ];
 
-        // Asignar precio_porcentaje según el tipo
-        $datosProducto['precio_porcentaje'] = ($tipo == 1)
-            ? $request->precio_venta  // Para productos
-            : $request->precio_porcentaje;  // Para servicios
-
         Producto::create($datosProducto);
 
             // Limpiar la imagen temporal de la sesión
             session()->forget('imagen_temp');
 
-        $usuario=User::find($request->idUsuario);
-        Bitacora::create([
-                'id_usuario' => $request->idUsuario,
-                'name_usuario' =>$usuario->name,
+        $usuarioId = $request->idUsuario ?: (auth()->check() ? auth()->id() : null);
+        $usuario = $usuarioId ? User::find($usuarioId) : null;
+        if ($usuario) {
+            Bitacora::create([
+                'id_usuario' => $usuarioId,
+                'name_usuario' => $usuario->name,
                 'accion' => 'Creación',
                 'tabla_afectada' => 'Producto',
                 'detalles' => "Se creo el producto: {$request->nombre}", //detalles especificos
                 'fecha_hora' => now(),
-        ]);
+            ]);
+        }
 
         return redirect()->route('productos.index')->with('success','¡Registro exitoso!');
 
@@ -161,13 +164,13 @@ class ProductoController extends Controller
             'nombre' => ['required', 'string', 'max:255'],
             'imagen' => 'nullable',
             'descripcion' => ['required', 'string', 'max:100'],
-            'precio_venta' => 'numeric|required|min:0',
+            'precio_venta' => 'required|numeric|min:0',
             'precio_porcentaje' => 'nullable|numeric|min:0',
             'estado' => 'integer',
         ]);
 
         // Determinar el tipo de producto
-        $nuevoTipo = $request->has('tipo') ? 2 : 1;
+        $nuevoTipo = in_array((string) $request->input('tipo'), ['2', 'on', 'true'], true) ? 2 : 1;
 
         // Preparar datos para actualización
         $datosActualizados = [
@@ -205,15 +208,16 @@ class ProductoController extends Controller
         // Lógica de precios según tipo de producto
         if ($nuevoTipo == 1) {
             // Producto normal: ambos precios iguales
-            $nuevoPrecio = round($request->precio_venta * 10) / 10;
+            $nuevoPrecio = round((float) $request->precio_venta, 2);
             $datosActualizados['precio_venta'] = $nuevoPrecio;
             $datosActualizados['precio_porcentaje'] = $nuevoPrecio;
         } else {
             // Servicio: precios pueden ser diferentes
-            $datosActualizados['precio_venta'] = round($request->precio_venta * 10) / 10;
-            $datosActualizados['precio_porcentaje'] = $request->precio_porcentaje
-                ? round($request->precio_porcentaje * 10) / 10
-                : null;
+            $datosActualizados['precio_venta'] = round((float) $request->precio_venta, 2);
+            $precioPorcentaje = $request->filled('precio_porcentaje')
+                ? (float) $request->precio_porcentaje
+                : (float) $request->precio_venta;
+            $datosActualizados['precio_porcentaje'] = round($precioPorcentaje, 2);
         }
 
         // Registrar cambio de precio si hubo modificación
@@ -230,15 +234,18 @@ class ProductoController extends Controller
         if ($producto->fill($datosActualizados)->isDirty()) {
             $producto->save();
 
-            $usuario = User::find($request->idUsuario);
-            Bitacora::create([
-                'id_usuario' => $request->idUsuario,
-                'name_usuario' => $usuario->name,
-                'accion' => 'Actualización',
-                'tabla_afectada' => 'Productos',
-                'detalles' => "Se actualizó el producto: {$request->nombre}",
-                'fecha_hora' => now(),
-            ]);
+            $usuarioId = $request->idUsuario ?: (auth()->check() ? auth()->id() : null);
+            $usuario = $usuarioId ? User::find($usuarioId) : null;
+            if ($usuario) {
+                Bitacora::create([
+                    'id_usuario' => $usuarioId,
+                    'name_usuario' => $usuario->name,
+                    'accion' => 'Actualización',
+                    'tabla_afectada' => 'Productos',
+                    'detalles' => "Se actualizó el producto: {$request->nombre}",
+                    'fecha_hora' => now(),
+                ]);
+            }
 
             return redirect()->route('productos.index')
                    ->with('success', '¡Producto actualizado!');
@@ -317,7 +324,7 @@ class ProductoController extends Controller
         $producto->update(['precio_venta' => $producto->precio_porcentaje]);
         //actualiza el campo de nuevo_precio con el nuevo precio generado y lo redondea.
         $producto->update(['precio_porcentaje' => round($request->nuevo_precio * 10) / 10]);
-        
+
         $usuario=User::find($request->idUsuario);
         Bitacora::create([
             'id_usuario' => $request->idUsuario,

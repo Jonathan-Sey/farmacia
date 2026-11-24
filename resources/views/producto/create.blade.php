@@ -36,8 +36,26 @@
     });
 
     dropzone.on("success", function(file, response) {
-        console.log("Archivo subido temporalmente:", response.imagen);
-        document.querySelector('[name="imagen"]').value = response.imagen;
+        const imagenNombre = response && typeof response === "object" ? response.imagen : null;
+        if (typeof imagenNombre !== "string" || imagenNombre.length === 0) {
+            this.removeFile(file);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error al subir la imagen',
+                text: 'El servidor no devolvió un nombre de imagen válido. Intenta subirla nuevamente.',
+            });
+            return;
+        }
+
+        document.querySelector('[name="imagen"]').value = imagenNombre;
+    });
+
+    dropzone.on("error", function(file) {
+        Swal.fire({
+            icon: 'error',
+            title: 'Error al subir la imagen',
+            text: 'No se pudo subir el archivo. Verifica la conexión e intenta nuevamente.',
+        });
     });
 
     dropzone.on("removedfile", function(file) {
@@ -96,6 +114,20 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{route('productos.store')}}" method="POST">
             @csrf
+            @if ($errors->any())
+                <div role="alert" class="alert alert-error mb-4 p-3">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+            @if (session('error'))
+                <div role="alert" class="alert alert-error mb-4 p-3">
+                    <span>{{ session('error') }}</span>
+                </div>
+            @endif
             <div id="usuario">
 
             </div>
@@ -133,7 +165,7 @@
                     <div class="flex flex-row gap-5">
                         <div class="flex flex-col gap-1">
                             <label for="tipo">Servicio</label>
-                            <input name="tipo" id="tipo" type="checkbox" class="toggle toggle-success"
+                            <input name="tipo" id="tipo" type="checkbox" value="2" class="toggle toggle-success"
                             {{ old('tipo') ? 'checked' : '' }}
                             />
                         </div>
@@ -197,10 +229,12 @@
                     <div >
                         <label for="precio_porcentaje" class="uppercase block text-sm font-medium text-gray-900">Precio Antigueño</label>
                         <input
-                            type="numeric"
+                            type="number"
                             name="precio_porcentaje"
                             id="precio_porcentaje"
                             placeholder="Precio Antigueño"
+                            min="0"
+                            step="0.01"
                             class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
                             value="{{ old('precio_porcentaje') }}">
 
@@ -263,7 +297,7 @@
                     <textarea name="descripcion"
                     id="descripcion" rows="3"
                     placeholder="Descripción del producto"
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"></textarea>
+                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('descripcion') }}</textarea>
                     @error('descripcion')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
