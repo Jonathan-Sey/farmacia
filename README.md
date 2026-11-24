@@ -54,6 +54,7 @@ composer install
 
 ```bash
  php artisan key:generate
+ php artisan jwt:secret
 ```
 <li>Ingrese al administrador de PHP MyAdmin y cree una nueva base de datos, el nombre es opcional, pero por defecto nombrarla tal como se espesifico en el paso anterior, dbfarmacia</li>
 <li>Correr la migracion del proyecto</li>

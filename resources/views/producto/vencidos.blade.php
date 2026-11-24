@@ -76,7 +76,9 @@
                 <td class="px-6 py-4 whitespace-nowrap">{{$almacen->producto->tipo == 1 ? 'Producto' : 'Servicio'}}</td>
                 <td class="px-6 py-4 whitespace-nowrap">
                     @if ($almacen->producto->imagen)
-                        <img src="{{ asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                        <div class="mt-2">
+                            <img src="{{ secure_asset('uploads/' . $almacen->producto->imagen) }}" alt="{{ $almacen->producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                        </div>
                     @else
                         <span class="text-gray-500">Sin imagen</span>
                     @endif

@@ -10,7 +10,6 @@
 @endpush
 
 @section('contenido')
-
     <x-data-table>
         <x-slot name="thead">
             <thead class=" text-white font-bold">

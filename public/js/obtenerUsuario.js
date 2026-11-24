@@ -1,6 +1,8 @@
-document.addEventListener('DOMContentLoaded', function () {function obtenerUsuario(){
-    const token = localStorage.getItem('jwt_token');
-    const crearUsuario = document.getElementById('usuario');
+document.addEventListener('DOMContentLoaded', function () {
+
+    function obtenerUsuario() {
+        const token = localStorage.getItem('jwt_token');
+        const crearUsuario = document.getElementById('usuario');
 
     if (!token) {
         Swal.fire({
@@ -26,6 +28,8 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
     const UserId = decodificarToken.id;
     const sucursalId = decodificarToken.sucursal_id;
 
+        const decodificarToken = jwt_decode(token);
+        const UserId = decodificarToken.id;
 
     if (crearUsuario) {
         crearUsuario.innerHTML = `
@@ -34,9 +38,17 @@ document.addEventListener('DOMContentLoaded', function () {function obtenerUsuar
         //console.log('Sucursal ID del usuario:', sucursalId);
     }
 
+        //console.log(UserId)
+
+        if (crearUsuario) {
+            crearUsuario.innerHTML = ` <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
+
+            document.getElementById("idUsuario").style.display = "none";
+        }
 
 }
 
 obtenerUsuario();
 });
 
+//});

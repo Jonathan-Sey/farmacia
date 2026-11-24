@@ -209,7 +209,6 @@ public function update(Request $request, $persona_id, FichaMedica $ficha)
         }
     }
 
-
 // // // Mostrar vista para confirmar eliminación
 //  public function destroyConfirm($id)
 //      {

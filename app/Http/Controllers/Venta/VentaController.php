@@ -117,14 +117,14 @@ class VentaController extends Controller
     //$fichaMedica = FichaMedica::select('antigueno','consulta_programada')->findOrFail($id);
     $persona = Persona::findOrFail($id);
     $ficha = $persona->fichasMedicas()->paginate(1);
-    
+
     $valor = $ficha->map(function($dato){
         return [
             'antigueno' =>$dato->antigueno,
         ];
     });
-    
-    
+
+
 
     // Formatear la respuesta
     // $productos = $fichaMedica->productosRecetados->map(function($producto) {
@@ -137,7 +137,7 @@ class VentaController extends Controller
     //     ];
     // });
 
-    //$personaAntiguena = $fichaMedica () 
+    //$personaAntiguena = $fichaMedica ()
 
 
         return response()->json($valor);
@@ -154,7 +154,7 @@ class VentaController extends Controller
             ->map(function ($almacen) {
                 return [
                     'id' => $almacen->producto->id,
-                    'imagen' => asset('uploads/' . $almacen->producto->imagen),
+                    'imagen' => secure_asset('uploads/' . $almacen->producto->imagen),
                     'nombre' => $almacen->producto->nombre,
                     'precio_venta' => $almacen->producto->precio_venta,
                     'precio_porcentaje' => $almacen->producto->precio_porcentaje,

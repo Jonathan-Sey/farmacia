@@ -121,7 +121,7 @@
       <p><strong>Motivo de la devolución:</strong> {{ $datos['motivo'] }}</p>
       <p><strong>Total:</strong> Q.{{ number_format($datos['total'], 2) }}</p>
       <p><strong>Observaciones:</strong> {{ $datos['observaciones'] }}</p>
-      
+
       <p><strong>Fecha de solicitud:</strong> {{ now() }}</p>
     </div>
 

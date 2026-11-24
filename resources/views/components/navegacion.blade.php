@@ -235,6 +235,6 @@
     </div>
 </header>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
-<script src="/js/logout.js"></script>
+<script src="{{ secure_asset('js/logout.js') }}"></script>
 
 

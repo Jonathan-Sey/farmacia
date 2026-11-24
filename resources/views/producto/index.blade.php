@@ -68,7 +68,7 @@
 
                         {{-- <a href="{{ $producto->imagen ? asset('uploads/' . $producto->imagen) : '#' }}">
                             @if ($producto->imagen)
-                                <img src="{{ asset('uploads/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded">
+                                <img src="{{ secure_asset('uploads/' . $producto->imagen) }}" alt="{{ $producto->nombre }}" class="w-16 h-16 object-cover rounded">
                             @else
                                 <span class="text-gray-500">Sin imagen</span>
                             @endif

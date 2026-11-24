@@ -12,7 +12,7 @@
         <button class="btn btn-success text-white font-bold uppercase">Crear</button>
     </a>
 
-    <a href="{{ route('especialidades.index') }}">  
+    <a href="{{ route('especialidades.index') }}">
         <button class="btn btn-primary text-white font-bold uppercase">Especialidades</button>
     </a>
 

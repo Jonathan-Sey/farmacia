@@ -218,11 +218,14 @@ class MedicoController extends Controller
                 'horarios' => $horarioData // Ya no usamos json_encode aquí
             ]);
         }
-
-
     }
      // Forzar refresco de la relación
      $medico->load('horarios');
+
+
+//    }
+     // Forzar refresco de la relación
+   //  $medico->load('horarios');
 
          // Alternativa: refrescar toda la instancia
     $medico->refresh();

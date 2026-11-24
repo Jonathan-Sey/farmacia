@@ -146,7 +146,7 @@
     let sucursales = @json($sucursales);
 
 
-    //validacion de los horarios 
+    //validacion de los horarios
      function validarHorarios() {
         let horarios = document.querySelectorAll('[name^="horarios["]');
         let esValido = true;
@@ -206,7 +206,7 @@
         let container = document.getElementById('horarios-container');
         let index = container.children.length;
 
-        //proceso para validar horario 
+        //proceso para validar horario
         let oldData = @json(old('horarios') ?? []);
         let oldHorario = oldData[index] || {};
 

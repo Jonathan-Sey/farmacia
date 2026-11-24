@@ -75,7 +75,7 @@
     <div class="md:col-span-2">
       <p  id="impuesto" class=" p-2 text-center font-semibold ">
             @if($compra->imagen_comprobante)
-        <a href="{{ asset('uploads/' . $compra->imagen_comprobante) }}" target="_blank"
+        <a href="{{ secure_asset('uploads/' . $compra->imagen_comprobante) }}" target="_blank"
         class="btn btn-sm btn-info" title="Ver comprobante">
             <i class="fas fa-file-invoice"></i>
         </a>

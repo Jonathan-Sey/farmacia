@@ -10,7 +10,7 @@ class FichaMedica extends Model
     use HasFactory;
     protected $table = 'fichas_medicas';
     protected $fillable = [
-        // datos de la persona menor 
+        // datos de la persona menor
         'nombreMenor',
         'apellido_paterno_menor',
         'apellido_materno_menor',
@@ -35,7 +35,7 @@ class FichaMedica extends Model
         'receta_foto',
         'sucursal_id',
     ];
-    
+
     public function departamento()
     {
         return $this->belongsTo(Departamento::class, 'departamento_id');
@@ -74,5 +74,8 @@ class FichaMedica extends Model
                     ->withTimestamps();
     }
 
+
+    //       return $this->receta_foto ? secure_asset('storage/' . $this->receta_foto) : null;
+    //   }
 
 }

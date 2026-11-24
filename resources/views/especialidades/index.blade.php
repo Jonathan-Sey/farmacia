@@ -141,7 +141,7 @@ $(document).ready(function() {
         },
     });
 
-    
+
          $('#example tbody').on('click', '.cambiar-estado-btn', function () {
                 const button = $(this);
                 const Id = button.data('id');

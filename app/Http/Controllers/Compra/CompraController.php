@@ -53,7 +53,7 @@ class CompraController extends Controller
 
         // nuevo valo, esto para mandar la url de la img
         $productos->each(function ($producto) {
-            $producto->imagen_url = asset('uploads/' . $producto->imagen);
+            $producto->imagen_url = secure_asset('uploads/' . $producto->imagen);
         });
 
         return view('compra.create', compact('proveedores', 'productos', 'sucursales'));
@@ -168,6 +168,9 @@ class CompraController extends Controller
                     $inventarioExistente->cantidad += $arrayCantidad[$index];
                     $inventarioExistente->save();
 
+
+
+
                 } else {
 
                     //  proceso de inventario
@@ -177,7 +180,6 @@ class CompraController extends Controller
                         'id_lote' => $lote->id,
                         'cantidad' => $arrayCantidad[$index],
                     ]);
-
 
                 }
             }
@@ -212,7 +214,7 @@ class CompraController extends Controller
     {
         // $productos = $compra->productos();
         if ($compra->imagen_comprobante) {
-            $compra->imagen_comprobante_url = asset('uploads/' . $compra->imagen_comprobante);
+            $compra->imagen_comprobante_url = secure_asset('uploads/' . $compra->imagen_comprobante);
         }
         return view('compra.show', compact('compra'));
     }

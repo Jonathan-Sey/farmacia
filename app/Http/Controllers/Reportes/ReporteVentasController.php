@@ -204,7 +204,6 @@ class ReporteVentasController extends Controller
         }
 
 
-
         if ($request->has('sucursal')) {
             $query->where('v.id_sucursal', $request->sucursal);
         }

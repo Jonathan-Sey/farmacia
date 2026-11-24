@@ -99,7 +99,7 @@
         if (imagenNombre) {
             const mockFile = { name: imagenNombre, size: 12345 };
             dropzone.emit("addedfile", mockFile);
-            dropzone.emit("thumbnail", mockFile, "{{ asset('uploads') }}/" + imagenNombre);
+            dropzone.emit("thumbnail", mockFile, "{{ secure_asset('uploads') }}/" + imagenNombre);
             dropzone.emit("complete", mockFile);
         }
     });
