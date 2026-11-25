@@ -3602,6 +3602,9 @@ details.collapse summary::-webkit-details-marker {
 .mt-\[10px\] {
   margin-top: 10px;
 }
+.ml-auto {
+  margin-left: auto;
+}
 .block {
   display: block;
 }
@@ -3830,6 +3833,9 @@ details.collapse summary::-webkit-details-marker {
 }
 .max-w-sm {
   max-width: 24rem;
+}
+.max-w-\[240px\] {
+  max-width: 240px;
 }
 .flex-1 {
   flex: 1 1 0%;
@@ -5007,6 +5013,11 @@ details.collapse summary::-webkit-details-marker {
 
   .sm\:gap-5 {
     gap: 1.25rem;
+  }
+
+  .sm\:gap-x-6 {
+    -moz-column-gap: 1.5rem;
+         column-gap: 1.5rem;
   }
 
   .sm\:space-y-6 > :not([hidden]) ~ :not([hidden]) {

@@ -53,7 +53,9 @@ class CompraController extends Controller
 
         // nuevo valo, esto para mandar la url de la img
         $productos->each(function ($producto) {
-            $producto->imagen_url = secure_asset('uploads/' . $producto->imagen);
+            $producto->imagen_url = $producto->imagen
+                ? asset('uploads/' . $producto->imagen)
+                : null;
         });
 
         return view('compra.create', compact('proveedores', 'productos', 'sucursales'));

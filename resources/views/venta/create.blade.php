@@ -424,7 +424,7 @@
                         <div class="mt-2 mb-5">
                                      <!-- Contenedor para mostrar la imagen -->
                                      <div id="imagen-producto" class="mt-4 hidden">
-                                        <img id="imagen" src="" alt="" class="w-24 h-24 object-cover rounded hidden" >
+                                        <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded hidden" >
                                         <div id="sin-imagen" class="text-sm text-gray-500 hidden">Sin imagen</div>
                                     </div>
 
@@ -575,7 +575,7 @@
                         <tr>
                             <th></th>
                             <td class="text-sm font-black">SUMA:  <span id="suma" class="font-black ">0</span></td>
-                            <td class="text-sm font-black">IVA %:  <span id="iva" class="font-black">0</span></td>
+                            <td class="text-sm font-black">IVA:  <span id="iva" class="font-black">0</span></td>
                             <td class="text-sm font-black"><input type="hidden" name="total" value="0" id="inputTotal"> TOTAL:  <span id="total" class="font-black">0</span></td>
                             <th></th>
                         </tr>
@@ -584,7 +584,7 @@
                   </div>
             </div>
 
-            <div class="mt-6 flex items-center justify-end gap-x-6">
+            <div class="mt-6 flex flex-col items-end justify-end gap-2 sm:flex-row sm:gap-x-6">
 
                 <a href="{{route('ventas.index')}} " id="btn-cancelar">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
@@ -702,66 +702,87 @@
 
 
 window.generarResumenVenta = function() {
-    let mensaje = `
-    <div class="w-full max-w-[100vw]">
-        <h5 class="text-md font-semibold mb-4 text-center">Resumen de la Venta</h5>
-        <div class="overflow-x-auto">
-            <table class="table table-zebra table-sm md:table-md w-full">
-                <thead>
-                    <tr class="bg-base-200">
-                        <th class="w-[50%] min-w-[150px]">Producto</th>
-                        <th class="text-center w-[15%]">Cantidad</th>
-                        <th class="text-right w-[20%]">Precio</th>
-                        <th class="text-right w-[15%]">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>`;
+    let resumen = `
+        <section class="text-left">
+            <div class="mb-4 grid grid-cols-1 gap-2 rounded-lg bg-gray-50 p-3 text-sm sm:grid-cols-2">
+                <p><span class="font-semibold">Farmacia:</span> ${escaparHtmlVenta($('#id_sucursal option:selected').text().trim())}</p>
+                <p><span class="font-semibold">Cliente:</span> ${escaparHtmlVenta($('#id_persona option:selected').text().trim())}</p>
+                <p><span class="font-semibold">Artículos:</span> ${$('#tabla-productos tbody tr').length}</p>
+            </div>
+            <div class="overflow-x-auto rounded-lg border">
+                <table class="w-full text-sm" style="min-width: 640px">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2 text-left">Producto</th>
+                            <th class="p-2 text-center">Tipo</th>
+                            <th class="p-2 text-center">Cantidad</th>
+                            <th class="p-2 text-right">Precio</th>
+                            <th class="p-2 text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
     $('#tabla-productos tbody tr').each(function() {
-        const producto = $(this).find('td:eq(0)').text().trim();
-        const cantidad = $(this).find('td:eq(1)').text().trim();
-        const precio = $(this).find('td:eq(2)').html().trim();
-        const subtotal = $(this).find('td:eq(3)').text().trim();
+        const producto = escaparHtmlVenta($(this).find('td:eq(0)').text().trim());
+        const cantidad = escaparHtmlVenta($(this).find('input[name="arraycantidad[]"]').val());
+        const tipo = $(this).find('input[name="arraytipo[]"]').val() === '2' ? 'Servicio' : 'Producto';
+        const precio = Number($(this).find('input[name="arrayprecio[]"]').val());
+        const precioOriginal = Number($(this).find('input[name="arrayPrecioOriginal[]"]').val());
+        const precioHtml = Number.isFinite(precioOriginal) && precioOriginal > precio
+            ? `<span class="mr-2 text-gray-500 line-through">${precioOriginal.toFixed(2)}</span>${precio.toFixed(2)}`
+            : precio.toFixed(2);
+        const subtotalProducto = Number($(this).find('td:eq(3)').text().trim()).toFixed(2);
 
-        mensaje += `
-                    <tr>
-                        <td class="break-words max-w-[150px] md:max-w-none" title="${producto}">${producto}</td>
-                        <td class="text-center">${cantidad}</td>
-                        <td class="text-right">${precio}</td>
-                        <td class="text-right">${subtotal}</td>
-                    </tr>`;
+        resumen += `
+                        <tr class="border-t">
+                            <td class="max-w-[240px] break-words p-2">${producto}</td>
+                            <td class="p-2 text-center">${tipo}</td>
+                            <td class="p-2 text-center">${cantidad}</td>
+                            <td class="p-2 text-right">${precioHtml}</td>
+                            <td class="p-2 text-right">${subtotalProducto}</td>
+                        </tr>`;
     });
 
-    mensaje += `
-                </tbody>
-            </table>
-        </div>
-            <div class="mt-4 grid grid-cols-1 gap-1 text-sm md:text-base">
+    resumen += `
+                    </tbody>
+                </table>
+            </div>
+            <div class="ml-auto mt-4 grid max-w-sm gap-2 text-sm">
                 <div class="flex justify-between border-b pb-1">
-                    <span class="font-medium">SUMA:</span>
-                    <span>${$('#suma').text().trim()}</span>
+                    <span class="font-medium">Subtotal:</span>
+                    <span>${Number($('#suma').text().trim()).toFixed(2)}</span>
                 </div>
                 <div class="flex justify-between border-b pb-1">
-                    <span class="font-medium">IVA %:</span>
-                    <span>${$('#iva').text().trim()}</span>
+                    <span class="font-medium">IVA:</span>
+                    <span>${Number($('#iva').text().trim()).toFixed(2)}</span>
                 </div>
-                <div class="flex justify-between font-bold text-lg mt-2">
-                    <span>TOTAL:</span>
-                    <span>${$('#total').text().trim()}</span>
+                <div class="flex justify-between text-lg font-bold">
+                    <span>Total:</span>
+                    <span>${Number($('#total').text().trim()).toFixed(2)}</span>
                 </div>
             </div>
-        </div>`;
+        </section>`;
 
-    return mensaje;
+    return resumen;
 };
 
+function escaparHtmlVenta(valor) {
+    return String(valor ?? '').replace(/[&<>"']/g, function(caracter) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[caracter];
+    });
+}
 
     // Configuración inicial
         let precioOriginal;
         let precioProducto;
         let nombreProducto;
         let contador = 0;
-        let subtotal = [];
         let suma = 0;
         let iva = 0;
         let total = 0;
@@ -776,14 +797,13 @@ window.generarResumenVenta = function() {
             const imagenReceta = document.getElementById('imagen_receta').value;
             const btnGuardar = document.getElementById('btn-guardar');
 
-            // Validar condiciones
-            const tieneProductos = filasProductos.length > 0;
-            const tieneSucursal = sucursal !== '';
-            const tienePersona = persona !== '';
-            const prescripcionValida = !esPrescrito || (esPrescrito && imagenReceta);
+            const requisitosPendientes = [];
+            if (filasProductos.length === 0) requisitosPendientes.push('agrega un producto');
+            if (!sucursal) requisitosPendientes.push('selecciona una farmacia');
+            if (!persona) requisitosPendientes.push('selecciona un cliente');
+            if (esPrescrito && !imagenReceta) requisitosPendientes.push('sube la receta');
 
-            // Habilitar/deshabilitar botón
-            btnGuardar.disabled = !(tieneProductos && tieneSucursal && tienePersona && prescripcionValida);
+            btnGuardar.disabled = requisitosPendientes.length > 0;
         }
 
         // En el script principal, restaurar el manejo del formulario de persona
@@ -1046,21 +1066,34 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
             $('#id_producto').change(function() {
                 const selectedOption = $(this).find('option:selected');
                 const imagenUrl = selectedOption.data('imagen');
+                const imagen = $('#imagen');
+                const sinImagen = $('#sin-imagen');
+
+                imagen.off('load error');
 
                 if (selectedOption.val()) {
                     $('#imagen-producto').removeClass('hidden');
 
                     if (imagenUrl && imagenUrl.trim() !== '') {
-                        // Hay imagen: mostrar imagen, ocultar mensaje
-                        $('#imagen').attr('src', imagenUrl).removeClass('hidden');
-                        $('#sin-imagen').addClass('hidden');
+                        imagen
+                            .addClass('hidden')
+                            .one('load', function() {
+                                imagen.removeClass('hidden');
+                                sinImagen.addClass('hidden');
+                            })
+                            .one('error', function() {
+                                imagen.addClass('hidden');
+                                sinImagen.removeClass('hidden');
+                            })
+                            .attr('src', imagenUrl);
+                        sinImagen.addClass('hidden');
                     } else {
-                        // No hay imagen: ocultar imagen, mostrar mensaje simple
-                        $('#imagen').addClass('hidden');
-                        $('#sin-imagen').removeClass('hidden');
+                        imagen.addClass('hidden').attr('src', '');
+                        sinImagen.removeClass('hidden');
                     }
                 } else {
-                    // No hay producto seleccionado: ocultar todo
+                    imagen.attr('src', '');
+                    sinImagen.addClass('hidden');
                     $('#imagen-producto').addClass('hidden');
                 }
             });
@@ -1231,10 +1264,10 @@ document.getElementById('btn-subir-receta').addEventListener('click', function(e
         // Función para agregar producto al detalle
        // Función para agregar producto - CORREGIDA
 function agregarProducto() {
-    let idSucursal = $('#id_sucursal').val();
     let id_producto = $('#id_producto').val();
     let producto = nombreProducto;
-    let cantidad = parseInt($('#cantidad').val());
+    const cantidadIngresada = $('#cantidad').val();
+    let cantidad = cantidadIngresada === '' ? NaN : Number(cantidadIngresada);
     let precio = parseFloat(precioProducto);
     let stock = parseInt($('#stock').val()) || 0;
     let tipo = $('#id_producto').find('option:selected').data('tipo');
@@ -1250,9 +1283,14 @@ function agregarProducto() {
     let precioConDescuento = tipo == 2 && aplicarDescuento; // Añadido esta línea
 
     // Validar producto existente
-    let productoExistente = $(`#tabla-productos tbody tr input[name="arrayIdProducto[]"][value="${id_producto}"]`).closest('tr');
+    let productoExistente = $('#tabla-productos tbody tr input[name="arrayIdProducto[]"]')
+        .filter(function() {
+            return this.value === String(id_producto);
+        })
+        .closest('tr')
+        .first();
     if (productoExistente.length > 0) {
-        editarProducto(productoExistente.find('th').text(), idSucursal);
+        editarProducto(productoExistente[0], cantidadIngresada);
         return;
     }
 
@@ -1281,7 +1319,7 @@ function agregarProducto() {
 
     if (id_producto != '' && producto != '' && precio > 0) {
         if (tipo === 1) { // Producto
-            if (!cantidad || cantidad <= 0 || cantidad % 1 !== 0) {
+            if (!Number.isInteger(cantidad) || cantidad <= 0) {
                 mensaje('Favor ingresar una cantidad válida.');
                 return;
             }
@@ -1294,11 +1332,11 @@ function agregarProducto() {
         }
 
         contador++;
-        subtotal[contador] = round(cantidad * precio);
-        suma += subtotal[contador];
+        const subtotalProducto = round(cantidad * precio);
+        suma += subtotalProducto;
 
         if (tipo === 1 && aplicarImpuesto) {
-            iva += round((subtotal[contador] / 100) * impuesto);
+            iva += round((subtotalProducto / 100) * impuesto);
         }
 
         total = round(suma + iva);
@@ -1330,10 +1368,10 @@ function agregarProducto() {
                     <input type="hidden" name="arrayprecio[]" value="${precio}">
                     ${displayPrecio}
                 </td>
-                <td>${subtotal[contador].toFixed(2)}</td>
+                <td>${subtotalProducto.toFixed(2)}</td>
                 <td>
-                    <button type="button" onclick="editarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button>
-                    <button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button>
+                    <button type="button" onclick="editarProducto(this.closest('tr'))" aria-label="Editar producto"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button>
+                    <button type="button" onclick="eliminarProducto(this.closest('tr'))" aria-label="Quitar producto"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button>
                 </td>
             </tr>
         `);
@@ -1360,85 +1398,64 @@ function agregarProducto() {
 
 // Función para editar producto - MODIFICADA para restringir cambios de precio en servicios
 // Función para editar producto - MODIFICADA para restringir cambios de precio en servicios
-function editarProducto(index) {
-    let fila = $(`#fila${index}`);
+function editarProducto(filaElemento, cantidadSugerida = '') {
+    let fila = $(filaElemento);
     let cantidadActual = fila.find('input[name="arraycantidad[]"]').val();
+    if (cantidadSugerida !== '') {
+        cantidadActual = cantidadSugerida;
+    }
     let precioActual = parseFloat(fila.find('input[name="arrayprecio[]"]').val());
-    let precioOriginal = parseFloat(fila.find('input[name="arrayPrecioOriginal[]"]').val());
     let idProducto = fila.find('input[name="arrayIdProducto[]"]').val();
     let tipo = fila.find('input[name="arraytipo[]"]').val() || '1';
     let justificacionActual = fila.find('input[name="arrayJustificacion[]"]').val() || '';
 
-    // Para servicios, obtener si ya tenía descuento aplicado
-    let tieneDescuento = tipo === '2' && precioActual < precioOriginal;
+    if (tipo !== '1') {
+        Swal.fire({
+            title: 'Servicio en el detalle',
+            html: `<p>El servicio ya está agregado con precio <strong>${precioActual.toFixed(2)}</strong>.</p>
+                ${justificacionActual ? `<p class="mt-2 text-sm text-gray-600">Descuento: ${escaparHtmlVenta(justificacionActual)}</p>` : ''}`,
+            confirmButtonText: 'Cerrar'
+        });
+        return;
+    }
 
     $.ajax({
         url: '/productos/stock/' + idProducto + '/' + $('#id_sucursal').val(),
         method: 'GET',
         success: function(response) {
-            let stockDisponible = tipo === '1' ? response.stock : 'N/A';
+            let stockDisponible = response.stock;
             let modalContent = `
                 <div class="mb-4">
                     <label class="block mb-2">${tipo === '1' ? 'Cantidad (Stock: '+stockDisponible+')' : 'Servicio'}</label>
             `;
 
-            if (tipo === '1') {
-                // Producto - permitir editar cantidad
-                modalContent += `
-                    <input id="edit-cantidad" type="number" value="${cantidadActual}"
-                           min="1" max="${stockDisponible}" step="1"
-                           class="input input-bordered w-full">
-                `;
-            } else {
-                // Servicio - mostrar información fija
-                modalContent += `
-                    <div class="p-2 bg-gray-100 rounded">
-                        <p class="font-semibold">Cantidad: 1 (Servicio)</p>
-                        <p class="font-semibold">Precio: ${precioActual.toFixed(2)}</p>
-                        ${tieneDescuento ? '<p class="text-green-600 text-sm">Descuento aplicado</p>' : ''}
-                    </div>
-                    <input type="hidden" id="edit-cantidad" value="1">
-                `;
-            }
+            modalContent += `
+                <input id="edit-cantidad" type="number" value="${cantidadActual}"
+                       min="1" max="${stockDisponible}" step="1"
+                       class="input input-bordered w-full">
+            `;
 
             modalContent += `</div>`;
 
-            // Solo para servicios con descuento, mostrar justificación
-            if (tipo === '2' && tieneDescuento) {
-                modalContent += `
-                    <div class="mb-4">
-                        <label class="block mb-2">Justificación del descuento:</label>
-                        <div class="p-2 bg-gray-100 rounded">
-                            <p>${justificacionActual || 'Sin justificación registrada'}</p>
-                        </div>
-                    </div>
-                `;
-            }
-
             Swal.fire({
-                title: 'Editar ' + (tipo === '1' ? 'Producto' : 'Servicio'),
+                title: 'Editar producto',
                 html: modalContent,
-                showCancelButton: tipo === '1', // Solo mostrar cancelar para productos
-                confirmButtonText: tipo === '1' ? 'Guardar' : 'Cerrar',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar cambios',
                 cancelButtonText: 'Cancelar',
-                showDenyButton: tipo === '1' ? false : false,
-                denyButtonText: 'Eliminar',
                 focusConfirm: false,
                 preConfirm: () => {
-                    if (tipo === '1') {
-                        let nuevaCantidad = parseInt($('#edit-cantidad').val());
+                    let nuevaCantidad = Number($('#edit-cantidad').val());
 
-                        if (!nuevaCantidad || nuevaCantidad <= 0 || nuevaCantidad > stockDisponible) {
-                            Swal.showValidationMessage('Cantidad inválida');
-                            return false;
-                        }
-
-                        return { cantidad: nuevaCantidad };
+                    if (!Number.isInteger(nuevaCantidad) || nuevaCantidad <= 0 || nuevaCantidad > stockDisponible) {
+                    Swal.showValidationMessage('La cantidad debe ser un entero dentro del stock disponible');
+                    return false;
                     }
-                    return null;
+
+                    return { cantidad: nuevaCantidad };
                 }
             }).then((result) => {
-                if (result.isConfirmed && tipo === '1') {
+                if (result.isConfirmed && result.value) {
                     // Actualizar solo cantidad para productos
                     fila.find('input[name="arraycantidad[]"]').val(result.value.cantidad);
                     fila.find('td:eq(1)').html(`
@@ -1448,13 +1465,10 @@ function editarProducto(index) {
 
                     // Recalcular subtotal y totales
                     let nuevoSubtotal = round(result.value.cantidad * precioActual);
-                    subtotal[index] = nuevoSubtotal;
                     fila.find('td:eq(3)').text(nuevoSubtotal.toFixed(2));
 
                     recalcularTotales();
-                } else if (result.isDenied) {
-                    // Opción para eliminar si es necesario
-                    eliminarProducto(index);
+                    verificarEstadoFormularioVenta();
                 }
             });
         },
@@ -1469,15 +1483,16 @@ function editarProducto(index) {
             suma = 0;
             iva = 0;
             let aplicarImpuesto = $('#impuesto-checkbox').is(':checked');
+            let numeroFila = 0;
 
             $('#tabla-productos tbody tr').each(function() {
-                let index = $(this).find('th').text();
+                numeroFila++;
+                $(this).find('th').text(numeroFila);
                 let cantidad = parseFloat($(this).find('input[name="arraycantidad[]"]').val());
                 let precio = parseFloat($(this).find('input[name="arrayprecio[]"]').val());
                 let tipo = $(this).find('input[name="arraytipo[]"]').val() || '1';
 
                 let subtotalRow = round(cantidad * precio);
-                subtotal[index] = subtotalRow;
                 suma += subtotalRow;
 
                 if (tipo === '1' && aplicarImpuesto) {
@@ -1496,37 +1511,9 @@ function editarProducto(index) {
         }
 
         // Función para eliminar producto
-        function eliminarProducto(index) {
-            let fila = $(`#fila${index}`);
-            let tipo = fila.find('input[name="arraytipo[]"]').val() || '1';
-            let subtotalProducto = subtotal[index];
-
-            // Restar del total
-            suma -= subtotalProducto;
-            if (tipo === '1' && $('#impuesto-checkbox').is(':checked')) {
-                iva -= round((subtotalProducto / 100) * impuesto);
-            }
-            total = round(suma + iva);
-
-            // Actualizar UI
-            $('#suma').html(suma.toFixed(2));
-            $('#iva').html(iva.toFixed(2));
-            $('#total').html(total.toFixed(2));
-            $('#impuesto').val(iva.toFixed(2));
-            $('#inputTotal').val(total.toFixed(2));
-
-            // Eliminar fila
-            $(`#fila${index}`).remove();
-            delete subtotal[index];
-
-            // Resetear si no hay productos
-            if ($('#tabla-productos tbody tr').length === 0) {
-                suma = 0;
-                iva = 0;
-                total = 0;
-                $('#suma, #iva, #total, #impuesto, #inputTotal').text('0.00');
-            }
-
+        function eliminarProducto(filaElemento) {
+            $(filaElemento).remove();
+            recalcularTotales();
             verificarEstadoFormularioVenta();
         }
 
@@ -1813,6 +1800,16 @@ function mensaje(message, icon = "error") {
         return;
     }
 
+    if (!document.getElementById('id_sucursal').value || !document.getElementById('id_persona').value) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Completa los datos de la venta',
+            text: 'Selecciona una farmacia y un cliente antes de confirmar.',
+            confirmButtonText: 'Entendido'
+        });
+        return;
+    }
+
     // Mostrar confirmación con resumen
     Swal.fire({
         title: 'Confirmar Venta',
@@ -1820,11 +1817,9 @@ function mensaje(message, icon = "error") {
         icon: 'question',
         showCancelButton: true,
         confirmButtonText: 'Confirmar Venta',
-        cancelButtonText: 'Cancelar',
-        customClass: {
-            popup: 'w-full max-w-4xl'
-        },
-        width: '80%'
+        cancelButtonText: 'Volver a revisar',
+        width: 'min(900px, calc(100vw - 1rem))',
+        padding: '1rem'
     }).then((result) => {
         if (result.isConfirmed) {
             // Mostrar loader mientras se procesa

@@ -159,7 +159,7 @@
                                 name="id_proveedor"
                                 id="id_proveedor"
                                 required>
-                                <option value="">Seleccionar una categoría</option>
+                                <option value="">Seleccionar un proveedor</option>
                                 @foreach ($proveedores as $proveedor)
                                     <option value="{{ $proveedor->id }}" {{old('id_proveedor') == $proveedor->id ? 'selected' : ''}}>{{$proveedor->empresa}}</option>
                                 @endforeach
@@ -198,6 +198,7 @@
                             name="id_sucursal"
                             :options="$sucursales->pluck('nombre','id')"
                             :selected="old('id_sucursal')"
+                            :required="true"
                             placeholder="Buscar una farmacia"
                         />
 
@@ -322,7 +323,10 @@
                             </div>
                             <!-- Contenedor para mostrar la imagen -->
                             <div id="imagen-producto" class="mt-4 hidden">
-                                <img id="imagen" src="" alt="Imagen del producto" class="w-24 h-24 object-cover rounded">
+                                <img id="imagen" src="" alt="Imagen del producto" class="hidden w-24 h-24 object-cover rounded">
+                                <p id="sin-imagen-producto" class="hidden rounded bg-gray-100 px-4 py-3 text-sm text-gray-600">
+                                    Sin imagen disponible
+                                </p>
                             </div>
                         <div class="lg:grid lg:grid-cols-2 lg:gap-x-4">
                                 {{-- cantidad --}}
@@ -400,7 +404,7 @@
                         <tr>
                             <th></th>
                             <td class="text-sm font-black">SUMA:  <span id="suma" class="font-black ">0</span></td>
-                            <td class="text-sm font-black">IVA %:  <span id="iva" class="font-black">0</span></td>
+                            <td class="text-sm font-black">IVA:  <span id="iva" class="font-black">0</span></td>
                             <td class="text-sm font-black"><input type="hidden" name="total" value="0" id="inputTotal"> TOTAL:  <span id="total" class="font-black">0</span></td>
                             <th></th>
                         </tr>
@@ -409,12 +413,13 @@
                   </div>
             </div>
 
-            <div class="mt-6 flex items-center justify-end gap-x-6">
+            <div class="mt-6 flex flex-col items-end justify-end gap-2 sm:flex-row sm:gap-x-6">
 
                 <a href="{{route('compras.index')}} " id="btn-cancelar">
                     <button type="button" class="text-sm font-semibold text-gray-900">Cancelar</button>
                 </a>
-                <button type="submit" id="btn-guardar" class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar</button>
+                <p id="estado-guardar" role="status" class="text-right text-sm text-gray-500" aria-live="polite"></p>
+                <button type="submit" id="btn-guardar" disabled class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600">Guardar Compra</button>
             </div>
         </form>
 
@@ -465,18 +470,17 @@
         const proveedor = document.getElementById('id_proveedor').value;
         const sucursal = document.getElementById('id_sucursal').value;
         const btnGuardar = document.getElementById('btn-guardar');
+        const estadoGuardar = document.getElementById('estado-guardar');
 
-        // Habilitar/deshabilitar botón según condiciones
-        if (filasProductos.length > 0 && proveedor && sucursal) {
-            btnGuardar.disabled = false;
-        } else {
-            btnGuardar.disabled = true;
-        }
+        const listoParaGuardar = filasProductos.length > 0 && proveedor && sucursal;
+        btnGuardar.disabled = !listoParaGuardar;
+        estadoGuardar.textContent = listoParaGuardar
+            ? ''
+            : 'Selecciona proveedor, sucursal y agrega al menos un producto.';
     }
 
     // Llamar a la función cuando cambie algo importante
-    document.getElementById('id_proveedor').addEventListener('change', verificarEstadoFormulario);
-    document.getElementById('id_sucursal').addEventListener('change', verificarEstadoFormulario);
+    $('#id_proveedor, #id_sucursal').on('change', verificarEstadoFormulario);
 
 
 
@@ -540,16 +544,39 @@
 
 <script>
     $(document).ready(function() {
-    $('#id_producto').change(function() {
-            const selectedOption = $(this).find('option:selected');
-            const imagenUrl = selectedOption.data('imagen'); // Obtener la URL de la imagen
+        const productImage = $('#imagen');
+        const imagePlaceholder = $('#sin-imagen-producto');
 
-            if (imagenUrl) {
-                $('#imagen-producto').removeClass('hidden'); // Mostrar el contenedor de la imagen
-                $('#imagen').attr('src', imagenUrl); // Actualizar la imagen
-            } else {
-                $('#imagen-producto').addClass('hidden'); // Ocultar el contenedor de la imagen
+        $('#id_producto').on('change', function() {
+            const imageUrl = $(this).find('option:selected').data('imagen');
+            const imageContainer = $('#imagen-producto');
+
+            productImage.off('load error').attr('src', '');
+            imagePlaceholder.addClass('hidden');
+
+            if (!$(this).val()) {
+                imageContainer.addClass('hidden');
+                return;
             }
+
+            imageContainer.removeClass('hidden');
+
+            if (!imageUrl) {
+                productImage.addClass('hidden');
+                imagePlaceholder.removeClass('hidden');
+                return;
+            }
+
+            productImage
+                .one('load', function() {
+                    productImage.removeClass('hidden');
+                    imagePlaceholder.addClass('hidden');
+                })
+                .one('error', function() {
+                    productImage.addClass('hidden');
+                    imagePlaceholder.removeClass('hidden');
+                })
+                .attr('src', imageUrl);
         });
     });
 </script>
@@ -582,22 +609,18 @@
             let aplicarImpuesto = $('#impuesto-checkbox').is(':checked'); // aplicacion de impuesto
 
             // Verificar si el producto ya existe en el detalle
-            let productoExistente = $(`#tabla-productos tbody tr input[name="arrayIdProducto[]"][value="${id_producto}"]`).closest('tr');
+            let productoExistente = $('#tabla-productos tbody tr input[name="arrayIdProducto[]"]')
+                .filter(function() {
+                    return this.value === String(id_producto);
+                })
+                .closest('tr')
+                .first();
 
             if (productoExistente.length > 0) {
-                // Si el producto ya existe, preguntar si desea editarlo
-                Swal.fire({
-                    title: 'Producto ya agregado',
-                    text: 'Este producto ya está en el detalle. ¿Desea editarlo?',
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonText: 'Sí, editar',
-                    cancelButtonText: 'Cancelar'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        let index = productoExistente.find('th').text();
-                        editarProducto(index);
-                    }
+                editarProducto(productoExistente[0], {
+                    cantidad: cantidad,
+                    precio: precio,
+                    vencimiento: fecha_vencimiento
                 });
                 return;
             }
@@ -628,8 +651,8 @@
                                 <td><input type="hidden" name="arrayprecio[]" value="${precio}">${precio}</td>
                                 <td><input type="hidden" name="arrayvencimiento[]" value="${fecha_vencimiento}">${fecha_vencimiento}</td>
                                 <td>${subtotal[contador]}</td>
-                                <td><button type="button" onclick="editarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button></td>
-                                <td><button type="button" onclick="eliminarProducto('${contador}')"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
+                                <td><button type="button" onclick="editarProducto(this.closest('tr'))" aria-label="Editar producto"><i class="p-3 cursor-pointer fa-solid fa-edit"></i></button></td>
+                                <td><button type="button" onclick="eliminarProducto(this.closest('tr'))" aria-label="Quitar producto"><i class="p-3 cursor-pointer fa-solid fa-trash"></i></button></td>
                             </tr> `);
 
                         limpiar();
@@ -656,20 +679,17 @@
 
         }
 
-        function editarProducto(index) {
-            let fila = $(`#fila${index}`);
-            let id_producto = fila.find('input[name="arrayIdProducto[]"]').val();
-            let cantidad = fila.find('input[name="arraycantidad[]"]').val();
-            let precio = fila.find('input[name="arrayprecio[]"]').val();
-            let fecha_vencimiento = fila.find('input[name="arrayvencimiento[]"]').val();
-
-
-             // Obtener fecha actual en formato
-            let fechaActual = new Date().toISOString().split('T')[0];
+        function editarProducto(filaElemento, valoresIngresados = {}) {
+            const fila = $(filaElemento);
+            const cantidad = valoresIngresados.cantidad || fila.find('input[name="arraycantidad[]"]').val();
+            const precio = valoresIngresados.precio || fila.find('input[name="arrayprecio[]"]').val();
+            const fechaVencimiento = valoresIngresados.vencimiento || fila.find('input[name="arrayvencimiento[]"]').val();
+            const fechaActual = fechaLocalActual();
 
             Swal.fire({
-                title: 'Editar Producto',
+                title: 'Actualizar producto del detalle',
                 html: `
+                    <p class="mb-4 text-left text-sm text-gray-600">Al guardar se reemplazarán los valores actuales de este producto.</p>
                     <div class="mb-4">
                         <label class="block mb-2">Cantidad</label>
                         <input id="edit-cantidad" type="number" value="${cantidad}" min="1" class="input input-bordered w-full">
@@ -680,33 +700,27 @@
                     </div>
                     <div class="mb-4">
                         <label class="block mb-2">Fecha Vencimiento</label>
-                        <input id="edit-vencimiento" type="date" value="${fecha_vencimiento}" min="${fechaActual}" class="input input-bordered w-full">
+                        <input id="edit-vencimiento" type="date" value="${fechaVencimiento}" min="${fechaActual}" class="input input-bordered w-full">
                     </div>
                 `,
                 showCancelButton: true,
-                confirmButtonText: 'Guardar',
+                confirmButtonText: 'Guardar cambios',
                 cancelButtonText: 'Cancelar',
                 preConfirm: () => {
                     let nuevaCantidad = $('#edit-cantidad').val();
                     let nuevoPrecio = $('#edit-precio').val();
                     let nuevaFecha = $('#edit-vencimiento').val();
 
-                      // Validar que la fecha no sea anterior a hoy
-                    if (new Date(nuevaFecha) < new Date(fechaActual)) {
-                        Swal.showValidationMessage('La fecha de vencimiento no puede ser anterior a hoy');
+                    if (!Number.isInteger(Number(nuevaCantidad)) || Number(nuevaCantidad) < 1) {
+                        Swal.showValidationMessage('La cantidad debe ser un número entero mayor a 0');
                         return false;
                     }
-
-                    if (!nuevaCantidad || nuevaCantidad <= 0) {
-                        Swal.showValidationMessage('La cantidad debe ser mayor a 0');
-                        return false;
-                    }
-                    if (!nuevoPrecio || nuevoPrecio <= 0) {
+                    if (!Number.isFinite(Number(nuevoPrecio)) || Number(nuevoPrecio) <= 0) {
                         Swal.showValidationMessage('El precio debe ser mayor a 0');
                         return false;
                     }
-                    if (!nuevaFecha) {
-                        Swal.showValidationMessage('Debe seleccionar una fecha de vencimiento');
+                    if (!nuevaFecha || nuevaFecha < fechaActual) {
+                        Swal.showValidationMessage('La fecha de vencimiento debe ser hoy o posterior');
                         return false;
                     }
 
@@ -717,19 +731,13 @@
                     };
                 }
             }).then((result) => {
-                if (result.isConfirmed) {
-                    // Actualizar valores en la fila
-                    fila.find('input[name="arraycantidad[]"]').val(result.value.cantidad);
-                    fila.find('input[name="arrayprecio[]"]').val(result.value.precio);
-                    fila.find('input[name="arrayvencimiento[]"]').val(result.value.vencimiento);
-
-                    // Actualizar visualización
+                if (result.isConfirmed && result.value) {
                     fila.find('td:eq(1)').html(`<input type="hidden" name="arraycantidad[]" value="${result.value.cantidad}">${result.value.cantidad}`);
                     fila.find('td:eq(2)').html(`<input type="hidden" name="arrayprecio[]" value="${result.value.precio}">${result.value.precio}`);
                     fila.find('td:eq(3)').html(`<input type="hidden" name="arrayvencimiento[]" value="${result.value.vencimiento}">${result.value.vencimiento}`);
-
-                    // Recalcular todos los totales
                     recalcularTotales();
+                    verificarEstadoFormulario();
+                    limpiar();
                 }
             });
         }
@@ -738,13 +746,11 @@
             suma = 0;
             iva = 0;
             let aplicarImpuesto = $('#impuesto-checkbox').is(':checked');
-
-            // Reiniciar contador y reindexar filas
-            contador = 0;
+            let numeroFila = 0;
 
             $('#tabla-productos tbody tr').each(function() {
-                contador++;
-                $(this).find('th').text(contador); // Actualizar índice
+                numeroFila++;
+                $(this).find('th').text(numeroFila);
 
                 let cantidad = parseFloat($(this).find('input[name="arraycantidad[]"]').val());
                 let precio = parseFloat($(this).find('input[name="arrayprecio[]"]').val());
@@ -772,24 +778,10 @@
         }
 
 
-        function eliminarProducto(index){
-            // recalculamos el detalle de venta
-            suma -= round(subtotal[index]);
-            iva = round(suma / 100 * impuesto);
-            total = round(suma + iva);
-
-            // mostramos los nuevos datos
-            $('#suma').html(suma);
-            $('#iva').html(iva);
-            $('#total').html(total);
-            $('#impuesto').val(iva);
-            $('#inputTotal').val(total);
-
-            // Eliminar la fila primero
-            $(`#fila${index}`).remove();
-                recalcularTotales();
-                // Verificar estado del formulario
-                verificarEstadoFormulario();
+        function eliminarProducto(filaElemento) {
+            $(filaElemento).remove();
+            recalcularTotales();
+            verificarEstadoFormulario();
         }
 
 
@@ -800,6 +792,13 @@
                 $('#producto').val('');
                 $('#cantidad').val('');
                 $('#precio').val('');
+        }
+
+        function fechaLocalActual() {
+            const hoy = new Date();
+            const mes = String(hoy.getMonth() + 1).padStart(2, '0');
+            const dia = String(hoy.getDate()).padStart(2, '0');
+            return `${hoy.getFullYear()}-${mes}-${dia}`;
         }
 
         // modal para canselar la compra
@@ -1047,6 +1046,16 @@ document.getElementById('btn-subir-comprobante').addEventListener('click', funct
             return;
         }
 
+        if (!document.getElementById('id_proveedor').value || !document.getElementById('id_sucursal').value) {
+            Swal.fire({
+                icon: 'warning',
+                title: 'Completa los datos de la compra',
+                text: 'Selecciona un proveedor y una sucursal antes de confirmar.',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
         // Mostrar confirmación
         Swal.fire({
             title: 'Confirmar Compra',
@@ -1054,7 +1063,9 @@ document.getElementById('btn-subir-comprobante').addEventListener('click', funct
             icon: 'question',
             showCancelButton: true,
             confirmButtonText: 'Confirmar Compra',
-            cancelButtonText: 'Cancelar'
+            cancelButtonText: 'Volver a revisar',
+            width: 'min(900px, calc(100vw - 1rem))',
+            padding: '1rem'
         }).then((result) => {
             if (result.isConfirmed) {
                 this.submit();
@@ -1064,65 +1075,76 @@ document.getElementById('btn-subir-comprobante').addEventListener('click', funct
 
     // funcion para el detalle compra
     function generarResumenCompra() {
-    let mensaje = `
-    <div class="w-full max-w-[100vw]">
-        <h5 class="text-md font-semibold mb-4 text-center">Resumen de la Compra</h5>
+    let resumen = `
+        <section class="text-left">
+            <div class="mb-4 grid grid-cols-1 gap-2 rounded-lg bg-gray-50 p-3 text-sm sm:grid-cols-2">
+                <p><span class="font-semibold">Proveedor:</span> ${escaparHtml($('#id_proveedor option:selected').text().trim())}</p>
+                <p><span class="font-semibold">Sucursal:</span> ${escaparHtml($('#id_sucursal option:selected').text().trim())}</p>
+                <p><span class="font-semibold">Productos:</span> ${$('#tabla-productos tbody tr').length}</p>
+            </div>
+            <div class="overflow-x-auto rounded-lg border">
+                <table class="w-full text-sm" style="min-width: 640px">
+                    <thead class="bg-gray-100">
+                        <tr>
+                            <th class="p-2 text-left">Producto</th>
+                            <th class="p-2 text-center">Cantidad</th>
+                            <th class="p-2 text-right">Precio</th>
+                            <th class="p-2 text-center">Vencimiento</th>
+                            <th class="p-2 text-right">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>`;
 
-        <!-- Tabla principal -->
-        <div class="overflow-x-auto">
-            <table class="table table-zebra table-sm md:table-md w-full">
-                <thead>
-                    <tr class="bg-base-200">
-                        <th class="w-[40%] min-w-[150px]">Producto</th>
-                        <th class="text-center w-[10%]">Cantidad</th>
-                        <th class="text-right w-[15%]">Precio</th>
-                        <th class="text-center w-[15%]">Vencimiento</th>
-                        <th class="text-right w-[20%]">Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-
-    // Corregidos los selectores según tu estructura HTML
     $('#tabla-productos tbody tr').each(function() {
-        const producto = $(this).find('td:eq(0)').text().trim();
-        const cantidad = $(this).find('td:eq(1)').text().trim();
-        const precio = $(this).find('td:eq(2)').text().trim();
-        const vencimiento = $(this).find('td:eq(3)').text().trim();
-        const subtotal = $(this).find('td:eq(4)').text().trim();
+        const producto = escaparHtml($(this).find('td:eq(0)').text().trim());
+        const cantidad = escaparHtml($(this).find('input[name="arraycantidad[]"]').val());
+        const precio = Number($(this).find('input[name="arrayprecio[]"]').val()).toFixed(2);
+        const vencimiento = escaparHtml($(this).find('input[name="arrayvencimiento[]"]').val());
+        const subtotalProducto = Number($(this).find('td:eq(4)').text().trim()).toFixed(2);
 
-        mensaje += `
-                    <tr>
-                        <td class="break-words max-w-[150px] md:max-w-none" title="${producto}">${producto}</td>
-                        <td class="text-center">${cantidad}</td>
-                        <td class="text-right">${precio}</td>
-                        <td class="text-center">${vencimiento}</td>
-                        <td class="text-right">${subtotal}</td>
-                    </tr>`;
+        resumen += `
+                        <tr class="border-t">
+                            <td class="max-w-[240px] break-words p-2">${producto}</td>
+                            <td class="p-2 text-center">${cantidad}</td>
+                            <td class="p-2 text-right">${precio}</td>
+                            <td class="p-2 text-center">${vencimiento}</td>
+                            <td class="p-2 text-right">${subtotalProducto}</td>
+                        </tr>`;
     });
 
-    mensaje += `
-                </tbody>
-            </table>
-        </div>
+    resumen += `
+                    </tbody>
+                </table>
+            </div>
+            <div class="ml-auto mt-4 grid max-w-sm gap-2 text-sm">
+                <div class="flex justify-between border-b pb-1">
+                    <span class="font-medium">Subtotal:</span>
+                    <span>${Number($('#suma').text().trim()).toFixed(2)}</span>
+                </div>
+                <div class="flex justify-between border-b pb-1">
+                    <span class="font-medium">IVA:</span>
+                    <span>${Number($('#iva').text().trim()).toFixed(2)}</span>
+                </div>
+                <div class="flex justify-between text-lg font-bold">
+                    <span>Total:</span>
+                    <span>${Number($('#total').text().trim()).toFixed(2)}</span>
+                </div>
+            </div>
+        </section>`;
 
-        <!-- Totales -->
-        <div class="mt-4 grid grid-cols-1 gap-1 text-sm md:text-base">
-            <div class="flex justify-between border-b pb-1">
-                <span class="font-medium">SUMA:</span>
-                <span>${$('#suma').text().trim()}</span>
-            </div>
-            <div class="flex justify-between border-b pb-1">
-                <span class="font-medium">IVA %:</span>
-                <span>${$('#iva').text().trim()}</span>
-            </div>
-            <div class="flex justify-between font-bold text-lg mt-2">
-                <span>TOTAL:</span>
-                <span>${$('#total').text().trim()}</span>
-            </div>
-        </div>
-    </div>`;
+    return resumen;
+}
 
-    return mensaje;
+function escaparHtml(valor) {
+    return String(valor ?? '').replace(/[&<>"']/g, function(caracter) {
+        return {
+            '&': '&amp;',
+            '<': '&lt;',
+            '>': '&gt;',
+            '"': '&quot;',
+            "'": '&#039;'
+        }[caracter];
+    });
 }
 
      </script>

@@ -154,7 +154,9 @@ class VentaController extends Controller
             ->map(function ($almacen) {
                 return [
                     'id' => $almacen->producto->id,
-                    'imagen' => secure_asset('uploads/' . $almacen->producto->imagen),
+                    'imagen' => $almacen->producto->imagen
+                        ? asset('uploads/' . $almacen->producto->imagen)
+                        : null,
                     'nombre' => $almacen->producto->nombre,
                     'precio_venta' => $almacen->producto->precio_venta,
                     'precio_porcentaje' => $almacen->producto->precio_porcentaje,
@@ -302,8 +304,6 @@ class VentaController extends Controller
                      ]);
             }
 
-            DB::commit();
-
             $usuario = User::find($request->idUsuario);
             Bitacora::create([
                 'id_usuario' => $request->idUsuario,
@@ -313,6 +313,8 @@ class VentaController extends Controller
                 'detalles' => "Se creó la venta en la farmacia: {$venta->sucursal->nombre}, para la persona {$venta->persona->nombre} - {$venta->persona->DPI}", //detalles especificos
                 'fecha_hora' => now(),
             ]);
+
+            DB::commit();
 
             return redirect()->route('ventas.index')->with('success', 'Venta creada exitosamente');
         } catch (Exception $e) {
