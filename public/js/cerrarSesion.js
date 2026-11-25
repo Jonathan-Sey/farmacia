@@ -1,28 +1,41 @@
-document.getElementById("logout-btn").addEventListener("click", logout);
-document.getElementById("logout-btn-mobile").addEventListener("click", logout);
+document.addEventListener('DOMContentLoaded', function () {
+    const logoutButtons = [
+        document.getElementById('logout-btn'),
+        document.getElementById('logout-btn-mobile')
+    ].filter(Boolean);
 
-function logout() {
-    const token = localStorage.getItem("jwt_token"); 
-
-    if (!token) {
-        alert("No se encontró un token activo");
-        return;
-    }
-
-    axios.post('/api/auth/logout', {}, {
-        headers: {
-            Authorization: `Bearer ${token}`
-        }
-    })
-    .then(response => {
-        console.log(response.data.message);
-        // Elimina el token del almacenamiento local y la demas informacion
-        localStorage.clear();
-        // Redirige al usuario a la página de inicio de sesión o inicio
-        window.location.href = "/";
-    })
-    .catch(error => {
-        console.error("Error al cerrar sesión", error.response.data);
-        alert("Hubo un problema al cerrar sesión. Intenta nuevamente.");
+    logoutButtons.forEach(function (button) {
+        button.addEventListener('click', logout);
     });
+});
+
+async function logout(event) {
+    event.preventDefault();
+
+    const logoutButtons = [
+        document.getElementById('logout-btn'),
+        document.getElementById('logout-btn-mobile')
+    ].filter(Boolean);
+    logoutButtons.forEach(function (button) {
+        button.disabled = true;
+    });
+
+    const token = localStorage.getItem('jwt_token');
+
+    try {
+        if (token) {
+            await axios.post('/api/auth/logout', {}, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            });
+        }
+    } catch (error) {
+        console.error('No se pudo invalidar el token en el servidor.', error.response ? error.response.data : error);
+    } finally {
+        ['jwt_token', 'pestanas', 'user_name', 'pagina_inicio', 'ultimaRutaValida'].forEach(function (key) {
+            localStorage.removeItem(key);
+        });
+        window.location.assign('/');
+    }
 }

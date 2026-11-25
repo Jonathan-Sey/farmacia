@@ -17,6 +17,15 @@
     <div class="bg-white p-5 rounded-xl shadow-lg w-full max-w-3xl mb-10">
         <form action="{{ route('roles.store') }}" method="POST">
             @csrf
+            @if ($errors->any())
+                <div role="alert" class="alert alert-error mb-4 p-3">
+                    <ul class="text-white font-bold">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div id="usuario">
     </div>
             <div class="border-b border-gray-900/10 pb-12">
@@ -37,7 +46,8 @@
                         @foreach ($pestanas as $pestana)
                         <div class="flex items-center">
                             <input type="checkbox" name="pestanas[]" id="pestana_{{ $pestana->id }}"
-                                   value="{{ $pestana->id }}" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                   value="{{ $pestana->id }}" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+                                   {{ in_array($pestana->id, old('pestanas', [])) ? 'checked' : '' }}>
                             <label for="pestana_{{ $pestana->id }}" class="ml-2 block text-sm text-gray-900">
                                 {{ $pestana->nombre }}
                             </label>
@@ -64,11 +74,8 @@
 </div> --}}
                 <div class="mt-4">
                     <label class="block text-sm font-medium text-gray-900">Seleccionar Página de Inicio</label>
-                    <select name="pagina_inicio" id="pagina_inicio" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
+                    <select name="pagina_inicio" id="pagina_inicio" data-old-value="{{ old('pagina_inicio') }}" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">
                         <option value="">-- Selecciona una Pestaña --</option>
-                        @foreach ($pestanas as $pestana)
-                            {{-- <option value="{{ $pestana->id }}">{{ $pestana->nombre }}</option> --}}
-                        @endforeach
                     </select>
                 </div>
 
@@ -83,7 +90,7 @@
 
                 <div class="mt-2">
                     <label for="descripcion" class="block text-sm font-medium text-gray-900">Descripción</label>
-                    <textarea name="descripcion" require id="descripcion" rows="3" placeholder="Descripción del Rol" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('descripcion') }}</textarea>
+                    <textarea name="descripcion" required id="descripcion" rows="3" placeholder="Descripción del Rol" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm">{{ old('descripcion') }}</textarea>
                     @error('descripcion')
                     <div role="alert" class="alert alert-error mt-4 p-2">
                         <span class="text-white font-bold">{{ $message }}</span>
@@ -106,7 +113,6 @@
 @push('js')
 <script src="/js/selecciondePestañasCreateRol.js"></script>
 
-@push('js')
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const checkboxes = document.querySelectorAll('input[name="pestanas[]"]');
@@ -125,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function() {
             });
 
         // Guardar selección actual
-        const currentSelection = paginaInicioSelect.value;
+        const currentSelection = paginaInicioSelect.value || paginaInicioSelect.dataset.oldValue;
 
         // Limpiar select
         paginaInicioSelect.innerHTML = '<option value="">-- Selecciona una Pestaña --</option>';

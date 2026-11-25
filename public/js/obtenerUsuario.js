@@ -18,33 +18,15 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Verifica si el elemento existe
     if (!crearUsuario) {
-        return; // Termina silenciosamente si no está presente
+        return;
     }
 
     const decodificarToken = jwt_decode(token);
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     const UserId = decodificarToken.id;
-    const sucursalId = decodificarToken.sucursal_id;
-
-        const decodificarToken = jwt_decode(token);
-        const UserId = decodificarToken.id;
-
-    if (crearUsuario) {
-        crearUsuario.innerHTML = `
-        <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
-        document.getElementById("idUsuario").style.display = "none";
-        //console.log('Sucursal ID del usuario:', sucursalId);
-    }
-
-        //console.log(UserId)
-
-        if (crearUsuario) {
-            crearUsuario.innerHTML = ` <input type="text" class="form-control" id="idUsuario" name="idUsuario" value="${UserId}" hidden>`;
-
-            document.getElementById("idUsuario").style.display = "none";
-        }
+    crearUsuario.innerHTML = `
+        <input type="hidden" id="idUsuario" name="idUsuario" value="${UserId}">`;
 
 }
 

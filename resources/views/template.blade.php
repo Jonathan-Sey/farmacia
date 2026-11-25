@@ -67,20 +67,97 @@
     <div class=" ml-4 md:ml-[200px]" id="piepagina">
         <x-footer class="bg-gray-800 text-white p-4 text-center w-full" />
     </div>
-    <script src="{{ secure_asset('js/axios.min.js') }}"></script>
+    <script src="{{ asset('js/axios.min.js') }}"></script>
     {{-- <script src="{{ secure_asset('js/datepicker/jquery-ui.js') }}"></script> --}}
-    <script src="{{ secure_asset('/js/barraResponsive.js') }}"></script>
-    <script type="module" src="/js/controldeNavPorRoles.js"></script>
-    <script src="{{ secure_asset('js/auth.js') }}"></script>
-    <script src="{{ secure_asset('js/permisos.js') }}"></script>
-    <script src="{{ secure_asset('js/logout.js') }}"></script>
-    <script src="{{ secure_asset('js/cerrarSesion.js') }}"></script>
-    <script src="{{ secure_asset('js/obtenerUsuario.js') }}"></script>
-    <script src="{{ secure_asset('js/cantidad.js') }}"></script>
+    <script src="{{ asset('js/barraResponsive.js') }}"></script>
+    <script type="module" src="{{ asset('js/controldeNavPorRoles.js') }}"></script>
+    <script src="{{ asset('js/auth.js') }}"></script>
+    <script src="{{ asset('js/permisos.js') }}"></script>
+    <script src="{{ asset('js/logout.js') }}"></script>
+    <script src="{{ asset('js/cerrarSesion.js') }}"></script>
+    <script src="{{ asset('js/obtenerUsuario.js') }}"></script>
+    <script src="{{ asset('js/cantidad.js') }}"></script>
 
 
     @stack('css')
     @stack('js')
+    @if ($errors->any())
+        @php
+            $restorableOldInput = collect(session()->getOldInput())
+                ->reject(function ($value, $key) {
+                    return preg_match('/password|token|secret/i', (string) $key);
+                })
+                ->all();
+        @endphp
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const oldInput = @json($restorableOldInput);
+                const selector = 'form input[name], form textarea[name], form select[name]';
+                const restoredFields = new WeakSet();
+
+                function getOldValue(name) {
+                    const path = name.match(/[^.[\]]+/g) || [];
+                    let value = oldInput;
+
+                    for (const segment of path) {
+                        if (!value || !Object.prototype.hasOwnProperty.call(value, segment)) {
+                            return undefined;
+                        }
+                        value = value[segment];
+                    }
+
+                    return value;
+                }
+
+                function restoreField(field) {
+                    if (restoredFields.has(field)) {
+                        return;
+                    }
+                    restoredFields.add(field);
+
+                    if (['hidden', 'file', 'password', 'submit', 'button', 'reset'].includes(field.type)) {
+                        return;
+                    }
+
+                    const value = getOldValue(field.name);
+                    if (value === undefined || value === null) {
+                        return;
+                    }
+
+                    if (field.type === 'checkbox' || field.type === 'radio') {
+                        const values = Array.isArray(value) ? value : [value];
+                        field.checked = values.map(String).includes(field.value);
+                    } else if (field.tagName === 'SELECT' && field.multiple) {
+                        const values = (Array.isArray(value) ? value : [value]).map(String);
+                        Array.from(field.options).forEach(function (option) {
+                            option.selected = values.includes(option.value);
+                        });
+                    } else {
+                        field.value = value;
+                    }
+
+                    field.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+
+                document.querySelectorAll(selector).forEach(restoreField);
+
+                const observer = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (mutation) {
+                        mutation.addedNodes.forEach(function (node) {
+                            if (node.nodeType !== Node.ELEMENT_NODE) {
+                                return;
+                            }
+                            if (node.matches(selector)) {
+                                restoreField(node);
+                            }
+                            node.querySelectorAll(selector).forEach(restoreField);
+                        });
+                    });
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+            });
+        </script>
+    @endif
 </body>
 
 

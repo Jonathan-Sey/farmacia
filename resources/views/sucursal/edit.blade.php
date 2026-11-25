@@ -13,6 +13,10 @@
 <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
 <script>
      Dropzone.autoDiscover = false;
+    const imagenInput = document.querySelector('[name="imagen"]');
+    const imagenOriginal = @json($sucursal->imagen);
+    let archivoImagenOriginal = null;
+    let reemplazandoArchivo = false;
     const dropzone = new Dropzone("#dropzone", {
         url: "{{ route('upload.image.temp') }}",
         dictDefaultMessage: "Arrastra y suelta una imagen o haz clic aquí para subirla",
@@ -28,11 +32,13 @@
 
     dropzone.on("addedfile", function(file) {
         if (this.files.length > 1) {
+            reemplazandoArchivo = true;
             this.removeFile(this.files[0]);
+            reemplazandoArchivo = false;
             Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Solo se permite subir una imagen.',
+                icon: 'info',
+                title: 'Imagen reemplazada',
+                text: 'La imagen nueva reemplazará a la anterior.',
                 confirmButtonText: 'Aceptar',
             });
         }
@@ -40,18 +46,21 @@
 
     dropzone.on("success", function(file, response) {
         console.log("Archivo subido temporalmente:", response.imagen);
-        document.querySelector('[name="imagen"]').value = response.imagen;
+        file.imagenSubida = response.imagen;
+        imagenInput.value = response.imagen;
+        const eliminarImagen = document.querySelector('[name="eliminar_imagen"]');
+        if (eliminarImagen) {
+            eliminarImagen.remove();
+        }
     });
 
     dropzone.on("removedfile", function(file) {
-    const imagenNombre = document.querySelector('[name="imagen"]').value;
-    const imagenOriginal = "{{ $sucursal->imagen }}";
+    if (reemplazandoArchivo && file === archivoImagenOriginal) {
+        return;
+    }
 
-    if (imagenNombre === imagenOriginal) {
-        // En lugar de dejar el campo vacío, puedes asignar un valor por defecto
-        document.querySelector('[name="imagen"]').value = 'default.jpg';
-
-        // O si prefieres usar el campo eliminar_imagen
+    if (file === archivoImagenOriginal) {
+        imagenInput.value = 'default.jpg';
         if (!document.querySelector('[name="eliminar_imagen"]')) {
             const input = document.createElement('input');
             input.type = 'hidden';
@@ -60,19 +69,21 @@
             document.querySelector('form').appendChild(input);
         }
     }
-    else if (imagenNombre && imagenNombre !== imagenOriginal) {
+    else if (file.imagenSubida) {
         fetch("{{ route('eliminar.imagen.temp') }}", {
             method: "POST",
             headers: {
                 "X-CSRF-TOKEN": "{{ csrf_token() }}",
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ imagen: imagenNombre }),
+            body: JSON.stringify({ imagen: file.imagenSubida }),
         });
+        if (imagenInput.value === file.imagenSubida) {
+            imagenInput.value = document.querySelector('[name="eliminar_imagen"]')
+                ? 'default.jpg'
+                : imagenOriginal;
+        }
     }
-
-    // Solo limpia el campo si estás usando imagen por defecto
-    // document.querySelector('[name="imagen"]').value = "";
 });
 
     // Precargar la imagen existente
@@ -80,6 +91,7 @@
         const imagenNombre = document.querySelector('[name="imagen"]').value;
         if (imagenNombre) {
             const mockFile = { name: imagenNombre, size: 12345 };
+            archivoImagenOriginal = mockFile;
             dropzone.emit("addedfile", mockFile);
             dropzone.emit("thumbnail", mockFile, "{{ secure_asset('uploads') }}/" + imagenNombre);
             dropzone.emit("complete", mockFile);
@@ -92,7 +104,7 @@
         const imagenOriginal = "{{ $sucursal->imagen }}";
         const formSubmitted = document.querySelector('form').submitted;
 
-        if (imagenNombre && !formSubmitted && imagenNombre !== imagenOriginal) {
+        if (imagenNombre && imagenNombre !== 'default.jpg' && !formSubmitted && imagenNombre !== imagenOriginal) {
             fetch("{{ route('eliminar.imagen.temp') }}", {
                 method: "POST",
                 headers: {
@@ -116,6 +128,20 @@
         <form action="{{route('sucursales.update',['sucursal'=>$sucursal->id])}}" method="POST">
             @csrf
             @method('PATCH')
+            @if (session('error'))
+                <div role="alert" class="alert alert-error mb-4 p-3">
+                    <span class="text-white font-bold">{{ session('error') }}</span>
+                </div>
+            @endif
+            @if ($errors->any())
+                <div role="alert" class="alert alert-error mb-4 p-3">
+                    <ul class="text-white font-bold">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
             <div id="usuario">
 
             </div>

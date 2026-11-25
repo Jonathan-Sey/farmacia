@@ -141,10 +141,10 @@
                 </li>
                 <!-- Botón Logout -->
                 <li>
-                    <a href="javascript:void(0);" id="logout-btn" class="flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
+                    <button type="button" id="logout-btn" class="w-full border-0 bg-transparent p-0 text-left flex flex-row items-center h-12 transform hover:translate-x-2 transition-transform ease-in duration-200 text-white hover:text-white">
                         <span class="inline-flex items-center justify-center h-12 w-12 text-lg text-white"><i class="bx bx-log-out"></i></span>
                         <span class="text-sm font-medium">Cerrar Sesión</span>
-                    </a>
+                    </button>
                 </li>
 
             </ul>
@@ -153,7 +153,7 @@
 <div class="flex md:hidden bg-white w-full shadow-md fixed top-0 z-50">
     <div class="flex justify-between items-center w-full px-4 h-16">
         <h1 class="text-xl uppercase text-indigo-500">Farmacia</h1>
-        <button id="menu-btn" class="text-gray-500 focus:outline-none">
+        <button id="menu-btn" type="button" class="text-gray-500 focus:outline-none" aria-controls="menu" aria-expanded="false" aria-label="Abrir menú">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path>
             </svg>
@@ -162,7 +162,7 @@
 </div>
 <!-- Menú desplegable móvil -->
 <div >
-     <ul id="menu" class="hidden bg-white shadow-md flex-col fixed top-16 left-0 w-full z-40 overflow-y-auto max-h-[calc(100vh-4rem)]">
+     <ul id="menu" class="hidden flex-col bg-white shadow-md fixed top-16 left-0 w-full z-40 overflow-y-auto max-h-[calc(100vh-4rem)]">
             <li data-pestanal="Dashboard" class="px-6 py-2 hover:bg-gray-100" style="display: none;">
                 <a href="/dashboard" class="block w-full"><i class="bx bx-home"></i> Dashboard</a>
             </li>
@@ -227,7 +227,7 @@
                 <a href="{{ route('devoluciones.index') }}" class="block w-full" ><i class="fa-solid fa-rotate-left"></i> Devoluciones</a>
             </li>
             <li class="flex flex-row justify-start items-start">
-                <button id="logout-btn-mobile" type="submit" class="py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white w-full">
+                <button id="logout-btn-mobile" type="button" class="py-2 px-4 text-gray-700 hover:bg-red-500 hover:text-white w-full">
                         <i class="bx bx-log-out mr-2 items-start"></i>Cerrar Sesión
                 </button>
             </li>
@@ -235,6 +235,5 @@
     </div>
 </header>
 <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
-<script src="{{ secure_asset('js/logout.js') }}"></script>
 
 

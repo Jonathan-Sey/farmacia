@@ -58,7 +58,8 @@ class SucursalController extends Controller
             'estado'=>'integer',
             'latitud' => 'required|numeric',
             'longitud' => 'required|numeric',
-            'google_maps_link' => 'required|url'
+            'google_maps_link' => 'required|url',
+            'idUsuario' => 'required|exists:users,id'
         ]);
 
           // Mover la imagen de temp a definitivo
@@ -88,7 +89,7 @@ class SucursalController extends Controller
         }
 
          //Bitacora
-         $usuario=User::find($request->idUsuario);
+         $usuario = User::findOrFail($request->idUsuario);
          Bitacora::create([
                  'id_usuario' => $request->idUsuario,
                  'name_usuario' =>$usuario->name,
@@ -133,7 +134,7 @@ class SucursalController extends Controller
     public function update(Request $request, Sucursal $sucursal)
     {
         $validated = $request->validate([
-            'imagen' => 'nullable',
+            'imagen' => 'nullable|string',
             'nombre' => ['required','string','max:35','unique:sucursal,nombre,'. $sucursal->id],
             'codigo_sucursal' => ['required','string','max:50','unique:sucursal,codigo_sucursal,' . $sucursal->id],
             'ubicacion' => 'required|max:200',
@@ -143,29 +144,40 @@ class SucursalController extends Controller
             'estado' => 'integer',
             'latitud' => 'required|numeric|between:-90,90',
             'longitud' => 'required|numeric|between:-180,180',
-            'google_maps_link' => 'required|url'
+            'google_maps_link' => 'required|url',
+            'idUsuario' => 'required|exists:users,id'
         ]);
+        $usuario = User::findOrFail($validated['idUsuario']);
+        unset($validated['idUsuario']);
 
         // Manejo de imagen
         $imagenOriginal = $sucursal->imagen;
+        $imagenSolicitada = $request->input('imagen');
+        $imagenNombre = is_string($imagenSolicitada)
+            ? basename(str_replace('\\', '/', $imagenSolicitada))
+            : '';
+        $imagenNueva = $imagenNombre !== ''
+            && $imagenNombre !== $imagenOriginal
+            && $imagenNombre !== 'default.jpg';
 
-        if ($request->has('eliminar_imagen') && $request->eliminar_imagen == '1') {
+        if ($imagenNueva) {
+            $imagenController = new ImagenController();
+            $imagenMovida = $imagenController->moverDefinitiva($imagenSolicitada);
+
+            if (!$imagenMovida) {
+                return back()->withInput()->with('error', 'No se pudo guardar la nueva imagen. Vuelve a cargarla e inténtalo de nuevo.');
+            }
+
+            if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
+                unlink(public_path('uploads/' . $imagenOriginal));
+            }
+            $validated['imagen'] = $imagenNombre;
+        }
+        elseif ($request->input('eliminar_imagen') == '1') {
             if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
                 unlink(public_path('uploads/' . $imagenOriginal));
             }
             $validated['imagen'] = null;
-        }
-        elseif ($request->imagen && $request->imagen !== $imagenOriginal) {
-            $imagenController = new ImagenController();
-            $imagenMovida = $imagenController->moverDefinitiva($request->imagen);
-
-            if (!$imagenMovida) {
-                return back()->with('error', 'No se pudo guardar la nueva imagen');
-            }
-
-            if ($imagenOriginal && file_exists(public_path('uploads/' . $imagenOriginal))) {
-                unlink(public_path('uploads/' . $imagenOriginal));
-            }
         }
         else {
             $validated['imagen'] = $imagenOriginal;
@@ -175,7 +187,6 @@ class SucursalController extends Controller
         $sucursal->update($validated);
 
         //Bitacora
-        $usuario = User::find($request->idUsuario);
         Bitacora::create([
             'id_usuario' => $request->idUsuario,
             'name_usuario' => $usuario->name,

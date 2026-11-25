@@ -57,6 +57,7 @@ class RolController extends Controller
             'pestanas' => 'required|array', // Se valida que pestanas sea un array
             'pestanas.*' => 'exists:pestanas,id', // Se valida que cada ID de pestaña exista en la base de datos
             'pagina_inicio' => 'nullable|exists:pestanas,id', // Se valida que la nueva pestaña, si es seleccionada, exista
+            'idUsuario' => 'required|exists:users,id',
         ]);
 
 
@@ -87,7 +88,7 @@ class RolController extends Controller
 
         $rol->pestanas()->sync($pestanasData);
 
-        $usuario=User::find($request->idUsuario);
+        $usuario = User::findOrFail($request->idUsuario);
 
         Bitacora::create([
                 'id_usuario' => $request->idUsuario,
@@ -107,8 +108,10 @@ class RolController extends Controller
             'descripcion' => 'required|string|max:255',
             'pestanas' => 'required|array',
             'pestanas.*' => 'exists:pestanas,id',
-            'pagina_inicio' => 'required|exists:pestanas,id'
+            'pagina_inicio' => 'required|exists:pestanas,id',
+            'idUsuario' => 'required|exists:users,id',
         ]);
+        $usuario = User::findOrFail($validated['idUsuario']);
 
         // Actualizar datos básicos del rol
         $rol->update([
@@ -129,7 +132,6 @@ class RolController extends Controller
         $rol->pestanas()->sync($pestanasData);
 
         // Bitácora
-        $usuario = User::find($request->idUsuario);
         Bitacora::create([
             'id_usuario' => $request->idUsuario,
             'name_usuario' => $usuario->name,
