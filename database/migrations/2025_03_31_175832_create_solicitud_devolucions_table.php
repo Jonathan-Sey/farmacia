@@ -13,6 +13,7 @@ class CreateSolicitudDevolucionsTable extends Migration
      */
     public function up()
     {
+
         Schema::create('solicitudes_devolucion', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('venta_id');
